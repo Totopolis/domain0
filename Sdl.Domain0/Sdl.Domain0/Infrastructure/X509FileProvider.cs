@@ -23,7 +23,7 @@ namespace Sdl.Domain0.Infrastructure
         {
             try
             {
-                return new X509Certificate2(_settings.FilePath, _settings.Password, X509KeyStorageFlags.DefaultKeySet;
+                return new X509Certificate2(_settings.FilePath, _settings.Password, X509KeyStorageFlags.DefaultKeySet);
             }
             catch (Exception)
             {

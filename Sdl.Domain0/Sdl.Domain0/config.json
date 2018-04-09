@@ -1,5 +1,5 @@
 ﻿{
-  "Uri": "https://+:443",
+  "Uri": "https://localhost",
   "App": {
     "Name": "Domain0",
     "Desc": "Domain0 auth service",
@@ -10,6 +10,6 @@
     "Name": "My",
     "Location": "LocalMachine",
     "FilePath": "",
-    "Password":  "" 
+    "Password": ""
   }
 }

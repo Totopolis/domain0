@@ -32,10 +32,7 @@ namespace Sdl.Domain0
                 x.EnableServiceRecovery(r => r.RestartService(0));
                 x.RunAsNetworkService();
                 x.EnableShutdown();
-                x.OnException(ex =>
-                {
-                    Monik.Client.M.ApplicationError(ex.Message);
-                });
+                x.OnException(ex => Monik.Client.M.ApplicationError(ex.Message));
 
                 x.WithNancy<Domain0Bootstrapper>(uri, GetX509Cert(uri));
             });
@@ -43,6 +40,9 @@ namespace Sdl.Domain0
 
         static X509Certificate2 GetX509Cert(Uri uri)
         {
+            if (!string.Equals(uri.Scheme, "https", StringComparison.OrdinalIgnoreCase))
+                return null;
+
             IX509CertificateProvider provider = null;
 
             var fileSettings = Configuration.GetSection("X509Provider").Get<X509FileSettings>();
