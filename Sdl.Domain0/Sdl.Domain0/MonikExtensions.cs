@@ -4,17 +4,11 @@ using System.Diagnostics;
 
 namespace Sdl.Domain0
 {
-    public class ApplicationInfo
+    public static class M
     {
-        public string Name { get; set; }
+        public const string MONIK_SOURCE = nameof(MONIK_SOURCE);
 
-        public string Description { get; set; }
-    }
-
-    public static class MonikExtensions
-    {
-
-        public static void UseMonik(this ApplicationInfo applicationInfo)
+        public static void Init()
         {
             var azureSender = new AzureSender("", "");
             var instanceName = "Dev";
@@ -23,9 +17,10 @@ namespace Sdl.Domain0
             if (isProduction && !isDebug)
                 instanceName = "Azure";
 
+            var source = Environment.GetEnvironmentVariable(MONIK_SOURCE);
             Trace.WriteLine($"BasePath: {AppContext.BaseDirectory}");
-            Trace.WriteLine($"Monik: {applicationInfo.Name} {instanceName}");
-            M.Initialize(azureSender, applicationInfo.Name, instanceName, aAutoKeepAliveEnable: true);
+            Trace.WriteLine($"Monik: {source} {instanceName}");
+            Monik.Client.M.Initialize(azureSender, source, instanceName, aAutoKeepAliveEnable: true);
         }
     }
 }

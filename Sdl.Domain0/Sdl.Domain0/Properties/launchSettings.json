@@ -3,6 +3,7 @@
     "Sdl.Domain0": {
       "commandName": "Project",
       "environmentVariables": {
+        "MONIK_SOURCE": "Domain0",
         "ASPNETCORE_ENVIRONMENT": "Production"
       }
     }

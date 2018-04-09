@@ -1,0 +1,15 @@
+﻿{
+  "Uri": "https://+:443",
+  "App": {
+    "Name": "Domain0",
+    "Desc": "Domain0 auth service",
+    "Service": "Domain0Service"
+  },
+  "X509Provider": {
+    "Subject": "localhost",
+    "Name": "My",
+    "Location": "LocalMachine",
+    "FilePath": "",
+    "Password":  "" 
+  }
+}

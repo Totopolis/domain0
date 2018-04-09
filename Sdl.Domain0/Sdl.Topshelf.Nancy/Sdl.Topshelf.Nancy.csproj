@@ -4,4 +4,9 @@
     <TargetFramework>net462</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Nancy.Hosting.Self" Version="2.0.0-clinteastwood" />
+    <PackageReference Include="Topshelf" Version="4.0.3" />
+  </ItemGroup>
+
 </Project>

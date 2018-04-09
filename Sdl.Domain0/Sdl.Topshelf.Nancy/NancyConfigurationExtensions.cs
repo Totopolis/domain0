@@ -8,15 +8,19 @@ namespace Sdl.Topshelf.Nancy
 {
     public static class NancyConfigurationExtensions
     {
-        public static void WithNancy<T>(this HostConfigurator configurator, Uri uri, X509Certificate2 certificate)
+        public static void WithNancy<T>(this HostConfigurator configurator, Uri uri, X509Certificate2 x509cert)
             where T : INancyBootstrapper, new()
         {
             configurator.BeforeInstall(() =>
             {
                 CommandHelper.OpenFirewallPorts("domain0-port", uri.Port);
                 CommandHelper.AddUrlReservation(uri, "NT AUTHORITY\\NETWORK SERVICE");
-                if (uri.Scheme == "https" && certificate != null)
-                    CommandHelper.AddSslCertificate(uri, certificate);
+                if (uri.Scheme == "https")
+                {
+                    if (x509cert == null)
+                        throw new ArgumentNullException(nameof(x509cert), "https");
+                    CommandHelper.AddSslCertificate(uri, x509cert);
+                }
             });
             configurator.BeforeUninstall(() =>
             {
