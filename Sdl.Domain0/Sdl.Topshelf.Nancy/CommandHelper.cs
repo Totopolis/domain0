@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Monik.Client;
+using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
@@ -8,32 +8,33 @@ namespace Sdl.Topshelf.Nancy
 {
     public static class CommandHelper
     {
-        public static bool OpenFirewallPorts(string rule, params int[] ports)
-            => RunElevated("netsh",
-                $"advfirewall firewall add rule name=\"{rule}\" dir=in protocol=TCP localport=\"{string.Join(",", ports)}\" action=allow",
-                out var output);
+        private const string Netsh = "netsh";
+
+        public static bool AddFirewallRule(string rule, params int[] ports)
+            => RunElevated(Netsh,
+                $"advfirewall firewall add rule name=\"{rule}\" dir=in protocol=TCP localport=\"{string.Join(",", ports)}\" action=allow");
+
+        public static bool RemoveFirewallRule(string rule)
+            => RunElevated(Netsh,
+                $"netsh advfirewall firewall delete rule name=\"{rule}\" dir=in");
 
         public static bool RemoveUrlReservation(Uri uri)
-            => RunElevated("netsh", 
-                $"http delete urlacl url={uri.Scheme}://{uri.Host}:{uri.Port}/".Replace("localhost", "+"),
-                out var text);
+            => RunElevated(Netsh, 
+                $"http delete urlacl url={uri.Scheme}://{uri.Host}:{uri.Port}/".Replace("localhost", "+"));
 
         public static bool AddUrlReservation(Uri uri, string user)
-            => RunElevated("netsh", 
-                $"http add urlacl url={uri.Scheme}://{uri.Host}:{uri.Port}/ user=\"{user}\"".Replace("localhost", "+"),
-                out var text);
+            => RunElevated(Netsh,
+                $"http add urlacl url={uri.Scheme}://{uri.Host}:{uri.Port}/ user=\"{user}\"".Replace("localhost", "+"));
 
         public static bool AddSslCertificate(Uri uri, X509Certificate2 cert)
-            => RunElevated("netsh",
-                $"http add sslcert ipport=0.0.0.0:{uri.Port} certhash={Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(cert.Thumbprint))} appid={{{Guid.NewGuid()}}}",
-                out var text);
+            => RunElevated(Netsh,
+                $"http add sslcert ipport=0.0.0.0:{uri.Port} certhash={Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(cert.Thumbprint))} appid={{{Guid.NewGuid()}}}");
 
-        public static bool DeleteSslCertificate(Uri uri)
-            => RunElevated("netsh",
-                $"http delete sslcert ipport=0.0.0.0:{uri.Port}",
-                out var text);
+        public static bool RemoveSslCertificate(Uri uri)
+            => RunElevated(Netsh,
+                $"http delete sslcert ipport=0.0.0.0:{uri.Port}");
 
-        public static bool RunElevated(string file, string args, out string output)
+        public static bool RunElevated(string file, string args)
         {
             var process = new Process
             {
@@ -49,8 +50,12 @@ namespace Sdl.Topshelf.Nancy
             };
             process.Start();
             process.WaitForExit();
-            output = process.StandardOutput.ReadToEnd();
-            return process.ExitCode == 0;
+            var output = process.StandardOutput.ReadToEnd();
+            if (process.ExitCode == 0)
+                return true;
+
+            M.ApplicationError($"{args}-{output}");
+            return false;
         }
     }
 }

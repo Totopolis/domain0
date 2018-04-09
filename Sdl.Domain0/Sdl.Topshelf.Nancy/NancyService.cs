@@ -2,13 +2,17 @@
 using Nancy.Hosting.Self;
 using System;
 using System.Diagnostics;
+using System.Security;
 using System.Security.Cryptography.X509Certificates;
 using Topshelf;
+using Topshelf.Hosts;
 
 namespace Sdl.Topshelf.Nancy
 {
     public class NancyService : ServiceControl
     {
+        public const string FirewallRule = "domain0-rule-https";
+
         private readonly Uri _uri;
 
         private readonly X509Certificate2 _x509cert;
@@ -34,20 +38,8 @@ namespace Sdl.Topshelf.Nancy
 
         public bool Start(HostControl hostControl)
         {
-            CommandHelper.OpenFirewallPorts("domain0-port", _uri.Port);
-            Debug.WriteLine($"firewall port added for {_uri.Port}");
-            CommandHelper.RemoveUrlReservation(_uri);
-            CommandHelper.AddUrlReservation(_uri, "NT AUTHORITY\\NETWORK SERVICE");
-            Debug.WriteLine($"reservation added for {_uri}");
-            if (_uri.Scheme == "https")
-            {
-                if (_x509cert == null)
-                    throw new ArgumentNullException(nameof(_x509cert), "https");
-
-                CommandHelper.DeleteSslCertificate(_uri);
-                CommandHelper.AddSslCertificate(_uri, _x509cert);
-                Debug.WriteLine($"ssl certificate added for {_uri}");
-            }
+            if (hostControl is ConsoleRunHost)
+                InstallService(_uri, _x509cert);
 
             _host.Start();
             Debug.WriteLine($"nancy started on {_uri}");
@@ -59,9 +51,38 @@ namespace Sdl.Topshelf.Nancy
             _host.Stop();
             Debug.WriteLine($"nancy stoped on {_uri}");
 
-            CommandHelper.RemoveUrlReservation(_uri);
-            Debug.WriteLine($"reservation removed for {_uri}");
+            if (hostControl is ConsoleRunHost)
+                UninstallService(_uri);
+
             return false;
+        }
+
+        public static void InstallService(Uri uri, X509Certificate2 x509cert)
+        {
+            CommandHelper.RemoveFirewallRule(FirewallRule);
+            if (!CommandHelper.AddFirewallRule(FirewallRule, uri.Port))
+                throw new SecurityException("couldnot execute firewall rule look at Monik");
+            CommandHelper.RemoveUrlReservation(uri);
+            if (!CommandHelper.AddUrlReservation(uri, "NT AUTHORITY\\NETWORK SERVICE"))
+                throw new SecurityException("couldnot add url reservation look at Monik");
+            if (uri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase))
+            {
+                if (x509cert == null)
+                    throw new SecurityException("couldnot load x509 cert for https");
+
+                CommandHelper.RemoveSslCertificate(uri);
+                if (!CommandHelper.AddSslCertificate(uri, x509cert))
+                    throw new SecurityException("couldnot set ssl cert look at Monik");
+            }
+        }
+
+        public static void UninstallService(Uri uri)
+        {
+            CommandHelper.RemoveFirewallRule(FirewallRule);
+            CommandHelper.RemoveUrlReservation(uri);
+            if (uri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase))
+                CommandHelper.RemoveSslCertificate(uri);
+
         }
     }
 }

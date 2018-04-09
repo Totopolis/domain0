@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Monik.Client.Azure" Version="1.0.19" />
     <PackageReference Include="Nancy.Hosting.Self" Version="2.0.0-clinteastwood" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
     <PackageReference Include="Topshelf" Version="4.0.3" />
   </ItemGroup>
 

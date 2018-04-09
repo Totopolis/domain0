@@ -6,7 +6,7 @@
     "Service": "Domain0Service"
   },
   "X509Provider": {
-    "Subject": "localhost",
+    "Subject": "",
     "Name": "My",
     "Location": "LocalMachine",
     "FilePath": "",
