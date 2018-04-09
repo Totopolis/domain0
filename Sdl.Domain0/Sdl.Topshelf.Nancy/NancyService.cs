@@ -15,8 +15,8 @@ namespace Sdl.Topshelf.Nancy
             {
                 UrlReservations = new UrlReservations
                 {
-                    CreateAutomatically = true,
-                    User = "NT AUTHORITY\\NETWORK SERVICE"
+                    // do not create url reservation
+                    CreateAutomatically = false
                 },
                 AllowChunkedEncoding = false,
                 UnhandledExceptionCallback = ex => { }

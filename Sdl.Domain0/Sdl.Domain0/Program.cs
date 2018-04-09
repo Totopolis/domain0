@@ -35,7 +35,7 @@ namespace Sdl.Domain0
                     M.ApplicationError(ex.Message);
                 });
 
-                x.WithNancy<Domain0Bootstrapper>(uri);
+                x.WithNancy<Domain0Bootstrapper>(uri, );
             });
         }
     }
