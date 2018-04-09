@@ -14,11 +14,14 @@ namespace Sdl.Topshelf.Nancy
             configurator.BeforeInstall(() =>
             {
                 CommandHelper.OpenFirewallPorts("domain0-port", uri.Port);
+                CommandHelper.RemoveUrlReservation(uri);
                 CommandHelper.AddUrlReservation(uri, "NT AUTHORITY\\NETWORK SERVICE");
                 if (uri.Scheme == "https")
                 {
                     if (x509cert == null)
                         throw new ArgumentNullException(nameof(x509cert), "https");
+
+                    CommandHelper.DeleteSslCertificate(uri);
                     CommandHelper.AddSslCertificate(uri, x509cert);
                 }
             });
@@ -27,7 +30,7 @@ namespace Sdl.Topshelf.Nancy
                 CommandHelper.RemoveUrlReservation(uri);
             });
 
-            configurator.Service(settings => new NancyService(uri, new T()));
+            configurator.Service(settings => new NancyService(uri, new T(), x509cert));
         }
     }
 }
