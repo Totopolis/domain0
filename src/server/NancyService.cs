@@ -7,7 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using Topshelf;
 using Topshelf.Hosts;
 
-namespace Sdl.Topshelf.Nancy
+namespace Domain0.WinService.Infrastructure
 {
     public class NancyService : ServiceControl
     {
@@ -59,29 +59,29 @@ namespace Sdl.Topshelf.Nancy
 
         public static void InstallService(Uri uri, X509Certificate2 x509cert)
         {
-            CommandHelper.RemoveFirewallRule(FirewallRule);
-            if (!CommandHelper.AddFirewallRule(FirewallRule, uri.Port))
+            NetshHelper.RemoveFirewallRule(FirewallRule);
+            if (!NetshHelper.AddFirewallRule(FirewallRule, uri.Port))
                 throw new SecurityException("couldnot execute firewall rule look at Monik");
-            CommandHelper.RemoveUrlReservation(uri);
-            if (!CommandHelper.AddUrlReservation(uri, "NT AUTHORITY\\NETWORK SERVICE"))
+            NetshHelper.RemoveUrlReservation(uri);
+            if (!NetshHelper.AddUrlReservation(uri, "NT AUTHORITY\\NETWORK SERVICE"))
                 throw new SecurityException("couldnot add url reservation look at Monik");
             if (uri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase))
             {
                 if (x509cert == null)
                     throw new SecurityException("couldnot load x509 cert for https");
 
-                CommandHelper.RemoveSslCertificate(uri);
-                if (!CommandHelper.AddSslCertificate(uri, x509cert))
+                NetshHelper.RemoveSslCertificate(uri);
+                if (!NetshHelper.AddSslCertificate(uri, x509cert))
                     throw new SecurityException("couldnot set ssl cert look at Monik");
             }
         }
 
         public static void UninstallService(Uri uri)
         {
-            CommandHelper.RemoveFirewallRule(FirewallRule);
-            CommandHelper.RemoveUrlReservation(uri);
+            NetshHelper.RemoveFirewallRule(FirewallRule);
+            NetshHelper.RemoveUrlReservation(uri);
             if (uri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase))
-                CommandHelper.RemoveSslCertificate(uri);
+                NetshHelper.RemoveSslCertificate(uri);
 
         }
     }

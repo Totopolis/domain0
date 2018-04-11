@@ -1,7 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
-using Sdl.Domain0.Infrastructure;
-using Sdl.Domain0.Nancy;
-using Sdl.Topshelf.Nancy;
+﻿using Domain0.Nancy;
+using Domain0.WinService.Certificate;
+using Domain0.WinService.Infrastructure;
 using System;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;

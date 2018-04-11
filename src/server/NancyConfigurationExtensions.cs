@@ -4,7 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 using Topshelf;
 using Topshelf.HostConfigurators;
 
-namespace Sdl.Topshelf.Nancy
+namespace Domain0.WinService.Infrastructure
 {
     public static class NancyConfigurationExtensions
     {

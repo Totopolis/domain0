@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography.X509Certificates;
 
-namespace Sdl.Domain0.Infrastructure
+namespace Domain0.WinService.Certificate
 {
     public class X509FileSettings
     {

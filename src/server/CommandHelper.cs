@@ -4,9 +4,9 @@ using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
-namespace Sdl.Topshelf.Nancy
+namespace Domain0.WinService.Infrastructure
 {
-    public static class CommandHelper
+    public static class NetshHelper
     {
         private const string Netsh = "netsh";
 
