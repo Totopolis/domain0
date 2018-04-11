@@ -2,7 +2,7 @@
 using Domain0.WinService.Certificate;
 using Domain0.WinService.Infrastructure;
 using System;
-using System.IO;
+using System.Configuration;
 using System.Security.Cryptography.X509Certificates;
 using Topshelf;
 
@@ -10,23 +10,16 @@ namespace Sdl.Domain0
 {
     class Program
     {
-        static IConfiguration Configuration { get; set; }
-
         static void Main(string[] args)
         {
             M.Init();
 
-            Configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("config.json")
-                .Build();
-
-            var uri = new Uri(Configuration["Uri"]);
+            var uri = new Uri(ConfigurationManager.AppSettings["Url"]);
             var code = HostFactory.Run(x =>
             {
-                x.SetDisplayName(Configuration["App:Name"]);
-                x.SetDescription(Configuration["App:Desc"]);
-                x.SetServiceName(Configuration["App:Service"]);
+                x.SetDisplayName("domain0");
+                x.SetDescription("domain0 auth service based on JWT");
+                x.SetServiceName("domain0 service");
                 x.StartAutomatically();
                 x.EnableServiceRecovery(r => r.RestartService(0));
                 x.RunAsNetworkService();
@@ -44,14 +37,28 @@ namespace Sdl.Domain0
 
             IX509CertificateProvider provider = null;
 
-            var fileSettings = Configuration.GetSection("X509Provider").Get<X509FileSettings>();
+            var fileSettings = new X509FileSettings
+            {
+                FilePath = ConfigurationManager.AppSettings["X509_Filepath"],
+                Password = ConfigurationManager.AppSettings["X509_Password"]
+            };
             if (!string.IsNullOrEmpty(fileSettings.FilePath))
             {
                 provider = new X509FileProvider(fileSettings);
             }
             else
             {
-                var storeSettings = Configuration.GetSection("X509Provider").Get<X509StoreSettings>();
+                if (!Enum.TryParse(ConfigurationManager.AppSettings["X509_Location"], out StoreLocation location))
+                    throw new ArgumentException(nameof(location), "Couldnt parse app.config X509_Location as StoreLocation");
+                if (!Enum.TryParse(ConfigurationManager.AppSettings["X509_StoreName"], out StoreName storeName))
+                    throw new ArgumentException(nameof(location), "Couldnt parse app.config X509_Location as StoreLocation");
+
+                var storeSettings = new X509StoreSettings
+                {
+                    Location = location,
+                    Name = storeName,
+                    Subject = ConfigurationManager.AppSettings["X509_Subject"]
+                };
                 if (!string.IsNullOrEmpty(storeSettings.Subject))
                     provider = new X509StoreProvider(storeSettings);
             }

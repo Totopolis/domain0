@@ -16,7 +16,7 @@ namespace Domain0.WinService.Infrastructure
 
         public static bool RemoveFirewallRule(string rule)
             => RunElevated(Netsh,
-                $"netsh advfirewall firewall delete rule name=\"{rule}\" dir=in");
+                $"advfirewall firewall delete rule name=\"{rule}\" dir=in");
 
         public static bool RemoveUrlReservation(Uri uri)
             => RunElevated(Netsh, 
@@ -54,6 +54,7 @@ namespace Domain0.WinService.Infrastructure
             if (process.ExitCode == 0)
                 return true;
 
+            Debug.WriteLine($"{args}-{output}");
             M.ApplicationError($"{args}-{output}");
             return false;
         }
