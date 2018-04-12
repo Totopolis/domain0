@@ -41,7 +41,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="server\CommandHelper.cs" />
-    <Content Include="common\AssemblyInfo.cs" />
     <Content Include="config\App.config" />
     <Content Include="server\Domain0Bootstrapper.cs" />
     <Content Include="server\IX509CertificateProvider.cs" />
@@ -69,6 +68,9 @@
     <None Include="swagger\swagger-ui-standalone-preset.js.map" />
     <None Include="swagger\swagger-ui.css.map" />
     <None Include="swagger\swagger-ui.js.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="common\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

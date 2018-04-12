@@ -66,9 +66,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\common\AssemblyInfo.cs">
-      <Link>Properties\AssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="..\..\src\server\CommandHelper.cs">
       <Link>Infrastructure\CommandHelper.cs</Link>
     </Compile>
@@ -91,6 +88,7 @@
       <Link>Certificate\X509StoreProvider.cs</Link>
     </Compile>
     <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup Condition="Exists('..\..\src\config\App.config')">
     <None Include="..\..\src\config\App.config">

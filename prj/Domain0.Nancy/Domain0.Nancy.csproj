@@ -61,9 +61,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\common\AssemblyInfo.cs">
-      <Link>Properties\AssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="..\..\src\server.nancy\TestMetadataModule.cs">
       <Link>Swagger\TestMetadataModule.cs</Link>
     </Compile>
@@ -76,6 +73,7 @@
     <Compile Include="..\..\src\server\EmbeddedContentConventionBuilder.cs">
       <Link>Infrastructure\EmbeddedContentConventionBuilder.cs</Link>
     </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\..\src\swagger\swagger-ui-bundle.js.map">
