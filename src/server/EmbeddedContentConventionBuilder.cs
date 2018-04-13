@@ -10,14 +10,14 @@ namespace Domain0.Nancy.Infrastructure
 {
     public static class EmbeddedContentConventionBuilderExtensions
     {
-        public static void AddEmbeddedDirectory(this IList<Func<NancyContext, string, Response>> conventions,
+        public static void AddEmbeddedDirectory<T>(this IList<Func<NancyContext, string, Response>> conventions,
             string requestPath, string embeddedPath)
-            => conventions.Add(EmbeddedContentConventionBuilder.AddEmbeddedDirectory(requestPath, embeddedPath));
+            => conventions.Add(EmbeddedContentConventionBuilder.AddEmbeddedDirectory<T>(requestPath, embeddedPath));
     }
 
     public static class EmbeddedContentConventionBuilder
     {
-        public static Func<NancyContext, string, Response> AddEmbeddedDirectory(string requestPath, string embedDirectory)
+        public static Func<NancyContext, string, Response> AddEmbeddedDirectory<T>(string requestPath, string embedDirectory)
         {
             return (ctx, root) =>
             {
@@ -28,28 +28,28 @@ namespace Domain0.Nancy.Infrastructure
                 var assembly = Assembly.GetExecutingAssembly();
                 var filename = Path.GetFileName(ctx.Request.Url.Path);
                 if (string.IsNullOrEmpty(filename))
-                    return ctx.Response.WithStatusCode(HttpStatusCode.NotFound);
+                    return HttpStatusCode.NotFound;
 
                 var pathParts = string.Concat(embedDirectory, path.Substring(requestPath.Length)).Split('/');
                 if (pathParts.Length == 0)
-                    return ctx.Response.WithStatusCode(HttpStatusCode.NotFound);
+                    return HttpStatusCode.NotFound;
 
-                var embeddedPath = GetEmbeddedPath(assembly, pathParts);
+                var embeddedPath = GetEmbeddedPath<T>(pathParts);
                 var stream = assembly.GetManifestResourceStream(embeddedPath);
                 if (stream == null)
-                    return ctx.Response.WithStatusCode(HttpStatusCode.NotFound);
+                    return HttpStatusCode.NotFound;
 
                 return new StreamResponse(() => stream, MimeTypes.GetMimeType(filename));
             };
         }
 
-        private static string GetEmbeddedPath(Assembly assembly, params string[] parts)
+        private static string GetEmbeddedPath<T>(params string[] parts)
         {
             var path = string.Join(".", parts.Take(parts.Length - 1).Select(p => p.Replace("-", "_")));
             if (!string.IsNullOrEmpty(path))
-                return $"{assembly.GetName().Name}.{path}.{parts.Last()}";
+                return $"{typeof(T).Namespace}.{path}.{parts.Last()}";
 
-            return $"{assembly.GetName().Name}.{parts.Last()}";
+            return $"{typeof(T).Namespace}.{parts.Last()}";
         }
     }
 }

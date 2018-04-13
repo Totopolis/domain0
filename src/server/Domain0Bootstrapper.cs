@@ -29,8 +29,7 @@ namespace Domain0.Nancy
         protected override void ConfigureConventions(NancyConventions nancyConventions)
         {
             // Add swagger
-            nancyConventions.StaticContentsConventions.AddFile("/swagger-ui/", "/swagger-ui/index.html");
-            nancyConventions.StaticContentsConventions.AddEmbeddedDirectory("/swagger-ui", "Swagger-UI");
+            nancyConventions.StaticContentsConventions.AddEmbeddedDirectory<Domain0Bootstrapper>("/swagger-ui", "Swagger-UI");
         }
     }
 }
