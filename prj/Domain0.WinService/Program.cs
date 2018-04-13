@@ -2,26 +2,36 @@
 using Domain0.Nancy;
 using Domain0.WinService.Certificate;
 using Domain0.WinService.Infrastructure;
+using Nancy;
 using System;
 using System.Configuration;
+using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
-using Domain0.Database;
+using System.Threading;
 using Topshelf;
 
 namespace Sdl.Domain0
 {
     class Program
     {
+        public const string ServiceName = "domain0";
+
         static void Main(string[] args)
         {
+            var fields = typeof(TypeResolveStrategies).GetRuntimeFields().Where(f => f.Name.Contains("ExcludeNancy"));
+            foreach (var field in fields)
+                field.SetValue(null, (TypeResolveStrategy)(type => !string.Equals(type.FullName, $"Nancy.{type.Name}")));
+
             var container = CreateContainer();
 
-            var uri = new Uri(ConfigurationManager.AppSettings["Url"]);
+            var uri = new Uri(ConfigurationManager.AppSettings["Url"] ?? "127.0.0.1");
+
             var code = HostFactory.Run(x =>
             {
-                x.SetDisplayName("domain0");
-                x.SetDescription("domain0 auth service based on JWT");
-                x.SetServiceName("domain0 service");
+                x.SetDisplayName(ServiceName);
+                x.SetDescription($"{ServiceName} auth service based on JWT");
+                x.SetServiceName($"{ServiceName} service");
                 x.StartAutomatically();
                 x.EnableServiceRecovery(r => r.RestartService(0));
                 x.RunAsNetworkService();
@@ -31,6 +41,8 @@ namespace Sdl.Domain0
                 var bootstrapper = new Domain0Bootstrapper(container);
                 x.WithNancy(uri, bootstrapper, GetX509Cert(uri));
             });
+
+            Thread.Sleep(TimeSpan.FromSeconds(5));
         }
 
         static IContainer CreateContainer()
