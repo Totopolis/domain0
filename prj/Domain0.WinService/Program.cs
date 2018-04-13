@@ -5,6 +5,7 @@ using Domain0.WinService.Infrastructure;
 using Nancy;
 using System;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
@@ -15,7 +16,26 @@ namespace Sdl.Domain0
 {
     class Program
     {
+#if DEBUG
+        public const string ServiceName = "domain0Debug";
+#else
         public const string ServiceName = "domain0";
+#endif
+
+#if DEBUG
+        public const string DefaultHttpsUri = "https://localhost:4443";
+#else
+        public const string DefaultHttpsUri = "https://localhost";
+#endif
+
+#if DEBUG
+        public const string DefaultHttpUri = "http://localhost:8880";
+#else
+        public const string DefaultHttpUri = "http://localhost";
+#endif
+
+        public const string DefaultConnectionString =
+            "Data Source=.;Initial Catalog=Telematic;Persist Security Info=True;Integrated Security=True";
 
         static void Main(string[] args)
         {
@@ -23,10 +43,15 @@ namespace Sdl.Domain0
             foreach (var field in fields)
                 field.SetValue(null, (TypeResolveStrategy)(type => !string.Equals(type.FullName, $"Nancy.{type.Name}")));
 
-            var container = CreateContainer();
+            var connectionString = ConfigurationManager.ConnectionStrings["Database"]?.ConnectionString ?? DefaultConnectionString;
+            var uri = !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Url"])
+                ? new Uri(ConfigurationManager.AppSettings["Url"])
+                : new Uri(HasX509CertificateSettings() ? DefaultHttpsUri : DefaultHttpUri);
 
-            var uri = new Uri(ConfigurationManager.AppSettings["Url"] ?? "127.0.0.1");
+            Console.WriteLine("use uri = " + uri);
+            Console.WriteLine("use connectionString = " + connectionString);
 
+            var container = CreateContainer(connectionString);
             var code = HostFactory.Run(x =>
             {
                 x.SetDisplayName(ServiceName);
@@ -45,13 +70,19 @@ namespace Sdl.Domain0
             Thread.Sleep(TimeSpan.FromSeconds(5));
         }
 
-        static IContainer CreateContainer()
+        static IContainer CreateContainer(string connectionString)
         {
             M.Init();
 
             var builder = new ContainerBuilder();
-            builder.RegisterInstance(ConfigurationManager.ConnectionStrings["Database"].ConnectionString).Named<string>("connectionString");
+            builder.RegisterInstance(connectionString).Named<string>("connectionString");
             return builder.Build();
+        }
+
+        static bool HasX509CertificateSettings()
+        {
+            return !string.IsNullOrEmpty(ConfigurationManager.AppSettings["X509_Filepath"])
+                || !string.IsNullOrEmpty(ConfigurationManager.AppSettings["X509_Subject"]);
         }
 
         static X509Certificate2 GetX509Cert(Uri uri)
@@ -73,9 +104,9 @@ namespace Sdl.Domain0
             else
             {
                 if (!Enum.TryParse(ConfigurationManager.AppSettings["X509_Location"], out StoreLocation location))
-                    throw new ArgumentException(nameof(location), "Couldnt parse app.config X509_Location as StoreLocation");
+                    location = StoreLocation.LocalMachine;
                 if (!Enum.TryParse(ConfigurationManager.AppSettings["X509_StoreName"], out StoreName storeName))
-                    throw new ArgumentException(nameof(location), "Couldnt parse app.config X509_Location as StoreLocation");
+                    storeName = StoreName.My;
 
                 var storeSettings = new X509StoreSettings
                 {

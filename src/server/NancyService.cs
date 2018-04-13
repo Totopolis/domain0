@@ -23,14 +23,10 @@ namespace Domain0.WinService.Infrastructure
         {
             var configuration = new HostConfiguration()
             {
-                UrlReservations = new UrlReservations
-                {
-                    // do not create url reservation
-                    CreateAutomatically = false
-                },
                 AllowChunkedEncoding = false,
                 UnhandledExceptionCallback = ex => { }
             };
+
             _uri = uri;
             _x509cert = x509cert;
             _host = new NancyHost(uri, bootstrapper, configuration);
@@ -39,22 +35,23 @@ namespace Domain0.WinService.Infrastructure
         public bool Start(HostControl hostControl)
         {
             if (hostControl is ConsoleRunHost)
+            {
                 InstallService(_uri, _x509cert);
+                Process.Start($"{_uri}swagger-ui/index.html");
+            }
 
             _host.Start();
-            Debug.WriteLine($"nancy started on {_uri}");
             return true;
         }
 
         public bool Stop(HostControl hostControl)
         {
             _host.Stop();
-            Debug.WriteLine($"nancy stoped on {_uri}");
 
             if (hostControl is ConsoleRunHost)
                 UninstallService(_uri);
 
-            return false;
+            return true;
         }
 
         public static void InstallService(Uri uri, X509Certificate2 x509cert)
