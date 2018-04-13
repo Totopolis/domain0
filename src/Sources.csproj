@@ -61,7 +61,6 @@
     <None Include="swagger\swagger-ui.js" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="model\LoginResult.cs" />
     <None Include="server\DatabaseModule.cs" />
     <None Include="server\DbManager.cs" />
     <None Include="server\EmbeddedContentConventionBuilder.cs" />
