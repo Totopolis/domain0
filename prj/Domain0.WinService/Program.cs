@@ -1,9 +1,11 @@
-﻿using Domain0.Nancy;
+﻿using Autofac;
+using Domain0.Nancy;
 using Domain0.WinService.Certificate;
 using Domain0.WinService.Infrastructure;
 using System;
 using System.Configuration;
 using System.Security.Cryptography.X509Certificates;
+using Domain0.Database;
 using Topshelf;
 
 namespace Sdl.Domain0
@@ -12,7 +14,7 @@ namespace Sdl.Domain0
     {
         static void Main(string[] args)
         {
-            M.Init();
+            var container = CreateContainer();
 
             var uri = new Uri(ConfigurationManager.AppSettings["Url"]);
             var code = HostFactory.Run(x =>
@@ -26,8 +28,18 @@ namespace Sdl.Domain0
                 x.EnableShutdown();
                 x.OnException(ex => Monik.Client.M.ApplicationError(ex.Message));
 
-                x.WithNancy<Domain0Bootstrapper>(uri, GetX509Cert(uri));
+                var bootstrapper = new Domain0Bootstrapper(container);
+                x.WithNancy(uri, bootstrapper, GetX509Cert(uri));
             });
+        }
+
+        static IContainer CreateContainer()
+        {
+            M.Init();
+
+            var builder = new ContainerBuilder();
+            builder.RegisterInstance(ConfigurationManager.ConnectionStrings["Database"].ConnectionString).Named<string>("connectionString");
+            return builder.Build();
         }
 
         static X509Certificate2 GetX509Cert(Uri uri)

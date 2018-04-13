@@ -45,13 +45,11 @@
     <Reference Include="Nancy.Swagger, Version=2.2.51.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.Swagger.2.2.51-alpha\lib\net452\Nancy.Swagger.dll</HintPath>
     </Reference>
-    <Reference Include="Nancy.Swagger.Annotations, Version=2.2.51.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.Swagger.Annotations.2.2.51-alpha\lib\net452\Nancy.Swagger.Annotations.dll</HintPath>
-    </Reference>
     <Reference Include="Swagger.ObjectModel, Version=2.2.51.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Swagger.ObjectModel.2.2.51-alpha\lib\net452\Swagger.ObjectModel.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />

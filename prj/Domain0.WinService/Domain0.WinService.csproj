@@ -69,6 +69,9 @@
     <Compile Include="..\..\src\server\CommandHelper.cs">
       <Link>Infrastructure\CommandHelper.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\DatabaseModule.cs">
+      <Link>Infrastructure\DatabaseModule.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\IX509CertificateProvider.cs">
       <Link>Certificate\IX509CertificateProvider.cs</Link>
     </Compile>
@@ -100,6 +103,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Domain0.Database\Domain0.Database.csproj">
+      <Project>{8910c188-8e74-4766-a266-be6a7d6676be}</Project>
+      <Name>Domain0.Database</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Domain0.Nancy\Domain0.Nancy.csproj">
       <Project>{b5d06024-a211-4154-bac8-02a517ec391b}</Project>
       <Name>Domain0.Nancy</Name>

@@ -8,12 +8,14 @@ namespace Sdl.Domain0
     {
         public const string MONIK_SOURCE = nameof(MONIK_SOURCE);
 
+        public const string ASPNETCORE_ENVIRONMENT = nameof(ASPNETCORE_ENVIRONMENT);
+
         public static void Init()
         {
             var azureSender = new AzureSender("", "");
             var instanceName = "Dev";
             var isDebug = AppContext.BaseDirectory.IndexOf("debug", 0, StringComparison.InvariantCultureIgnoreCase) >= 0;
-            var isProduction = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")?.Equals("Production", StringComparison.InvariantCultureIgnoreCase) ?? false;
+            var isProduction = Environment.GetEnvironmentVariable(ASPNETCORE_ENVIRONMENT)?.Equals("Production", StringComparison.InvariantCultureIgnoreCase) ?? false;
             if (isProduction && !isDebug)
                 instanceName = "Azure";
 
