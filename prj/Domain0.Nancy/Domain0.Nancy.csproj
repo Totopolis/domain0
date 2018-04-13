@@ -114,5 +114,11 @@
       <Link>Swagger-UI\swagger-ui.js</Link>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Domain0.Database\Domain0.Database.csproj">
+      <Project>{8910c188-8e74-4766-a266-be6a7d6676be}</Project>
+      <Name>Domain0.Database</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
