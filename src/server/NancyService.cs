@@ -55,7 +55,7 @@ namespace Domain0.WinService.Infrastructure
             if (!NetshHelper.AddFirewallRule(FirewallRule, uri.Port))
                 throw new SecurityException("couldnot execute firewall rule look at Monik");
             NetshHelper.RemoveUrlReservation(uri);
-            if (!NetshHelper.AddUrlReservation(uri, "NT AUTHORITY\\NETWORK SERVICE"))
+            if (!NetshHelper.AddUrlReservation(uri, $"{Environment.UserDomainName}\\{Environment.UserName}"))
                 throw new SecurityException("couldnot add url reservation look at Monik");
             if (uri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase))
             {
