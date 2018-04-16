@@ -66,6 +66,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\src\server.nancy\SmsModule.cs">
+      <Link>SmsModule.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server.nancy\TestMetadataModule.cs">
       <Link>Swagger\TestMetadataModule.cs</Link>
     </Compile>

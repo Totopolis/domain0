@@ -77,5 +77,8 @@
   <ItemGroup>
     <Folder Include="common\" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="server.nancy\SmsModule.cs" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
