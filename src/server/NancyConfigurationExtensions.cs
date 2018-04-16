@@ -19,12 +19,25 @@ namespace Domain0.WinService.Infrastructure
                 }
                 catch (Exception ex)
                 {
+                    // Install service exception
                     settings.ExceptionCallback(ex);
                     throw ex;
                 }
             });
             configurator.BeforeUninstall(() => NancyService.UninstallService(uri));
-            configurator.Service(settings => new NancyService(uri, configuration, bootstrapper, x509cert));
+            configurator.Service(settings =>
+            {
+                try
+                {
+                    return new NancyService(uri, configuration, bootstrapper, x509cert);
+                }
+                catch (Exception ex)
+                {
+                    // Application startup exception
+                    settings.ExceptionCallback(ex);
+                    throw ex;
+                }
+            });
         }
     }
 }
