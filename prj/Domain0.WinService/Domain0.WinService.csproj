@@ -104,9 +104,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="ILMerge.props" />
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
