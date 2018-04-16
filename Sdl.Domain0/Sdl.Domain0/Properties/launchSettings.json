@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Sdl.Domain0": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production"
+      }
+    }
+  }
+}
