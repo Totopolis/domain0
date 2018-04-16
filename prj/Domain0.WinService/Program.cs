@@ -9,9 +9,11 @@ using System.Configuration;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using Domain0.Database;
 using Nancy.Hosting.Self;
 using Topshelf;
 using NLog.Common;
+using Nancy.Bootstrappers.Autofac;
 
 namespace Domain0.WinService
 {
@@ -80,6 +82,9 @@ namespace Domain0.WinService
             Logger.Info("Use ConnectionString={0}", connectionString);
 
             var container = CreateContainer(connectionString);
+            var dbManager = container.Resolve<DbManager>();
+            dbManager.Initialize();
+
             var code = HostFactory.Run(x =>
             {
                 x.SetDisplayName(ServiceName);
@@ -105,6 +110,9 @@ namespace Domain0.WinService
         {
             var builder = new ContainerBuilder();
             builder.RegisterInstance(connectionString).Named<string>("connectionString");
+            builder.Register(c => LogManager.GetCurrentClassLogger()).As<ILogger>().InstancePerDependency();
+            builder.RegisterModule<DatabaseModule>();
+
             return builder.Build();
         }
 

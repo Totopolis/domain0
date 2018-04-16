@@ -6,6 +6,7 @@ using Swagger.ObjectModel;
 using Domain0.Nancy.Infrastructure;
 using Nancy.Bootstrapper;
 using Domain0.Database;
+using System;
 
 namespace Domain0.Nancy
 {
@@ -28,11 +29,7 @@ namespace Domain0.Nancy
 
             container.Update(builder =>
             {
-                builder.RegisterModule<DatabaseModule>();
             });
-
-            var dbManager = container.Resolve<DbManager>();
-            dbManager.Initialize();
         }
 
         protected override void ConfigureConventions(NancyConventions nancyConventions)
