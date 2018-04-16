@@ -9,9 +9,9 @@ using System.Configuration;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading;
 using Nancy.Hosting.Self;
 using Topshelf;
+using NLog.Common;
 
 namespace Domain0.WinService
 {
@@ -38,10 +38,16 @@ namespace Domain0.WinService
         public const string DefaultConnectionString =
             "Data Source=.;Initial Catalog=Telematic;Persist Security Info=True;Integrated Security=True";
 
-        public static ILogger Logger = LogManager.GetCurrentClassLogger();
+        public static readonly ILogger Logger;
 
         static Program()
         {
+            LogManager.ThrowExceptions = true;
+            InternalLogger.LogFile = "error.log";
+            InternalLogger.LogLevel = LogLevel.Error;
+
+            Logger = LogManager.GetCurrentClassLogger();
+
             var fields = typeof(TypeResolveStrategies).GetRuntimeFields().Where(f => f.Name.Contains("ExcludeNancy"));
             foreach (var field in fields)
                 field.SetValue(null, (TypeResolveStrategy)(type => !string.Equals(type.FullName, $"Nancy.{type.Name}")));
@@ -59,8 +65,9 @@ namespace Domain0.WinService
                 Logger.Fatal(ex, "cannot start service");
             }
 
-            Logger.Info("Exit at 5 seconds...");
-            Thread.Sleep(TimeSpan.FromSeconds(5));
+#if DEBUG
+            Console.ReadKey(true);
+#endif
         }
 
         static void Run()
@@ -85,7 +92,7 @@ namespace Domain0.WinService
                 x.OnException(ex => Logger.Fatal(ex, "unhandled exception"));
 
                 var bootstrapper = new Domain0Bootstrapper(container);
-                var configuration = new HostConfiguration()
+                var configuration = new HostConfiguration
                 {
                     AllowChunkedEncoding = false,
                     UnhandledExceptionCallback = ex => Logger.Fatal(ex, "unhandled nancy exception")

@@ -81,6 +81,9 @@
     <Compile Include="..\..\src\server\IX509CertificateProvider.cs">
       <Link>Certificate\IX509CertificateProvider.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\MonikNLogTarget.cs">
+      <Link>Infrastructure\MonikNLogTarget.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\NancyConfigurationExtensions.cs">
       <Link>Infrastructure\NancyConfigurationExtensions.cs</Link>
     </Compile>
@@ -95,11 +98,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup Condition="Exists('..\..\src\config\App.config')">
-    <None Include="..\..\src\config\App.config">
-      <Link>App.Overrides.config</Link>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

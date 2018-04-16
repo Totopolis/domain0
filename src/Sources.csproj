@@ -41,6 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="config\App.config" />
+    <None Include="config\NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="server\CommandHelper.cs" />
@@ -55,6 +58,7 @@
     <None Include="server\DatabaseModule.cs" />
     <None Include="server\DbManager.cs" />
     <None Include="server\EmbeddedContentConventionBuilder.cs" />
+    <None Include="server\MonikNLogTarget.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="swagger\favicon-16x16.png" />
