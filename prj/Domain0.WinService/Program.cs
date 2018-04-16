@@ -3,16 +3,17 @@ using Domain0.Nancy;
 using Domain0.WinService.Certificate;
 using Domain0.WinService.Infrastructure;
 using Nancy;
+using NLog;
+using NLog.Common;
 using System;
 using System.Configuration;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using Topshelf;
 
-namespace Sdl.Domain0
+namespace Domain0.WinService
 {
     class Program
     {
@@ -37,19 +38,25 @@ namespace Sdl.Domain0
         public const string DefaultConnectionString =
             "Data Source=.;Initial Catalog=Telematic;Persist Security Info=True;Integrated Security=True";
 
-        static void Main(string[] args)
+        public static ILogger Logger = LogManager.GetCurrentClassLogger();
+
+        static Program()
         {
             var fields = typeof(TypeResolveStrategies).GetRuntimeFields().Where(f => f.Name.Contains("ExcludeNancy"));
             foreach (var field in fields)
                 field.SetValue(null, (TypeResolveStrategy)(type => !string.Equals(type.FullName, $"Nancy.{type.Name}")));
+        }
+
+        static void Main(string[] args)
+        {
+            Logger.Info($"Use BasePath: {AppContext.BaseDirectory}");
 
             var connectionString = ConfigurationManager.ConnectionStrings["Database"]?.ConnectionString ?? DefaultConnectionString;
             var uri = !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Url"])
                 ? new Uri(ConfigurationManager.AppSettings["Url"])
                 : new Uri(HasX509CertificateSettings() ? DefaultHttpsUri : DefaultHttpUri);
-
-            Console.WriteLine("use uri = " + uri);
-            Console.WriteLine("use connectionString = " + connectionString);
+            Logger.Info("Use Uri={0}", uri);
+            Logger.Info("Use ConnectionString={0}", connectionString);
 
             var container = CreateContainer(connectionString);
             var code = HostFactory.Run(x =>
@@ -67,13 +74,12 @@ namespace Sdl.Domain0
                 x.WithNancy(uri, bootstrapper, GetX509Cert(uri));
             });
 
+            Logger.Info("Exit at 5 seconds...");
             Thread.Sleep(TimeSpan.FromSeconds(5));
         }
 
         static IContainer CreateContainer(string connectionString)
         {
-            M.Init();
-
             var builder = new ContainerBuilder();
             builder.RegisterInstance(connectionString).Named<string>("connectionString");
             return builder.Build();

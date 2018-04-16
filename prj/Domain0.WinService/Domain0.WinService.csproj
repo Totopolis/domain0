@@ -57,11 +57,17 @@
     <Reference Include="Nancy.Hosting.Self, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.Hosting.Self.2.0.0-clinteastwood\lib\net452\Nancy.Hosting.Self.dll</HintPath>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.5.2\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="Topshelf, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b, processorArchitecture=MSIL">
@@ -74,9 +80,6 @@
     </Compile>
     <Compile Include="..\..\src\server\IX509CertificateProvider.cs">
       <Link>Certificate\IX509CertificateProvider.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\MonikExtensions.cs">
-      <Link>Infrastructure\MonikExtensions.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\NancyConfigurationExtensions.cs">
       <Link>Infrastructure\NancyConfigurationExtensions.cs</Link>
@@ -101,6 +104,12 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="ILMerge.props" />
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
