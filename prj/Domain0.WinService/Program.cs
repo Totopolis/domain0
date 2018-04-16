@@ -4,13 +4,13 @@ using Domain0.WinService.Certificate;
 using Domain0.WinService.Infrastructure;
 using Nancy;
 using NLog;
-using NLog.Common;
 using System;
 using System.Configuration;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
+using Nancy.Hosting.Self;
 using Topshelf;
 
 namespace Domain0.WinService
@@ -50,7 +50,21 @@ namespace Domain0.WinService
         static void Main(string[] args)
         {
             Logger.Info($"Use BasePath: {AppContext.BaseDirectory}");
+            try
+            {
+                Run();
+            }
+            catch (Exception ex)
+            {
+                Logger.Fatal(ex, "cannot start service");
+            }
 
+            Logger.Info("Exit at 5 seconds...");
+            Thread.Sleep(TimeSpan.FromSeconds(5));
+        }
+
+        static void Run()
+        {
             var connectionString = ConfigurationManager.ConnectionStrings["Database"]?.ConnectionString ?? DefaultConnectionString;
             var uri = !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Url"])
                 ? new Uri(ConfigurationManager.AppSettings["Url"])
@@ -68,14 +82,16 @@ namespace Domain0.WinService
                 x.EnableServiceRecovery(r => r.RestartService(0));
                 x.RunAsNetworkService();
                 x.EnableShutdown();
-                x.OnException(ex => Monik.Client.M.ApplicationError(ex.Message));
+                x.OnException(ex => Logger.Fatal(ex, "unhandled exception"));
 
                 var bootstrapper = new Domain0Bootstrapper(container);
-                x.WithNancy(uri, bootstrapper, GetX509Cert(uri));
+                var configuration = new HostConfiguration()
+                {
+                    AllowChunkedEncoding = false,
+                    UnhandledExceptionCallback = ex => Logger.Fatal(ex, "unhandled nancy exception")
+                };
+                x.WithNancy(uri, configuration, bootstrapper, GetX509Cert(uri));
             });
-
-            Logger.Info("Exit at 5 seconds...");
-            Thread.Sleep(TimeSpan.FromSeconds(5));
         }
 
         static IContainer CreateContainer(string connectionString)

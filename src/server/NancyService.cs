@@ -19,14 +19,8 @@ namespace Domain0.WinService.Infrastructure
 
         private readonly NancyHost _host;
 
-        public NancyService(Uri uri, INancyBootstrapper bootstrapper, X509Certificate2 x509cert)
+        public NancyService(Uri uri, HostConfiguration configuration, INancyBootstrapper bootstrapper, X509Certificate2 x509cert)
         {
-            var configuration = new HostConfiguration()
-            {
-                AllowChunkedEncoding = false,
-                UnhandledExceptionCallback = ex => { }
-            };
-
             _uri = uri;
             _x509cert = x509cert;
             _host = new NancyHost(uri, bootstrapper, configuration);
@@ -35,12 +29,13 @@ namespace Domain0.WinService.Infrastructure
         public bool Start(HostControl hostControl)
         {
             if (hostControl is ConsoleRunHost)
-            {
                 InstallService(_uri, _x509cert);
-                Process.Start($"{_uri}swagger-ui/index.html");
-            }
 
             _host.Start();
+
+            if(hostControl is ConsoleRunHost)
+                Process.Start($"{_uri}swagger-ui/index.html");
+
             return true;
         }
 

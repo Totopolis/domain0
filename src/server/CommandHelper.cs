@@ -1,4 +1,5 @@
 ﻿using Monik.Client;
+using NLog;
 using System;
 using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
@@ -9,6 +10,8 @@ namespace Domain0.WinService.Infrastructure
     public static class NetshHelper
     {
         private const string Netsh = "netsh";
+
+        public static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         public static bool AddFirewallRule(string rule, params int[] ports)
             => RunElevated(Netsh,
@@ -36,6 +39,8 @@ namespace Domain0.WinService.Infrastructure
 
         public static bool RunElevated(string file, string args)
         {
+            Logger.Debug("{0} {1}", Netsh, args);
+
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
@@ -54,8 +59,7 @@ namespace Domain0.WinService.Infrastructure
             if (process.ExitCode == 0)
                 return true;
 
-            Debug.WriteLine($"{args}-{output}");
-            M.ApplicationError($"{args}-{output}");
+            Logger.Error("{0} {1}: {2}", Netsh, args, output);
             return false;
         }
     }
