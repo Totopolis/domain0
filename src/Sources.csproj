@@ -78,7 +78,11 @@
     <Folder Include="common\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="server.nancy\SmsLogin.cs" />
+    <Compile Include="server.nancy\SmsLoginModelDataProvider.cs" />
+    <Compile Include="server.nancy\SmsMetadataModule.cs" />
     <Compile Include="server.nancy\SmsModule.cs" />
+    <Compile Include="server.nancy\TestMetadataModule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
