@@ -114,6 +114,28 @@ namespace Domain0.Nancy
                     .Parameter(new Parameter { In = ParameterIn.Header, Name = "Authorization", Type = "string", Default = "Bearer", Required = true, Description = "Authorization token from login method" })
                     .Parameter(new Parameter { In = ParameterIn.Path, Name = "phone", Type = "integer", Required = true, Description = "User phone" })
                     .Response((int)HttpStatusCode.OK, r => r.Schema<UserProfile>().Description("Ok").Build())));
+
+            modelCatalog.AddModel<UserProfileFilter>();
+            modelCatalog.AddModel<IEnumerable<UserProfile>>();
+            Describe[nameof(SmsModule.UserFilter)] = description => description.AsSwagger(
+                with => with.Operation(op => op
+                    .OperationId(nameof(SmsModule.UserFilter))
+                    .Tag("UserProfile")
+                    .ProduceMimeTypes(new[] { "application/json" })
+                    .ConsumeMimeTypes(new[] { "application/json" })
+                    .Parameter(new Parameter { In = ParameterIn.Header, Name = "Authorization", Type = "string", Default = "Bearer", Required = true, Description = "Authorization token from login method" })
+                    .BodyParameter(b => b.Name("parameters").Schema<UserProfileFilter>().Description("parameters user ids").Build())
+                    .Response((int)HttpStatusCode.OK, r => r.Schema<IEnumerable<UserProfile>>().Description("Ok").Build())));
+
+            Describe[nameof(SmsModule.GetUserById)] = description => description.AsSwagger(
+                with => with.Operation(op => op
+                    .OperationId(nameof(SmsModule.GetUserById))
+                    .Tag("Users")
+                    .ProduceMimeTypes(new[] { "application/json" })
+                    .ConsumeMimeTypes(new[] { "application/json" })
+                    .Parameter(new Parameter { In = ParameterIn.Header, Name = "Authorization", Type = "string", Default = "Bearer", Required = true, Description = "Authorization token from login method" })
+                    .Parameter(new Parameter { In = ParameterIn.Path, Name = "id", Type = "integer", Required = true, Description = "User id" })
+                    .Response((int)HttpStatusCode.OK, r => r.Schema<UserProfile>().Description("Ok").Build())));
         }
     }
 }

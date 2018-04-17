@@ -1,6 +1,7 @@
 ﻿using Domain0.Nancy.Model;
 using Nancy;
 using Nancy.ModelBinding;
+using System.Linq;
 
 namespace Domain0.Nancy
 {
@@ -19,8 +20,8 @@ namespace Domain0.Nancy
             Get("/api/Refresh/{refreshToken}", ctx => Refresh(), name: nameof(Refresh));
             Get("/api/profile", ctx => GetMyProfile(), name: nameof(GetMyProfile));
             Get("/api/users/sms/{phone}", ctx => GetUserByPhone(), name: nameof(GetUserByPhone));
-            Post("/api/profile/filter", ctx => ProfileFilter(), name: nameof(ProfileFilter));
-            Post("/api/users/{id}", ctx => GetUser(), name: nameof(GetUser));
+            Post("/api/profile/filter", ctx => UserFilter(), name: nameof(UserFilter));
+            Post("/api/users/{id}", ctx => GetUserById(), name: nameof(GetUserById));
         }
 
         public object Register()
@@ -81,7 +82,7 @@ namespace Domain0.Nancy
 
         public object Refresh()
         {
-            var refreshToken = this.Context.Parameters.refreshToken;
+            var refreshToken = Context.Parameters.refreshToken;
             return new AccessTokenResponse
             {
                 AccessToken = "access_token",
@@ -105,22 +106,34 @@ namespace Domain0.Nancy
 
         public object GetUserByPhone()
         {
-            var phone = this.Context.Parameters.phone;
+            var phone = Context.Parameters.phone;
             return new UserProfile
             {
                 Id = 1,
-                Name = "test"
+                Name = "test",
+                Phone = phone
             };
         }
 
-        public object ProfileFilter()
+        public object UserFilter()
         {
-            return HttpStatusCode.OK;
+            var filter = this.Bind<UserProfileFilter>();
+            return filter.UserIds.Select(id => new UserProfile
+            {
+                Id = id,
+                Name = "test " + id,
+                Phone = 79000000000 + id
+            }).ToList();
         }
 
-        public object GetUser()
+        public object GetUserById()
         {
-            return HttpStatusCode.OK;
+            var id = Context.Parameters.id;
+            return new UserProfile
+            {
+                Id = id,
+                Name = "test " + id
+            };
         }
     }
 }

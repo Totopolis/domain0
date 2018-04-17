@@ -11,6 +11,10 @@
         /// </summary>
         public string Name { get; set; }
         /// <summary>
+        /// Телефон.
+        /// </summary>
+        public decimal? Phone { get; set; }
+        /// <summary>
         /// Описание пользователя.
         /// </summary>
         public string Description { get; set; }
