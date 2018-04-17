@@ -66,11 +66,38 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\src\server.nancy\AccessTokenResponse.cs">
+      <Link>Model\AccessTokenResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server.nancy\ForceChangePhone.cs">
+      <Link>Model\ForceChangePhone.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server.nancy\ForceCreateUser.cs">
+      <Link>Model\ForceCreateUser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server.nancy\SmsLoginModelDataProvider.cs">
+      <Link>Model\SmsLoginModelDataProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server.nancy\SmsLoginRequest.cs">
+      <Link>Model\SmsLoginRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server.nancy\SmsMetadataModule.cs">
+      <Link>Swagger\SmsMetadataModule.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server.nancy\SmsModule.cs">
+      <Link>SmsModule.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server.nancy\TestMetadataModule.cs">
       <Link>Swagger\TestMetadataModule.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server.nancy\TestModule.cs">
       <Link>TestModule.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server.nancy\UserProfile.cs">
+      <Link>Model\UserProfile.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server.nancy\UserProfileFilter.cs">
+      <Link>Model\UserProfileFilter.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\Domain0Bootstrapper.cs">
       <Link>Domain0Bootstrapper.cs</Link>
