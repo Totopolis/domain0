@@ -68,8 +68,16 @@ namespace Domain0.Nancy
                     .ConsumeMimeTypes(new[] { "application/json" })
                     .BodyParameter(b => b.Name("phone").Schema(new Schema()).Description("user's phone with single number, started from 7 for Russia, 79162233224 for example").Build())
                     .Response(r => r.Description("Ok").Build())));
+
+            modelCatalog.AddModel<ForceChangePhone>();
             Describe[nameof(SmsModule.ForceChangePhone)] = description => description.AsSwagger(
-                with => with.Operation(op => op.OperationId(nameof(SmsModule.ForceChangePhone)).Tag("Sms").Response(r => r.Description("Ok").Build())));
+                with => with.Operation(op => op
+                    .OperationId(nameof(SmsModule.ForceChangePhone))
+                    .Tag("Sms")
+                    .ProduceMimeTypes(new[] { "application/json" })
+                    .ConsumeMimeTypes(new[] { "application/json" })
+                    .BodyParameter(b => b.Name("parameters").Schema<ForceChangePhone>().Description("parameters for force change phone").Build())
+                    .Response(r => r.Description("Ok").Build())));
         }
     }
 }

@@ -63,6 +63,7 @@ namespace Domain0.Nancy
 
         public object ForceChangePhone()
         {
+            var request = this.Bind<ForceChangePhone>();
             return HttpStatusCode.OK;
         }
 
