@@ -75,7 +75,8 @@ namespace Domain0.Nancy
 
         public object PhoneByUserId()
         {
-            return HttpStatusCode.OK;
+            var userId = this.Bind<long>();
+            return 79160000000;
         }
 
         public object Refresh()

@@ -19,11 +19,18 @@ namespace Domain0.Nancy
                     .Parameter(new Parameter { In = ParameterIn.Header, Name="Authorization", Type="string", Default="Bearer", Required=true, Description="Authorization token from login method"})
                     .Parameter(new Parameter { In = ParameterIn.Query, Name = "Phone", Default = "", MinLength=11, Required = true, Description = "user's phone with single number, started from 7 for Russia, 79162233224 for example" })
                     .Tag("Sms")
-                    .Response(r => r.Schema(new Schema {Type="boolean"}).Description("Ok").Build())
+                    .Response((int)HttpStatusCode.OK, r => r.Schema(new Schema {Type="boolean"}).Description("True if user exists else false").Build())
                 ));
 
             Describe[nameof(SmsModule.PhoneByUserId)] = description => description.AsSwagger(
-                with => with.Operation(op => op.OperationId(nameof(SmsModule.PhoneByUserId)).Tag("Sms").Response(r => r.Description("Ok").Build())));
+                with => with.Operation(op => op
+                    .OperationId(nameof(SmsModule.PhoneByUserId))
+                    .Tag("Sms")
+                    .ProduceMimeTypes(new[] { "application/json" })
+                    .ConsumeMimeTypes(new[] { "application/json" })
+                    .Parameter(new Parameter { In = ParameterIn.Header, Name = "Authorization", Type = "string", Default = "Bearer", Required = true, Description = "Authorization token from login method" })
+                    .Parameter(new Parameter { In = ParameterIn.Query, Name = "Id", Type = "integer", Required = true, Description = "User Id" })
+                    .Response((int)HttpStatusCode.OK, r => r.Schema(new Schema {Type = "integer" }).Description("Return phone by user Id").Build())));
 
             modelCatalog.AddModel<SmsLoginRequest>();
             modelCatalog.AddModel<SmsLoginResponse>();
