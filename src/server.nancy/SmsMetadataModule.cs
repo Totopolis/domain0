@@ -19,7 +19,7 @@ namespace Domain0.Nancy
                     .Parameter(new Parameter { In = ParameterIn.Header, Name="Authorization", Type="string", Default="Bearer", Required=true, Description="Authorization token from login method"})
                     .Parameter(new Parameter { In = ParameterIn.Query, Name = "Phone", Default = "", MinLength=11, Required = true, Description = "user's phone with single number, started from 7 for Russia, 79162233224 for example" })
                     .Tag("Sms")
-                    .Response(r => r.Description("Ok").Build())
+                    .Response(r => r.Schema(new Schema {Type="boolean"}).Description("Ok").Build())
                 ));
 
             Describe[nameof(SmsModule.PhoneByUserId)] = description => description.AsSwagger(

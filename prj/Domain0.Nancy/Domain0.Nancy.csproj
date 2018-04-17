@@ -66,6 +66,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\src\server.nancy\ForceChangePhone.cs">
+      <Link>Model\ForceChangePhone.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server.nancy\ForceCreateUser.cs">
       <Link>Model\ForceCreateUser.cs</Link>
     </Compile>
@@ -93,7 +96,6 @@
     <Compile Include="..\..\src\server\EmbeddedContentConventionBuilder.cs">
       <Link>Infrastructure\EmbeddedContentConventionBuilder.cs</Link>
     </Compile>
-    <Compile Include="Model\ForceChangePhone.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

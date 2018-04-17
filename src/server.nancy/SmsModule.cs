@@ -69,7 +69,8 @@ namespace Domain0.Nancy
 
         public object DoesUserExist()
         {
-            return HttpStatusCode.OK;
+            var phone = this.Bind<long>();
+            return true;
         }
 
         public object PhoneByUserId()
