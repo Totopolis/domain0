@@ -74,7 +74,7 @@ namespace Domain0.Nancy
                     .ProduceMimeTypes(new[] { "application/json" })
                     .ConsumeMimeTypes(new[] { "application/json" })
                     .BodyParameter(b => b.Name("phone").Schema(new Schema()).Description("user's phone with single number, started from 7 for Russia, 79162233224 for example").Build())
-                    .Response(r => r.Description("Ok").Build())));
+                    .Response((int)HttpStatusCode.OK, r => r.Description("Ok").Build())));
 
             modelCatalog.AddModel<ForceChangePhone>();
             Describe[nameof(SmsModule.ForceChangePhone)] = description => description.AsSwagger(
@@ -84,7 +84,7 @@ namespace Domain0.Nancy
                     .ProduceMimeTypes(new[] { "application/json" })
                     .ConsumeMimeTypes(new[] { "application/json" })
                     .BodyParameter(b => b.Name("parameters").Schema<ForceChangePhone>().Description("parameters for force change phone").Build())
-                    .Response(r => r.Description("Ok").Build())));
+                    .Response((int)HttpStatusCode.OK, r => r.Description("Ok").Build())));
 
             Describe[nameof(SmsModule.Refresh)] = description => description.AsSwagger(
                 with => with.Operation(op => op
@@ -94,7 +94,16 @@ namespace Domain0.Nancy
                     .ConsumeMimeTypes(new[] { "application/json" })
                     .Parameter(new Parameter { In = ParameterIn.Header, Name = "Authorization", Type = "string", Default = "Bearer", Required = true, Description = "Authorization token from login method" })
                     .Parameter(new Parameter { In = ParameterIn.Path, Name = "refreshToken", Type = "string", Required = true, Description = "Refresh token from login or refresh method method" })
-                    .Response(r => r.Schema<AccessTokenResponse>().Description("Ok").Build())));
+                    .Response((int)HttpStatusCode.OK, r => r.Schema<AccessTokenResponse>().Description("Ok").Build())));
+
+            Describe[nameof(SmsModule.GetProfile)] = description => description.AsSwagger(
+                with => with.Operation(op => op
+                    .OperationId(nameof(SmsModule.GetProfile))
+                    .Tag("UserProfile")
+                    .ProduceMimeTypes(new[] { "application/json" })
+                    .ConsumeMimeTypes(new[] { "application/json" })
+                    .Parameter(new Parameter { In = ParameterIn.Header, Name = "Authorization", Type = "string", Default = "Bearer", Required = true, Description = "Authorization token from login method" })
+                    .Response((int)HttpStatusCode.OK, r => r.Schema<UserProfile>().Description("Ok").Build())));
         }
     }
 }
