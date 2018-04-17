@@ -78,11 +78,12 @@
     <Folder Include="common\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="server.nancy\SmsLogin.cs" />
-    <Compile Include="server.nancy\SmsLoginModelDataProvider.cs" />
-    <Compile Include="server.nancy\SmsMetadataModule.cs" />
-    <Compile Include="server.nancy\SmsModule.cs" />
-    <Compile Include="server.nancy\TestMetadataModule.cs" />
+    <None Include="server.nancy\ForceCreateUser.cs" />
+    <None Include="server.nancy\SmsLogin.cs" />
+    <None Include="server.nancy\SmsLoginModelDataProvider.cs" />
+    <None Include="server.nancy\SmsMetadataModule.cs" />
+    <None Include="server.nancy\SmsModule.cs" />
+    <None Include="server.nancy\TestMetadataModule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

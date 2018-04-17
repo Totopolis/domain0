@@ -31,6 +31,7 @@ namespace Domain0.Nancy
 
         public object ForceCreateUser()
         {
+            var request = this.Bind<ForceCreateUserRequest>();
             return HttpStatusCode.OK;
         }
 
@@ -56,6 +57,7 @@ namespace Domain0.Nancy
 
         public object RequestResetPassword()
         {
+            var phone = this.Bind<long>();
             return HttpStatusCode.OK;
         }
 

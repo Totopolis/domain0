@@ -66,6 +66,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\src\server.nancy\ForceCreateUser.cs">
+      <Link>Model\ForceCreateUser.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server.nancy\SmsLogin.cs">
       <Link>Model\SmsLogin.cs</Link>
     </Compile>

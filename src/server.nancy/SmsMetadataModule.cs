@@ -4,6 +4,7 @@ using Nancy.Swagger;
 using Swagger.ObjectModel;
 using System.Collections.Generic;
 using Nancy.Swagger.Services;
+using System.Net;
 
 namespace Domain0.Nancy
 {
@@ -11,41 +12,62 @@ namespace Domain0.Nancy
     {
         public SmsMetadataModule(ISwaggerModelCatalog modelCatalog, IEnumerable<ISwaggerModelDataProvider> providers)
         {
-            modelCatalog.AddModels(typeof(SmsLoginRequest), typeof(SmsLoginResponse), typeof(SmsLoginProfile));
-
             Describe[nameof(SmsModule.DoesUserExist)] = description => 
                 description.AsSwagger(with => with.Operation(op => op
                     .OperationId(nameof(SmsModule.PhoneByUserId))
-                    .ProduceMimeTypes(new [] { "application/json", "application/x-protobuf" })
+                    .ProduceMimeTypes(new [] { "application/json" })
                     .Parameter(new Parameter { In = ParameterIn.Header, Name="Authorization", Type="string", Default="Bearer", Required=true, Description="Authorization token from login method"})
                     .Parameter(new Parameter { In = ParameterIn.Query, Name = "Phone", Default = "", MinLength=11, Required = true, Description = "user's phone with single number, started from 7 for Russia, 79162233224 for example" })
                     .Tag("Sms")
                     .Response(r => r.Description("Ok").Build())
                 ));
+
             Describe[nameof(SmsModule.PhoneByUserId)] = description => description.AsSwagger(
                 with => with.Operation(op => op.OperationId(nameof(SmsModule.PhoneByUserId)).Tag("Sms").Response(r => r.Description("Ok").Build())));
+
+            modelCatalog.AddModel<SmsLoginRequest>();
+            modelCatalog.AddModel<SmsLoginResponse>();
+            modelCatalog.AddModel<SmsLoginProfile>();
             Describe[nameof(SmsModule.Login)] = description => description.AsSwagger(
                 with => with.Operation(op => op
                     .OperationId(nameof(SmsModule.Login))
                     .Tag("Sms")
-                    .ProduceMimeTypes(new[] { "application/json", "application/x-protobuf" })
-                    .ConsumeMimeTypes(new[] { "application/json", "application/x-protobuf" })
+                    .ProduceMimeTypes(new[] { "application/json" })
+                    .ConsumeMimeTypes(new[] { "application/json" })
                     .BodyParameter(p => p.Schema<SmsLoginRequest>().Name("login request parameter").Build())
-                    .Response(r => r.Schema<SmsLoginResponse>().Description("Ok").Build())));
+                    .Response((int) HttpStatusCode.OK, r => r.Schema<SmsLoginResponse>().Description("Ok").Build())));
+
             Describe[nameof(SmsModule.Register)] = description => description.AsSwagger(
                 with => with.Operation(op => op
                     .OperationId(nameof(SmsModule.Register))
                     .Tag("Sms")
-                    .ProduceMimeTypes(new[] { "application/json", "application/x-protobuf" })
-                    .ConsumeMimeTypes(new[] { "application/json", "application/x-protobuf" })
+                    .ProduceMimeTypes(new[] { "application/json" })
+                    .ConsumeMimeTypes(new[] { "application/json" })
                     .BodyParameter(b => b.Name("phone").Schema(new Schema()).Description("user's phone with single number, started from 7 for Russia, 79162233224 for example").Build())
                     .Response(r => r.Description("Ok").Build())));
+
             Describe[nameof(SmsModule.ChangePassword)] = description => description.AsSwagger(
                 with => with.Operation(op => op.OperationId(nameof(SmsModule.ChangePassword)).Tag("Sms").Response(r => r.Description("Ok").Build())));
+
+            modelCatalog.AddModel<ForceCreateUserRequest>();
             Describe[nameof(SmsModule.ForceCreateUser)] = description => description.AsSwagger(
-                with => with.Operation(op => op.OperationId(nameof(SmsModule.ForceCreateUser)).Tag("Sms").Response(r => r.Description("Ok").Build())));
+                with => with.Operation(op => op
+                    .OperationId(nameof(SmsModule.ForceCreateUser))
+                    .Tag("Sms")
+                    .ProduceMimeTypes(new[] { "application/json" })
+                    .ConsumeMimeTypes(new[] { "application/json" })
+                    .Parameter(new Parameter { In = ParameterIn.Header, Name = "Authorization", Type = "string", Default = "Bearer", Required = true, Description = "Authorization token from login method" })
+                    .BodyParameter(b => b.Name("parameters").Schema<ForceCreateUserRequest>().Description("parameters for force create").Build())
+                    .Response((int) HttpStatusCode.OK, r => r.Description("Ok").Build())));
+
             Describe[nameof(SmsModule.RequestResetPassword)] = description => description.AsSwagger(
-                with => with.Operation(op => op.OperationId(nameof(SmsModule.RequestResetPassword)).Tag("Sms").Response(r => r.Description("Ok").Build())));
+                with => with.Operation(op => op
+                    .OperationId(nameof(SmsModule.RequestResetPassword))
+                    .Tag("Sms")
+                    .ProduceMimeTypes(new[] { "application/json" })
+                    .ConsumeMimeTypes(new[] { "application/json" })
+                    .BodyParameter(b => b.Name("phone").Schema(new Schema()).Description("user's phone with single number, started from 7 for Russia, 79162233224 for example").Build())
+                    .Response(r => r.Description("Ok").Build())));
             Describe[nameof(SmsModule.ForceChangePhone)] = description => description.AsSwagger(
                 with => with.Operation(op => op.OperationId(nameof(SmsModule.ForceChangePhone)).Tag("Sms").Response(r => r.Description("Ok").Build())));
         }
