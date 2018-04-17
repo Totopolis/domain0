@@ -3,6 +3,11 @@ using NLog;
 
 namespace Domain0.Nancy
 {
+    public class Test
+    {
+        public int Id { get; set; }
+    }
+
     public class TestModule : NancyModule
     {
         private readonly ILogger _logger;
@@ -17,7 +22,9 @@ namespace Domain0.Nancy
         public object TestMethod()
         {
             _logger.Debug("TestMethod invoked");
-            return HttpStatusCode.OK;
+            return Negotiate
+                .WithMediaRangeModel("application/x-protobuf", new Test { Id = 1 })
+                .WithMediaRangeModel("application/json", new Test { Id = 2 });
         }
     }
 }

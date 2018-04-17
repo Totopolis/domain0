@@ -105,6 +105,9 @@
     <Compile Include="..\..\src\server\EmbeddedContentConventionBuilder.cs">
       <Link>Infrastructure\EmbeddedContentConventionBuilder.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\ProtobufResponseProcessor.cs">
+      <Link>Infrastructure\ProtobufResponseProcessor.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

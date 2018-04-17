@@ -59,6 +59,9 @@
     <None Include="server\DbManager.cs" />
     <None Include="server\EmbeddedContentConventionBuilder.cs" />
     <None Include="server\MonikNLogTarget.cs" />
+    <None Include="server\ProtobufBodyDeserializer.cs" />
+    <None Include="server\ProtobufResponse.cs" />
+    <None Include="server\ProtobufResponseProcessor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="swagger\favicon-16x16.png" />
