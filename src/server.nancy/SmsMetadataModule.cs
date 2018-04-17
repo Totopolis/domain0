@@ -17,7 +17,7 @@ namespace Domain0.Nancy
                     .OperationId(nameof(SmsModule.PhoneByUserId))
                     .ProduceMimeTypes(new [] { "application/json" })
                     .Parameter(new Parameter { In = ParameterIn.Header, Name="Authorization", Type="string", Default="Bearer", Required=true, Description="Authorization token from login method"})
-                    .Parameter(new Parameter { In = ParameterIn.Query, Name = "Phone", Default = "", MinLength=11, Required = true, Description = "user's phone with single number, started from 7 for Russia, 79162233224 for example" })
+                    .Parameter(new Parameter { In = ParameterIn.Query, Name = "Phone", Type = "integer", Required = true, Description = "user's phone with single number, started from 7 for Russia, 79162233224 for example" })
                     .Tag("Sms")
                     .Response((int)HttpStatusCode.OK, r => r.Schema(new Schema {Type="boolean"}).Description("True if user exists else false").Build())
                 ));
@@ -96,13 +96,23 @@ namespace Domain0.Nancy
                     .Parameter(new Parameter { In = ParameterIn.Path, Name = "refreshToken", Type = "string", Required = true, Description = "Refresh token from login or refresh method method" })
                     .Response((int)HttpStatusCode.OK, r => r.Schema<AccessTokenResponse>().Description("Ok").Build())));
 
-            Describe[nameof(SmsModule.GetProfile)] = description => description.AsSwagger(
+            Describe[nameof(SmsModule.GetMyProfile)] = description => description.AsSwagger(
                 with => with.Operation(op => op
-                    .OperationId(nameof(SmsModule.GetProfile))
+                    .OperationId(nameof(SmsModule.GetMyProfile))
                     .Tag("UserProfile")
                     .ProduceMimeTypes(new[] { "application/json" })
                     .ConsumeMimeTypes(new[] { "application/json" })
                     .Parameter(new Parameter { In = ParameterIn.Header, Name = "Authorization", Type = "string", Default = "Bearer", Required = true, Description = "Authorization token from login method" })
+                    .Response((int)HttpStatusCode.OK, r => r.Schema<UserProfile>().Description("Ok").Build())));
+
+            Describe[nameof(SmsModule.GetUserByPhone)] = description => description.AsSwagger(
+                with => with.Operation(op => op
+                    .OperationId(nameof(SmsModule.GetUserByPhone))
+                    .Tag("Users")
+                    .ProduceMimeTypes(new[] { "application/json" })
+                    .ConsumeMimeTypes(new[] { "application/json" })
+                    .Parameter(new Parameter { In = ParameterIn.Header, Name = "Authorization", Type = "string", Default = "Bearer", Required = true, Description = "Authorization token from login method" })
+                    .Parameter(new Parameter { In = ParameterIn.Path, Name = "phone", Type = "integer", Required = true, Description = "User phone" })
                     .Response((int)HttpStatusCode.OK, r => r.Schema<UserProfile>().Description("Ok").Build())));
         }
     }

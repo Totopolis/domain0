@@ -17,8 +17,8 @@ namespace Domain0.Nancy
             Get("/api/sms/DoesUserExist", ctx => DoesUserExist(), name: nameof(DoesUserExist));
             Get("/api/sms/PhoneByUserId", ctx => PhoneByUserId(), name: nameof(PhoneByUserId));
             Get("/api/Refresh/{refreshToken}", ctx => Refresh(), name: nameof(Refresh));
-            Get("/api/profile", ctx => GetProfile(), name: nameof(GetProfile));
-            Get("/api/users/{type}/{profileId}", ctx => GetUserPhone(), name: nameof(GetUserPhone));
+            Get("/api/profile", ctx => GetMyProfile(), name: nameof(GetMyProfile));
+            Get("/api/users/sms/{phone}", ctx => GetUserByPhone(), name: nameof(GetUserByPhone));
             Post("/api/profile/filter", ctx => ProfileFilter(), name: nameof(ProfileFilter));
             Post("/api/users/{id}", ctx => GetUser(), name: nameof(GetUser));
         }
@@ -94,7 +94,7 @@ namespace Domain0.Nancy
             };
         }
 
-        public object GetProfile()
+        public object GetMyProfile()
         {
             return new UserProfile
             {
@@ -103,9 +103,14 @@ namespace Domain0.Nancy
             };
         }
 
-        public object GetUserPhone()
+        public object GetUserByPhone()
         {
-            return HttpStatusCode.OK;
+            var phone = this.Context.Parameters.phone;
+            return new UserProfile
+            {
+                Id = 1,
+                Name = "test"
+            };
         }
 
         public object ProfileFilter()
