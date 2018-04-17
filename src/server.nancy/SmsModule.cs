@@ -38,11 +38,11 @@ namespace Domain0.Nancy
         public object Login()
         {
             var request = this.Bind<SmsLoginRequest>();
-            return new SmsLoginResponse
+            return new AccessTokenResponse
             {
                 AccessToken = "access_token",
                 RefreshToken = "refresh_token",
-                Profile = new SmsLoginProfile
+                Profile = new UserProfile
                 {
                     Id = 1,
                     Name = "name"
@@ -81,12 +81,26 @@ namespace Domain0.Nancy
 
         public object Refresh()
         {
-            return HttpStatusCode.OK;
+            var refreshToken = this.Context.Parameters.refreshToken;
+            return new AccessTokenResponse
+            {
+                AccessToken = "access_token",
+                RefreshToken = refreshToken,
+                Profile = new UserProfile
+                {
+                    Id = 1,
+                    Name = "name"
+                }
+            };
         }
 
         public object GetProfile()
         {
-            return HttpStatusCode.OK;
+            return new UserProfile
+            {
+                Id = 1,
+                Name = "test"
+            };
         }
 
         public object GetUserPhone()

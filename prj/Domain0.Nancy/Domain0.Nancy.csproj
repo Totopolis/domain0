@@ -66,6 +66,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\src\server.nancy\AccessTokenResponse.cs">
+      <Link>Model\AccessTokenResponse.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server.nancy\ForceChangePhone.cs">
       <Link>Model\ForceChangePhone.cs</Link>
     </Compile>
@@ -89,6 +92,9 @@
     </Compile>
     <Compile Include="..\..\src\server.nancy\TestModule.cs">
       <Link>TestModule.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server.nancy\UserProfile.cs">
+      <Link>Model\UserProfile.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\Domain0Bootstrapper.cs">
       <Link>Domain0Bootstrapper.cs</Link>

@@ -33,8 +33,8 @@ namespace Domain0.Nancy
                     .Response((int)HttpStatusCode.OK, r => r.Schema(new Schema {Type = "integer" }).Description("Return phone by user Id").Build())));
 
             modelCatalog.AddModel<SmsLoginRequest>();
-            modelCatalog.AddModel<SmsLoginResponse>();
-            modelCatalog.AddModel<SmsLoginProfile>();
+            modelCatalog.AddModel<AccessTokenResponse>();
+            modelCatalog.AddModel<UserProfile>();
             Describe[nameof(SmsModule.Login)] = description => description.AsSwagger(
                 with => with.Operation(op => op
                     .OperationId(nameof(SmsModule.Login))
@@ -42,7 +42,7 @@ namespace Domain0.Nancy
                     .ProduceMimeTypes(new[] { "application/json" })
                     .ConsumeMimeTypes(new[] { "application/json" })
                     .BodyParameter(p => p.Schema<SmsLoginRequest>().Name("login request parameter").Build())
-                    .Response((int) HttpStatusCode.OK, r => r.Schema<SmsLoginResponse>().Description("Ok").Build())));
+                    .Response((int) HttpStatusCode.OK, r => r.Schema<AccessTokenResponse>().Description("Ok").Build())));
 
             Describe[nameof(SmsModule.Register)] = description => description.AsSwagger(
                 with => with.Operation(op => op
@@ -85,6 +85,16 @@ namespace Domain0.Nancy
                     .ConsumeMimeTypes(new[] { "application/json" })
                     .BodyParameter(b => b.Name("parameters").Schema<ForceChangePhone>().Description("parameters for force change phone").Build())
                     .Response(r => r.Description("Ok").Build())));
+
+            Describe[nameof(SmsModule.Refresh)] = description => description.AsSwagger(
+                with => with.Operation(op => op
+                    .OperationId(nameof(SmsModule.Refresh))
+                    .Tag("Refresh")
+                    .ProduceMimeTypes(new[] { "application/json" })
+                    .ConsumeMimeTypes(new[] { "application/json" })
+                    .Parameter(new Parameter { In = ParameterIn.Header, Name = "Authorization", Type = "string", Default = "Bearer", Required = true, Description = "Authorization token from login method" })
+                    .Parameter(new Parameter { In = ParameterIn.Path, Name = "refreshToken", Type = "string", Required = true, Description = "Refresh token from login or refresh method method" })
+                    .Response(r => r.Schema<AccessTokenResponse>().Description("Ok").Build())));
         }
     }
 }
