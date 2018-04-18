@@ -46,6 +46,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="common\BadModelException.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="server\CommandHelper.cs" />
     <None Include="server\database.sql" />
     <None Include="server\domain0.proto" />
@@ -63,6 +66,7 @@
     <None Include="server\ProtobufBodyDeserializer.cs" />
     <None Include="server\ProtobufResponse.cs" />
     <None Include="server\ProtobufResponseProcessor.cs" />
+    <None Include="server\NancyModuleExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="swagger\favicon-16x16.png" />
@@ -78,9 +82,7 @@
     <None Include="swagger\swagger-ui.css.map" />
     <None Include="swagger\swagger-ui.js.map" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="common\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="server.nancy\ForceCreateUser.cs" />
     <None Include="server.nancy\SmsLoginRequest.cs" />

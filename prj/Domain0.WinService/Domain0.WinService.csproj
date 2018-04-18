@@ -57,6 +57,9 @@
     <Reference Include="Nancy.Hosting.Self, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.Hosting.Self.2.0.0-clinteastwood\lib\net452\Nancy.Hosting.Self.dll</HintPath>
     </Reference>
+    <Reference Include="Nancy.Validation.DataAnnotations, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.Validation.DataAnnotations.2.0.0-clinteastwood\lib\net452\Nancy.Validation.DataAnnotations.dll</HintPath>
+    </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.5.2\lib\net45\NLog.dll</HintPath>
     </Reference>

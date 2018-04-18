@@ -1,9 +1,12 @@
-﻿using Gerakul.ProtoBufSerializer;
+﻿using System.ComponentModel.DataAnnotations;
+using Gerakul.ProtoBufSerializer;
 using Nancy;
-using Nancy.ModelBinding;
 using Nancy.Swagger.Annotations.Attributes;
 using NLog;
 using Swagger.ObjectModel;
+using Domain0.Nancy.Infrastructure;
+using Nancy.Validation;
+using System.Collections.Generic;
 
 namespace Domain0.Nancy
 {
@@ -20,6 +23,9 @@ namespace Domain0.Nancy
 
         public int Id { get; set; }
 
+        [Required(ErrorMessage = "Name is required")]
+        [MinLength(6, ErrorMessage = "Name must be at least 6 characters")]
+        [MaxLength(64, ErrorMessage = "Name must be at most 64 characters")]
         public string Name { get; set; }
     }
 
@@ -41,10 +47,11 @@ namespace Domain0.Nancy
         [Route(Tags = new[] {"Test"}, Summary = "Test method implements basic functions")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "test parameter", ParamType = typeof(Test), Required = true)]
         [SwaggerResponse(HttpStatusCode.OK, Message = "sample test response", Model = typeof(Test))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, Message = "bad validation response", Model = typeof(IEnumerable<ModelValidationError>))]
         public object TestMethod()
         {
-            var result = this.Bind<Test>();
             _logger.Debug("TestMethod invoked");
+            var result = this.BindAndValidateModel<Test>();
             return result;
         }
     }

@@ -6,6 +6,13 @@ using Swagger.ObjectModel;
 using Domain0.Nancy.Infrastructure;
 using Nancy.Bootstrapper;
 using Nancy.Swagger.Annotations;
+using Nancy.Swagger;
+using Nancy.Validation;
+using System.Collections.Generic;
+using Nancy;
+using Nancy.Responses.Negotiation;
+using System.Linq;
+using Domain0.Exceptions;
 
 namespace Domain0.Nancy
 {
@@ -26,10 +33,35 @@ namespace Domain0.Nancy
                 Name = "domain0"
             });
 
+            var modelCatalog = container.Resolve<ISwaggerModelCatalog>();
+            modelCatalog.AddModel<IEnumerable<ModelValidationError>>();
+            modelCatalog.AddModel<ModelValidationError>();
+
             SwaggerAnnotationsConfig.ShowOnlyAnnotatedRoutes = true;
             container.Update(builder =>
             {
                 builder.RegisterType<SwaggerAnnotationsProvider>().As<ISwaggerMetadataProvider>();
+            });
+        }
+
+        protected override void RequestStartup(ILifetimeScope container, IPipelines pipelines, NancyContext context)
+        {
+            base.RequestStartup(container, pipelines, context);
+
+            var responseNegotiator = container.Resolve<IResponseNegotiator>();
+            pipelines.OnError.AddItemToStartOfPipeline((ctx, ex) =>
+            {
+                switch (ex)
+                {
+                    case BadModelException bad:
+                        return new Negotiator(ctx)
+                            .WithStatusCode(HttpStatusCode.BadRequest)
+                            .WithHeader("X-Status-Reason", "validation error")
+                            .WithReasonPhrase("validation error")
+                            .WithMediaRangeModel("application/json", bad.ValidationResult.Errors.SelectMany(e => e.Value));
+                }
+
+                return null;
             });
         }
 
