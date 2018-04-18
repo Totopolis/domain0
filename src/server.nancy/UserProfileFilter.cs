@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Domain0.Nancy.Model
+namespace Domain0.Model
 {
     public class UserProfileFilter
     {

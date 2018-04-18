@@ -1,7 +1,7 @@
 ﻿using Nancy.Swagger.Services;
 using Nancy.Swagger;
 
-namespace Domain0.Nancy.Model
+namespace Domain0.Model
 {
     public class SmsLoginModelDataProvider : ISwaggerModelDataProvider
     {
