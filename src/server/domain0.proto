@@ -7,6 +7,61 @@ option csharp_namespace = "Domain0.Model.Protobuf";
 
 message Test
 {
-	int32 Id = 1;       // тестовый идентификатор
-	string Name = 2;	// тестовое название
+	int32 Id = 1;
+	string Name = 2;
+}
+
+message UserProfile
+{
+	int32 Id = 1;
+	string Name = 2;
+	int64 Phone = 3;
+	string Description = 4;
+}
+
+message AccessTokenResponse
+{
+	string AccessToken = 1;
+	string RefreshToken = 2;
+	UserProfile Profile = 3;
+}
+
+message ChangePasswordRequest
+{
+	string OldPassword = 1;
+	string NewPassword = 2;
+}
+
+message ForceChangePhone
+{
+	int32 UserId = 1;
+	int64 NewPhone = 2;
+}
+
+message ForceCreateUserRequest
+{
+	int64 Phone = 1;
+	string Name = 2;
+	bool BlockSmsSend = 3;
+	repeated string Roles = 4;
+	string CustomSmsTemplate = 5;
+}
+
+message SmsLoginRequest
+{
+	string Phone = 1;
+	string Password = 2;
+}
+
+message UserProfile
+{
+	int32 Id = 1;
+	string Name = 2;
+	int64 Phone = 3;
+	string Description = 4;
+}
+
+message UserProfileFilter
+{
+	repeated int32 UserIds = 1;
 }

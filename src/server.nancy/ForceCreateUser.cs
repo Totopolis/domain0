@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Gerakul.ProtoBufSerializer;
+using Nancy.Swagger.Annotations.Attributes;
+using System.Collections.Generic;
 
 namespace Domain0.Model
 {
@@ -7,6 +9,17 @@ namespace Domain0.Model
     /// </summary>
     public sealed class ForceCreateUserRequest
     {
+        [ModelProperty(Ignore = true)]
+        public static MessageDescriptor<ForceCreateUserRequest> DefaultDescriptor
+            => MessageDescriptor<ForceCreateUserRequest>.Create(new[]
+            {
+                FieldSetting<ForceCreateUserRequest>.CreateInt64(1, c => c.Phone, (c, v) => c.Phone = v),
+                FieldSetting<ForceCreateUserRequest>.CreateString(2, c => c.Name, (c, v) => c.Name = v, c => c.Name?.Length > 0),
+                FieldSetting<ForceCreateUserRequest>.CreateBool(3, c => c.BlockSmsSend, (c, v) => c.BlockSmsSend = v),
+                FieldSetting<ForceCreateUserRequest>.CreateStringArray(4, c => c.Roles, (c, v) => c.Roles.Add(v), c => c.Roles?.Count > 0),
+                FieldSetting<ForceCreateUserRequest>.CreateString(5, c => c.CustomSmsTemplate, (c, v) => c.CustomSmsTemplate = v, c => c.CustomSmsTemplate?.Length > 0),
+            });
+
         /// <summary>
         /// Телефон пользователя
         /// </summary>
