@@ -3,6 +3,7 @@ using Nancy.Swagger.Annotations.Attributes;
 
 namespace Domain0.Model
 {
+    [Model("Access token response")]
     public class AccessTokenResponse
     {
         [ModelProperty(Ignore = true)]

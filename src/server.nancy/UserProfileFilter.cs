@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace Domain0.Model
 {
+    [Model("User profile filter")]
     public class UserProfileFilter
     {
         [ModelProperty(Ignore = true)]

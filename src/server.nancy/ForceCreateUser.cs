@@ -7,6 +7,7 @@ namespace Domain0.Model
     /// <summary>
     /// Параметры для принудительного создания пользователя
     /// </summary>
+    [Model("Force create user request")]
     public sealed class ForceCreateUserRequest
     {
         [ModelProperty(Ignore = true)]

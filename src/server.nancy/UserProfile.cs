@@ -3,6 +3,7 @@ using Nancy.Swagger.Annotations.Attributes;
 
 namespace Domain0.Model
 {
+    [Model("User profile")]
     public class UserProfile
     {
         [ModelProperty(Ignore = true)]

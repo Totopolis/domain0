@@ -3,6 +3,7 @@ using Nancy.Swagger.Annotations.Attributes;
 
 namespace Domain0.Model
 {
+    [Model("Change password request")]
     public class ChangePasswordRequest
     {
         [ModelProperty(Ignore = true)]
