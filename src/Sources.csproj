@@ -48,6 +48,7 @@
   <ItemGroup>
     <None Include="server\CommandHelper.cs" />
     <None Include="server\database.sql" />
+    <None Include="server\domain0.proto" />
     <None Include="server\Domain0Bootstrapper.cs" />
     <None Include="server\IX509CertificateProvider.cs" />
     <None Include="server\NancyConfigurationExtensions.cs" />
@@ -86,7 +87,6 @@
     <None Include="server.nancy\SmsLoginModelDataProvider.cs" />
     <None Include="server.nancy\SmsMetadataModule.cs" />
     <None Include="server.nancy\SmsModule.cs" />
-    <None Include="server.nancy\TestMetadataModule.cs" />
     <None Include="server.nancy\AccessTokenResponse.cs" />
     <None Include="server.nancy\ForceChangePhone.cs" />
     <None Include="server.nancy\UserProfile.cs" />

@@ -1,4 +1,4 @@
-﻿using Domain0.Nancy.Model;
+﻿using Domain0.Model;
 using Nancy;
 using Nancy.ModelBinding;
 using System.Linq;

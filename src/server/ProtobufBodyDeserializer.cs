@@ -11,7 +11,10 @@ namespace Domain0.Nancy.Infrastructure
 
         public object Deserialize(MediaRange mediaRange, Stream bodyStream, BindingContext context)
         {
-            return null;
+            var descriptor = ProtobufResponse.GetDescriptor(context.DestinationType);
+            var contentLength = (int) context.Context.Request.Headers.ContentLength;
+            var bytes = new BinaryReader(bodyStream).ReadBytes(contentLength);
+            return descriptor.Read(bytes);
         }
     }
 }

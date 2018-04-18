@@ -1,10 +1,10 @@
-﻿using Domain0.Nancy.Model;
-using Nancy.Metadata.Modules;
+﻿using Nancy.Metadata.Modules;
 using Nancy.Swagger;
 using Swagger.ObjectModel;
 using System.Collections.Generic;
 using Nancy.Swagger.Services;
 using System.Net;
+using Domain0.Model;
 
 namespace Domain0.Nancy
 {

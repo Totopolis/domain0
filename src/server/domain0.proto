@@ -1,0 +1,12 @@
+﻿syntax = "proto3";
+
+package Domain0;
+
+option optimize_for = SPEED;
+option csharp_namespace = "Domain0.Model.Protobuf";
+
+message Test
+{
+	int32 Id = 1;       // тестовый идентификатор
+	string Name = 2;	// тестовое название
+}

@@ -5,8 +5,7 @@ using Nancy.Swagger.Services;
 using Swagger.ObjectModel;
 using Domain0.Nancy.Infrastructure;
 using Nancy.Bootstrapper;
-using Domain0.Database;
-using System;
+using Nancy.Swagger.Annotations;
 
 namespace Domain0.Nancy
 {
@@ -29,6 +28,7 @@ namespace Domain0.Nancy
 
             container.Update(builder =>
             {
+                builder.RegisterType<SwaggerAnnotationsProvider>().As<ISwaggerMetadataProvider>();
             });
         }
 
