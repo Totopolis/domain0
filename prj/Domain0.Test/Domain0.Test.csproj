@@ -92,8 +92,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\test\TestModule.cs">
-      <Link>TestModule.cs</Link>
+    <Compile Include="..\..\src\test\SmsModuleTests.cs">
+      <Link>SmsModuleTests.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\test\TestModuleTests.cs">
+      <Link>TestModuleTests.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

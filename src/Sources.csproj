@@ -95,7 +95,8 @@
     <None Include="server.nancy\ChangePasswordRequest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="test\TestModule.cs" />
+    <None Include="test\TestModuleTests.cs" />
+    <None Include="test\SmsModuleTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

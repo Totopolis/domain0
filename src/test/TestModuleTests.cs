@@ -13,7 +13,7 @@ using HttpStatusCode = Nancy.HttpStatusCode;
 
 namespace Domain0.Test
 {
-    public class TestModule
+    public class TestModuleTests
     {
         [Fact]
         public async Task Validation_Name_Required()
@@ -81,7 +81,7 @@ namespace Domain0.Test
             Assert.Equal(request.Name, response.Name);
         }
 
-        private IContainer GetContainer()
+        public static IContainer GetContainer()
         {
             var builder = new ContainerBuilder();
 

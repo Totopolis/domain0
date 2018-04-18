@@ -10,25 +10,39 @@ namespace Domain0.Nancy
 {
     public class SmsModule : NancyModule
     {
+        public const string RegisterUrl = "/api/sms/Register";
+        public const string ForceCreateUserUrl = "/api/sms/ForceCreateUser";
+        public const string LoginUrl = "/api/sms/Login";
+        public const string ChangePasswordUrl = "/api/sms/ChangePassword";
+        public const string RequestResetPasswordUrl = "/api/sms/RequestResetPassword";
+        public const string ForceChangePhoneUrl = "/api/sms/ForceChangePhone";
+        public const string DoesUserExistUrl = "/api/sms/DoesUserExist";
+        public const string PhoneByUserIdUrl = "/api/sms/PhoneByUserId";
+        public const string RefreshUrl = "/api/Refresh/{refreshToken}";
+        public const string GetMyProfileUrl = "/api/profile";
+        public const string GetUserByPhoneUrl = "/api/users/sms/{phone}";
+        public const string GetUserByFilterUrl = "/api/profile/filter";
+        public const string GetUserByIdUrl = "/api/users/{id}";
+
         public SmsModule()
         {
-            Put("/api/sms/Register", ctx => Register(), name: nameof(Register));
-            Put("/api/sms/ForceCreateUser", ctx => ForceCreateUser(), name: nameof(ForceCreateUser));
-            Post("/api/sms/Login", ctx => Login(), name: nameof(Login));
-            Post("/api/sms/ChangePassword", ctx => ChangePassword(), name: nameof(ChangePassword));
-            Post("/api/sms/RequestResetPassword", ctx => RequestResetPassword(), name: nameof(RequestResetPassword));
-            Post("/api/sms/ForceChangePhone", ctx => ForceChangePhone(), name: nameof(ForceChangePhone));
-            Get("/api/sms/DoesUserExist", ctx => DoesUserExist(), name: nameof(DoesUserExist));
-            Get("/api/sms/PhoneByUserId", ctx => PhoneByUserId(), name: nameof(PhoneByUserId));
-            Get("/api/Refresh/{refreshToken}", ctx => Refresh(), name: nameof(Refresh));
-            Get("/api/profile", ctx => GetMyProfile(), name: nameof(GetMyProfile));
-            Get("/api/users/sms/{phone}", ctx => GetUserByPhone(), name: nameof(GetUserByPhone));
-            Post("/api/profile/filter", ctx => UserFilter(), name: nameof(UserFilter));
-            Post("/api/users/{id}", ctx => GetUserById(), name: nameof(GetUserById));
+            Put(RegisterUrl, ctx => Register(), name: nameof(Register));
+            Put(ForceCreateUserUrl, ctx => ForceCreateUser(), name: nameof(ForceCreateUser));
+            Post(LoginUrl, ctx => Login(), name: nameof(Login));
+            Post(ChangePasswordUrl, ctx => ChangePassword(), name: nameof(ChangePassword));
+            Post(RequestResetPasswordUrl, ctx => RequestResetPassword(), name: nameof(RequestResetPassword));
+            Post(ForceChangePhoneUrl, ctx => ForceChangePhone(), name: nameof(ForceChangePhone));
+            Get(DoesUserExistUrl, ctx => DoesUserExist(), name: nameof(DoesUserExist));
+            Get(PhoneByUserIdUrl, ctx => PhoneByUserId(), name: nameof(PhoneByUserId));
+            Get(RefreshUrl, ctx => Refresh(), name: nameof(Refresh));
+            Get(GetMyProfileUrl, ctx => GetMyProfile(), name: nameof(GetMyProfile));
+            Get(GetUserByPhoneUrl, ctx => GetUserByPhone(), name: nameof(GetUserByPhone));
+            Post(GetUserByFilterUrl, ctx => GetUserByFilter(), name: nameof(GetUserByFilter));
+            Post(GetUserByIdUrl, ctx => GetUserById(), name: nameof(GetUserById));
         }
 
         [Route(nameof(Register))]
-        [Route(HttpMethod.Put, "/api/sms/Register")]
+        [Route(HttpMethod.Put, RegisterUrl)]
         [Route(Consumes = new[] { "application/json" })]
         [Route(Produces = new string[] { })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
@@ -41,7 +55,7 @@ namespace Domain0.Nancy
         }
 
         [Route(nameof(ForceCreateUser))]
-        [Route(HttpMethod.Put, "/api/sms/ForceCreateUser")]
+        [Route(HttpMethod.Put, ForceCreateUserUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Produces = new string[] { })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
@@ -54,7 +68,7 @@ namespace Domain0.Nancy
         }
 
         [Route(nameof(Login))]
-        [Route(HttpMethod.Post, "/api/sms/Login")]
+        [Route(HttpMethod.Post, LoginUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
@@ -76,7 +90,7 @@ namespace Domain0.Nancy
         }
 
         [Route(nameof(ChangePassword))]
-        [Route(HttpMethod.Post, "/api/sms/ChangePassword")]
+        [Route(HttpMethod.Post, ChangePasswordUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Produces = new string[] { })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
@@ -89,7 +103,7 @@ namespace Domain0.Nancy
         }
 
         [Route(nameof(RequestResetPassword))]
-        [Route(HttpMethod.Post, "/api/sms/RequestResetPassword")]
+        [Route(HttpMethod.Post, RequestResetPasswordUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Produces = new string[] { })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for reset password")]
@@ -102,7 +116,7 @@ namespace Domain0.Nancy
         }
 
         [Route(nameof(ForceChangePhone))]
-        [Route(HttpMethod.Post, "/api/sms/ForceChangePhone")]
+        [Route(HttpMethod.Post, ForceChangePhoneUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Produces = new string[] { })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for force change phone only administrator")]
@@ -115,7 +129,7 @@ namespace Domain0.Nancy
         }
 
         [Route(nameof(DoesUserExist))]
-        [Route(HttpMethod.Get, "/api/sms/DoesUserExist")]
+        [Route(HttpMethod.Get, DoesUserExistUrl)]
         [Route(Produces = new[] { "application/json" })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for check user exists")]
         [RouteParam(ParamIn = ParameterIn.Query, Name = "phone", ParamType = typeof(long), Required = true, Description = "user's phone with single number, started from 7 for Russia, 79162233224 for example")]
@@ -127,7 +141,7 @@ namespace Domain0.Nancy
         }
 
         [Route(nameof(PhoneByUserId))]
-        [Route(HttpMethod.Get, "/api/sms/PhoneByUserId")]
+        [Route(HttpMethod.Get, PhoneByUserIdUrl)]
         [Route(Produces = new[] { "application/json" })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for get phone by user id")]
         [RouteParam(ParamIn = ParameterIn.Query, Name = "id", ParamType = typeof(int), Required = true, Description = "User Id")]
@@ -139,7 +153,7 @@ namespace Domain0.Nancy
         }
 
         [Route(nameof(Refresh))]
-        [Route(HttpMethod.Get, "/api/Refresh/{refreshToken}")]
+        [Route(HttpMethod.Get, RefreshUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Refresh" }, Summary = "Method for refresh access token")]
         [RouteParam(ParamIn = ParameterIn.Path, Name = "refreshToken", ParamType = typeof(string), Required = true, Description = "Refresh token")]
@@ -160,7 +174,7 @@ namespace Domain0.Nancy
         }
 
         [Route(nameof(GetMyProfile))]
-        [Route(HttpMethod.Get, "/api/profile")]
+        [Route(HttpMethod.Get, GetMyProfileUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "UserProfile" }, Summary = "Method for receive own profile")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(UserProfile))]
@@ -174,7 +188,7 @@ namespace Domain0.Nancy
         }
 
         [Route(nameof(GetUserByPhone))]
-        [Route(HttpMethod.Get, "/api/users/sms/{phone}")]
+        [Route(HttpMethod.Get, GetUserByPhoneUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Users" }, Summary = "Method for receive profile by phone")]
         [RouteParam(ParamIn = ParameterIn.Path, Name = "phone", ParamType = typeof(long), Required = true, Description = "User phone")]
@@ -190,14 +204,14 @@ namespace Domain0.Nancy
             };
         }
 
-        [Route(nameof(UserFilter))]
-        [Route(HttpMethod.Get, "/api/profile/filter")]
+        [Route(nameof(GetUserByFilter))]
+        [Route(HttpMethod.Get, GetUserByFilterUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "UserProfile" }, Summary = "Method for receive profiles by user ids")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(UserProfileFilter), Required = true, Description = "Profile filter")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(IEnumerable<UserProfile>))]
-        public object UserFilter()
+        public object GetUserByFilter()
         {
             var filter = this.Bind<UserProfileFilter>();
             return filter.UserIds.Select(id => new UserProfile
@@ -209,7 +223,7 @@ namespace Domain0.Nancy
         }
 
         [Route(nameof(GetUserById))]
-        [Route(HttpMethod.Get, "/api/users/{id}")]
+        [Route(HttpMethod.Get, GetUserByIdUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Users" }, Summary = "Method for receive profile by user id")]
         [RouteParam(ParamIn = ParameterIn.Path, Name = "id", ParamType = typeof(int), Required = true, Description = "User id")]
