@@ -26,6 +26,7 @@ namespace Domain0.Nancy
                 Name = "domain0"
             });
 
+            SwaggerAnnotationsConfig.ShowOnlyAnnotatedRoutes = true;
             container.Update(builder =>
             {
                 builder.RegisterType<SwaggerAnnotationsProvider>().As<ISwaggerMetadataProvider>();

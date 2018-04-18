@@ -75,6 +75,9 @@
     <Compile Include="..\..\src\server.nancy\AccessTokenResponse.cs">
       <Link>Model\AccessTokenResponse.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server.nancy\ChangePasswordRequest.cs">
+      <Link>Model\ChangePasswordRequest.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server.nancy\ForceChangePhone.cs">
       <Link>Model\ForceChangePhone.cs</Link>
     </Compile>
@@ -86,9 +89,6 @@
     </Compile>
     <Compile Include="..\..\src\server.nancy\SmsLoginRequest.cs">
       <Link>Model\SmsLoginRequest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\SmsMetadataModule.cs">
-      <Link>Swagger\SmsMetadataModule.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server.nancy\SmsModule.cs">
       <Link>SmsModule.cs</Link>

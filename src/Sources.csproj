@@ -85,12 +85,12 @@
     <None Include="server.nancy\ForceCreateUser.cs" />
     <None Include="server.nancy\SmsLoginRequest.cs" />
     <None Include="server.nancy\SmsLoginModelDataProvider.cs" />
-    <None Include="server.nancy\SmsMetadataModule.cs" />
     <None Include="server.nancy\SmsModule.cs" />
     <None Include="server.nancy\AccessTokenResponse.cs" />
     <None Include="server.nancy\ForceChangePhone.cs" />
     <None Include="server.nancy\UserProfile.cs" />
     <None Include="server.nancy\UserProfileFilter.cs" />
+    <None Include="server.nancy\ChangePasswordRequest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

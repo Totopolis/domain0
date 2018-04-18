@@ -38,7 +38,7 @@ namespace Domain0.Nancy
         [Route(HttpMethod.Post, "/testapimethod")]
         [Route(Produces = new[] {"application/json", "application/x-protobuf"})]
         [Route(Consumes = new[] {"application/json", "application/x-protobuf"})]
-        [Route(Tags = new[] {"Test"})]
+        [Route(Tags = new[] {"Test"}, Summary = "Test method implements basic functions")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "test parameter", ParamType = typeof(Test), Required = true)]
         [SwaggerResponse(HttpStatusCode.OK, Message = "sample test response", Model = typeof(Test))]
         public object TestMethod()
