@@ -13,7 +13,6 @@ using Domain0.Database;
 using Nancy.Hosting.Self;
 using Topshelf;
 using NLog.Common;
-using Nancy.Bootstrappers.Autofac;
 
 namespace Domain0.WinService
 {

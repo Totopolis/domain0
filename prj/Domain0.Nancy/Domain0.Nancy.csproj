@@ -79,6 +79,9 @@
     <Compile Include="..\..\src\common\BadModelException.cs">
       <Link>Exception\BadModelException.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\common\NotFoundException.cs">
+      <Link>Exceptions\NotFoundException.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server.nancy\AccessTokenResponse.cs">
       <Link>Model\AccessTokenResponse.cs</Link>
     </Compile>

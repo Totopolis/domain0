@@ -59,6 +59,10 @@ namespace Domain0.Nancy
                             .WithHeader("X-Status-Reason", "validation error")
                             .WithReasonPhrase("validation error")
                             .WithMediaRangeModel("application/json", bad.ValidationResult.Errors.SelectMany(e => e.Value));
+                    case NotFoundException notFound:
+                        return new Negotiator(ctx)
+                            .WithStatusCode(HttpStatusCode.NotFound)
+                            .WithReasonPhrase("not found error");
                 }
 
                 return null;

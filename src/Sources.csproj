@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="common\BadModelException.cs" />
+    <None Include="common\NotFoundException.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="server\CommandHelper.cs" />
@@ -82,7 +83,6 @@
     <None Include="swagger\swagger-ui.css.map" />
     <None Include="swagger\swagger-ui.js.map" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <None Include="server.nancy\ForceCreateUser.cs" />
     <None Include="server.nancy\SmsLoginRequest.cs" />
