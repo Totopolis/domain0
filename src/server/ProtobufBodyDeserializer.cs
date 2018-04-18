@@ -1,4 +1,5 @@
-﻿using Nancy.ModelBinding;
+﻿using System.Collections;
+using Nancy.ModelBinding;
 using Nancy.Responses.Negotiation;
 using System.IO;
 
@@ -14,7 +15,13 @@ namespace Domain0.Nancy.Infrastructure
             var descriptor = ProtobufResponse.GetDescriptor(context.DestinationType);
             var contentLength = (int) context.Context.Request.Headers.ContentLength;
             var bytes = new BinaryReader(bodyStream).ReadBytes(contentLength);
-            return descriptor.Read(bytes);
+
+            object result;
+            if (typeof(IEnumerable).IsAssignableFrom(context.DestinationType))
+                result = descriptor.ReadLenDelimitedStream(bytes);
+            else
+                result = descriptor.Read(bytes);
+            return result;
         }
     }
 }

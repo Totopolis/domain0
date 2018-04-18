@@ -1,6 +1,7 @@
 ﻿using Gerakul.ProtoBufSerializer;
 using Nancy;
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
@@ -15,6 +16,10 @@ namespace Domain0.Nancy.Infrastructure
         {
             return Cache.GetOrAdd(type, t =>
             {
+                var isEnumerable = typeof(IEnumerable).IsAssignableFrom(type);
+                if (isEnumerable)
+                    t = type.GenericTypeArguments.FirstOrDefault();
+
                 var descriptorProperty = t.GetProperties(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public)
                     .FirstOrDefault(p => typeof(IUntypedMessageDescriptor).IsAssignableFrom(p.PropertyType));
                 var descriptor = (IUntypedMessageDescriptor)descriptorProperty?.GetValue(null);
@@ -33,7 +38,13 @@ namespace Domain0.Nancy.Infrastructure
             Contents = model == null ? NoBody : (stream =>
             {
                 var descriptor = GetDescriptor(model.GetType());
-                var bytes = descriptor.Write(model);
+
+                byte[] bytes;
+                if (model is IEnumerable collection)
+                    bytes = descriptor.WriteLenDelimitedStream(collection);
+                else
+                    bytes = descriptor.Write(model);
+
                 stream.Write(bytes, 0, bytes.Length);
             });
         }
