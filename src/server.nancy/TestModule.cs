@@ -7,6 +7,7 @@ using Swagger.ObjectModel;
 using Domain0.Nancy.Infrastructure;
 using Nancy.Validation;
 using System.Collections.Generic;
+using System;
 
 namespace Domain0.Nancy
 {

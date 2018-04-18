@@ -13,6 +13,7 @@ using Nancy;
 using Nancy.Responses.Negotiation;
 using System.Linq;
 using Domain0.Exceptions;
+using NLog;
 
 namespace Domain0.Nancy
 {
@@ -21,7 +22,13 @@ namespace Domain0.Nancy
     {
         private readonly IContainer _container;
 
-        public Domain0Bootstrapper(IContainer container) => _container = container;
+        private readonly ILogger _logger;
+
+        public Domain0Bootstrapper(IContainer container)
+        {
+            _container = container;
+            _logger = _container.Resolve<ILogger>();
+        } 
 
         protected override ILifetimeScope GetApplicationContainer() => _container;
 
@@ -63,6 +70,9 @@ namespace Domain0.Nancy
                         return new Negotiator(ctx)
                             .WithStatusCode(HttpStatusCode.NotFound)
                             .WithReasonPhrase("not found error");
+                    default:
+                        _logger.Error(ex, ex.ToString());
+                        break;
                 }
 
                 return null;
