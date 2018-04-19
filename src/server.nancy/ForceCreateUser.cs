@@ -1,6 +1,7 @@
 ﻿using Gerakul.ProtoBufSerializer;
 using Nancy.Swagger.Annotations.Attributes;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain0.Model
 {
@@ -14,7 +15,7 @@ namespace Domain0.Model
         public static MessageDescriptor<ForceCreateUserRequest> DefaultDescriptor
             => MessageDescriptor<ForceCreateUserRequest>.Create(new[]
             {
-                FieldSetting<ForceCreateUserRequest>.CreateInt64(1, c => c.Phone, (c, v) => c.Phone = v),
+                FieldSetting<ForceCreateUserRequest>.CreateInt64(1, c => c.Phone.Value, (c, v) => c.Phone = v, c => c.Phone.HasValue),
                 FieldSetting<ForceCreateUserRequest>.CreateString(2, c => c.Name, (c, v) => c.Name = v, c => c.Name?.Length > 0),
                 FieldSetting<ForceCreateUserRequest>.CreateBool(3, c => c.BlockSmsSend, (c, v) => c.BlockSmsSend = v),
                 FieldSetting<ForceCreateUserRequest>.CreateStringArray(4, c => c.Roles, (c, v) => c.Roles.Add(v), c => c.Roles?.Count > 0),
@@ -24,7 +25,9 @@ namespace Domain0.Model
         /// <summary>
         /// Телефон пользователя
         /// </summary>
-        public long Phone { get; set; }
+        [Required(ErrorMessage = "Phone is required")]
+        [MinLength(11, ErrorMessage = "Phone number at least 11 digits without +")]
+        public long? Phone { get; set; }
         /// <summary>
         /// Имя пользователя
         /// </summary>

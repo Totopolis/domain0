@@ -4,12 +4,12 @@ using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Swagger.Annotations.Attributes;
 using Swagger.ObjectModel;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
 using Domain0.Exceptions;
+using Domain0.Nancy.Infrastructure;
 
 namespace Domain0.Nancy
 {
@@ -59,7 +59,7 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
         public async Task<object> Register()
         {
-            var phone = this.Bind<decimal>();
+            var phone = this.Bind<long>();
             try
             {
                 await _accountService.Register(phone);
@@ -82,8 +82,16 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
         public async Task<object> ForceCreateUser()
         {
-            var request = this.Bind<ForceCreateUserRequest>();
-            return await _accountService.CreateUser(request);
+            var request = this.BindAndValidateModel<ForceCreateUserRequest>();
+            try
+            {
+                return await _accountService.CreateUser(request);
+            }
+            catch (SecurityException)
+            {
+                ModelValidationResult.Errors.Add(nameof(request.Phone), "user exists");
+                throw new BadModelException(ModelValidationResult);
+            }
         }
 
         [Route(nameof(Login))]

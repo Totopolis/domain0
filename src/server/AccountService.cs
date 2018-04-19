@@ -86,11 +86,18 @@ namespace Domain0.Service
 
         public async Task<UserProfile> CreateUser(ForceCreateUserRequest request)
         {
+            if (!request.Phone.HasValue)
+                throw new SecurityException("user exists");
+
+            var phone = request.Phone.Value;
+            if (await DoesUserExists(phone))
+                throw new SecurityException("user exists");
+
             var password = _passwordGenerator.Generate();
             var id = await _accountRepository.Insert(new Account
             {
                 Login = request.Phone.ToString(),
-                Phone = request.Phone,
+                Phone = phone,
                 Password = password,
                 FirstName = request.Name
             });
@@ -106,12 +113,12 @@ namespace Domain0.Service
             else
                 await _roleRepository.AddUserToRoles(id, request.Roles.ToArray());
 
-            var result = _mapper.Map<UserProfile>(await _accountRepository.FindByPhone(request.Phone));
-            if (!request.BlockSmsSend)
+            var result = _mapper.Map<UserProfile>(await _accountRepository.FindByPhone(request.Phone.Value));
+            if (request.BlockSmsSend)
                 return result;
 
             string message;
-            if (!string.IsNullOrEmpty(request.CustomSmsTemplate))
+            if (string.IsNullOrEmpty(request.CustomSmsTemplate))
                 message = string.Format(await _messageTemplateRepository.GetWelcomeTemplate(), 
                     request.Phone, password);
             else
@@ -119,7 +126,7 @@ namespace Domain0.Service
                     .Replace("{phone}", request.Phone.ToString())
                     .Replace("{password}", password);
 
-            await _smsClient.Send(request.Phone, message);
+            await _smsClient.Send(request.Phone.Value, message);
 
             return result;
         }

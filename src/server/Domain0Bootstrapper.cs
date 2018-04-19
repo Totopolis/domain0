@@ -55,7 +55,6 @@ namespace Domain0.Nancy
         {
             base.RequestStartup(container, pipelines, context);
 
-            var responseNegotiator = container.Resolve<IResponseNegotiator>();
             pipelines.OnError.AddItemToStartOfPipeline((ctx, ex) =>
             {
                 switch (ex)
