@@ -111,6 +111,7 @@ namespace Domain0.WinService
             builder.RegisterInstance(connectionString).Named<string>("connectionString");
             builder.Register(c => LogManager.GetCurrentClassLogger()).As<ILogger>().InstancePerDependency();
             builder.RegisterModule<DatabaseModule>();
+            builder.RegisterModule<ApplicationModule>();
 
             return builder.Build();
         }
