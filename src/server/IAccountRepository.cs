@@ -6,5 +6,7 @@ namespace Domain0.Repository
     public interface IAccountRepository
     {
         Task<Account> FindByPhone(decimal phone);
+
+        Task<int> Insert(Account account);
     }
 }

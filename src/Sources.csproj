@@ -68,6 +68,19 @@
     <None Include="server\ProtobufResponse.cs" />
     <None Include="server\ProtobufResponseProcessor.cs" />
     <None Include="server\NancyModuleExtensions.cs" />
+    <None Include="server\Account.cs" />
+    <None Include="server\AccountService.cs" />
+    <None Include="server\ApplicationModule.cs" />
+    <None Include="server\IAccountRepository.cs" />
+    <None Include="server\IMessageTemplateRepository.cs" />
+    <None Include="server\IPasswordGenerator.cs" />
+    <None Include="server\IRegistryRequestRepository.cs" />
+    <None Include="server\ISmsClient.cs" />
+    <None Include="server\MessageTemplate.cs" />
+    <None Include="server\RegistryRequest.cs" />
+    <None Include="server\IRoleRepository.cs" />
+    <None Include="server\MapperProfile.cs" />
+    <None Include="server\Role.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="swagger\favicon-16x16.png" />
@@ -97,19 +110,7 @@
   <ItemGroup>
     <None Include="test\TestModuleTests.cs" />
     <None Include="test\SmsModuleTests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="server\Account.cs" />
-    <Compile Include="server\AccountService.cs" />
-    <Compile Include="server\ApplicationModule.cs" />
-    <Compile Include="server\IAccountRepository.cs" />
-    <Compile Include="server\IMessageTemplateRepository.cs" />
-    <Compile Include="server\IPasswordGenerator.cs" />
-    <Compile Include="server\IRegistryRequestRepository.cs" />
-    <Compile Include="server\ISmsClient.cs" />
-    <Compile Include="server\MessageTemplate.cs" />
-    <Compile Include="server\RegistryRequest.cs" />
-    <Compile Include="test\MoqRegistrationSource.cs" />
+    <None Include="test\MoqRegistrationSource.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

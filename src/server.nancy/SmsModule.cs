@@ -80,10 +80,10 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(ForceCreateUserRequest), Required = true, Description = "parameters for force create")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
-        public object ForceCreateUser()
+        public async Task<object> ForceCreateUser()
         {
             var request = this.Bind<ForceCreateUserRequest>();
-            return HttpStatusCode.NoContent;
+            return await _accountService.CreateUser(request);
         }
 
         [Route(nameof(Login))]
