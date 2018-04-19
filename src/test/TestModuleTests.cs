@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Domain0.Infrastructure;
 using Domain0.Nancy;
 using Domain0.Test.Infrastructure;
 using Nancy.Testing;
