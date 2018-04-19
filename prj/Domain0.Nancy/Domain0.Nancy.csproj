@@ -112,11 +112,38 @@
     <Compile Include="..\..\src\server.nancy\UserProfileFilter.cs">
       <Link>Model\UserProfileFilter.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\Account.cs">
+      <Link>Service\Repository\Model\Account.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\AccountService.cs">
+      <Link>Service\AccountService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\ApplicationModule.cs">
+      <Link>Infrastructure\ApplicationModule.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\Domain0Bootstrapper.cs">
       <Link>Domain0Bootstrapper.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\EmbeddedContentConventionBuilder.cs">
       <Link>Infrastructure\EmbeddedContentConventionBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\IAccountRepository.cs">
+      <Link>Service\Repository\IAccountRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\IMessageTemplateRepository.cs">
+      <Link>Service\Repository\IMessageTemplateRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\IPasswordGenerator.cs">
+      <Link>Service\IPasswordGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\IRegistryRequestRepository.cs">
+      <Link>Service\Repository\IRegistryRequestRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\ISmsClient.cs">
+      <Link>Service\ISmsClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\MessageTemplate.cs">
+      <Link>Service\Repository\Model\MessageTemplate.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\NancyModuleExtensions.cs">
       <Link>Infrastructure\NancyModuleExtensions.cs</Link>
@@ -129,6 +156,9 @@
     </Compile>
     <Compile Include="..\..\src\server\ProtobufResponseProcessor.cs">
       <Link>Infrastructure\ProtobufResponseProcessor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\RegistryRequest.cs">
+      <Link>Service\Repository\Model\RegistryRequest.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

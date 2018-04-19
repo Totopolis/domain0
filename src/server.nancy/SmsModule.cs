@@ -1,10 +1,15 @@
 ﻿using Domain0.Model;
+using Domain0.Service;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Swagger.Annotations.Attributes;
 using Swagger.ObjectModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
+using System.Threading.Tasks;
+using Domain0.Exceptions;
 
 namespace Domain0.Nancy
 {
@@ -24,8 +29,12 @@ namespace Domain0.Nancy
         public const string GetUserByFilterUrl = "/api/profile/filter";
         public const string GetUserByIdUrl = "/api/users/{id}";
 
-        public SmsModule()
+        private readonly IAccountService _accountService;
+
+        public SmsModule(IAccountService accountService)
         {
+            _accountService = accountService;
+
             Put(RegisterUrl, ctx => Register(), name: nameof(Register));
             Put(ForceCreateUserUrl, ctx => ForceCreateUser(), name: nameof(ForceCreateUser));
             Post(LoginUrl, ctx => Login(), name: nameof(Login));
@@ -48,9 +57,19 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "phone", ParamType = typeof(long), Required = true, Description = "user's phone with single number, started from 7 for Russia, 79162233224 for example")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
-        public object Register()
+        public async Task<object> Register()
         {
-            var phone = this.Bind<long>();
+            var phone = this.Bind<decimal>();
+            try
+            {
+                await _accountService.Register(phone);
+            }
+            catch (SecurityException ex)
+            {
+                ModelValidationResult.Errors.Add(nameof(phone), ex.Message);
+                throw new BadModelException(ModelValidationResult);
+            }
+
             return HttpStatusCode.NoContent;
         }
 
