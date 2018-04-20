@@ -6,10 +6,10 @@ namespace Domain0.Repository
 {
     public interface ISmsRequestRepository
     {
-        Task Save(RegistryRequest registryRequest);
+        Task Save(SmsRequest smsRequest);
 
-        Task<RegistryRequest> Pick(decimal phone);
+        Task<SmsRequest> Pick(decimal phone);
 
-        Task<RegistryRequest> Take(decimal phone);
+        Task Remove(decimal phone);
     }
 }

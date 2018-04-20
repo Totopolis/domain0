@@ -18,6 +18,7 @@ namespace Domain0.Model
         [Required]
         public string Phone { get; set; }
 
+        [Required]
         public string Password { get; set; }
     }
 }

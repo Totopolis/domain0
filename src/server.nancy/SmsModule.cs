@@ -104,16 +104,16 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(AccessTokenResponse))]
         public async Task<object> Login()
         {
-            var request = this.Bind<SmsLoginRequest>();
-            try
+            var request = this.BindAndValidateModel<SmsLoginRequest>();
+
+            var result = await _accountService.Login(request);
+            if (result == null)
             {
-                return await _accountService.Login(request);
-            }
-            catch (Exception)
-            {
-                ModelValidationResult.Errors.Add(nameof(request.Phone), "user exists");
+                ModelValidationResult.Errors.Add(nameof(request.Phone), "user or password incorrect");
                 throw new BadModelException(ModelValidationResult);
             }
+
+            return result;
         }
 
         [Route(nameof(ChangePassword))]

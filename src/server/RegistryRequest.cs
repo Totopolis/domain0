@@ -2,7 +2,7 @@
 
 namespace Domain0.Repository.Model
 {
-    public class RegistryRequest
+    public class SmsRequest
     {
         public decimal Phone { get; set; }
 

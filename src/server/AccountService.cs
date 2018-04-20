@@ -75,7 +75,7 @@ namespace Domain0.Service
 
             var password = _authGenerator.GeneratePassword();
             var expiredAt = TimeSpan.FromSeconds(90);
-            await _smsRequestRepository.Save(new RegistryRequest
+            await _smsRequestRepository.Save(new SmsRequest
             {
                 Phone = phone,
                 Password = password,
@@ -146,8 +146,15 @@ namespace Domain0.Service
         {
             var permissions = await _permissionRepository.GetByUserId(account.Id);
             var registration = await _tokenRegistrationRepository.FindLastTokenByUserId(account.Id);
-            string accessToken;
-            if (registration == null)
+            string accessToken = registration?.AccessToken;
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                var principal = _authGenerator.Parse(accessToken);
+                if (!principal.GetPermissions().All(permission => permissions.Contains(permission)))
+                    accessToken = null;
+            }
+
+            if (string.IsNullOrEmpty(accessToken))
             {
                 accessToken = _authGenerator.GenerateAccessToken(account.Id, permissions);
                 await _tokenRegistrationRepository.Save(registration = new TokenRegistration
@@ -183,9 +190,19 @@ namespace Domain0.Service
 
             // sms request registration
             var phone = account?.Phone ?? decimal.Parse(request.Phone);
-            var smsRequest = await _smsRequestRepository.Take(phone);
-            if (!string.Equals(smsRequest?.Password, request.Password, StringComparison.OrdinalIgnoreCase) && smsRequest.ExpiredAt > DateTime.UtcNow)
+            var smsRequest = await _smsRequestRepository.Pick(phone);
+            if (smsRequest == null)
                 return null;
+            if (smsRequest.ExpiredAt < DateTime.UtcNow)
+            {
+                await _smsRequestRepository.Remove(phone);
+                return null;
+            }
+            if (!string.Equals(smsRequest.Password, request.Password, StringComparison.OrdinalIgnoreCase))
+                return null;
+
+            // remove confirmed request
+            await _smsRequestRepository.Remove(phone);
 
             // confirm sms request
             var salt = _authGenerator.GenerateSalt();

@@ -1,4 +1,7 @@
 ﻿
+using System.Linq;
+using System.Security.Claims;
+
 namespace Domain0.Service
 {
     public interface IAuthGenerator
@@ -14,6 +17,16 @@ namespace Domain0.Service
         string GenerateSalt();
 
         string HashPassword(string password, string salt);
+
+        ClaimsPrincipal Parse(string accessToken);
+
+        int GetTid(string refreshToken);
+    }
+
+    public static class ClaimsPrincipalExtensions
+    {
+        public static string[] GetPermissions(this ClaimsPrincipal principal)
+            => principal.Claims.Where(c => c.Type == "role").Select(c => c.Value).Distinct().ToArray();
     }
 
     public class AuthGenerator : IAuthGenerator
@@ -46,6 +59,16 @@ namespace Domain0.Service
         public string HashPassword(string password, string salt)
         {
             return password + salt;
+        }
+
+        public ClaimsPrincipal Parse(string accessToken)
+        {
+            return new ClaimsPrincipal();
+        }
+
+        public int GetTid(string refreshToken)
+        {
+            return 0;
         }
     }
 }
