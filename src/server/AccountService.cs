@@ -17,6 +17,8 @@ namespace Domain0.Service
         Task<bool> DoesUserExists(decimal phone);
 
         Task<UserProfile> CreateUser(ForceCreateUserRequest request);
+
+        Task<AccessTokenResponse> Login(SmsLoginRequest request);
     }
 
     public class AccountService : IAccountService
@@ -25,33 +27,41 @@ namespace Domain0.Service
 
         private readonly ISmsClient _smsClient;
 
-        private readonly IPasswordGenerator _passwordGenerator;
+        private readonly IAuthGenerator _authGenerator;
 
         private readonly IAccountRepository _accountRepository;
 
         private readonly IRoleRepository _roleRepository;
 
-        private readonly IRegistryRequestRepository _registryRequestRepository;
+        private readonly ISmsRequestRepository _smsRequestRepository;
 
         private readonly IMessageTemplateRepository _messageTemplateRepository;
+
+        private readonly IPermissionRepository _permissionRepository;
+
+        private readonly ITokenRegistrationRepository _tokenRegistrationRepository;
 
         public AccountService(
             IMapper mapper,
             ISmsClient smsClient,
-            IPasswordGenerator passwordGenerator,
+            IAuthGenerator authGenerator,
             IAccountRepository accountRepository,
             IRoleRepository roleRepository,
-            IRegistryRequestRepository registryRequestRepository,
-            IMessageTemplateRepository messageTemplateRepository)
+            ISmsRequestRepository smsRequestRepository,
+            IMessageTemplateRepository messageTemplateRepository,
+            IPermissionRepository permissionRepository,
+            ITokenRegistrationRepository tokenRegistrationRepository)
         {
             _mapper = mapper;
             _smsClient = smsClient;
-            _passwordGenerator = passwordGenerator;
+            _authGenerator = authGenerator;
 
             _accountRepository = accountRepository;
             _roleRepository = roleRepository;
-            _registryRequestRepository = registryRequestRepository;
+            _smsRequestRepository = smsRequestRepository;
             _messageTemplateRepository = messageTemplateRepository;
+            _permissionRepository = permissionRepository;
+            _tokenRegistrationRepository = tokenRegistrationRepository;
         }
 
         public async Task Register(decimal phone)
@@ -59,13 +69,13 @@ namespace Domain0.Service
             if (await DoesUserExists(phone))
                 throw new SecurityException("user exists");
 
-            var existed = await _registryRequestRepository.Pick(phone);
+            var existed = await _smsRequestRepository.Pick(phone);
             if (existed != null)
                 return;
 
-            var password = _passwordGenerator.Generate();
+            var password = _authGenerator.GeneratePassword();
             var expiredAt = TimeSpan.FromSeconds(90);
-            await _registryRequestRepository.Save(new RegistryRequest
+            await _smsRequestRepository.Save(new RegistryRequest
             {
                 Phone = phone,
                 Password = password,
@@ -93,33 +103,34 @@ namespace Domain0.Service
             if (await DoesUserExists(phone))
                 throw new SecurityException("user exists");
 
-            var password = _passwordGenerator.Generate();
+            var password = _authGenerator.GeneratePassword();
+            var salt = _authGenerator.GenerateSalt();
             var id = await _accountRepository.Insert(new Account
             {
-                Login = request.Phone.ToString(),
                 Phone = phone,
-                Password = password,
-                FirstName = request.Name
+                Password = _authGenerator.HashPassword(password, salt),
+                Salt = salt,
+                Name = request.Name
             });
 
             var roles = await _roleRepository.GetByIds(request.Roles.ToArray());
-            if (roles.Length != request.Roles.Count)
+            if (roles.Length != (request.Roles?.Count ?? 0))
                 throw new NotFoundException(nameof(request.Roles), string.Join(",",
                     request.Roles.Where(role =>
                         roles.All(r => string.Equals(r.Code, role, StringComparison.OrdinalIgnoreCase)))));
 
             if (roles.Length == 0)
-                await _roleRepository.AddUserToRoles(id, "user");
+                await _roleRepository.AddUserToDefaultRoles(id);
             else
                 await _roleRepository.AddUserToRoles(id, request.Roles.ToArray());
 
-            var result = _mapper.Map<UserProfile>(await _accountRepository.FindByPhone(request.Phone.Value));
+            var result = _mapper.Map<UserProfile>(await _accountRepository.FindByLogin(phone.ToString()));
             if (request.BlockSmsSend)
                 return result;
 
             string message;
             if (string.IsNullOrEmpty(request.CustomSmsTemplate))
-                message = string.Format(await _messageTemplateRepository.GetWelcomeTemplate(), 
+                message = string.Format(await _messageTemplateRepository.GetWelcomeTemplate(),
                     request.Phone, password);
             else
                 message = request.CustomSmsTemplate
@@ -129,6 +140,78 @@ namespace Domain0.Service
             await _smsClient.Send(request.Phone.Value, message);
 
             return result;
+        }
+
+        public async Task<AccessTokenResponse> GetTokenResponse(Account account)
+        {
+            var permissions = await _permissionRepository.GetByUserId(account.Id);
+            var registration = await _tokenRegistrationRepository.FindLastTokenByUserId(account.Id);
+            string accessToken;
+            if (registration == null)
+            {
+                accessToken = _authGenerator.GenerateAccessToken(account.Id, permissions);
+                await _tokenRegistrationRepository.Save(registration = new TokenRegistration
+                {
+                    UserId = account.Id,
+                    IssuedAt = DateTime.UtcNow,
+                    AccessToken = accessToken,
+                    ExpiredAt = DateTime.UtcNow.Add(TimeSpan.FromDays(10))
+                });
+            }
+            else
+                accessToken = registration.AccessToken;
+
+            var refreshToken = _authGenerator.GenerateRefreshToken(registration.Id, account.Id);
+            return new AccessTokenResponse
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                Profile = _mapper.Map<UserProfile>(account)
+            };
+        }
+
+        public async Task<AccessTokenResponse> Login(SmsLoginRequest request)
+        {
+            var account = await _accountRepository.FindByLogin(request.Phone);
+            if (account != null)
+            {
+                if (_authGenerator.CheckPassword(request.Password, account.Password, account.Salt))
+                    return await GetTokenResponse(account);
+                else
+                    return null;
+            }
+
+            // sms request registration
+            var phone = account?.Phone ?? decimal.Parse(request.Phone);
+            var smsRequest = await _smsRequestRepository.Take(phone);
+            if (!string.Equals(smsRequest?.Password, request.Password, StringComparison.OrdinalIgnoreCase) && smsRequest.ExpiredAt > DateTime.UtcNow)
+                return null;
+
+            // confirm sms request
+            var salt = _authGenerator.GenerateSalt();
+            var password = _authGenerator.HashPassword(request.Password, salt);
+            if (account != null)
+            {
+                // change password
+                account.Salt = salt;
+                account.Password = password;
+                await _accountRepository.Update(account);
+            }
+            else
+            {
+                // confirm registration
+                var userId = await _accountRepository.Insert(account = new Account
+                {
+                    Name = request.Phone.ToString(),
+                    Phone = phone,
+                    Login = phone.ToString(),
+                    Salt = salt,
+                    Password = password
+                });
+                await _roleRepository.AddUserToDefaultRoles(userId);
+            }
+
+            return await GetTokenResponse(account);
         }
     }
 }

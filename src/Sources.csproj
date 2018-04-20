@@ -74,7 +74,7 @@
     <None Include="server\IAccountRepository.cs" />
     <None Include="server\IMessageTemplateRepository.cs" />
     <None Include="server\IPasswordGenerator.cs" />
-    <None Include="server\IRegistryRequestRepository.cs" />
+    <None Include="server\ISmsRequestRepository.cs" />
     <None Include="server\ISmsClient.cs" />
     <None Include="server\MessageTemplate.cs" />
     <None Include="server\RegistryRequest.cs" />
@@ -111,6 +111,11 @@
     <None Include="test\TestModuleTests.cs" />
     <None Include="test\SmsModuleTests.cs" />
     <None Include="test\MoqRegistrationSource.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="server\IPermissionRepository.cs" />
+    <Compile Include="server\ITokenRegistrationRepository.cs" />
+    <Compile Include="server\TokenRegistration.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

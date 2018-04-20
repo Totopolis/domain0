@@ -10,5 +10,7 @@ namespace Domain0.Repository
         Task<Role[]> GetByIds(params string[] ids);
 
         Task AddUserToRoles(int userId, params string[] roles);
+
+        Task AddUserToDefaultRoles(int userId);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Gerakul.ProtoBufSerializer;
 using Nancy.Swagger.Annotations.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain0.Model
 {
@@ -14,6 +15,7 @@ namespace Domain0.Model
                 FieldSetting<SmsLoginRequest>.CreateString(2, c => c.Password, (c, v) => c.Password = v, c => c.Password?.Length > 0),
             });
 
+        [Required]
         public string Phone { get; set; }
 
         public string Password { get; set; }

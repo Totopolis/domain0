@@ -10,6 +10,7 @@ using System.Security;
 using System.Threading.Tasks;
 using Domain0.Exceptions;
 using Domain0.Nancy.Infrastructure;
+using System;
 
 namespace Domain0.Nancy
 {
@@ -101,19 +102,18 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(SmsLoginRequest), Required = true, Description = "parameters for login")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(AccessTokenResponse))]
-        public object Login()
+        public async Task<object> Login()
         {
             var request = this.Bind<SmsLoginRequest>();
-            return new AccessTokenResponse
+            try
             {
-                AccessToken = "access_token",
-                RefreshToken = "refresh_token",
-                Profile = new UserProfile
-                {
-                    Id = 1,
-                    Name = "name"
-                }
-            };
+                return await _accountService.Login(request);
+            }
+            catch (Exception)
+            {
+                ModelValidationResult.Errors.Add(nameof(request.Phone), "user exists");
+                throw new BadModelException(ModelValidationResult);
+            }
         }
 
         [Route(nameof(ChangePassword))]

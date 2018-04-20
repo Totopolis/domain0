@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 
 namespace Domain0.Repository
 {
-    public interface IRegistryRequestRepository
+    public interface ISmsRequestRepository
     {
         Task Save(RegistryRequest registryRequest);
 
         Task<RegistryRequest> Pick(decimal phone);
+
+        Task<RegistryRequest> Take(decimal phone);
     }
 }

@@ -139,14 +139,20 @@
     <Compile Include="..\..\src\server\IPasswordGenerator.cs">
       <Link>Service\IPasswordGenerator.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\server\IRegistryRequestRepository.cs">
-      <Link>Service\Repository\IRegistryRequestRepository.cs</Link>
+    <Compile Include="..\..\src\server\IPermissionRepository.cs">
+      <Link>Service\Repository\IPermissionRepository.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\IRoleRepository.cs">
       <Link>Service\Repository\IRoleRepository.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\ISmsClient.cs">
       <Link>Service\ISmsClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\ISmsRequestRepository.cs">
+      <Link>Service\Repository\ISmsRequestRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\ITokenRegistrationRepository.cs">
+      <Link>Service\Repository\ITokenRegistrationRepository.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\MapperProfile.cs">
       <Link>Infrastructure\MapperProfile.cs</Link>
@@ -171,6 +177,9 @@
     </Compile>
     <Compile Include="..\..\src\server\Role.cs">
       <Link>Service\Repository\Model\Role.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\TokenRegistration.cs">
+      <Link>Service\Repository\Model\TokenRegistration.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

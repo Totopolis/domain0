@@ -43,7 +43,7 @@ namespace Domain0.Test
         {
             var container = TestModuleTests.GetContainer(b =>
             {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
             });
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
@@ -58,9 +58,9 @@ namespace Domain0.Test
             var messageTemplate = Mock.Get(messageTemplateRepository);
             messageTemplate.Setup(r => r.GetRegisterTemplate()).ReturnsAsync("hello {0}!");
 
-            var passwordGenerator = container.Resolve<IPasswordGenerator>();
+            var passwordGenerator = container.Resolve<IAuthGenerator>();
             var passwordMock = Mock.Get(passwordGenerator);
-            passwordMock.Setup(p => p.Generate()).Returns("password");
+            passwordMock.Setup(p => p.GeneratePassword()).Returns("password");
 
             var result = await browser.Put(SmsModule.RegisterUrl, with =>
             {
@@ -80,7 +80,7 @@ namespace Domain0.Test
         {
             var container = TestModuleTests.GetContainer(b =>
             {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
             });
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
@@ -98,9 +98,9 @@ namespace Domain0.Test
             var roleMock = Mock.Get(roleRepository);
             roleMock.Setup(r => r.GetByIds(It.IsAny<string[]>())).ReturnsAsync(roles.Select(role => new Role {Code = role }).ToArray());
 
-            var passwordGenerator = container.Resolve<IPasswordGenerator>();
+            var passwordGenerator = container.Resolve<IAuthGenerator>();
             var passwordMock = Mock.Get(passwordGenerator);
-            passwordMock.Setup(p => p.Generate()).Returns("password");
+            passwordMock.Setup(p => p.GeneratePassword()).Returns("password");
 
             var result = await browser.Put(SmsModule.ForceCreateUserUrl, with =>
             {
@@ -127,7 +127,7 @@ namespace Domain0.Test
         {
             var container = TestModuleTests.GetContainer(b =>
             {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
             });
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
@@ -145,9 +145,9 @@ namespace Domain0.Test
             var roleMock = Mock.Get(roleRepository);
             roleMock.Setup(r => r.GetByIds(It.IsAny<string[]>())).ReturnsAsync(roles.Select(role => new Role { Code = role }).ToArray());
 
-            var passwordGenerator = container.Resolve<IPasswordGenerator>();
+            var passwordGenerator = container.Resolve<IAuthGenerator>();
             var passwordMock = Mock.Get(passwordGenerator);
-            passwordMock.Setup(p => p.Generate()).Returns("password");
+            passwordMock.Setup(p => p.GeneratePassword()).Returns("password");
 
             var messageTemplateRepository = container.Resolve<IMessageTemplateRepository>();
             var messageTemplate = Mock.Get(messageTemplateRepository);
@@ -177,7 +177,7 @@ namespace Domain0.Test
         {
             var container = TestModuleTests.GetContainer(b =>
             {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
             });
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
@@ -195,9 +195,9 @@ namespace Domain0.Test
             var roleMock = Mock.Get(roleRepository);
             roleMock.Setup(r => r.GetByIds(It.IsAny<string[]>())).ReturnsAsync(roles.Select(role => new Role { Code = role }).ToArray());
 
-            var passwordGenerator = container.Resolve<IPasswordGenerator>();
+            var passwordGenerator = container.Resolve<IAuthGenerator>();
             var passwordMock = Mock.Get(passwordGenerator);
-            passwordMock.Setup(p => p.Generate()).Returns("password");
+            passwordMock.Setup(p => p.GeneratePassword()).Returns("password");
 
             var result = await browser.Put(SmsModule.ForceCreateUserUrl, with =>
             {
