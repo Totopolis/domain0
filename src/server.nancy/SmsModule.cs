@@ -202,7 +202,10 @@ namespace Domain0.Nancy
             }
 
             var result = await _accountService.GetProfileByUserId(id);
-            return result.Phone;
+            if (result.Phone == null)
+                throw new NotFoundException(nameof(result.Phone));
+
+            return (long) result.Phone;
         }
 
         [Route(nameof(Refresh))]

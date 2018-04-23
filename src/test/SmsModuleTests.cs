@@ -11,16 +11,18 @@ using Domain0.Service;
 using Domain0.Model;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 using System;
 using System.Security.Claims;
 
 namespace Domain0.Test
 {
+
     public class SmsModuleTests
     {
-        [Fact]
-        public async Task Registration_Validation_UserExists()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task Registration_Validation_UserExists(DataFormat format)
         {
             var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
@@ -32,17 +34,19 @@ namespace Domain0.Test
             var accountMock = Mock.Get(accountRepository);
             accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync(new Account());
 
-            var result = await browser.Put(SmsModule.RegisterUrl, with =>
+            var response = await browser.Put(SmsModule.RegisterUrl, with =>
             {
-                with.Accept("application/json");
-                with.JsonBody(phone);
+                with.Accept(format);
+                with.DataFormatBody(format, phone);
             });
 
-            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-        [Fact]
-        public async Task Registration_Success()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task Registration_Success(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -65,13 +69,13 @@ namespace Domain0.Test
             var passwordMock = Mock.Get(passwordGenerator);
             passwordMock.Setup(p => p.GeneratePassword()).Returns("password");
 
-            var result = await browser.Put(SmsModule.RegisterUrl, with =>
+            var response = await browser.Put(SmsModule.RegisterUrl, with =>
             {
-                with.Accept("application/json");
-                with.JsonBody(phone);
+                with.Accept(format);
+                with.DataFormatBody(format, phone);
             });
 
-            Assert.Equal(HttpStatusCode.NoContent, result.StatusCode);
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
             var smsRequestMock = Mock.Get(container.Resolve<ISmsRequestRepository>());
             smsRequestMock.Verify(a => a.Save(It.IsAny<SmsRequest>()), Times.Once());
@@ -81,8 +85,10 @@ namespace Domain0.Test
             smsMock.Verify(s => s.Send(phone, "hello password!"));
         }
 
-        [Fact]
-        public async Task ForceCreateUser_SendSms_CustomTemplate()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task ForceCreateUser_SendSms_CustomTemplate(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -108,10 +114,10 @@ namespace Domain0.Test
             var passwordMock = Mock.Get(passwordGenerator);
             passwordMock.Setup(p => p.GeneratePassword()).Returns("password");
 
-            var result = await browser.Put(SmsModule.ForceCreateUserUrl, with =>
+            var response = await browser.Put(SmsModule.ForceCreateUserUrl, with =>
             {
-                with.Accept("application/json");
-                with.JsonBody(new ForceCreateUserRequest
+                with.Accept(format);
+                with.DataFormatBody(format, new ForceCreateUserRequest
                 {
                     BlockSmsSend = false,
                     Phone = phone,
@@ -121,15 +127,17 @@ namespace Domain0.Test
                 });
             });
 
-            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var smsClient = container.Resolve<ISmsClient>();
             var smsMock = Mock.Get(smsClient);
             smsMock.Verify(s => s.Send(phone, "password password phone " + phone));
         }
 
-        [Fact]
-        public async Task ForceCreateUser_SendSms_StandardTemplate()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task ForceCreateUser_SendSms_StandardTemplate(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -159,10 +167,10 @@ namespace Domain0.Test
             var messageTemplate = Mock.Get(messageTemplateRepository);
             messageTemplate.Setup(r => r.GetWelcomeTemplate()).ReturnsAsync("hello {1} {0}!");
 
-            var result = await browser.Put(SmsModule.ForceCreateUserUrl, with =>
+            var response = await browser.Put(SmsModule.ForceCreateUserUrl, with =>
             {
-                with.Accept("application/json");
-                with.JsonBody(new ForceCreateUserRequest
+                with.Accept(format);
+                with.DataFormatBody(format, new ForceCreateUserRequest
                 {
                     BlockSmsSend = false,
                     Phone = phone,
@@ -171,15 +179,17 @@ namespace Domain0.Test
                 });
             });
 
-            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var smsClient = container.Resolve<ISmsClient>();
             var smsMock = Mock.Get(smsClient);
             smsMock.Verify(s => s.Send(phone, "hello password " + phone + "!"));
         }
 
-        [Fact]
-        public async Task ForceCreateUser_NotSendSms()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task ForceCreateUser_NotSendSms(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -189,7 +199,7 @@ namespace Domain0.Test
             var browser = new Browser(bootstrapper);
 
             var phone = 79000000000;
-            var roles = new List<string> { "role1", "role2" };
+            var roles = new List<string> {"role1", "role2"};
 
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountMock = Mock.Get(accountRepository);
@@ -205,10 +215,10 @@ namespace Domain0.Test
             var passwordMock = Mock.Get(passwordGenerator);
             passwordMock.Setup(p => p.GeneratePassword()).Returns("password");
 
-            var result = await browser.Put(SmsModule.ForceCreateUserUrl, with =>
+            var response = await browser.Put(SmsModule.ForceCreateUserUrl, with =>
             {
-                with.Accept("application/json");
-                with.JsonBody(new ForceCreateUserRequest
+                with.Accept(format);
+                with.DataFormatBody(format, new ForceCreateUserRequest
                 {
                     BlockSmsSend = true,
                     Phone = phone,
@@ -218,15 +228,17 @@ namespace Domain0.Test
                 });
             });
 
-            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var smsClient = container.Resolve<ISmsClient>();
             var smsMock = Mock.Get(smsClient);
             smsMock.Verify(c => c.Send(It.IsAny<decimal>(), It.IsAny<string>()), Times.Never);
         }
 
-        [Fact]
-        public async Task ForceCreateUser_UserExists()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task ForceCreateUser_UserExists(DataFormat format)
         {
             var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
@@ -239,10 +251,10 @@ namespace Domain0.Test
             var accountMock = Mock.Get(accountRepository);
             accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync(new Account {Phone = phone});
 
-            var result = await browser.Put(SmsModule.ForceCreateUserUrl, with =>
+            var response = await browser.Put(SmsModule.ForceCreateUserUrl, with =>
             {
-                with.Accept("application/json");
-                with.JsonBody(new ForceCreateUserRequest
+                with.Accept(format);
+                with.DataFormatBody(format, new ForceCreateUserRequest
                 {
                     BlockSmsSend = true,
                     Phone = phone,
@@ -252,27 +264,30 @@ namespace Domain0.Test
                 });
             });
 
-            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-        [Fact]
-        public async Task ForceCreateUser_Validation()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task ForceCreateUser_Validation(DataFormat format)
         {
             var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
-            var result = await browser.Put(SmsModule.ForceCreateUserUrl, with =>
+            var response = await browser.Put(SmsModule.ForceCreateUserUrl, with =>
             {
-                with.Accept("application/json");
-                with.Body("");
+                with.Accept(format);
             });
 
-            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-        [Fact]
-        public async Task Login_Success()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task Login_Success(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -298,24 +313,27 @@ namespace Domain0.Test
             authGenerator.Setup(a => a.GenerateAccessToken(It.IsAny<int>(), It.IsAny<string[]>())).Returns<int, string[]>((userId, perms) => userId + string.Join("", perms));
             authGenerator.Setup(a => a.GenerateRefreshToken(It.IsAny<int>(), It.IsAny<int>())).Returns<int, int>((tid, userId) => $"{tid}_{userId}");
 
-            var result = await browser.Post(SmsModule.LoginUrl, with =>
+            var response = await browser.Post(SmsModule.LoginUrl, with =>
             {
-                with.Accept("application/json");
-                with.JsonBody(new SmsLoginRequest {Phone = phone.ToString(), Password = password});
+                with.Accept(format);
+                with.DataFormatBody(format, new SmsLoginRequest {Phone = phone.ToString(), Password = password});
             });
 
-            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             tokenMock.Verify(t => t.Save(It.IsAny<TokenRegistration>()), Times.Once);
 
-            var response = JsonConvert.DeserializeObject<AccessTokenResponse>(result.Body.AsString());
-            Assert.Equal(1, response.Profile.Id);
-            Assert.Equal(phone, response.Profile.Phone);
-            Assert.Equal("1test1test2", response.AccessToken);
-            Assert.Equal("0_1", response.RefreshToken);
+            ;
+            var result = response.Body.AsDataFormat<AccessTokenResponse>(format);
+            Assert.Equal(1, result.Profile.Id);
+            Assert.Equal(phone, result.Profile.Phone);
+            Assert.Equal("1test1test2", result.AccessToken);
+            Assert.Equal("0_1", result.RefreshToken);
         }
 
-        [Fact]
-        public async Task Login_Register_NoRequest()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task Login_Register_NoRequest(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -333,17 +351,19 @@ namespace Domain0.Test
             var smsRequestMock = Mock.Get(container.Resolve<ISmsRequestRepository>());
             smsRequestMock.Setup(a => a.Pick(phone)).ReturnsAsync((SmsRequest) null);
 
-            var result = await browser.Post(SmsModule.LoginUrl, with =>
+            var response = await browser.Post(SmsModule.LoginUrl, with =>
             {
-                with.Accept("application/json");
-                with.JsonBody(new SmsLoginRequest { Phone = phone.ToString(), Password = password });
+                with.Accept(format);
+                with.DataFormatBody(format, new SmsLoginRequest { Phone = phone.ToString(), Password = password });
             });
 
-            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-        [Fact]
-        public async Task Login_Register_ExpiredRequest()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task Login_Register_ExpiredRequest(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -361,18 +381,20 @@ namespace Domain0.Test
             var smsRequestMock = Mock.Get(container.Resolve<ISmsRequestRepository>());
             smsRequestMock.Setup(a => a.Pick(phone)).ReturnsAsync(new SmsRequest { Phone = phone, Password = password, ExpiredAt = DateTime.UtcNow.AddSeconds(-1)});
 
-            var result = await browser.Post(SmsModule.LoginUrl, with =>
+            var response = await browser.Post(SmsModule.LoginUrl, with =>
             {
-                with.Accept("application/json");
-                with.JsonBody(new SmsLoginRequest { Phone = phone.ToString(), Password = password });
+                with.Accept(format);
+                with.DataFormatBody(format, new SmsLoginRequest { Phone = phone.ToString(), Password = password });
             });
 
-            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             smsRequestMock.Verify(r => r.Remove(phone), Times.Once);
         }
 
-        [Fact]
-        public async Task ChangePassword_Account()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task ChangePassword_Account(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -399,21 +421,23 @@ namespace Domain0.Test
             authGenerator.Setup(a => a.GenerateSalt()).Returns(() => salt);
             authGenerator.Setup(a => a.HashPassword(It.IsAny<string>(), It.IsAny<string>())).Returns<string, string>((p, s) => p + s);
 
-            var result = await browser.Post(SmsModule.ChangePasswordUrl, with =>
+            var response = await browser.Post(SmsModule.ChangePasswordUrl, with =>
             {
-                with.Accept("application/json");
-                with.JsonBody(new ChangePasswordRequest { OldPassword = password, NewPassword = newpassword });
+                with.Accept(format);
+                with.DataFormatBody(format, new ChangePasswordRequest { OldPassword = password, NewPassword = newpassword });
             });
 
-            Assert.Equal(HttpStatusCode.NoContent, result.StatusCode);
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
             accountMock.Verify(a => a.Update(It.IsAny<Account>()), Times.Once);
             Assert.Equal(newpassword + salt, account.Password);
             Assert.Equal(salt, account.Salt);
         }
 
-        [Fact]
-        public async Task ResetPassword_Success()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task ResetPassword_Success(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -435,13 +459,13 @@ namespace Domain0.Test
             var authGenerator = Mock.Get(container.Resolve<IAuthGenerator>());
             authGenerator.Setup(a => a.GeneratePassword()).Returns(() => password);
 
-            var result = await browser.Post(SmsModule.RequestResetPasswordUrl, with =>
+            var response = await browser.Post(SmsModule.RequestResetPasswordUrl, with =>
             {
-                with.Accept("application/json");
-                with.JsonBody(phone);
+                with.Accept(format);
+                with.DataFormatBody(format, phone);
             });
 
-            Assert.Equal(HttpStatusCode.NoContent, result.StatusCode);
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
             var smsRequestMock = Mock.Get(container.Resolve<ISmsRequestRepository>());
             smsRequestMock.Verify(a => a.Save(It.IsAny<SmsRequest>()), Times.Once);
@@ -450,8 +474,10 @@ namespace Domain0.Test
             smsMock.Verify(a => a.Send(phone, password + "_test"), Times.Once);
         }
 
-        [Fact]
-        public async Task ResetPassword_NotFound()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task ResetPassword_NotFound(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -467,17 +493,19 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync((Account) null);
 
-            var result = await browser.Post(SmsModule.RequestResetPasswordUrl, with =>
+            var response = await browser.Post(SmsModule.RequestResetPasswordUrl, with =>
             {
-                with.Accept("application/json");
-                with.JsonBody(phone);
+                with.Accept(format);
+                with.DataFormatBody(format, phone);
             });
 
-            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
-        [Fact]
-        public async Task ForceChangePhone_Success()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task ForceChangePhone_Success(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -494,20 +522,22 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync(account);
 
-            var result = await browser.Post(SmsModule.ForceChangePhoneUrl, with =>
+            var response = await browser.Post(SmsModule.ForceChangePhoneUrl, with =>
             {
-                with.Accept("application/json");
-                with.JsonBody(new ChangePhoneRequest {UserId = userId, NewPhone = newphone});
+                with.Accept(format);
+                with.DataFormatBody(format, new ChangePhoneRequest {UserId = userId, NewPhone = newphone});
             });
 
-            Assert.Equal(HttpStatusCode.NoContent, result.StatusCode);
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             Assert.Equal(newphone, account.Phone);
             Assert.Equal(newphone.ToString(), account.Login);
             accountMock.Verify(a => a.Update(It.IsAny<Account>()), Times.Once);
         }
 
-        [Fact]
-        public async Task ForceChangePhone_NotFound()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task ForceChangePhone_NotFound(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -522,17 +552,19 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync((Account) null);
 
-            var result = await browser.Post(SmsModule.ForceChangePhoneUrl, with =>
+            var response = await browser.Post(SmsModule.ForceChangePhoneUrl, with =>
             {
-                with.Accept("application/json");
-                with.JsonBody(new ChangePhoneRequest { UserId = userId, NewPhone = newphone });
+                with.Accept(format);
+                with.DataFormatBody(format, new ChangePhoneRequest { UserId = userId, NewPhone = newphone });
             });
 
-            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
-        [Fact]
-        public async Task DoesUserExists_IsTrue()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task DoesUserExists_IsTrue(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -546,18 +578,21 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync(new Account());
 
-            var result = await browser.Get(SmsModule.DoesUserExistUrl, with =>
+            var response = await browser.Get(SmsModule.DoesUserExistUrl, with =>
             {
-                with.Accept("application/json");
+                with.Accept(format);
                 with.Query(nameof(phone), phone.ToString());
             });
 
-            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
-            Assert.True(bool.Parse(result.Body.AsString()));
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var result = response.Body.AsDataFormat<bool>(format);
+            Assert.True(result);
         }
 
-        [Fact]
-        public async Task DoesUserExists_IsFalse()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task DoesUserExists_IsFalse(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -571,18 +606,21 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync((Account)null);
 
-            var result = await browser.Get(SmsModule.DoesUserExistUrl, with =>
+            var response = await browser.Get(SmsModule.DoesUserExistUrl, with =>
             {
-                with.Accept("application/json");
+                with.Accept(format);
                 with.Query(nameof(phone), phone.ToString());
             });
 
-            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
-            Assert.False(bool.Parse(result.Body.AsString()));
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var result = response.Body.AsDataFormat<bool>(format);
+            Assert.False(result);
         }
 
-        [Fact]
-        public async Task GetPhoneByUserId_Success()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task GetPhoneByUserId_Success(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -597,18 +635,21 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(id)).ReturnsAsync(new Account {Id = id, Phone = phone});
 
-            var result = await browser.Get(SmsModule.PhoneByUserIdUrl, with =>
+            var response = await browser.Get(SmsModule.PhoneByUserIdUrl, with =>
             {
-                with.Accept("application/json");
+                with.Accept(format);
                 with.Query(nameof(id), id.ToString());
             });
 
-            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
-            Assert.Equal(phone.ToString(), result.Body.AsString());
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var result = response.Body.AsDataFormat<long>(format);
+            Assert.Equal(phone, result);
         }
 
-        [Fact]
-        public async Task GetPhoneByUserId_NotFound()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task GetPhoneByUserId_NotFound(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -622,17 +663,19 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(id)).ReturnsAsync((Account) null);
 
-            var result = await browser.Get(SmsModule.PhoneByUserIdUrl, with =>
+            var response = await browser.Get(SmsModule.PhoneByUserIdUrl, with =>
             {
-                with.Accept("application/json");
+                with.Accept(format);
                 with.Query(nameof(id), id.ToString());
             });
 
-            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
-        [Fact]
-        public async Task Refresh_Success()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task Refresh_Success(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -666,20 +709,22 @@ namespace Domain0.Test
                 UserId = userId
             });
 
-            var result = await browser.Get(SmsModule.RefreshUrl.Replace("{refreshToken}", refreshToken), with =>
+            var response = await browser.Get(SmsModule.RefreshUrl.Replace("{refreshToken}", refreshToken), with =>
             {
-                with.Accept("application/json");
+                with.Accept(format);
             });
 
-            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
-            var response = JsonConvert.DeserializeObject<AccessTokenResponse>(result.Body.AsString());
-            Assert.Equal(userId, response.Profile.Id);
-            Assert.Equal("101_test1_test2_test3", response.AccessToken);
-            Assert.Equal(refreshToken, response.RefreshToken);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var result = response.Body.AsDataFormat<AccessTokenResponse>(format);
+            Assert.Equal(userId, result.Profile.Id);
+            Assert.Equal("101_test1_test2_test3", result.AccessToken);
+            Assert.Equal(refreshToken, result.RefreshToken);
         }
 
-        [Fact]
-        public async Task Refresh_Account_NotFound()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task Refresh_Account_NotFound(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -707,16 +752,18 @@ namespace Domain0.Test
                 UserId = userId
             });
 
-            var result = await browser.Get(SmsModule.RefreshUrl.Replace("{refreshToken}", refreshToken), with =>
+            var response = await browser.Get(SmsModule.RefreshUrl.Replace("{refreshToken}", refreshToken), with =>
             {
-                with.Accept("application/json");
+                with.Accept(format);
             });
 
-            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
-        [Fact]
-        public async Task Refresh_TokenRegistry_NotFound()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task Refresh_TokenRegistry_NotFound(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -735,16 +782,18 @@ namespace Domain0.Test
             var authGenerator = Mock.Get(container.Resolve<IAuthGenerator>());
             authGenerator.Setup(p => p.GetTid(refreshToken)).Returns(tid);
 
-            var result = await browser.Get(SmsModule.RefreshUrl.Replace("{refreshToken}", refreshToken), with =>
+            var response = await browser.Get(SmsModule.RefreshUrl.Replace("{refreshToken}", refreshToken), with =>
             {
-                with.Accept("application/json");
+                with.Accept(format);
             });
 
-            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
-        [Fact]
-        public async Task GetMyProfile_Success()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task GetMyProfile_Success(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -762,19 +811,21 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync(new Account {Id = userId, Phone = phone});
 
-            var result = await browser.Get(SmsModule.GetMyProfileUrl, with =>
+            var response = await browser.Get(SmsModule.GetMyProfileUrl, with =>
             {
-                with.Accept("application/json");
+                with.Accept(format);
             });
 
-            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
-            var response = JsonConvert.DeserializeObject<UserProfile>(result.Body.AsString());
-            Assert.Equal(userId, response.Id);
-            Assert.Equal(phone, response.Phone);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var result = response.Body.AsDataFormat<UserProfile>(format);
+            Assert.Equal(userId, result.Id);
+            Assert.Equal(phone, result.Phone);
         }
 
-        [Fact]
-        public async Task GetProfileByPhone_Success()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task GetProfileByPhone_Success(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -789,19 +840,21 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync(new Account { Id = userId, Phone = phone });
 
-            var result = await browser.Get(SmsModule.GetUserByPhoneUrl.Replace("{phone}", phone.ToString()), with =>
+            var response = await browser.Get(SmsModule.GetUserByPhoneUrl.Replace("{phone}", phone.ToString()), with =>
             {
-                with.Accept("application/json");
+                with.Accept(format);
             });
 
-            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
-            var response = JsonConvert.DeserializeObject<UserProfile>(result.Body.AsString());
-            Assert.Equal(userId, response.Id);
-            Assert.Equal(phone, response.Phone);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var result = response.Body.AsDataFormat<UserProfile>(format);
+            Assert.Equal(userId, result.Id);
+            Assert.Equal(phone, result.Phone);
         }
 
-        [Fact]
-        public async Task GetProfileByPhone_NotFound()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task GetProfileByPhone_NotFound(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -815,16 +868,18 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync((Account) null);
 
-            var result = await browser.Get(SmsModule.GetUserByPhoneUrl.Replace("{phone}", phone.ToString()), with =>
+            var response = await browser.Get(SmsModule.GetUserByPhoneUrl.Replace("{phone}", phone.ToString()), with =>
             {
-                with.Accept("application/json");
+                with.Accept(format);
             });
 
-            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
-        [Fact]
-        public async Task GetProfileByUserId_Success()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task GetProfileByUserId_Success(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -838,18 +893,20 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync(new Account {Id = userId});
 
-            var result = await browser.Get(SmsModule.GetUserByIdUrl.Replace("{id}", userId.ToString()), with =>
+            var response = await browser.Get(SmsModule.GetUserByIdUrl.Replace("{id}", userId.ToString()), with =>
             {
-                with.Accept("application/json");
+                with.Accept(format);
             });
 
-            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
-            var response = JsonConvert.DeserializeObject<UserProfile>(result.Body.AsString());
-            Assert.Equal(userId, response.Id);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var result = response.Body.AsDataFormat<UserProfile>(format);
+            Assert.Equal(userId, result.Id);
         }
 
-        [Fact]
-        public async Task GetProfileByUserId_NotFound()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task GetProfileByUserId_NotFound(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -863,16 +920,18 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync((Account)null);
 
-            var result = await browser.Get(SmsModule.GetUserByIdUrl.Replace("{id}", userId.ToString()), with =>
+            var response = await browser.Get(SmsModule.GetUserByIdUrl.Replace("{id}", userId.ToString()), with =>
             {
-                with.Accept("application/json");
+                with.Accept(format);
             });
 
-            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
-        [Fact]
-        public async Task GetProfilesByFilter_Success()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task GetProfilesByFilter_Success(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -884,22 +943,23 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserIds(It.IsAny<IEnumerable<int>>())).Returns<IEnumerable<int>>(ids => Task.FromResult(ids.Select(id => new Account {Id=id}).ToArray()));
 
-            var result = await browser.Post(SmsModule.GetUsersByFilterUrl, with =>
+            var response = await browser.Post(SmsModule.GetUsersByFilterUrl, with =>
             {
-                with.Accept("application/json");
-                with.JsonBody(new UserProfileFilter
+                with.Accept(format);
+                with.DataFormatBody(format, new UserProfileFilter
                 {
                     UserIds = Enumerable.Range(1, 10).ToList()
                 });
             });
 
-            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
-            var response = JsonConvert.DeserializeObject<UserProfile[]>(result.Body.AsString());
-            Assert.Equal(10, response.Length);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var result = response.Body.AsArrayDataFormat<UserProfile>(format);
+            Assert.Equal(10, result.Length);
         }
 
-        [Fact]
-        public async Task GetProfilesByFilter_BadRequest()
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        public async Task GetProfilesByFilter_BadRequest(DataFormat format)
         {
             var container = TestModuleTests.GetContainer(b =>
             {
@@ -911,13 +971,13 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserIds(It.IsAny<IEnumerable<int>>())).Returns<IEnumerable<int>>(ids => Task.FromResult(ids.Select(id => new Account { Id = id }).ToArray()));
 
-            var result = await browser.Post(SmsModule.GetUsersByFilterUrl, with =>
+            var response = await browser.Post(SmsModule.GetUsersByFilterUrl, with =>
             {
-                with.Accept("application/json");
+                with.Accept(format);
                 with.JsonBody("{userIds:['qwe','rty']}");
             });
 
-            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
     }
 }

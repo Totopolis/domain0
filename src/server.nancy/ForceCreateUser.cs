@@ -39,7 +39,7 @@ namespace Domain0.Model
         /// <summary>
         /// Роли, которые будут назначены пользователю
         /// </summary>
-        public List<string> Roles { get; set; }
+        public List<string> Roles { get; set; } = new List<string>();
         /// <summary>
         /// Шаблон сообщения который будет отправлен пользователю
         /// </summary>

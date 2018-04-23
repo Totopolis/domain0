@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using Nancy.ModelBinding;
+﻿using Nancy.ModelBinding;
 using Nancy.Responses.Negotiation;
 using System.IO;
 
@@ -16,11 +15,10 @@ namespace Domain0.Nancy.Infrastructure
             var contentLength = (int) context.Context.Request.Headers.ContentLength;
             var bytes = new BinaryReader(bodyStream).ReadBytes(contentLength);
 
-            object result;
-            if (typeof(IEnumerable).IsAssignableFrom(context.DestinationType))
-                result = descriptor.ReadLenDelimitedStream(bytes);
-            else
-                result = descriptor.Read(bytes);
+            var result = descriptor.Read(bytes);
+            if (result is SimpleValue simple)
+                result = simple.Obj;
+
             return result;
         }
     }

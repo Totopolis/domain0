@@ -17,6 +17,6 @@ namespace Domain0.Model
         /// <summary>
         /// Идентификаторы пользователей.
         /// </summary>
-        public List<int> UserIds { get; set; }
+        public List<int> UserIds { get; set; } = new List<int>();
     }
 }
