@@ -27,6 +27,8 @@ namespace Domain0.Service
         Task ForceChangePhone(ChangePhoneRequest request);
 
         Task<decimal> GetPhoneByUserId(int id);
+
+        Task<AccessTokenResponse> Refresh(string refreshToken);
     }
 
     public class AccountService : IAccountService
@@ -293,6 +295,27 @@ namespace Domain0.Service
                 throw new NotFoundException(nameof(account));
 
             return account.Phone;
+        }
+
+        public async Task<AccessTokenResponse> Refresh(string refreshToken)
+        {
+            var id = _authGenerator.GetTid(refreshToken);
+            var tokenRegistry = await _tokenRegistrationRepository.FindById(id);
+            if (tokenRegistry == null)
+                throw new NotFoundException(nameof(tokenRegistry), id);
+            var account = await _accountRepository.FindByUserId(tokenRegistry.UserId);
+            if (account == null)
+                throw new NotFoundException(nameof(account), tokenRegistry.UserId);
+
+            var principal = _authGenerator.Parse(tokenRegistry.AccessToken);
+            var accessToken = _authGenerator.GenerateAccessToken(account.Id, principal.GetPermissions());
+
+            return new AccessTokenResponse
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                Profile = _mapper.Map<UserProfile>(account)
+            };
         }
     }
 }

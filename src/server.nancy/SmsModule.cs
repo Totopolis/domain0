@@ -211,19 +211,11 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Refresh" }, Summary = "Method for refresh access token")]
         [RouteParam(ParamIn = ParameterIn.Path, Name = "refreshToken", ParamType = typeof(string), Required = true, Description = "Refresh token")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(AccessTokenResponse))]
-        public object Refresh()
+        public async Task<object> Refresh()
         {
             var refreshToken = Context.Parameters.refreshToken;
-            return new AccessTokenResponse
-            {
-                AccessToken = "access_token",
-                RefreshToken = refreshToken,
-                Profile = new UserProfile
-                {
-                    Id = 1,
-                    Name = "name"
-                }
-            };
+            var response = await _accountService.Refresh(refreshToken);
+            return response;
         }
 
         [Route(nameof(GetMyProfile))]
