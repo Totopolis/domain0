@@ -162,7 +162,7 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
         public async Task<object> ForceChangePhone()
         {
-            var request = this.Bind<ChangePhoneRequest>();
+            var request = this.BindAndValidateModel<ChangePhoneRequest>();
             await _accountService.ForceChangePhone(request);
             return HttpStatusCode.NoContent;
         }
@@ -173,10 +173,17 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Sms" }, Summary = "Method for check user exists")]
         [RouteParam(ParamIn = ParameterIn.Query, Name = "phone", ParamType = typeof(long), Required = true, Description = "user's phone with single number, started from 7 for Russia, 79162233224 for example")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "True if user exists else false", Model = typeof(bool))]
-        public object DoesUserExist()
+        public async Task<object> DoesUserExist()
         {
-            var phone = this.Bind<long>();
-            return true;
+            decimal phone;
+            if (!decimal.TryParse(Request.Query[nameof(phone)].ToString(), out phone))
+            {
+                ModelValidationResult.Errors.Add(nameof(phone), "wrong phone format");
+                throw new BadModelException(ModelValidationResult);
+            }
+
+            var result = await _accountService.DoesUserExists(phone);
+            return result;
         }
 
         [Route(nameof(PhoneByUserId))]
