@@ -223,13 +223,10 @@ namespace Domain0.Nancy
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "UserProfile" }, Summary = "Method for receive own profile")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(UserProfile))]
-        public object GetMyProfile()
+        public async Task<object> GetMyProfile()
         {
-            return new UserProfile
-            {
-                Id = 1,
-                Name = "test"
-            };
+            var profile = await _accountService.GetMyProfile();
+            return profile;
         }
 
         [Route(nameof(GetUserByPhone))]

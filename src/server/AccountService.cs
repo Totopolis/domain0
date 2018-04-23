@@ -29,6 +29,8 @@ namespace Domain0.Service
         Task<decimal> GetPhoneByUserId(int id);
 
         Task<AccessTokenResponse> Refresh(string refreshToken);
+
+        Task<UserProfile> GetMyProfile();
     }
 
     public class AccountService : IAccountService
@@ -316,6 +318,13 @@ namespace Domain0.Service
                 RefreshToken = refreshToken,
                 Profile = _mapper.Map<UserProfile>(account)
             };
+        }
+
+        public async Task<UserProfile> GetMyProfile()
+        {
+            var userId = _requestContext.UserId;
+            var account = await _accountRepository.FindByUserId(userId);
+            return _mapper.Map<UserProfile>(account);
         }
     }
 }
