@@ -1,227 +1,276 @@
 ﻿using Domain0.Model;
+using Domain0.Service;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Swagger.Annotations.Attributes;
 using Swagger.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
+using System.Threading.Tasks;
+using Domain0.Exceptions;
+using Domain0.Nancy.Infrastructure;
 
 namespace Domain0.Nancy
 {
     public class SmsModule : NancyModule
     {
-        public SmsModule()
+        public const string RegisterUrl = "/api/sms/Register";
+        public const string ForceCreateUserUrl = "/api/sms/ForceCreateUser";
+        public const string LoginUrl = "/api/sms/Login";
+        public const string ChangePasswordUrl = "/api/sms/ChangePassword";
+        public const string RequestResetPasswordUrl = "/api/sms/RequestResetPassword";
+        public const string ForceChangePhoneUrl = "/api/sms/ForceChangePhone";
+        public const string DoesUserExistUrl = "/api/sms/DoesUserExist";
+        public const string PhoneByUserIdUrl = "/api/sms/PhoneByUserId";
+        public const string RefreshUrl = "/api/Refresh/{refreshToken}";
+        public const string GetMyProfileUrl = "/api/profile";
+        public const string GetUserByPhoneUrl = "/api/users/sms/{phone}";
+        public const string GetUsersByFilterUrl = "/api/profile/filter";
+        public const string GetUserByIdUrl = "/api/users/{id}";
+
+        private readonly IAccountService _accountService;
+
+        public SmsModule(IAccountService accountService)
         {
-            Put("/api/sms/Register", ctx => Register(), name: nameof(Register));
-            Put("/api/sms/ForceCreateUser", ctx => ForceCreateUser(), name: nameof(ForceCreateUser));
-            Post("/api/sms/Login", ctx => Login(), name: nameof(Login));
-            Post("/api/sms/ChangePassword", ctx => ChangePassword(), name: nameof(ChangePassword));
-            Post("/api/sms/RequestResetPassword", ctx => RequestResetPassword(), name: nameof(RequestResetPassword));
-            Post("/api/sms/ForceChangePhone", ctx => ForceChangePhone(), name: nameof(ForceChangePhone));
-            Get("/api/sms/DoesUserExist", ctx => DoesUserExist(), name: nameof(DoesUserExist));
-            Get("/api/sms/PhoneByUserId", ctx => PhoneByUserId(), name: nameof(PhoneByUserId));
-            Get("/api/Refresh/{refreshToken}", ctx => Refresh(), name: nameof(Refresh));
-            Get("/api/profile", ctx => GetMyProfile(), name: nameof(GetMyProfile));
-            Get("/api/users/sms/{phone}", ctx => GetUserByPhone(), name: nameof(GetUserByPhone));
-            Post("/api/profile/filter", ctx => UserFilter(), name: nameof(UserFilter));
-            Post("/api/users/{id}", ctx => GetUserById(), name: nameof(GetUserById));
+            _accountService = accountService;
+
+            Put(RegisterUrl, ctx => Register(), name: nameof(Register));
+            Put(ForceCreateUserUrl, ctx => ForceCreateUser(), name: nameof(ForceCreateUser));
+            Post(LoginUrl, ctx => Login(), name: nameof(Login));
+            Post(ChangePasswordUrl, ctx => ChangePassword(), name: nameof(ChangePassword));
+            Post(RequestResetPasswordUrl, ctx => RequestResetPassword(), name: nameof(RequestResetPassword));
+            Post(ForceChangePhoneUrl, ctx => ForceChangePhone(), name: nameof(ForceChangePhone));
+            Get(DoesUserExistUrl, ctx => DoesUserExist(), name: nameof(DoesUserExist));
+            Get(PhoneByUserIdUrl, ctx => PhoneByUserId(), name: nameof(PhoneByUserId));
+            Get(RefreshUrl, ctx => Refresh(), name: nameof(Refresh));
+            Get(GetMyProfileUrl, ctx => GetMyProfile(), name: nameof(GetMyProfile));
+            Get(GetUserByPhoneUrl, ctx => GetUserByPhone(), name: nameof(GetUserByPhone));
+            Post(GetUsersByFilterUrl, ctx => GetUserByFilter(), name: nameof(GetUserByFilter));
+            Get(GetUserByIdUrl, ctx => GetUserById(), name: nameof(GetUserById));
         }
 
         [Route(nameof(Register))]
-        [Route(HttpMethod.Put, "/api/sms/Register")]
+        [Route(HttpMethod.Put, RegisterUrl)]
         [Route(Consumes = new[] { "application/json" })]
         [Route(Produces = new string[] { })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "phone", ParamType = typeof(long), Required = true, Description = "user's phone with single number, started from 7 for Russia, 79162233224 for example")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
-        public object Register()
+        public async Task<object> Register()
         {
             var phone = this.Bind<long>();
+            try
+            {
+                await _accountService.Register(phone);
+            }
+            catch (SecurityException ex)
+            {
+                ModelValidationResult.Errors.Add(nameof(phone), ex.Message);
+                throw new BadModelException(ModelValidationResult);
+            }
+
             return HttpStatusCode.NoContent;
         }
 
         [Route(nameof(ForceCreateUser))]
-        [Route(HttpMethod.Put, "/api/sms/ForceCreateUser")]
+        [Route(HttpMethod.Put, ForceCreateUserUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Produces = new string[] { })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(ForceCreateUserRequest), Required = true, Description = "parameters for force create")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
-        public object ForceCreateUser()
+        public async Task<object> ForceCreateUser()
         {
-            var request = this.Bind<ForceCreateUserRequest>();
-            return HttpStatusCode.NoContent;
+            var request = this.BindAndValidateModel<ForceCreateUserRequest>();
+            try
+            {
+                return await _accountService.CreateUser(request);
+            }
+            catch (SecurityException)
+            {
+                ModelValidationResult.Errors.Add(nameof(request.Phone), "user exists");
+                throw new BadModelException(ModelValidationResult);
+            }
         }
 
         [Route(nameof(Login))]
-        [Route(HttpMethod.Post, "/api/sms/Login")]
+        [Route(HttpMethod.Post, LoginUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(SmsLoginRequest), Required = true, Description = "parameters for login")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(AccessTokenResponse))]
-        public object Login()
+        public async Task<object> Login()
         {
-            var request = this.Bind<SmsLoginRequest>();
-            return new AccessTokenResponse
+            var request = this.BindAndValidateModel<SmsLoginRequest>();
+
+            var result = await _accountService.Login(request);
+            if (result == null)
             {
-                AccessToken = "access_token",
-                RefreshToken = "refresh_token",
-                Profile = new UserProfile
-                {
-                    Id = 1,
-                    Name = "name"
-                }
-            };
+                ModelValidationResult.Errors.Add(nameof(request.Phone), "user or password incorrect");
+                throw new BadModelException(ModelValidationResult);
+            }
+
+            return result;
         }
 
         [Route(nameof(ChangePassword))]
-        [Route(HttpMethod.Post, "/api/sms/ChangePassword")]
+        [Route(HttpMethod.Post, ChangePasswordUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Produces = new string[] { })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(ChangePasswordRequest), Required = true, Description = "parameters for change password")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
-        public object ChangePassword()
+        public async Task<object> ChangePassword()
         {
-            var request = this.Bind<ChangePasswordRequest>();
+            //this.RequiresAuthentication();
+            var request = this.BindAndValidateModel<ChangePasswordRequest>();
+            try
+            {
+                await _accountService.ChangePassword(request);
+            }
+            catch (SecurityException)
+            {
+                ModelValidationResult.Errors.Add("oldPassword", "password is not valid");
+                throw new BadModelException(ModelValidationResult);
+            }
+
             return HttpStatusCode.NoContent;
         }
 
         [Route(nameof(RequestResetPassword))]
-        [Route(HttpMethod.Post, "/api/sms/RequestResetPassword")]
+        [Route(HttpMethod.Post, RequestResetPasswordUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Produces = new string[] { })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for reset password")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "phone", ParamType = typeof(long), Required = true, Description = "user's phone with single number, started from 7 for Russia, 79162233224 for example")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
-        public object RequestResetPassword()
+        public async Task<object> RequestResetPassword()
         {
-            var phone = this.Bind<long>();
+            var phone = this.BindAndValidateModel<long>();
+            await _accountService.RequestResetPassword(phone);
             return HttpStatusCode.NoContent;
         }
 
         [Route(nameof(ForceChangePhone))]
-        [Route(HttpMethod.Post, "/api/sms/ForceChangePhone")]
+        [Route(HttpMethod.Post, ForceChangePhoneUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Produces = new string[] { })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for force change phone only administrator")]
-        [RouteParam(ParamIn = ParameterIn.Body, Name = "phone", ParamType = typeof(ForceChangePhone), Required = true, Description = "parameters for change phone")]
+        [RouteParam(ParamIn = ParameterIn.Body, Name = "phone", ParamType = typeof(ChangePhoneRequest), Required = true, Description = "parameters for change phone")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
-        public object ForceChangePhone()
+        public async Task<object> ForceChangePhone()
         {
-            var request = this.Bind<ForceChangePhone>();
+            var request = this.BindAndValidateModel<ChangePhoneRequest>();
+            await _accountService.ForceChangePhone(request);
             return HttpStatusCode.NoContent;
         }
 
         [Route(nameof(DoesUserExist))]
-        [Route(HttpMethod.Get, "/api/sms/DoesUserExist")]
+        [Route(HttpMethod.Get, DoesUserExistUrl)]
         [Route(Produces = new[] { "application/json" })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for check user exists")]
         [RouteParam(ParamIn = ParameterIn.Query, Name = "phone", ParamType = typeof(long), Required = true, Description = "user's phone with single number, started from 7 for Russia, 79162233224 for example")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "True if user exists else false", Model = typeof(bool))]
-        public object DoesUserExist()
+        public async Task<object> DoesUserExist()
         {
-            var phone = this.Bind<long>();
-            return true;
+            decimal phone;
+            if (!decimal.TryParse(Request.Query[nameof(phone)].ToString(), out phone))
+            {
+                ModelValidationResult.Errors.Add(nameof(phone), "wrong phone format");
+                throw new BadModelException(ModelValidationResult);
+            }
+
+            var result = await _accountService.DoesUserExists(phone);
+            return result;
         }
 
         [Route(nameof(PhoneByUserId))]
-        [Route(HttpMethod.Get, "/api/sms/PhoneByUserId")]
+        [Route(HttpMethod.Get, PhoneByUserIdUrl)]
         [Route(Produces = new[] { "application/json" })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for get phone by user id")]
         [RouteParam(ParamIn = ParameterIn.Query, Name = "id", ParamType = typeof(int), Required = true, Description = "User Id")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "User phone", Model = typeof(long))]
-        public object PhoneByUserId()
+        public async Task<object> PhoneByUserId()
         {
-            var userId = this.Bind<long>();
-            return 79160000000;
+            int id;
+            if (!int.TryParse(Request.Query[nameof(id)], out id))
+            {
+                ModelValidationResult.Errors.Add(nameof(id), "bad format");
+                throw new BadModelException(ModelValidationResult);
+            }
+
+            var result = await _accountService.GetProfileByUserId(id);
+            return result.Phone;
         }
 
         [Route(nameof(Refresh))]
-        [Route(HttpMethod.Get, "/api/Refresh/{refreshToken}")]
+        [Route(HttpMethod.Get, RefreshUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Refresh" }, Summary = "Method for refresh access token")]
         [RouteParam(ParamIn = ParameterIn.Path, Name = "refreshToken", ParamType = typeof(string), Required = true, Description = "Refresh token")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(AccessTokenResponse))]
-        public object Refresh()
+        public async Task<object> Refresh()
         {
             var refreshToken = Context.Parameters.refreshToken;
-            return new AccessTokenResponse
-            {
-                AccessToken = "access_token",
-                RefreshToken = refreshToken,
-                Profile = new UserProfile
-                {
-                    Id = 1,
-                    Name = "name"
-                }
-            };
+            var response = await _accountService.Refresh(refreshToken);
+            return response;
         }
 
         [Route(nameof(GetMyProfile))]
-        [Route(HttpMethod.Get, "/api/profile")]
+        [Route(HttpMethod.Get, GetMyProfileUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "UserProfile" }, Summary = "Method for receive own profile")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(UserProfile))]
-        public object GetMyProfile()
+        public async Task<object> GetMyProfile()
         {
-            return new UserProfile
-            {
-                Id = 1,
-                Name = "test"
-            };
+            var profile = await _accountService.GetMyProfile();
+            return profile;
         }
 
         [Route(nameof(GetUserByPhone))]
-        [Route(HttpMethod.Get, "/api/users/sms/{phone}")]
+        [Route(HttpMethod.Get, GetUserByPhoneUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Users" }, Summary = "Method for receive profile by phone")]
         [RouteParam(ParamIn = ParameterIn.Path, Name = "phone", ParamType = typeof(long), Required = true, Description = "User phone")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(UserProfile))]
-        public object GetUserByPhone()
+        public async Task<object> GetUserByPhone()
         {
-            var phone = Context.Parameters.phone;
-            return new UserProfile
+            if (!decimal.TryParse(Context.Parameters.phone.ToString(), out decimal phone))
             {
-                Id = 1,
-                Name = "test",
-                Phone = phone
-            };
+                ModelValidationResult.Errors.Add(nameof(phone), "bad format");
+                throw new BadModelException(ModelValidationResult);
+            }
+
+            var profile = await _accountService.GetProfileByPhone(phone);
+            return profile;
         }
 
-        [Route(nameof(UserFilter))]
-        [Route(HttpMethod.Get, "/api/profile/filter")]
+        [Route(nameof(GetUserByFilter))]
+        [Route(HttpMethod.Get, GetUsersByFilterUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "UserProfile" }, Summary = "Method for receive profiles by user ids")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(UserProfileFilter), Required = true, Description = "Profile filter")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(IEnumerable<UserProfile>))]
-        public object UserFilter()
+        public async Task<object> GetUserByFilter()
         {
-            var filter = this.Bind<UserProfileFilter>();
-            return filter.UserIds.Select(id => new UserProfile
-            {
-                Id = id,
-                Name = "test " + id,
-                Phone = 79000000000 + id
-            }).ToList();
+            var filter = this.BindAndValidateModel<UserProfileFilter>();
+            return await _accountService.GetProfilesByFilter(filter);
         }
 
         [Route(nameof(GetUserById))]
-        [Route(HttpMethod.Get, "/api/users/{id}")]
+        [Route(HttpMethod.Get, GetUserByIdUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Users" }, Summary = "Method for receive profile by user id")]
         [RouteParam(ParamIn = ParameterIn.Path, Name = "id", ParamType = typeof(int), Required = true, Description = "User id")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(UserProfile))]
-        public object GetUserById()
+        public async Task<object> GetUserById()
         {
             var id = Context.Parameters.id;
-            return new UserProfile
-            {
-                Id = id,
-                Name = "test " + id
-            };
+            var profile = await _accountService.GetProfileByUserId(id);
+            return profile;
         }
     }
 }

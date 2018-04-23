@@ -1,10 +1,12 @@
 ﻿using Autofac;
 using Domain0.Nancy;
+using Domain0.Test.Infrastructure;
 using Nancy.Testing;
 using Newtonsoft.Json;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,7 +15,7 @@ using HttpStatusCode = Nancy.HttpStatusCode;
 
 namespace Domain0.Test
 {
-    public class TestModule
+    public class TestModuleTests
     {
         [Fact]
         public async Task Validation_Name_Required()
@@ -81,7 +83,7 @@ namespace Domain0.Test
             Assert.Equal(request.Name, response.Name);
         }
 
-        private IContainer GetContainer()
+        public static IContainer GetContainer(Action<ContainerBuilder> upgrade = null)
         {
             var builder = new ContainerBuilder();
 
@@ -91,7 +93,10 @@ namespace Domain0.Test
             LogManager.Configuration = config;
 
             builder.Register(c => LogManager.GetCurrentClassLogger()).As<ILogger>().InstancePerDependency();
+            builder.RegisterSource(new MoqRegistrationSource());
+            builder.RegisterModule<ApplicationModule>();
 
+            upgrade?.Invoke(builder);
             return builder.Build();
         }
     }

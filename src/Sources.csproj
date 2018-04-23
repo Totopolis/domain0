@@ -68,6 +68,19 @@
     <None Include="server\ProtobufResponse.cs" />
     <None Include="server\ProtobufResponseProcessor.cs" />
     <None Include="server\NancyModuleExtensions.cs" />
+    <None Include="server\Account.cs" />
+    <None Include="server\AccountService.cs" />
+    <None Include="server\ApplicationModule.cs" />
+    <None Include="server\IAccountRepository.cs" />
+    <None Include="server\IMessageTemplateRepository.cs" />
+    <None Include="server\IPasswordGenerator.cs" />
+    <None Include="server\ISmsRequestRepository.cs" />
+    <None Include="server\ISmsClient.cs" />
+    <None Include="server\MessageTemplate.cs" />
+    <None Include="server\RegistryRequest.cs" />
+    <None Include="server\IRoleRepository.cs" />
+    <None Include="server\MapperProfile.cs" />
+    <None Include="server\Role.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="swagger\favicon-16x16.png" />
@@ -95,7 +108,14 @@
     <None Include="server.nancy\ChangePasswordRequest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="test\TestModule.cs" />
+    <None Include="test\TestModuleTests.cs" />
+    <None Include="test\SmsModuleTests.cs" />
+    <None Include="test\MoqRegistrationSource.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="server\IPermissionRepository.cs" />
+    <Compile Include="server\ITokenRegistrationRepository.cs" />
+    <Compile Include="server\TokenRegistration.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

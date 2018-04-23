@@ -33,6 +33,9 @@
     <Reference Include="Autofac, Version=4.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.4.0.0-rc3-316\lib\net451\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="AutoMapper, Version=6.2.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.6.2.2\lib\net45\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="Gerakul.ProtoBufSerializer, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Gerakul.ProtoBufSerializer.1.2.1\lib\net46\Gerakul.ProtoBufSerializer.dll</HintPath>
     </Reference>
@@ -112,11 +115,53 @@
     <Compile Include="..\..\src\server.nancy\UserProfileFilter.cs">
       <Link>Model\UserProfileFilter.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\Account.cs">
+      <Link>Service\Repository\Model\Account.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\AccountService.cs">
+      <Link>Service\AccountService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\ApplicationModule.cs">
+      <Link>Infrastructure\ApplicationModule.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\Domain0Bootstrapper.cs">
       <Link>Domain0Bootstrapper.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\EmbeddedContentConventionBuilder.cs">
       <Link>Infrastructure\EmbeddedContentConventionBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\IAccountRepository.cs">
+      <Link>Service\Repository\IAccountRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\IMessageTemplateRepository.cs">
+      <Link>Service\Repository\IMessageTemplateRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\IPasswordGenerator.cs">
+      <Link>Service\IPasswordGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\IPermissionRepository.cs">
+      <Link>Service\Repository\IPermissionRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\IRequestContext.cs">
+      <Link>Service\IRequestContext.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\IRoleRepository.cs">
+      <Link>Service\Repository\IRoleRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\ISmsClient.cs">
+      <Link>Service\ISmsClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\ISmsRequestRepository.cs">
+      <Link>Service\Repository\ISmsRequestRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\ITokenRegistrationRepository.cs">
+      <Link>Service\Repository\ITokenRegistrationRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\MapperProfile.cs">
+      <Link>Infrastructure\MapperProfile.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\MessageTemplate.cs">
+      <Link>Service\Repository\Model\MessageTemplate.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\NancyModuleExtensions.cs">
       <Link>Infrastructure\NancyModuleExtensions.cs</Link>
@@ -129,6 +174,15 @@
     </Compile>
     <Compile Include="..\..\src\server\ProtobufResponseProcessor.cs">
       <Link>Infrastructure\ProtobufResponseProcessor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\RegistryRequest.cs">
+      <Link>Service\Repository\Model\RegistryRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\Role.cs">
+      <Link>Service\Repository\Model\Role.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\TokenRegistration.cs">
+      <Link>Service\Repository\Model\TokenRegistration.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -14,6 +14,7 @@ using Nancy.Responses.Negotiation;
 using System.Linq;
 using Domain0.Exceptions;
 using NLog;
+using Nancy.ModelBinding;
 
 namespace Domain0.Nancy
 {
@@ -54,8 +55,11 @@ namespace Domain0.Nancy
         protected override void RequestStartup(ILifetimeScope container, IPipelines pipelines, NancyContext context)
         {
             base.RequestStartup(container, pipelines, context);
+            pipelines.BeforeRequest.AddItemToEndOfPipeline((ctx) =>
+            {
+                return null;
+            });
 
-            var responseNegotiator = container.Resolve<IResponseNegotiator>();
             pipelines.OnError.AddItemToStartOfPipeline((ctx, ex) =>
             {
                 switch (ex)
@@ -70,6 +74,12 @@ namespace Domain0.Nancy
                         return new Negotiator(ctx)
                             .WithStatusCode(HttpStatusCode.NotFound)
                             .WithReasonPhrase("not found error");
+                    case ModelBindingException binding:
+                        return new Negotiator(ctx)
+                            .WithStatusCode(HttpStatusCode.BadRequest)
+                            .WithHeader("X-Status-Reason", "validation error")
+                            .WithReasonPhrase("validation error")
+                            .WithMediaRangeModel("application/json", new List<ModelValidationError> { new ModelValidationError(binding.BoundType.Name, "couldnt deserialize")});
                     default:
                         _logger.Error(ex, ex.ToString());
                         break;
