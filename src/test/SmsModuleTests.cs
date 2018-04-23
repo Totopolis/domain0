@@ -822,5 +822,54 @@ namespace Domain0.Test
 
             Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
         }
+
+        [Fact]
+        public async Task GetProfilesByFilter_Success()
+        {
+            var container = TestModuleTests.GetContainer(b =>
+            {
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
+            });
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByUserIds(It.IsAny<IEnumerable<int>>())).Returns<IEnumerable<int>>(ids => Task.FromResult(ids.Select(id => new Account {Id=id}).ToArray()));
+
+            var result = await browser.Post(SmsModule.GetUsersByFilterUrl, with =>
+            {
+                with.Accept("application/json");
+                with.JsonBody(new UserProfileFilter
+                {
+                    UserIds = Enumerable.Range(1, 10).ToList()
+                });
+            });
+
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            var response = JsonConvert.DeserializeObject<UserProfile[]>(result.Body.AsString());
+            Assert.Equal(10, response.Length);
+        }
+
+        [Fact]
+        public async Task GetProfilesByFilter_BadRequest()
+        {
+            var container = TestModuleTests.GetContainer(b =>
+            {
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
+            });
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByUserIds(It.IsAny<IEnumerable<int>>())).Returns<IEnumerable<int>>(ids => Task.FromResult(ids.Select(id => new Account { Id = id }).ToArray()));
+
+            var result = await browser.Post(SmsModule.GetUsersByFilterUrl, with =>
+            {
+                with.Accept("application/json");
+                with.JsonBody("{userIds:['qwe','rty']}");
+            });
+
+            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+        }
     }
 }
