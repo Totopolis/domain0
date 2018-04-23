@@ -192,10 +192,17 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Sms" }, Summary = "Method for get phone by user id")]
         [RouteParam(ParamIn = ParameterIn.Query, Name = "id", ParamType = typeof(int), Required = true, Description = "User Id")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "User phone", Model = typeof(long))]
-        public object PhoneByUserId()
+        public async Task<object> PhoneByUserId()
         {
-            var userId = this.Bind<long>();
-            return 79160000000;
+            int id;
+            if (!int.TryParse(Request.Query[nameof(id)], out id))
+            {
+                ModelValidationResult.Errors.Add(nameof(id), "bad format");
+                throw new BadModelException(ModelValidationResult);
+            }
+
+            var result = await _accountService.GetPhoneByUserId(id);
+            return result;
         }
 
         [Route(nameof(Refresh))]

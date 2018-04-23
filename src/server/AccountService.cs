@@ -25,6 +25,8 @@ namespace Domain0.Service
         Task RequestResetPassword(decimal phone);
 
         Task ForceChangePhone(ChangePhoneRequest request);
+
+        Task<decimal> GetPhoneByUserId(int id);
     }
 
     public class AccountService : IAccountService
@@ -282,6 +284,15 @@ namespace Domain0.Service
             account.Phone = request.NewPhone;
 
             await _accountRepository.Update(account);
+        }
+
+        public async Task<decimal> GetPhoneByUserId(int id)
+        {
+            var account = await _accountRepository.FindByUserId(id);
+            if (account == null)
+                throw new NotFoundException(nameof(account));
+
+            return account.Phone;
         }
     }
 }
