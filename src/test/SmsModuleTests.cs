@@ -529,5 +529,55 @@ namespace Domain0.Test
 
             Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
         }
+
+        [Fact]
+        public async Task DoesUserExists_IsTrue()
+        {
+            var container = TestModuleTests.GetContainer(b =>
+            {
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
+            });
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var phone = 79000000000;
+
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync(new Account());
+
+            var result = await browser.Get(SmsModule.DoesUserExistUrl, with =>
+            {
+                with.Accept("application/json");
+                with.Query(nameof(phone), phone.ToString());
+            });
+
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.True(bool.Parse(result.Body.AsString()));
+        }
+
+        [Fact]
+        public async Task DoesUserExists_IsFalse()
+        {
+            var container = TestModuleTests.GetContainer(b =>
+            {
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
+            });
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var phone = 79000000000;
+
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync((Account)null);
+
+            var result = await browser.Get(SmsModule.DoesUserExistUrl, with =>
+            {
+                with.Accept("application/json");
+                with.Query(nameof(phone), phone.ToString());
+            });
+
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.False(bool.Parse(result.Body.AsString()));
+        }
     }
 }
