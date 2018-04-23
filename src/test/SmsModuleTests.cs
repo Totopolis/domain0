@@ -824,6 +824,54 @@ namespace Domain0.Test
         }
 
         [Fact]
+        public async Task GetProfileByUserId_Success()
+        {
+            var container = TestModuleTests.GetContainer(b =>
+            {
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
+            });
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var userId = 1;
+
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync(new Account {Id = userId});
+
+            var result = await browser.Get(SmsModule.GetUserByIdUrl.Replace("{id}", userId.ToString()), with =>
+            {
+                with.Accept("application/json");
+            });
+
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            var response = JsonConvert.DeserializeObject<UserProfile>(result.Body.AsString());
+            Assert.Equal(userId, response.Id);
+        }
+
+        [Fact]
+        public async Task GetProfileByUserId_NotFound()
+        {
+            var container = TestModuleTests.GetContainer(b =>
+            {
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
+            });
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var userId = 1;
+
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync((Account)null);
+
+            var result = await browser.Get(SmsModule.GetUserByIdUrl.Replace("{id}", userId.ToString()), with =>
+            {
+                with.Accept("application/json");
+            });
+
+            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+        [Fact]
         public async Task GetProfilesByFilter_Success()
         {
             var container = TestModuleTests.GetContainer(b =>
