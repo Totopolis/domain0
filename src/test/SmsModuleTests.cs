@@ -772,5 +772,55 @@ namespace Domain0.Test
             Assert.Equal(userId, response.Id);
             Assert.Equal(phone, response.Phone);
         }
+
+        [Fact]
+        public async Task GetProfileByPhone_Success()
+        {
+            var container = TestModuleTests.GetContainer(b =>
+            {
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
+            });
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var phone = 79000000000;
+            var userId = 1;
+
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync(new Account { Id = userId, Phone = phone });
+
+            var result = await browser.Get(SmsModule.GetUserByPhoneUrl.Replace("{phone}", phone.ToString()), with =>
+            {
+                with.Accept("application/json");
+            });
+
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            var response = JsonConvert.DeserializeObject<UserProfile>(result.Body.AsString());
+            Assert.Equal(userId, response.Id);
+            Assert.Equal(phone, response.Phone);
+        }
+
+        [Fact]
+        public async Task GetProfileByPhone_NotFound()
+        {
+            var container = TestModuleTests.GetContainer(b =>
+            {
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
+            });
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var phone = 79000000000;
+
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync((Account) null);
+
+            var result = await browser.Get(SmsModule.GetUserByPhoneUrl.Replace("{phone}", phone.ToString()), with =>
+            {
+                with.Accept("application/json");
+            });
+
+            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
     }
 }
