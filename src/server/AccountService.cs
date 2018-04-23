@@ -21,6 +21,8 @@ namespace Domain0.Service
         Task<AccessTokenResponse> Login(SmsLoginRequest request);
 
         Task ChangePassword(ChangePasswordRequest request);
+
+        Task RequestResetPassword(decimal phone);
     }
 
     public class AccountService : IAccountService
@@ -244,6 +246,27 @@ namespace Domain0.Service
             account.Salt = _authGenerator.GenerateSalt();
             account.Password = _authGenerator.HashPassword(request.NewPassword, account.Salt);
             await _accountRepository.Update(account);
+        }
+
+        public async Task RequestResetPassword(decimal phone)
+        {
+            var account = await _accountRepository.FindByPhone(phone);
+            if (account == null)
+                throw new NotFoundException(nameof(phone), "account not found");
+
+            var password = _authGenerator.GeneratePassword();
+            var expiredAt = TimeSpan.FromSeconds(90);
+            await _smsRequestRepository.Save(new SmsRequest
+            {
+                Phone = phone,
+                Password = password,
+                ExpiredAt = DateTime.UtcNow.Add(expiredAt)
+            });
+
+            var template = await _messageTemplateRepository.GetRequestResetTemplate();
+            var message = string.Format(template, password, expiredAt.TotalMinutes);
+
+            await _smsClient.Send(phone, message);
         }
     }
 }

@@ -7,5 +7,7 @@ namespace Domain0.Repository
         Task<string> GetWelcomeTemplate();
 
         Task<string> GetRegisterTemplate();
+
+        Task<string> GetRequestResetTemplate();
     }
 }

@@ -148,9 +148,10 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Sms" }, Summary = "Method for reset password")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "phone", ParamType = typeof(long), Required = true, Description = "user's phone with single number, started from 7 for Russia, 79162233224 for example")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
-        public object RequestResetPassword()
+        public async Task<object> RequestResetPassword()
         {
-            var phone = this.Bind<long>();
+            var phone = this.BindAndValidateModel<long>();
+            await _accountService.RequestResetPassword(phone);
             return HttpStatusCode.NoContent;
         }
 
