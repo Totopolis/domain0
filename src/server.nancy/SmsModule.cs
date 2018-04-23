@@ -47,7 +47,7 @@ namespace Domain0.Nancy
             Get(GetMyProfileUrl, ctx => GetMyProfile(), name: nameof(GetMyProfile));
             Get(GetUserByPhoneUrl, ctx => GetUserByPhone(), name: nameof(GetUserByPhone));
             Post(GetUsersByFilterUrl, ctx => GetUserByFilter(), name: nameof(GetUserByFilter));
-            Post(GetUserByIdUrl, ctx => GetUserById(), name: nameof(GetUserById));
+            Get(GetUserByIdUrl, ctx => GetUserById(), name: nameof(GetUserById));
         }
 
         [Route(nameof(Register))]
@@ -201,8 +201,8 @@ namespace Domain0.Nancy
                 throw new BadModelException(ModelValidationResult);
             }
 
-            var result = await _accountService.GetPhoneByUserId(id);
-            return result;
+            var result = await _accountService.GetProfileByUserId(id);
+            return result.Phone;
         }
 
         [Route(nameof(Refresh))]
@@ -266,14 +266,11 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Users" }, Summary = "Method for receive profile by user id")]
         [RouteParam(ParamIn = ParameterIn.Path, Name = "id", ParamType = typeof(int), Required = true, Description = "User id")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(UserProfile))]
-        public object GetUserById()
+        public async Task<object> GetUserById()
         {
             var id = Context.Parameters.id;
-            return new UserProfile
-            {
-                Id = id,
-                Name = "test " + id
-            };
+            var profile = await _accountService.GetProfileByUserId(id);
+            return profile;
         }
     }
 }

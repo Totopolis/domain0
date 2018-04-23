@@ -26,13 +26,13 @@ namespace Domain0.Service
 
         Task ForceChangePhone(ChangePhoneRequest request);
 
-        Task<decimal> GetPhoneByUserId(int id);
-
         Task<AccessTokenResponse> Refresh(string refreshToken);
 
         Task<UserProfile> GetMyProfile();
 
         Task<UserProfile> GetProfileByPhone(decimal phone);
+
+        Task<UserProfile> GetProfileByUserId(int id);
 
         Task<UserProfile[]> GetProfilesByFilter(UserProfileFilter filter);
     }
@@ -294,15 +294,6 @@ namespace Domain0.Service
             await _accountRepository.Update(account);
         }
 
-        public async Task<decimal> GetPhoneByUserId(int id)
-        {
-            var account = await _accountRepository.FindByUserId(id);
-            if (account == null)
-                throw new NotFoundException(nameof(account));
-
-            return account.Phone;
-        }
-
         public async Task<AccessTokenResponse> Refresh(string refreshToken)
         {
             var id = _authGenerator.GetTid(refreshToken);
@@ -338,6 +329,14 @@ namespace Domain0.Service
             var account = await _accountRepository.FindByPhone(phone);
             if (account == null)
                 throw new NotFoundException(nameof(account), phone);
+            return _mapper.Map<UserProfile>(account);
+        }
+
+        public async Task<UserProfile> GetProfileByUserId(int id)
+        {
+            var account = await _accountRepository.FindByUserId(id);
+            if (account == null)
+                throw new NotFoundException(nameof(account), id);
             return _mapper.Map<UserProfile>(account);
         }
 
