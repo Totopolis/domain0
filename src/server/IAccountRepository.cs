@@ -9,6 +9,8 @@ namespace Domain0.Repository
 
         Task<Account> FindByPhone(decimal phone);
 
+        Task<Account> FindByUserId(int userId);
+
         Task<int> Insert(Account account);
 
         Task Update(Account account);

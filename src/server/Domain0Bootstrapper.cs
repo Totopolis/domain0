@@ -54,6 +54,10 @@ namespace Domain0.Nancy
         protected override void RequestStartup(ILifetimeScope container, IPipelines pipelines, NancyContext context)
         {
             base.RequestStartup(container, pipelines, context);
+            pipelines.BeforeRequest.AddItemToEndOfPipeline((ctx) =>
+            {
+                return null;
+            });
 
             pipelines.OnError.AddItemToStartOfPipeline((ctx, ex) =>
             {

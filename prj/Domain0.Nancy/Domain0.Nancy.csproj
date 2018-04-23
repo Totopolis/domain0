@@ -142,6 +142,9 @@
     <Compile Include="..\..\src\server\IPermissionRepository.cs">
       <Link>Service\Repository\IPermissionRepository.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\IRequestContext.cs">
+      <Link>Service\IRequestContext.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\IRoleRepository.cs">
       <Link>Service\Repository\IRoleRepository.cs</Link>
     </Compile>

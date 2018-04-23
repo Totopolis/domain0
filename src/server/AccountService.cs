@@ -19,6 +19,8 @@ namespace Domain0.Service
         Task<UserProfile> CreateUser(ForceCreateUserRequest request);
 
         Task<AccessTokenResponse> Login(SmsLoginRequest request);
+
+        Task ChangePassword(ChangePasswordRequest request);
     }
 
     public class AccountService : IAccountService
@@ -28,6 +30,8 @@ namespace Domain0.Service
         private readonly ISmsClient _smsClient;
 
         private readonly IAuthGenerator _authGenerator;
+
+        private readonly IRequestContext _requestContext;
 
         private readonly IAccountRepository _accountRepository;
 
@@ -45,6 +49,7 @@ namespace Domain0.Service
             IMapper mapper,
             ISmsClient smsClient,
             IAuthGenerator authGenerator,
+            IRequestContext requestContext,
             IAccountRepository accountRepository,
             IRoleRepository roleRepository,
             ISmsRequestRepository smsRequestRepository,
@@ -55,6 +60,7 @@ namespace Domain0.Service
             _mapper = mapper;
             _smsClient = smsClient;
             _authGenerator = authGenerator;
+            _requestContext = requestContext;
 
             _accountRepository = accountRepository;
             _roleRepository = roleRepository;
@@ -191,9 +197,7 @@ namespace Domain0.Service
             // sms request registration
             var phone = account?.Phone ?? decimal.Parse(request.Phone);
             var smsRequest = await _smsRequestRepository.Pick(phone);
-            if (smsRequest == null)
-                return null;
-            if (smsRequest.ExpiredAt < DateTime.UtcNow)
+            if (!(smsRequest?.ExpiredAt > DateTime.UtcNow))
             {
                 await _smsRequestRepository.Remove(phone);
                 return null;
@@ -229,6 +233,17 @@ namespace Domain0.Service
             }
 
             return await GetTokenResponse(account);
+        }
+
+        public async Task ChangePassword(ChangePasswordRequest request)
+        {
+            var account = await _accountRepository.FindByUserId(_requestContext.UserId);
+            if (!_authGenerator.CheckPassword(request.OldPassword, account?.Password, account?.Salt))
+                throw new SecurityException("password not match");
+
+            account.Salt = _authGenerator.GenerateSalt();
+            account.Password = _authGenerator.HashPassword(request.NewPassword, account.Salt);
+            await _accountRepository.Update(account);
         }
     }
 }

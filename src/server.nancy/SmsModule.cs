@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Domain0.Exceptions;
 using Domain0.Nancy.Infrastructure;
 using System;
+using Nancy.Security;
 
 namespace Domain0.Nancy
 {
@@ -123,9 +124,20 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(ChangePasswordRequest), Required = true, Description = "parameters for change password")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
-        public object ChangePassword()
+        public async Task<object> ChangePassword()
         {
-            var request = this.Bind<ChangePasswordRequest>();
+            //this.RequiresAuthentication();
+            var request = this.BindAndValidateModel<ChangePasswordRequest>();
+            try
+            {
+                await _accountService.ChangePassword(request);
+            }
+            catch (SecurityException)
+            {
+                ModelValidationResult.Errors.Add("oldPassword", "password is not valid");
+                throw new BadModelException(ModelValidationResult);
+            }
+
             return HttpStatusCode.NoContent;
         }
 
