@@ -371,42 +371,6 @@ namespace Domain0.Test
         }
 
         [Fact]
-        public async Task Login_TokenExists()
-        {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
-            });
-            var bootstrapper = new Domain0Bootstrapper(container);
-            var browser = new Browser(bootstrapper);
-
-            var phone = 79000000000;
-            var password = "password";
-
-            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
-            accountMock.Setup(a => a.FindByLogin(phone.ToString())).ReturnsAsync(new Account { Id = 1, Login = phone.ToString(), Phone = phone, Password = password });
-
-            var permissionMock = Mock.Get(container.Resolve<IPermissionRepository>());
-            permissionMock.Setup(a => a.GetByUserId(It.IsAny<int>())).ReturnsAsync(new[] { "test1", "test2" });
-
-            var tokenMock = Mock.Get(container.Resolve<ITokenRegistrationRepository>());
-            tokenMock.Setup(a => a.FindLastTokenByUserId(It.IsAny<int>())).ReturnsAsync(new TokenRegistration { UserId = 1, ExpiredAt = DateTime.UtcNow.AddDays(1), AccessToken="test1,test2,test3"});
-
-            var authGenerator = Mock.Get(container.Resolve<IAuthGenerator>());
-            authGenerator.Setup(a => a.CheckPassword(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns<string, string, string>((pasd, hash, salt) => pasd == hash);
-            authGenerator.Setup(a => a.GenerateAccessToken(It.IsAny<int>(), It.IsAny<string[]>())).Returns<int, string[]>((userId, perms) => userId + string.Join("", perms));
-            authGenerator.Setup(a => a.GenerateRefreshToken(It.IsAny<int>(), It.IsAny<int>())).Returns<int, int>((tid, userId) => $"{tid}_{userId}");
-
-            var result = await browser.Post(SmsModule.LoginUrl, with =>
-            {
-                with.Accept("application/json");
-                with.JsonBody(new SmsLoginRequest { Phone = phone.ToString(), Password = password });
-            });
-
-            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
-        }
-
-        [Fact]
         public async Task ChangePassword_Account()
         {
             var container = TestModuleTests.GetContainer(b =>
@@ -506,6 +470,61 @@ namespace Domain0.Test
             {
                 with.Accept("application/json");
                 with.JsonBody(phone);
+            });
+
+            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task ForceChangePhone_Success()
+        {
+            var container = TestModuleTests.GetContainer(b =>
+            {
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
+            });
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var userId = 1;
+            var phone = 79000000000;
+            var newphone = 79000000001;
+
+            var account = new Account { Id = 1, Login = phone.ToString(), Phone = phone };
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync(account);
+
+            var result = await browser.Post(SmsModule.ForceChangePhoneUrl, with =>
+            {
+                with.Accept("application/json");
+                with.JsonBody(new ChangePhoneRequest {UserId = userId, NewPhone = newphone});
+            });
+
+            Assert.Equal(HttpStatusCode.NoContent, result.StatusCode);
+            Assert.Equal(newphone, account.Phone);
+            Assert.Equal(newphone.ToString(), account.Login);
+            accountMock.Verify(a => a.Update(It.IsAny<Account>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task ForceChangePhone_NotFound()
+        {
+            var container = TestModuleTests.GetContainer(b =>
+            {
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
+            });
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var userId = 1;
+            var newphone = 79000000001;
+
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync((Account) null);
+
+            var result = await browser.Post(SmsModule.ForceChangePhoneUrl, with =>
+            {
+                with.Accept("application/json");
+                with.JsonBody(new ChangePhoneRequest { UserId = userId, NewPhone = newphone });
             });
 
             Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);

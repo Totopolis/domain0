@@ -160,7 +160,7 @@ namespace Domain0.Service
             if (!string.IsNullOrEmpty(accessToken))
             {
                 var principal = _authGenerator.Parse(accessToken);
-                if (!principal.GetPermissions().All(permission => permissions.Contains(permission)))
+                if (!principal?.GetPermissions().All(permission => permissions.Contains(permission)) ?? true)
                     accessToken = null;
             }
 
@@ -277,9 +277,9 @@ namespace Domain0.Service
             if (account == null)
                 throw new NotFoundException(nameof(request.UserId), "account not found");
 
-            account.Phone = request.NewPhone;
             if (account.Login == account.Phone.ToString())
                 account.Login = request.NewPhone.ToString();
+            account.Phone = request.NewPhone;
 
             await _accountRepository.Update(account);
         }
