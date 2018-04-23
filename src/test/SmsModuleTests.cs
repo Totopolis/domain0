@@ -405,5 +405,46 @@ namespace Domain0.Test
 
             Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
         }
+
+        [Fact]
+        public async Task ChangePassword_Account()
+        {
+            var container = TestModuleTests.GetContainer(b =>
+            {
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
+            });
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var userId = 1;
+            var phone = 79000000000;
+            var password = "password";
+            var newpassword = "newpassword";
+            var salt = "salt";
+
+            var contextMock = Mock.Get(container.Resolve<IRequestContext>());
+            contextMock.Setup(a => a.UserId).Returns(userId);
+
+            var account = new Account {Id = userId, Login = phone.ToString(), Phone = phone, Password = password};
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByUserId(1)).ReturnsAsync(account);
+
+            var authGenerator = Mock.Get(container.Resolve<IAuthGenerator>());
+            authGenerator.Setup(a => a.CheckPassword(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns<string, string, string>((p, h, s) => p == h);
+            authGenerator.Setup(a => a.GenerateSalt()).Returns(() => salt);
+            authGenerator.Setup(a => a.HashPassword(It.IsAny<string>(), It.IsAny<string>())).Returns<string, string>((p, s) => p + s);
+
+            var result = await browser.Post(SmsModule.ChangePasswordUrl, with =>
+            {
+                with.Accept("application/json");
+                with.JsonBody(new ChangePasswordRequest { OldPassword = password, NewPassword = newpassword });
+            });
+
+            Assert.Equal(HttpStatusCode.NoContent, result.StatusCode);
+
+            accountMock.Verify(a => a.Update(It.IsAny<Account>()), Times.Once);
+            Assert.Equal(newpassword + salt, account.Password);
+            Assert.Equal(salt, account.Salt);
+        }
     }
 }
