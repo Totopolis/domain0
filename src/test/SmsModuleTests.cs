@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using System;
+using System.Security.Claims;
 
 namespace Domain0.Test
 {
@@ -625,6 +626,118 @@ namespace Domain0.Test
             {
                 with.Accept("application/json");
                 with.Query(nameof(id), id.ToString());
+            });
+
+            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task Refresh_Success()
+        {
+            var container = TestModuleTests.GetContainer(b =>
+            {
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
+            });
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var userId = 101;
+            var tid = 1001;
+            var refreshToken = "refreshToken123123";
+            var accessToken = "test1,test2,test3";
+
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync(new Account {Id = userId});
+
+            var passwordMock = Mock.Get(container.Resolve<IAuthGenerator>());
+            passwordMock.Setup(p => p.GetTid(refreshToken)).Returns(tid);
+
+            var authGenerator = Mock.Get(container.Resolve<IAuthGenerator>());
+            authGenerator.Setup(a => a.Parse(It.IsAny<string>())).Returns<string>(token =>
+                new ClaimsPrincipal(new ClaimsIdentity(token.Split(',').Select(r => new Claim(ClaimTypes.Role, r)))));
+            authGenerator.Setup(a => a.GenerateAccessToken(It.IsAny<int>(), It.IsAny<string[]>()))
+                .Returns<int, string[]>((uid, roles) => $"{uid}_{string.Join("_", roles)}");
+
+            var tokenMock = Mock.Get(container.Resolve<ITokenRegistrationRepository>());
+            tokenMock.Setup(a => a.FindById(tid)).ReturnsAsync(new TokenRegistration
+            {
+                Id = tid,
+                AccessToken = accessToken,
+                UserId = userId
+            });
+
+            var result = await browser.Get(SmsModule.RefreshUrl.Replace("{refreshToken}", refreshToken), with =>
+            {
+                with.Accept("application/json");
+            });
+
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            var response = JsonConvert.DeserializeObject<AccessTokenResponse>(result.Body.AsString());
+            Assert.Equal(userId, response.Profile.Id);
+            Assert.Equal("101_test1_test2_test3", response.AccessToken);
+            Assert.Equal(refreshToken, response.RefreshToken);
+        }
+
+        [Fact]
+        public async Task Refresh_Account_NotFound()
+        {
+            var container = TestModuleTests.GetContainer(b =>
+            {
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
+            });
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var userId = 101;
+            var tid = 1001;
+            var refreshToken = "refreshToken123123";
+            var accessToken = "test1,test2,test3";
+
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync((Account) null);
+
+            var authGenerator = Mock.Get(container.Resolve<IAuthGenerator>());
+            authGenerator.Setup(p => p.GetTid(refreshToken)).Returns(tid);
+
+            var tokenMock = Mock.Get(container.Resolve<ITokenRegistrationRepository>());
+            tokenMock.Setup(a => a.FindById(tid)).ReturnsAsync(new TokenRegistration
+            {
+                Id = tid,
+                AccessToken = accessToken,
+                UserId = userId
+            });
+
+            var result = await browser.Get(SmsModule.RefreshUrl.Replace("{refreshToken}", refreshToken), with =>
+            {
+                with.Accept("application/json");
+            });
+
+            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task Refresh_TokenRegistry_NotFound()
+        {
+            var container = TestModuleTests.GetContainer(b =>
+            {
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
+            });
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var userId = 101;
+            var tid = 1001;
+            var refreshToken = "refreshToken123123";
+
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync(new Account { Id = userId });
+
+            var authGenerator = Mock.Get(container.Resolve<IAuthGenerator>());
+            authGenerator.Setup(p => p.GetTid(refreshToken)).Returns(tid);
+
+            var result = await browser.Get(SmsModule.RefreshUrl.Replace("{refreshToken}", refreshToken), with =>
+            {
+                with.Accept("application/json");
             });
 
             Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
