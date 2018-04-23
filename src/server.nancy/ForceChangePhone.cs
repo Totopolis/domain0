@@ -4,14 +4,14 @@ using Nancy.Swagger.Annotations.Attributes;
 namespace Domain0.Model
 {
     [Model("Force change phone request")]
-    public class ForceChangePhone
+    public class ChangePhoneRequest
     {
         [ModelProperty(Ignore = true)]
-        public static MessageDescriptor<ForceChangePhone> DefaultDescriptor
-            => MessageDescriptor<ForceChangePhone>.Create(new[]
+        public static MessageDescriptor<ChangePhoneRequest> DefaultDescriptor
+            => MessageDescriptor<ChangePhoneRequest>.Create(new[]
             {
-                FieldSetting<ForceChangePhone>.CreateInt32(1, c => c.UserId, (c, v) => c.UserId = v),
-                FieldSetting<ForceChangePhone>.CreateInt64(2, c => c.NewPhone, (c, v) => c.NewPhone = v),
+                FieldSetting<ChangePhoneRequest>.CreateInt32(1, c => c.UserId, (c, v) => c.UserId = v),
+                FieldSetting<ChangePhoneRequest>.CreateInt64(2, c => c.NewPhone, (c, v) => c.NewPhone = v)
             });
 
         /// <summary>

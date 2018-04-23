@@ -23,6 +23,8 @@ namespace Domain0.Service
         Task ChangePassword(ChangePasswordRequest request);
 
         Task RequestResetPassword(decimal phone);
+
+        Task ForceChangePhone(ChangePhoneRequest request);
     }
 
     public class AccountService : IAccountService
@@ -267,6 +269,19 @@ namespace Domain0.Service
             var message = string.Format(template, password, expiredAt.TotalMinutes);
 
             await _smsClient.Send(phone, message);
+        }
+
+        public async Task ForceChangePhone(ChangePhoneRequest request)
+        {
+            var account = await _accountRepository.FindByUserId(request.UserId);
+            if (account == null)
+                throw new NotFoundException(nameof(request.UserId), "account not found");
+
+            account.Phone = request.NewPhone;
+            if (account.Login == account.Phone.ToString())
+                account.Login = request.NewPhone.ToString();
+
+            await _accountRepository.Update(account);
         }
     }
 }

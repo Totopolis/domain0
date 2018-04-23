@@ -10,8 +10,6 @@ using System.Security;
 using System.Threading.Tasks;
 using Domain0.Exceptions;
 using Domain0.Nancy.Infrastructure;
-using System;
-using Nancy.Security;
 
 namespace Domain0.Nancy
 {
@@ -160,11 +158,12 @@ namespace Domain0.Nancy
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Produces = new string[] { })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for force change phone only administrator")]
-        [RouteParam(ParamIn = ParameterIn.Body, Name = "phone", ParamType = typeof(ForceChangePhone), Required = true, Description = "parameters for change phone")]
+        [RouteParam(ParamIn = ParameterIn.Body, Name = "phone", ParamType = typeof(ChangePhoneRequest), Required = true, Description = "parameters for change phone")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
-        public object ForceChangePhone()
+        public async Task<object> ForceChangePhone()
         {
-            var request = this.Bind<ForceChangePhone>();
+            var request = this.Bind<ChangePhoneRequest>();
+            await _accountService.ForceChangePhone(request);
             return HttpStatusCode.NoContent;
         }
 
