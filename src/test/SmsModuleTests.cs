@@ -446,5 +446,69 @@ namespace Domain0.Test
             Assert.Equal(newpassword + salt, account.Password);
             Assert.Equal(salt, account.Salt);
         }
+
+        [Fact]
+        public async Task ResetPassword_Success()
+        {
+            var container = TestModuleTests.GetContainer(b =>
+            {
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
+            });
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var phone = 79000000000;
+            var password = "password";
+
+            var account = new Account { Id = 1, Login = phone.ToString(), Phone = phone, Password = password };
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync(account);
+
+            var messageTemplateMock = Mock.Get(container.Resolve<IMessageTemplateRepository>());
+            messageTemplateMock.Setup(a => a.GetRequestResetTemplate()).ReturnsAsync("{0}_test");
+
+            var authGenerator = Mock.Get(container.Resolve<IAuthGenerator>());
+            authGenerator.Setup(a => a.GeneratePassword()).Returns(() => password);
+
+            var result = await browser.Post(SmsModule.RequestResetPasswordUrl, with =>
+            {
+                with.Accept("application/json");
+                with.JsonBody(phone);
+            });
+
+            Assert.Equal(HttpStatusCode.NoContent, result.StatusCode);
+
+            var smsRequestMock = Mock.Get(container.Resolve<ISmsRequestRepository>());
+            smsRequestMock.Verify(a => a.Save(It.IsAny<SmsRequest>()), Times.Once);
+
+            var smsMock = Mock.Get(container.Resolve<ISmsClient>());
+            smsMock.Verify(a => a.Send(phone, password + "_test"), Times.Once);
+        }
+
+        [Fact]
+        public async Task ResetPassword_NotFound()
+        {
+            var container = TestModuleTests.GetContainer(b =>
+            {
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
+            });
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var phone = 79000000000;
+            var password = "password";
+
+            var account = new Account { Id = 1, Login = phone.ToString(), Phone = phone, Password = password };
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync((Account) null);
+
+            var result = await browser.Post(SmsModule.RequestResetPasswordUrl, with =>
+            {
+                with.Accept("application/json");
+                with.JsonBody(phone);
+            });
+
+            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
     }
 }
