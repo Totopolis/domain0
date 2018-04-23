@@ -1,4 +1,5 @@
 ﻿using Domain0.Repository.Model;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Domain0.Repository
@@ -14,5 +15,7 @@ namespace Domain0.Repository
         Task<int> Insert(Account account);
 
         Task Update(Account account);
+
+        Task<Account[]> FindByUserIds(IEnumerable<int> userIds);
     }
 }

@@ -33,6 +33,8 @@ namespace Domain0.Service
         Task<UserProfile> GetMyProfile();
 
         Task<UserProfile> GetProfileByPhone(decimal phone);
+
+        Task<UserProfile[]> GetProfilesByFilter(UserProfileFilter filter);
     }
 
     public class AccountService : IAccountService
@@ -337,6 +339,12 @@ namespace Domain0.Service
             if (account == null)
                 throw new NotFoundException(nameof(account), phone);
             return _mapper.Map<UserProfile>(account);
+        }
+
+        public async Task<UserProfile[]> GetProfilesByFilter(UserProfileFilter filter)
+        {
+            var accounts = await _accountRepository.FindByUserIds(filter.UserIds);
+            return _mapper.Map<UserProfile[]>(accounts);
         }
     }
 }

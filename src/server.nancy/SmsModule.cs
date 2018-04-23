@@ -26,7 +26,7 @@ namespace Domain0.Nancy
         public const string RefreshUrl = "/api/Refresh/{refreshToken}";
         public const string GetMyProfileUrl = "/api/profile";
         public const string GetUserByPhoneUrl = "/api/users/sms/{phone}";
-        public const string GetUserByFilterUrl = "/api/profile/filter";
+        public const string GetUsersByFilterUrl = "/api/profile/filter";
         public const string GetUserByIdUrl = "/api/users/{id}";
 
         private readonly IAccountService _accountService;
@@ -46,7 +46,7 @@ namespace Domain0.Nancy
             Get(RefreshUrl, ctx => Refresh(), name: nameof(Refresh));
             Get(GetMyProfileUrl, ctx => GetMyProfile(), name: nameof(GetMyProfile));
             Get(GetUserByPhoneUrl, ctx => GetUserByPhone(), name: nameof(GetUserByPhone));
-            Post(GetUserByFilterUrl, ctx => GetUserByFilter(), name: nameof(GetUserByFilter));
+            Post(GetUsersByFilterUrl, ctx => GetUserByFilter(), name: nameof(GetUserByFilter));
             Post(GetUserByIdUrl, ctx => GetUserById(), name: nameof(GetUserById));
         }
 
@@ -248,21 +248,16 @@ namespace Domain0.Nancy
         }
 
         [Route(nameof(GetUserByFilter))]
-        [Route(HttpMethod.Get, GetUserByFilterUrl)]
+        [Route(HttpMethod.Get, GetUsersByFilterUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "UserProfile" }, Summary = "Method for receive profiles by user ids")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(UserProfileFilter), Required = true, Description = "Profile filter")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(IEnumerable<UserProfile>))]
-        public object GetUserByFilter()
+        public async Task<object> GetUserByFilter()
         {
-            var filter = this.Bind<UserProfileFilter>();
-            return filter.UserIds.Select(id => new UserProfile
-            {
-                Id = id,
-                Name = "test " + id,
-                Phone = 79000000000 + id
-            }).ToList();
+            var filter = this.BindAndValidateModel<UserProfileFilter>();
+            return await _accountService.GetProfilesByFilter(filter);
         }
 
         [Route(nameof(GetUserById))]
