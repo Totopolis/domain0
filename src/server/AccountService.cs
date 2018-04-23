@@ -31,6 +31,8 @@ namespace Domain0.Service
         Task<AccessTokenResponse> Refresh(string refreshToken);
 
         Task<UserProfile> GetMyProfile();
+
+        Task<UserProfile> GetProfileByPhone(decimal phone);
     }
 
     public class AccountService : IAccountService
@@ -324,6 +326,16 @@ namespace Domain0.Service
         {
             var userId = _requestContext.UserId;
             var account = await _accountRepository.FindByUserId(userId);
+            if (account == null)
+                throw new NotFoundException(nameof(account), userId);
+            return _mapper.Map<UserProfile>(account);
+        }
+
+        public async Task<UserProfile> GetProfileByPhone(decimal phone)
+        {
+            var account = await _accountRepository.FindByPhone(phone);
+            if (account == null)
+                throw new NotFoundException(nameof(account), phone);
             return _mapper.Map<UserProfile>(account);
         }
     }

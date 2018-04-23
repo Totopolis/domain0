@@ -742,5 +742,35 @@ namespace Domain0.Test
 
             Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
         }
+
+        [Fact]
+        public async Task GetMyProfile_Success()
+        {
+            var container = TestModuleTests.GetContainer(b =>
+            {
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
+            });
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var phone = 79000000000;
+            var userId = 1;
+
+            var requestMock = Mock.Get(container.Resolve<IRequestContext>());
+            requestMock.Setup(a => a.UserId).Returns(userId);
+
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync(new Account {Id = userId, Phone = phone});
+
+            var result = await browser.Get(SmsModule.GetMyProfileUrl, with =>
+            {
+                with.Accept("application/json");
+            });
+
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            var response = JsonConvert.DeserializeObject<UserProfile>(result.Body.AsString());
+            Assert.Equal(userId, response.Id);
+            Assert.Equal(phone, response.Phone);
+        }
     }
 }
