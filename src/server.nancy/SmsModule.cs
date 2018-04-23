@@ -235,15 +235,16 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Users" }, Summary = "Method for receive profile by phone")]
         [RouteParam(ParamIn = ParameterIn.Path, Name = "phone", ParamType = typeof(long), Required = true, Description = "User phone")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(UserProfile))]
-        public object GetUserByPhone()
+        public async Task<object> GetUserByPhone()
         {
-            var phone = Context.Parameters.phone;
-            return new UserProfile
+            if (!decimal.TryParse(Context.Parameters.phone.ToString(), out decimal phone))
             {
-                Id = 1,
-                Name = "test",
-                Phone = phone
-            };
+                ModelValidationResult.Errors.Add(nameof(phone), "bad format");
+                throw new BadModelException(ModelValidationResult);
+            }
+
+            var profile = await _accountService.GetProfileByPhone(phone);
+            return profile;
         }
 
         [Route(nameof(GetUserByFilter))]
