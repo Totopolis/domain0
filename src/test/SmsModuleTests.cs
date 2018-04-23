@@ -579,5 +579,55 @@ namespace Domain0.Test
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             Assert.False(bool.Parse(result.Body.AsString()));
         }
+
+        [Fact]
+        public async Task GetPhoneByUserId_Success()
+        {
+            var container = TestModuleTests.GetContainer(b =>
+            {
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
+            });
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var phone = 79000000000;
+            var id = 1;
+
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByUserId(id)).ReturnsAsync(new Account {Id = id, Phone = phone});
+
+            var result = await browser.Get(SmsModule.PhoneByUserIdUrl, with =>
+            {
+                with.Accept("application/json");
+                with.Query(nameof(id), id.ToString());
+            });
+
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal(phone.ToString(), result.Body.AsString());
+        }
+
+        [Fact]
+        public async Task GetPhoneByUserId_NotFound()
+        {
+            var container = TestModuleTests.GetContainer(b =>
+            {
+                b.RegisterInstance(new Mock<IAuthGenerator>().Object).As<IAuthGenerator>().SingleInstance();
+            });
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var id = 1;
+
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByUserId(id)).ReturnsAsync((Account) null);
+
+            var result = await browser.Get(SmsModule.PhoneByUserIdUrl, with =>
+            {
+                with.Accept("application/json");
+                with.Query(nameof(id), id.ToString());
+            });
+
+            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
     }
 }
