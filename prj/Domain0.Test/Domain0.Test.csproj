@@ -98,6 +98,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\src\test\BrowserResponseBodyWrapperExtensions.cs">
+      <Link>BrowserResponseBodyWrapperExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\test\MoqRegistrationSource.cs">
       <Link>MoqRegistrationSource.cs</Link>
     </Compile>

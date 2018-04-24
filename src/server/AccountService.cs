@@ -43,7 +43,9 @@ namespace Domain0.Service
 
         private readonly ISmsClient _smsClient;
 
-        private readonly IAuthGenerator _authGenerator;
+        private readonly IPasswordGenerator _passwordGenerator;
+
+        private readonly ITokenGenerator _tokenGenerator;
 
         private readonly IRequestContext _requestContext;
 
@@ -62,7 +64,8 @@ namespace Domain0.Service
         public AccountService(
             IMapper mapper,
             ISmsClient smsClient,
-            IAuthGenerator authGenerator,
+            IPasswordGenerator passwordGenerator,
+            ITokenGenerator tokenGenerator,
             IRequestContext requestContext,
             IAccountRepository accountRepository,
             IRoleRepository roleRepository,
@@ -73,7 +76,8 @@ namespace Domain0.Service
         {
             _mapper = mapper;
             _smsClient = smsClient;
-            _authGenerator = authGenerator;
+            _passwordGenerator = passwordGenerator;
+            _tokenGenerator = tokenGenerator;
             _requestContext = requestContext;
 
             _accountRepository = accountRepository;
@@ -93,7 +97,7 @@ namespace Domain0.Service
             if (existed != null)
                 return;
 
-            var password = _authGenerator.GeneratePassword();
+            var password = _passwordGenerator.GeneratePassword();
             var expiredAt = TimeSpan.FromSeconds(90);
             await _smsRequestRepository.Save(new SmsRequest
             {
@@ -123,13 +127,11 @@ namespace Domain0.Service
             if (await DoesUserExists(phone))
                 throw new SecurityException("user exists");
 
-            var password = _authGenerator.GeneratePassword();
-            var salt = _authGenerator.GenerateSalt();
+            var password = _passwordGenerator.GeneratePassword();
             var id = await _accountRepository.Insert(new Account
             {
                 Phone = phone,
-                Password = _authGenerator.HashPassword(password, salt),
-                Salt = salt,
+                Password = _passwordGenerator.HashPassword(password),
                 Name = request.Name
             });
 
@@ -169,14 +171,14 @@ namespace Domain0.Service
             string accessToken = registration?.AccessToken;
             if (!string.IsNullOrEmpty(accessToken))
             {
-                var principal = _authGenerator.Parse(accessToken);
+                var principal = _tokenGenerator.Parse(accessToken);
                 if (!principal?.GetPermissions().All(permission => permissions.Contains(permission)) ?? true)
                     accessToken = null;
             }
 
             if (string.IsNullOrEmpty(accessToken))
             {
-                accessToken = _authGenerator.GenerateAccessToken(account.Id, permissions);
+                accessToken = _tokenGenerator.GenerateAccessToken(account.Id, permissions);
                 await _tokenRegistrationRepository.Save(registration = new TokenRegistration
                 {
                     UserId = account.Id,
@@ -188,7 +190,7 @@ namespace Domain0.Service
             else
                 accessToken = registration.AccessToken;
 
-            var refreshToken = _authGenerator.GenerateRefreshToken(registration.Id, account.Id);
+            var refreshToken = _tokenGenerator.GenerateRefreshToken(registration.Id, account.Id);
             return new AccessTokenResponse
             {
                 AccessToken = accessToken,
@@ -202,7 +204,7 @@ namespace Domain0.Service
             var account = await _accountRepository.FindByLogin(request.Phone);
             if (account != null)
             {
-                if (_authGenerator.CheckPassword(request.Password, account.Password, account.Salt))
+                if (_passwordGenerator.CheckPassword(request.Password, account.Password))
                     return await GetTokenResponse(account);
                 else
                     return null;
@@ -223,12 +225,10 @@ namespace Domain0.Service
             await _smsRequestRepository.Remove(phone);
 
             // confirm sms request
-            var salt = _authGenerator.GenerateSalt();
-            var password = _authGenerator.HashPassword(request.Password, salt);
+            var password = _passwordGenerator.HashPassword(request.Password);
             if (account != null)
             {
                 // change password
-                account.Salt = salt;
                 account.Password = password;
                 await _accountRepository.Update(account);
             }
@@ -240,7 +240,6 @@ namespace Domain0.Service
                     Name = request.Phone.ToString(),
                     Phone = phone,
                     Login = phone.ToString(),
-                    Salt = salt,
                     Password = password
                 });
                 await _roleRepository.AddUserToDefaultRoles(userId);
@@ -252,11 +251,10 @@ namespace Domain0.Service
         public async Task ChangePassword(ChangePasswordRequest request)
         {
             var account = await _accountRepository.FindByUserId(_requestContext.UserId);
-            if (!_authGenerator.CheckPassword(request.OldPassword, account?.Password, account?.Salt))
+            if (!_passwordGenerator.CheckPassword(request.OldPassword, account?.Password))
                 throw new SecurityException("password not match");
 
-            account.Salt = _authGenerator.GenerateSalt();
-            account.Password = _authGenerator.HashPassword(request.NewPassword, account.Salt);
+            account.Password = _passwordGenerator.HashPassword(request.NewPassword);
             await _accountRepository.Update(account);
         }
 
@@ -266,7 +264,7 @@ namespace Domain0.Service
             if (account == null)
                 throw new NotFoundException(nameof(phone), "account not found");
 
-            var password = _authGenerator.GeneratePassword();
+            var password = _passwordGenerator.GeneratePassword();
             var expiredAt = TimeSpan.FromSeconds(90);
             await _smsRequestRepository.Save(new SmsRequest
             {
@@ -296,7 +294,7 @@ namespace Domain0.Service
 
         public async Task<AccessTokenResponse> Refresh(string refreshToken)
         {
-            var id = _authGenerator.GetTid(refreshToken);
+            var id = _tokenGenerator.GetTid(refreshToken);
             var tokenRegistry = await _tokenRegistrationRepository.FindById(id);
             if (tokenRegistry == null)
                 throw new NotFoundException(nameof(tokenRegistry), id);
@@ -304,8 +302,8 @@ namespace Domain0.Service
             if (account == null)
                 throw new NotFoundException(nameof(account), tokenRegistry.UserId);
 
-            var principal = _authGenerator.Parse(tokenRegistry.AccessToken);
-            var accessToken = _authGenerator.GenerateAccessToken(account.Id, principal.GetPermissions());
+            var principal = _tokenGenerator.Parse(tokenRegistry.AccessToken);
+            var accessToken = _tokenGenerator.GenerateAccessToken(account.Id, principal.GetPermissions());
 
             return new AccessTokenResponse
             {

@@ -10,7 +10,7 @@ namespace Domain0
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<MapperProfile>().As<Profile>().SingleInstance();
-            builder.RegisterType<AuthGenerator>().As<IAuthGenerator>().SingleInstance();
+            builder.RegisterType<PasswordGenerator>().As<IPasswordGenerator>().SingleInstance();
             builder.RegisterType<AccountService>().As<IAccountService>().InstancePerLifetimeScope();
             builder.Register(container =>
             {
