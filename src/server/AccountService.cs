@@ -139,7 +139,7 @@ namespace Domain0.Service
             if (roles.Length != (request.Roles?.Count ?? 0))
                 throw new NotFoundException(nameof(request.Roles), string.Join(",",
                     request.Roles.Where(role =>
-                        roles.All(r => string.Equals(r.Code, role, StringComparison.OrdinalIgnoreCase)))));
+                        roles.All(r => string.Equals(r.Name, role, StringComparison.OrdinalIgnoreCase)))));
 
             if (roles.Length == 0)
                 await _roleRepository.AddUserToDefaultRoles(id);

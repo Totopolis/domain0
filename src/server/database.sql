@@ -41,7 +41,8 @@ go
 create table mon.Role (
 	Id int not null identity(1,1) constraint PK_mon_Role primary key,
 	Name nvarchar(64) not null,
-	Description nvarchar(max) null
+	Description nvarchar(max) null,
+	IsDefault bit not null,
 
 	constraint UQ_mon_Role unique(Name)
 )
