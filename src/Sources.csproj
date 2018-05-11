@@ -85,6 +85,12 @@
     <None Include="server\PasswordGenerator.cs" />
     <None Include="server\TokenGenerator.cs" />
     <None Include="server\TokenRegistration.cs" />
+    <None Include="server\AccountRepository.cs" />
+    <None Include="server\MessageTemplateRepository.cs" />
+    <None Include="server\PermissionRepository.cs" />
+    <None Include="server\RoleRepository.cs" />
+    <None Include="server\SmsRequestRepository.cs" />
+    <None Include="server\TokenRegistrationRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="swagger\favicon-16x16.png" />
