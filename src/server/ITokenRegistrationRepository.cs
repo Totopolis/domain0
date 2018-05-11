@@ -17,15 +17,9 @@ namespace Domain0.Repository
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="registration"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
-        Task<int> Register(TokenRegistration registration);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<TokenRegistration> FindLastTokenByUserId(int id);
+        Task<TokenRegistration> FindLastTokenByUserId(int userId);
         /// <summary>
         /// 
         /// </summary>
