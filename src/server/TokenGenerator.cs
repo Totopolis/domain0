@@ -69,6 +69,7 @@ namespace Domain0.Service
             {
                 new Claim("typ", "refresh_token"),
                 new Claim("sub", userId.ToString()),
+                new Claim("tid", tokenId.ToString()),
             };
             var tokenDescriptor = new SecurityTokenDescriptor
             {
