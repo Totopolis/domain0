@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
-namespace Domain0.Database
+namespace Domain0.FastSql
 {
     public class DbManager
     {
@@ -18,7 +18,7 @@ namespace Domain0.Database
         public void Initialize()
         {
             var assembly = Assembly.GetExecutingAssembly();
-            using (var stream = assembly.GetManifestResourceStream("Domain0.Database.Scripts.database.sql"))
+            using (var stream = assembly.GetManifestResourceStream("Domain0.WinService.Scripts.database.sql"))
             using (var reader = new StreamReader(stream))
             {
                 var sql = reader.ReadToEnd();

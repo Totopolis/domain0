@@ -37,17 +37,14 @@
     <Reference Include="AutoMapper, Version=6.2.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.6.2.2\lib\net45\AutoMapper.dll</HintPath>
     </Reference>
-    <Reference Include="Gerakul.FastSql, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Gerakul.FastSql.1.0.2\lib\net46\Gerakul.FastSql.dll</HintPath>
-    </Reference>
     <Reference Include="Gerakul.ProtoBufSerializer, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Gerakul.ProtoBufSerializer.1.2.1\lib\net46\Gerakul.ProtoBufSerializer.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.IdentityModel.Logging, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.IdentityModel.Logging.5.2.2\lib\net451\Microsoft.IdentityModel.Logging.dll</HintPath>
+    <Reference Include="Microsoft.IdentityModel.Logging, Version=1.0.0.127, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Logging.1.0.0\lib\net451\Microsoft.IdentityModel.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.IdentityModel.Tokens, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.IdentityModel.Tokens.5.2.2\lib\net451\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    <Reference Include="Microsoft.IdentityModel.Tokens, Version=5.0.0.127, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Tokens.5.0.0\lib\net451\Microsoft.IdentityModel.Tokens.dll</HintPath>
     </Reference>
     <Reference Include="Nancy, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.2.0.0-clinteastwood\lib\net452\Nancy.dll</HintPath>
@@ -86,8 +83,8 @@
     <Reference Include="System.Data.SqlClient, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SqlClient.4.3.1\lib\net46\System.Data.SqlClient.dll</HintPath>
     </Reference>
-    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.5.2.2\lib\net451\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=5.0.0.127, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.5.0.0\lib\net451\System.IdentityModel.Tokens.Jwt.dll</HintPath>
     </Reference>
     <Reference Include="System.Interactive.Async, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Interactive.Async.3.1.1\lib\net46\System.Interactive.Async.dll</HintPath>
@@ -143,9 +140,6 @@
     <Compile Include="..\..\src\server\Account.cs">
       <Link>Service\Repository\Model\Account.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\server\AccountRepository.cs">
-      <Link>Service\FastSql\AccountRepository.cs</Link>
-    </Compile>
     <Compile Include="..\..\src\server\AccountService.cs">
       <Link>Service\AccountService.cs</Link>
     </Compile>
@@ -188,17 +182,11 @@
     <Compile Include="..\..\src\server\MessageTemplate.cs">
       <Link>Service\Repository\Model\MessageTemplate.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\server\MessageTemplateRepository.cs">
-      <Link>Service\FastSql\MessageTemplateRepository.cs</Link>
-    </Compile>
     <Compile Include="..\..\src\server\NancyModuleExtensions.cs">
       <Link>Infrastructure\NancyModuleExtensions.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\PasswordGenerator.cs">
       <Link>Service\PasswordGenerator.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\PermissionRepository.cs">
-      <Link>Service\FastSql\PermissionRepository.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\ProtobufBodyDeserializer.cs">
       <Link>Infrastructure\ProtobufBodyDeserializer.cs</Link>
@@ -215,20 +203,11 @@
     <Compile Include="..\..\src\server\Role.cs">
       <Link>Service\Repository\Model\Role.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\server\RoleRepository.cs">
-      <Link>Service\FastSql\RoleRepository.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\SmsRequestRepository.cs">
-      <Link>Service\FastSql\SmsRequestRepository.cs</Link>
-    </Compile>
     <Compile Include="..\..\src\server\TokenGenerator.cs">
       <Link>Service\TokenGenerator.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\TokenRegistration.cs">
       <Link>Service\Repository\Model\TokenRegistration.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\TokenRegistrationRepository.cs">
-      <Link>Service\FastSql\TokenRegistrationRepository.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -272,12 +251,6 @@
     <EmbeddedResource Include="..\..\src\swagger\swagger-ui.js">
       <Link>Swagger-UI\swagger-ui.js</Link>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Domain0.Database\Domain0.Database.csproj">
-      <Project>{8910c188-8e74-4766-a266-be6a7d6676be}</Project>
-      <Name>Domain0.Database</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

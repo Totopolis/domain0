@@ -9,10 +9,10 @@ using System.Configuration;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
-using Domain0.Database;
 using Nancy.Hosting.Self;
 using Topshelf;
 using NLog.Common;
+using Domain0.FastSql;
 
 namespace Domain0.WinService
 {
@@ -49,6 +49,7 @@ namespace Domain0.WinService
 
             Logger = LogManager.GetCurrentClassLogger();
 
+            /// Nancy single exe hook
             var fields = typeof(TypeResolveStrategies).GetRuntimeFields().Where(f => f.Name.Contains("ExcludeNancy"));
             foreach (var field in fields)
                 field.SetValue(null, (TypeResolveStrategy)(type => !string.Equals(type.FullName, $"Nancy.{type.Name}")));

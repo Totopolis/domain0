@@ -108,7 +108,7 @@ namespace Domain0.Test
 
             var roleRepository = container.Resolve<IRoleRepository>();
             var roleMock = Mock.Get(roleRepository);
-            roleMock.Setup(r => r.GetByIds(It.IsAny<string[]>())).ReturnsAsync(roles.Select(role => new Role {Code = role }).ToArray());
+            roleMock.Setup(r => r.GetByIds(It.IsAny<string[]>())).ReturnsAsync(roles.Select(role => new Role { Name = role }).ToArray());
 
             var passwordGenerator = container.Resolve<IPasswordGenerator>();
             var passwordMock = Mock.Get(passwordGenerator);
@@ -157,7 +157,7 @@ namespace Domain0.Test
 
             var roleRepository = container.Resolve<IRoleRepository>();
             var roleMock = Mock.Get(roleRepository);
-            roleMock.Setup(r => r.GetByIds(It.IsAny<string[]>())).ReturnsAsync(roles.Select(role => new Role { Code = role }).ToArray());
+            roleMock.Setup(r => r.GetByIds(It.IsAny<string[]>())).ReturnsAsync(roles.Select(role => new Role { Name = role }).ToArray());
 
             var passwordGenerator = container.Resolve<IPasswordGenerator>();
             var passwordMock = Mock.Get(passwordGenerator);
@@ -209,7 +209,7 @@ namespace Domain0.Test
 
             var roleRepository = container.Resolve<IRoleRepository>();
             var roleMock = Mock.Get(roleRepository);
-            roleMock.Setup(r => r.GetByIds(It.IsAny<string[]>())).ReturnsAsync(roles.Select(role => new Role { Code = role }).ToArray());
+            roleMock.Setup(r => r.GetByIds(It.IsAny<string[]>())).ReturnsAsync(roles.Select(role => new Role { Name = role }).ToArray());
 
             var passwordGenerator = container.Resolve<IPasswordGenerator>();
             var passwordMock = Mock.Get(passwordGenerator);
