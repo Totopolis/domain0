@@ -2,17 +2,10 @@
 using Newtonsoft.Json;
 using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 
 namespace Domain0.Service
 {
-    public static class ClaimsPrincipalExtensions
-    {
-        public static string[] GetPermissions(this ClaimsPrincipal principal)
-            => principal.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).Distinct().ToArray();
-    }
-
     public class TokenGeneratorSettings
     {
         public string Issuer { get; set; }
@@ -24,21 +17,6 @@ namespace Domain0.Service
         public string Secret { get; set; }
 
         public string Alg { get; set; }
-    }
-
-    public interface ITokenGenerator
-    {
-        string GenerateAccessToken(int id, DateTime issueAt, string[] permissions);
-
-        string GenerateAccessToken(int id, string[] permissions);
-
-        string GenerateRefreshToken(int tokenId, int userId);
-
-        string GenerateRefreshToken(int tokenId, DateTime issueAt, int userId);
-
-        ClaimsPrincipal Parse(string accessToken);
-
-        int GetTid(string refreshToken);
     }
 
     public class TokenGenerator : ITokenGenerator
@@ -85,7 +63,7 @@ namespace Domain0.Service
             return _handler.WriteToken(token);
         }
 
-        public string GenerateRefreshToken(int userId, DateTime issueAt, int tokenId)
+        public string GenerateRefreshToken(int tokenId, DateTime issueAt, int userId)
         {
             var claims = new[]
             {
@@ -115,6 +93,8 @@ namespace Domain0.Service
                 IssuerSigningKey = _signatureKey,
                 NameClaimType = ClaimTypes.Name,
                 ValidateAudience = true,
+                ValidAudience = _settings.Audience,
+                ValidIssuer = _settings.Issuer,
             };
             var principal = _handler.ValidateToken(accessToken, parameters, out var token);
             var identity = (ClaimsIdentity)principal.Identity;

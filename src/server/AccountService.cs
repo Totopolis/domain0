@@ -7,9 +7,16 @@ using Domain0.Model;
 using AutoMapper;
 using Domain0.Exceptions;
 using System.Linq;
+using System.Security.Claims;
 
 namespace Domain0.Service
 {
+    public static class ClaimsPrincipalExtensions
+    {
+        public static string[] GetPermissions(this ClaimsPrincipal principal)
+            => principal.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).Distinct().ToArray();
+    }
+
     public interface IAccountService
     {
         Task Register(decimal phone);

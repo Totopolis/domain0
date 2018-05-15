@@ -91,6 +91,7 @@
     <None Include="server\RoleRepository.cs" />
     <None Include="server\SmsRequestRepository.cs" />
     <None Include="server\TokenRegistrationRepository.cs" />
+    <None Include="server\ITokenGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="swagger\favicon-16x16.png" />

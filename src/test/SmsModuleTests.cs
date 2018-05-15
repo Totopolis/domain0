@@ -309,7 +309,7 @@ namespace Domain0.Test
             tokenMock.Setup(a => a.FindLastTokenByUserId(It.IsAny<int>())).ReturnsAsync((TokenRegistration) null);
 
             var authGenerator = Mock.Get(container.Resolve<IPasswordGenerator>());
-            authGenerator.Setup(a => a.CheckPassword(It.IsAny<string>(), It.IsAny<string>())).Returns<string, string, string>((pasd, hash, salt) => pasd == hash);
+            authGenerator.Setup(a => a.CheckPassword(It.IsAny<string>(), It.IsAny<string>())).Returns<string, string>((pasd, hash) => pasd == hash);
             var tokenGenerator = Mock.Get(container.Resolve<ITokenGenerator>());
             tokenGenerator.Setup(a => a.GenerateAccessToken(It.IsAny<int>(), It.IsAny<string[]>())).Returns<int, string[]>((userId, perms) => userId + string.Join("", perms));
             tokenGenerator.Setup(a => a.GenerateRefreshToken(It.IsAny<int>(), It.IsAny<int>())).Returns<int, int>((tid, userId) => $"{tid}_{userId}");

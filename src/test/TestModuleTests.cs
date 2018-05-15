@@ -10,6 +10,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain0.Service;
+using Moq;
 using Xunit;
 using HttpStatusCode = Nancy.HttpStatusCode;
 
@@ -95,6 +97,7 @@ namespace Domain0.Test
             builder.Register(c => LogManager.GetCurrentClassLogger()).As<ILogger>().InstancePerDependency();
             builder.RegisterSource(new MoqRegistrationSource());
             builder.RegisterModule<ApplicationModule>();
+            builder.RegisterInstance(new Mock<ITokenGenerator>().Object).As<ITokenGenerator>();
 
             upgrade?.Invoke(builder);
             return builder.Build();

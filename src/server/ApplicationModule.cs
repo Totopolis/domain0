@@ -11,11 +11,6 @@ namespace Domain0
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<MapperProfile>().As<Profile>().SingleInstance();
-            builder.RegisterType<PasswordGenerator>().As<IPasswordGenerator>().SingleInstance();
-            builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance();
-            builder.RegisterType<AccountService>().As<IAccountService>().InstancePerLifetimeScope();
-
             var settings = new TokenGeneratorSettings
             {
                 Audience = "*",
@@ -25,6 +20,12 @@ namespace Domain0
                 Alg = SecurityAlgorithms.HmacSha256,
             };
             builder.RegisterInstance(settings);
+            builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance();
+
+            builder.RegisterType<MapperProfile>().As<Profile>().SingleInstance();
+            builder.RegisterType<PasswordGenerator>().As<IPasswordGenerator>().SingleInstance();
+            builder.RegisterType<AccountService>().As<IAccountService>().InstancePerLifetimeScope();
+
             builder.Register(container =>
             {
                 var profiles = container.Resolve<IEnumerable<Profile>>();
