@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Domain0.Repository;
 using Domain0.Repository.Model;
@@ -17,15 +18,15 @@ namespace Domain0.FastSql
 
         public Task<SmsRequest> Pick(decimal phone)
             => SimpleCommand.ExecuteQueryAsync<SmsRequest>(_connectionString,
-                    $"select * from {TableName} where {nameof(SmsRequest.Phone)}=@p0", phone)
+                    $"select * from {TableName} where {nameof(SmsRequest.Phone)}=@p0 and {nameof(SmsRequest.ExpiredAt)}>=@p1", phone, DateTime.UtcNow)
                 .FirstOrDefault();
-
-        public Task Remove(decimal phone)
-            => SimpleCommand.ExecuteNonQueryAsync(_connectionString,
-                $"delete from {TableName} where {nameof(SmsRequest.Phone)}=@p0", phone);
 
         public Task Save(SmsRequest smsRequest)
             => MappedCommand.InsertAsync(_connectionString, TableName, smsRequest);
 
+        public Task<bool> ConfirmRegister(decimal phone, string password)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

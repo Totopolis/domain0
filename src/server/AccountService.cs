@@ -208,35 +208,23 @@ namespace Domain0.Service
 
         public async Task<AccessTokenResponse> Login(SmsLoginRequest request)
         {
+            var phone = decimal.Parse(request.Phone);
+            var hashPassword = _passwordGenerator.HashPassword(request.Password);
+
+            // login account
             var account = await _accountRepository.FindByLogin(request.Phone);
-            if (account != null)
-            {
-                if (_passwordGenerator.CheckPassword(request.Password, account.Password))
-                    return await GetTokenResponse(account);
-                else
-                    return null;
-            }
+            if (account != null && _passwordGenerator.CheckPassword(request.Password, account.Password))
+                return await GetTokenResponse(account);
 
-            // sms request registration
-            var phone = account?.Phone ?? decimal.Parse(request.Phone);
-            var smsRequest = await _smsRequestRepository.Pick(phone);
-            if (!(smsRequest?.ExpiredAt > DateTime.UtcNow))
-            {
-                await _smsRequestRepository.Remove(phone);
+            // remove try confirm registration
+            if (!await _smsRequestRepository.ConfirmRegister(phone, request.Password))
                 return null;
-            }
-            if (!string.Equals(smsRequest.Password, request.Password, StringComparison.OrdinalIgnoreCase))
-                return null;
-
-            // remove confirmed request
-            await _smsRequestRepository.Remove(phone);
 
             // confirm sms request
-            var password = _passwordGenerator.HashPassword(request.Password);
             if (account != null)
             {
                 // change password
-                account.Password = password;
+                account.Password = hashPassword;
                 await _accountRepository.Update(account);
             }
             else
@@ -244,10 +232,10 @@ namespace Domain0.Service
                 // confirm registration
                 var userId = await _accountRepository.Insert(account = new Account
                 {
-                    Name = request.Phone.ToString(),
+                    Name = phone.ToString(),
                     Phone = phone,
                     Login = phone.ToString(),
-                    Password = password
+                    Password = hashPassword
                 });
                 await _roleRepository.AddUserToDefaultRoles(userId);
             }

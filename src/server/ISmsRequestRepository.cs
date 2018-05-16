@@ -22,10 +22,11 @@ namespace Domain0.Repository
         /// <returns></returns>
         Task<SmsRequest> Pick(decimal phone);
         /// <summary>
-        /// Удаление запроса по номеру телефона.
+        /// Потдтверждение регистрации.
         /// </summary>
         /// <param name="phone">номер телефона.</param>
+        /// <param name="password">пароль, присланный в смс-сообщении.</param>
         /// <returns></returns>
-        Task Remove(decimal phone);
+        Task<bool> ConfirmRegister(decimal phone, string password);
     }
 }

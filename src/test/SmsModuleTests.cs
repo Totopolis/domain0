@@ -389,7 +389,6 @@ namespace Domain0.Test
             });
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            smsRequestMock.Verify(r => r.Remove(phone), Times.Once);
         }
 
         [Theory]

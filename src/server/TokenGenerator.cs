@@ -33,10 +33,7 @@ namespace Domain0.Service
         {
             _settings = settings;
             _signatureKey = new SymmetricSecurityKey(Convert.FromBase64String(settings.Secret));
-            _handler = new JwtSecurityTokenHandler
-            {
-                SetDefaultTimesOnTokenCreation = false
-            };
+            _handler = new JwtSecurityTokenHandler {SetDefaultTimesOnTokenCreation = false};
         }
 
         public string GenerateAccessToken(int id, string[] permissions)
@@ -113,8 +110,7 @@ namespace Domain0.Service
 
         public int GetTid(string refreshToken)
         {
-            throw new NotImplementedException();
+            return 0;
         }
-
     }
 }
