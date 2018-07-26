@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="config\App.config" />
     <None Include="config\NLog.xsd">
       <SubType>Designer</SubType>
@@ -50,6 +51,10 @@
     <None Include="common\NotFoundException.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="server\CommandHelper.cs" />
     <None Include="server\database.sql" />
     <None Include="server\domain0.proto" />
@@ -123,6 +128,13 @@
     <None Include="test\SmsModuleTests.cs" />
     <None Include="test\MoqRegistrationSource.cs" />
     <None Include="test\BrowserResponseBodyWrapperExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

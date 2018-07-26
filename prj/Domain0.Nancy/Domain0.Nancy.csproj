@@ -213,6 +213,8 @@
       <Link>Service\Repository\Model\TokenRegistration.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\FakeRequestContext.cs" />
+    <Compile Include="Service\FakeSmsClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\..\src\swagger\swagger-ui-bundle.js.map">
@@ -227,7 +229,12 @@
     <EmbeddedResource Include="..\..\src\swagger\swagger-ui.js.map">
       <Link>Swagger-UI\swagger-ui.js.map</Link>
     </EmbeddedResource>
-    <None Include="packages.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\..\src\swagger\favicon-16x16.png">

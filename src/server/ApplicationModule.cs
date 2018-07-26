@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Autofac;
 using AutoMapper;
+using Domain0.Nancy.Service;
 using Domain0.Service;
 using Microsoft.IdentityModel.Tokens;
 
@@ -25,7 +26,8 @@ namespace Domain0
             builder.RegisterType<MapperProfile>().As<Profile>().SingleInstance();
             builder.RegisterType<PasswordGenerator>().As<IPasswordGenerator>().SingleInstance();
             builder.RegisterType<AccountService>().As<IAccountService>().InstancePerLifetimeScope();
-
+            builder.RegisterType<FakeSmsClient>().As<ISmsClient>();
+            builder.RegisterType<FakeRequestContext>().As<IRequestContext>();
             builder.Register(container =>
             {
                 var profiles = container.Resolve<IEnumerable<Profile>>();
