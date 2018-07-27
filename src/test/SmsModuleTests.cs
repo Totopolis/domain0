@@ -63,7 +63,11 @@ namespace Domain0.Test
 
             var messageTemplateRepository = container.Resolve<IMessageTemplateRepository>();
             var messageTemplate = Mock.Get(messageTemplateRepository);
-            messageTemplate.Setup(r => r.GetRegisterTemplate()).ReturnsAsync("hello {0}!");
+            messageTemplate
+                .Setup(r => r.GetRegisterTemplate(
+                    It.IsAny<MessageTemplateLocale>(), 
+                    It.IsAny<MessageTemplateType>()))
+                .ReturnsAsync("hello {0}!");
 
             var passwordGenerator = container.Resolve<IPasswordGenerator>();
             var passwordMock = Mock.Get(passwordGenerator);
@@ -165,7 +169,12 @@ namespace Domain0.Test
 
             var messageTemplateRepository = container.Resolve<IMessageTemplateRepository>();
             var messageTemplate = Mock.Get(messageTemplateRepository);
-            messageTemplate.Setup(r => r.GetWelcomeTemplate()).ReturnsAsync("hello {1} {0}!");
+            messageTemplate.Setup(r => 
+                r.GetWelcomeTemplate(
+                    It.IsAny<MessageTemplateLocale>(),
+                    It.IsAny<MessageTemplateType>())
+                )
+                .ReturnsAsync("hello {1} {0}!");
 
             var response = await browser.Put(SmsModule.ForceCreateUserUrl, with =>
             {
@@ -451,7 +460,11 @@ namespace Domain0.Test
             accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync(account);
 
             var messageTemplateMock = Mock.Get(container.Resolve<IMessageTemplateRepository>());
-            messageTemplateMock.Setup(a => a.GetRequestResetTemplate()).ReturnsAsync("{0}_test");
+            messageTemplateMock
+                .Setup(a => a.GetRequestResetTemplate(
+                    It.IsAny<MessageTemplateLocale>(),
+                    It.IsAny<MessageTemplateType>()))
+                .ReturnsAsync("{0}_test");
 
             var authGenerator = Mock.Get(container.Resolve<IPasswordGenerator>());
             authGenerator.Setup(a => a.GeneratePassword()).Returns(() => password);

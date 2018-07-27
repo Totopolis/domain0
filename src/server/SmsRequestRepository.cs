@@ -11,8 +11,8 @@ namespace Domain0.FastSql
     {
         private readonly string _connectionString;
 
-        public const string TableName = "[dom].[Caching]";
-
+        public const string TableName = "[dom].[SmsRequest]";
+         
         public SmsRequestRepository(string connectionString)
             => _connectionString = connectionString;
 

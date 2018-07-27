@@ -108,11 +108,22 @@ go
 create table dom.Message (
 	Id int identity(1,1) not null constraint PK_Message_Id primary key,
 	Description nvarchar(max) null,
+	Type nvarchar(10) null,
 	Locale nvarchar(3) null,
 	Name nvarchar(256) not null,
 	Template nvarchar(max) not null
 )
 go
+insert into dom.Message 
+(Type, Locale, Name, Template)
+values
+('sms',		'eng',		'WelcomeTemplate',		'Hello {0}!'),
+('sms',		'eng',		'RegisterTemplate',		'Your password is: {0} will valid for {1} min'),
+('sms',		'eng',		'RequestResetTemplate',	'Your NEW password is: {0} will valid for {1} min'),
+('sms',		'rus',		'WelcomeTemplate',		'Добро пожаловать {0}!'),
+('sms',		'rus',		'RegisterTemplate',		'Ваш пароль: {0} действителен {1} мин'),
+('sms',		'rus',		'RequestResetTemplate',	'Ваш НОВЫЙ пароль: {0} действителен {1} мин')
+
 
 if object_id('dom.Account') is not null
 	drop table dom.Account
@@ -126,3 +137,13 @@ create table dom.Account (
 	[Description] nvarchar(max) not null
 )
 go
+if object_id('dom.SmsRequest') is not null
+	drop table dom.SmsRequest
+go
+
+create table dom.SmsRequest (
+	[Id] int identity(1,1) not null constraint PK_SmsRequest_Id primary key,
+	[Phone] decimal not null,
+	[Password] nvarchar(80) not null,
+	[ExpiredAt] nvarchar(256) not null
+)

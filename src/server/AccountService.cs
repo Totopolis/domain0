@@ -113,7 +113,7 @@ namespace Domain0.Service
                 ExpiredAt = DateTime.UtcNow.Add(expiredAt)
             });
 
-            var template = await _messageTemplateRepository.GetRegisterTemplate();
+            var template = await _messageTemplateRepository.GetRegisterTemplate(MessageTemplateLocale.rus, MessageTemplateType.sms);
             var message = string.Format(template, password, expiredAt.TotalMinutes);
 
             await _smsClient.Send(phone, message);
@@ -159,7 +159,7 @@ namespace Domain0.Service
 
             string message;
             if (string.IsNullOrEmpty(request.CustomSmsTemplate))
-                message = string.Format(await _messageTemplateRepository.GetWelcomeTemplate(),
+                message = string.Format(await _messageTemplateRepository.GetWelcomeTemplate(MessageTemplateLocale.rus, MessageTemplateType.sms),
                     request.Phone, password);
             else
                 message = request.CustomSmsTemplate
@@ -268,7 +268,7 @@ namespace Domain0.Service
                 ExpiredAt = DateTime.UtcNow.Add(expiredAt)
             });
 
-            var template = await _messageTemplateRepository.GetRequestResetTemplate();
+            var template = await _messageTemplateRepository.GetRequestResetTemplate(MessageTemplateLocale.rus, MessageTemplateType.sms);
             var message = string.Format(template, password, expiredAt.TotalMinutes);
 
             await _smsClient.Send(phone, message);

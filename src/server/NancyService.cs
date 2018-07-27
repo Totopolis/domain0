@@ -28,7 +28,7 @@ namespace Domain0.WinService.Infrastructure
 
         public bool Start(HostControl hostControl)
         {
-            if (hostControl is ConsoleRunHost)
+            if (!(hostControl is ConsoleRunHost))
                 InstallService(_uri, _x509cert);
 
             _host.Start();
