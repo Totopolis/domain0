@@ -64,26 +64,45 @@ namespace Domain0.Test
                 .Setup(r => r.GetRegisterTemplate(
                     It.IsAny<MessageTemplateLocale>(), 
                     It.IsAny<MessageTemplateType>()))
-                .ReturnsAsync("hello {0}!");
+                .ReturnsAsync("Your password is: {0} will valid for {1} min");
+            messageTemplate
+                .Setup(r => r.GetWelcomeTemplate(
+                    It.IsAny<MessageTemplateLocale>(),
+                    It.IsAny<MessageTemplateType>()))
+                .ReturnsAsync("Hello {0}!");
 
             var passwordGenerator = container.Resolve<IPasswordGenerator>();
             var passwordMock = Mock.Get(passwordGenerator);
             passwordMock.Setup(p => p.GeneratePassword()).Returns("password");
 
-            var response = await browser.Put(SmsModule.RegisterUrl, with =>
+            var registerResponse = await browser.Put(SmsModule.RegisterUrl, with =>
             {
                 with.Accept(format);
                 with.DataFormatBody(format, phone);
             });
 
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal(HttpStatusCode.NoContent, registerResponse.StatusCode);
 
             var smsRequestMock = Mock.Get(container.Resolve<ISmsRequestRepository>());
+            smsRequestMock
+                .Setup(x => x.ConfirmRegister(It.IsAny<decimal>(), It.IsAny<string>()))
+                .Returns(async () => true);
+
             smsRequestMock.Verify(a => a.Save(It.IsAny<SmsRequest>()), Times.Once());
 
             var smsClient = container.Resolve<ISmsClient>();
             var smsMock = Mock.Get(smsClient);
-            smsMock.Verify(s => s.Send(phone, "hello password!"));
+            smsMock.Verify(s => s.Send(phone, "Your password is: password will valid for 1,5 min"));
+
+            var firstLoginResponse = await browser.Post(SmsModule.LoginUrl, 
+                with =>
+                {
+                    with.Accept(format);
+                    with.DataFormatBody(format,
+                        new SmsLoginRequest { Phone = phone.ToString(), Password = "password" });
+                });
+
+            Assert.Equal(HttpStatusCode.OK, firstLoginResponse.StatusCode);
         }
 
         [Theory]

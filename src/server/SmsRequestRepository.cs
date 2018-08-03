@@ -24,9 +24,10 @@ namespace Domain0.FastSql
         public Task Save(SmsRequest smsRequest)
             => MappedCommand.InsertAsync(_connectionString, TableName, smsRequest);
 
-        public Task<bool> ConfirmRegister(decimal phone, string password)
+        public async Task<bool> ConfirmRegister(decimal phone, string password)
         {
-            throw new NotImplementedException();
+            var request = await Pick(phone);
+            return request.Password == password;
         }
     }
 }

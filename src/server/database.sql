@@ -134,7 +134,7 @@ create table dom.Account (
 	[Login] nvarchar(80) null,
 	[Password] nvarchar(80) null,
 	[Name] nvarchar(256) not null,
-	[Description] nvarchar(max) not null
+	[Description] nvarchar(max) null
 )
 go
 if object_id('dom.SmsRequest') is not null
@@ -145,5 +145,18 @@ create table dom.SmsRequest (
 	[Id] int identity(1,1) not null constraint PK_SmsRequest_Id primary key,
 	[Phone] decimal not null,
 	[Password] nvarchar(80) not null,
-	[ExpiredAt] nvarchar(256) not null
+	[ExpiredAt] datetime2 not null
+)
+go
+
+if object_id('dom.TokenRegistration') is not null
+	drop table dom.SmsRequest
+go
+
+create table dom.TokenRegistration (
+	[Id] int identity(1,1) not null constraint PK_TokenRegistration_Id primary key,
+	[UserId] int not null,
+	[AccessToken] nvarchar(max) not null,
+	[IssuedAt] datetime2 not null,
+	[ExpiredAt] datetime2 null
 )
