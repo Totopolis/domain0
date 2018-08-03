@@ -48,10 +48,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task Registration_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -94,10 +91,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task ForceCreateUser_SendSms_CustomTemplate(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -143,10 +137,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task ForceCreateUser_SendSms_StandardTemplate(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -200,10 +191,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task ForceCreateUser_NotSendSms(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -298,10 +286,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task Login_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -345,10 +330,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task Login_Register_NoRequest(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -375,10 +357,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task Login_Register_ExpiredRequest(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -405,10 +384,8 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task ChangePassword_Account(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
+
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -445,10 +422,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task ResetPassword_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -489,10 +463,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task ResetPassword_NotFound(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -517,10 +488,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task ForceChangePhone_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -549,10 +517,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task ForceChangePhone_NotFound(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -576,10 +541,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task DoesUserExists_IsTrue(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -604,10 +566,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task DoesUserExists_IsFalse(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -632,10 +591,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task GetPhoneByUserId_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -661,10 +617,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task GetPhoneByUserId_NotFound(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -687,10 +640,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task Refresh_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -734,10 +684,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task Refresh_Account_NotFound(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -773,10 +720,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task Refresh_TokenRegistry_NotFound(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -803,10 +747,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task GetMyProfile_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -818,6 +759,8 @@ namespace Domain0.Test
 
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync(new Account {Id = userId, Phone = phone});
+
+            var t = accountMock.Object;
 
             var response = await browser.Get(SmsModule.GetMyProfileUrl, with =>
             {
@@ -835,10 +778,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task GetProfileByPhone_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -864,10 +804,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task GetProfileByPhone_NotFound(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -889,10 +826,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task GetProfileByUserId_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -916,10 +850,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task GetProfileByUserId_NotFound(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -941,10 +872,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task GetProfilesByFilter_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -969,10 +897,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Json)]
         public async Task GetProfilesByFilter_BadRequest(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(b =>
-            {
-                b.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
-            });
+            var container = TestModuleTests.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 

@@ -14,6 +14,7 @@ using Domain0.Service;
 using Moq;
 using Xunit;
 using HttpStatusCode = Nancy.HttpStatusCode;
+using Domain0.Repository;
 
 namespace Domain0.Test
 {
@@ -98,6 +99,10 @@ namespace Domain0.Test
             builder.RegisterSource(new MoqRegistrationSource());
             builder.RegisterModule<ApplicationModule>();
             builder.RegisterInstance(new Mock<ITokenGenerator>().Object).As<ITokenGenerator>();
+            builder.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
+            builder.RegisterInstance(new Mock<IRequestContext>().Object).As<IRequestContext>().SingleInstance();
+            builder.RegisterInstance(new Mock<IAccountRepository>().Object).As<IAccountRepository>().SingleInstance();
+            builder.RegisterInstance(new Mock<ISmsClient>().Object).As<ISmsClient>().SingleInstance();
 
             upgrade?.Invoke(builder);
             return builder.Build();
