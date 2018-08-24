@@ -150,7 +150,7 @@ create table dom.SmsRequest (
 go
 
 if object_id('dom.TokenRegistration') is not null
-	drop table dom.SmsRequest
+	drop table dom.TokenRegistration
 go
 
 create table dom.TokenRegistration (
