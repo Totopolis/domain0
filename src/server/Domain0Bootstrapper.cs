@@ -15,6 +15,10 @@ using System.Linq;
 using Domain0.Exceptions;
 using NLog;
 using Nancy.ModelBinding;
+using Nancy.Authentication.Stateless;
+using Domain0.Service;
+using Domain0.Nancy.Service;
+using Autofac.Core;
 
 namespace Domain0.Nancy
 {
@@ -87,12 +91,36 @@ namespace Domain0.Nancy
 
                 return null;
             });
+
+            StatelessAuthentication.Enable(
+                pipelines, 
+                container
+                    .Resolve<IAuthenticationConfigurationBuilder>()
+                    .Build());
+
         }
 
         protected override void ConfigureConventions(NancyConventions nancyConventions)
         {
             // Add swagger
             nancyConventions.StaticContentsConventions.AddEmbeddedDirectory<Domain0Bootstrapper>("/swagger-ui", "Swagger-UI");
+        }
+
+        protected override void ConfigureRequestContainer(ILifetimeScope container, NancyContext context)
+        {
+            container.Update(builder =>
+            {
+                builder
+                    .RegisterType<JwtAuthenticationRequestContext>()
+                    .As<IRequestContext>()
+                    .WithParameter(
+                        new ResolvedParameter(
+                            (pi, ctx) => pi.ParameterType == typeof(NancyContext),
+                            (pi, ctx) => context))
+                    .InstancePerLifetimeScope();
+            });
+
+            base.ConfigureRequestContainer(container, context);
         }
     }
 }

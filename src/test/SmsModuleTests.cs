@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Security.Claims;
+using Sdl.Domain0.Shared;
+using Newtonsoft.Json;
 
 namespace Domain0.Test
 {
@@ -403,7 +405,8 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task ChangePassword_Account(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer();
+            var container = TestModuleTests.GetContainer(
+                builder => builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
 
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
@@ -412,6 +415,22 @@ namespace Domain0.Test
             var phone = 79000000000;
             var password = "password";
             var newpassword = "newpassword";
+
+            var tokenGenerator = container.Resolve<ITokenGenerator>();
+            var secret = Convert.FromBase64String("kiHLSfGebYvXGTDx0vWb53JhyUpnw6HvgRwOJ6h/hUs=");
+            var permissions = new[] { "test1", "test2" };
+            var issueTime = DateTime.UtcNow;
+            var accessToken = new JsonWebToken().Encode(new
+            {
+                typ = "access_token",
+                sub = $"{userId}",
+                permissions = JsonConvert.SerializeObject(permissions),
+                exp = new DateTimeOffset(issueTime.AddMinutes(15)).ToUnixTimeSeconds(),
+                iat = new DateTimeOffset(issueTime).ToUnixTimeSeconds(),
+                iss = "issuer",
+                aud = "*",
+            }, secret, JwtHashAlgorithm.HS256);
+
 
             var contextMock = Mock.Get(container.Resolve<IRequestContext>());
             contextMock.Setup(a => a.UserId).Returns(userId);
@@ -426,6 +445,7 @@ namespace Domain0.Test
 
             var response = await browser.Post(SmsModule.ChangePasswordUrl, with =>
             {
+                with.Header("Authorization", $"Bearer {accessToken}");
                 with.Accept(format);
                 with.DataFormatBody(format, new ChangePasswordRequest { OldPassword = password, NewPassword = newpassword });
             });
@@ -766,12 +786,29 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task GetMyProfile_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer();
+            var container = TestModuleTests.GetContainer(
+                builder => builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
             var phone = 79000000000;
             var userId = 1;
+
+            var tokenGenerator = container.Resolve<ITokenGenerator>();
+            var secret = Convert.FromBase64String("kiHLSfGebYvXGTDx0vWb53JhyUpnw6HvgRwOJ6h/hUs=");
+            var permissions = new[] { "test1", "test2" };
+            var issueTime = DateTime.UtcNow;
+            var accessToken = new JsonWebToken().Encode(new
+            {
+                typ = "access_token",
+                sub = $"{userId}",
+                permissions = JsonConvert.SerializeObject(permissions),
+                exp = new DateTimeOffset(issueTime.AddMinutes(15)).ToUnixTimeSeconds(),
+                iat = new DateTimeOffset(issueTime).ToUnixTimeSeconds(),
+                iss = "issuer",
+                aud = "*",
+            }, secret, JwtHashAlgorithm.HS256);
 
             var requestMock = Mock.Get(container.Resolve<IRequestContext>());
             requestMock.Setup(a => a.UserId).Returns(userId);
@@ -783,6 +820,7 @@ namespace Domain0.Test
 
             var response = await browser.Get(SmsModule.GetMyProfileUrl, with =>
             {
+                with.Header("Authorization", $"Bearer {accessToken}");
                 with.Accept(format);
             });
 

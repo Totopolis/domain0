@@ -26,7 +26,7 @@ namespace Domain0.Test
                 permissions = JsonConvert.SerializeObject(permissions),
                 exp = new DateTimeOffset(issueTime.AddMinutes(15)).ToUnixTimeSeconds(),
                 iat = new DateTimeOffset(issueTime).ToUnixTimeSeconds(),
-                iss = "sdl",
+                iss = "issuer",
                 aud = "*",
             }, secret, JwtHashAlgorithm.HS256);
 
@@ -53,7 +53,7 @@ namespace Domain0.Test
                 tid = $"{tid}",
                 exp = new DateTimeOffset(issueTime.AddMinutes(15)).ToUnixTimeSeconds(),
                 iat = new DateTimeOffset(issueTime).ToUnixTimeSeconds(),
-                iss = "sdl",
+                iss = "issuer",
                 aud = "*"
             }, secret, JwtHashAlgorithm.HS256);
 

@@ -49,6 +49,9 @@
     <Reference Include="Nancy, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.2.0.0-clinteastwood\lib\net452\Nancy.dll</HintPath>
     </Reference>
+    <Reference Include="Nancy.Authentication.Stateless, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.Authentication.Stateless.2.0.0-clinteastwood\lib\net452\Nancy.Authentication.Stateless.dll</HintPath>
+    </Reference>
     <Reference Include="Nancy.Bootstrappers.Autofac, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.Bootstrappers.Autofac.2.0.0-clinteastwood\lib\net452\Nancy.Bootstrappers.Autofac.dll</HintPath>
     </Reference>
@@ -93,6 +96,7 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -212,8 +216,10 @@
     <Compile Include="..\..\src\server\TokenRegistration.cs">
       <Link>Service\Repository\Model\TokenRegistration.cs</Link>
     </Compile>
+    <Compile Include="Infrastructure\AuthenticationConfigurationBuilder.cs" />
+    <Compile Include="Infrastructure\IAuthenticationConfigurationBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service\FakeRequestContext.cs" />
+    <Compile Include="Service\JwtAuthenticationRequestContext.cs" />
     <Compile Include="Service\FakeSmsClient.cs" />
   </ItemGroup>
   <ItemGroup>
