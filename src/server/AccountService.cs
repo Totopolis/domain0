@@ -237,6 +237,10 @@ namespace Domain0.Service
                     Login = phone.ToString(),
                     Password = hashPassword
                 });
+
+                // store new assigned Id
+                account.Id = userId;
+
                 await _roleRepository.AddUserToDefaultRoles(userId);
             }
 
