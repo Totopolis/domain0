@@ -25,6 +25,22 @@ go
 if object_id('dom.Application') is not null
 	drop table dom.Application
 go
+if object_id('dom.Account') is not null
+	drop table dom.Account
+go
+if object_id('dom.SmsRequest') is not null
+	drop table dom.SmsRequest
+go
+if object_id('dom.Caching') is not null
+	drop table dom.Caching
+go
+if object_id('dom.Message') is not null
+	drop table dom.Message
+go
+if object_id('dom.TokenRegistration') is not null
+	drop table dom.TokenRegistration
+go
+
 
 create table dom.Login (
 	Id int not null identity(1,1) constraint PK_dom_Login primary key,
@@ -69,9 +85,20 @@ create table dom.PermissionRole (
 	constraint PK_dom_PermissionRole primary key(PermissionId, RoleId)
 )
 go
+
+create table dom.Account (
+	[Id] int identity(1,1) not null constraint PK_Account_Id primary key,
+	[Phone] decimal null,
+	[Login] nvarchar(80) null,
+	[Password] nvarchar(80) null,
+	[Name] nvarchar(256) not null,
+	[Description] nvarchar(max) null
+)
+go
+
 create table dom.RoleUser (
 	RoleId int not null constraint FK_dom_RoleUser_RoleId foreign key references dom.Role(Id),
-	UserId int not null constraint FK_dom_RoleUser_UserId foreign key references dom.Login(Id)
+	UserId int not null constraint FK_dom_RoleUser_UserId foreign key references dom.Account(Id)
 
 	constraint PK_dom_RoleUser primary key(RoleId, UserId)
 )
@@ -91,9 +118,7 @@ create table dom.Token (
 	AccessToken varchar(max) not null
 )
 go
-if object_id('dom.Caching') is not null
-	drop table dom.Caching
-go
+
 create table dom.Caching (
 	Id varchar(900) not null constraint PK_dom_Caching primary key,
 	Value varbinary(max) not null,
@@ -102,9 +127,7 @@ create table dom.Caching (
 	AbsoluteExpiration datetimeoffset(7) null
 )
 go
-if object_id('dom.Message') is not null
-	drop table dom.Message
-go
+
 create table dom.Message (
 	Id int identity(1,1) not null constraint PK_Message_Id primary key,
 	Description nvarchar(max) null,
@@ -125,32 +148,12 @@ values
 ('sms',		'rus',		'RequestResetTemplate',	'Ваш НОВЫЙ пароль: {0} действителен {1} мин')
 
 
-if object_id('dom.Account') is not null
-	drop table dom.Account
-go
-create table dom.Account (
-	[Id] int identity(1,1) not null constraint PK_Account_Id primary key,
-	[Phone] decimal null,
-	[Login] nvarchar(80) null,
-	[Password] nvarchar(80) null,
-	[Name] nvarchar(256) not null,
-	[Description] nvarchar(max) null
-)
-go
-if object_id('dom.SmsRequest') is not null
-	drop table dom.SmsRequest
-go
-
 create table dom.SmsRequest (
 	[Id] int identity(1,1) not null constraint PK_SmsRequest_Id primary key,
 	[Phone] decimal not null,
 	[Password] nvarchar(80) not null,
 	[ExpiredAt] datetime2 not null
 )
-go
-
-if object_id('dom.TokenRegistration') is not null
-	drop table dom.TokenRegistration
 go
 
 create table dom.TokenRegistration (
