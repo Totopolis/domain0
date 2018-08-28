@@ -8,6 +8,7 @@ using AutoMapper;
 using Domain0.Exceptions;
 using System.Linq;
 using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Domain0.Service
 {
@@ -178,9 +179,18 @@ namespace Domain0.Service
             string accessToken = registration?.AccessToken;
             if (!string.IsNullOrEmpty(accessToken))
             {
-                var principal = _tokenGenerator.Parse(accessToken);
-                if (!principal?.GetPermissions().All(permission => permissions.Contains(permission)) ?? true)
+                try
+                {
+                    // if permission changed we should make new token
+                    var principal = _tokenGenerator.Parse(accessToken);
+                    if (!principal?.GetPermissions().All(permission => permissions.Contains(permission)) ?? true)
+                        accessToken = null;
+                }
+                catch (SecurityTokenValidationException ex)
+                {
+                    // if token expired or some sensitive properties changes we should make new token
                     accessToken = null;
+                }
             }
 
             if (string.IsNullOrEmpty(accessToken))
