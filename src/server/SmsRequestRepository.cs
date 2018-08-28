@@ -27,7 +27,7 @@ namespace Domain0.FastSql
         public async Task<bool> ConfirmRegister(decimal phone, string password)
         {
             var request = await Pick(phone);
-            return request.Password == password;
+            return request?.Password == password;
         }
     }
 }
