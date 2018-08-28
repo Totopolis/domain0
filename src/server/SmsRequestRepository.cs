@@ -18,7 +18,11 @@ namespace Domain0.FastSql
 
         public Task<SmsRequest> Pick(decimal phone)
             => SimpleCommand.ExecuteQueryAsync<SmsRequest>(_connectionString,
-                    $"select * from {TableName} where {nameof(SmsRequest.Phone)}=@p0 and {nameof(SmsRequest.ExpiredAt)}>=@p1", phone, DateTime.UtcNow)
+                    $"select * from {TableName} " +
+                    $"where {nameof(SmsRequest.Phone)}=@p0 " +
+                    $"and {nameof(SmsRequest.ExpiredAt)}>=@p1 " +
+                    $"order by id desc",  // get latest request
+                    phone, DateTime.UtcNow)
                 .FirstOrDefault();
 
         public Task Save(SmsRequest smsRequest)
