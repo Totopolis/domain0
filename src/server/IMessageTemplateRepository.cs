@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Domain0.Repository
 {
-    public interface IMessageTemplateRepository
+    public interface IMessageTemplateRepository : IRepository<int, MessageTemplate>
     {
         Task<string> GetWelcomeTemplate(
             MessageTemplateLocale locale,
@@ -17,5 +17,6 @@ namespace Domain0.Repository
         Task<string> GetRequestResetTemplate(
             MessageTemplateLocale locale,
             MessageTemplateType type);
+
     }
 }

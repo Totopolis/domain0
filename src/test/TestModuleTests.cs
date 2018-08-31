@@ -102,6 +102,7 @@ namespace Domain0.Test
             builder.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
             builder.RegisterInstance(new Mock<IRequestContext>().Object).As<IRequestContext>().SingleInstance();
             builder.RegisterInstance(new Mock<IAccountRepository>().Object).As<IAccountRepository>().SingleInstance();
+            builder.RegisterInstance(new Mock<IApplicationRepository>().Object).As<IApplicationRepository>().SingleInstance();
             builder.RegisterInstance(new Mock<ISmsClient>().Object).As<ISmsClient>().SingleInstance();
 
             upgrade?.Invoke(builder);

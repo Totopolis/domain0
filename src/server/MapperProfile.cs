@@ -13,6 +13,11 @@ namespace Domain0.Service
                 .ForMember(x => x.Name, opt => opt.MapFrom(x => (x.Name).Trim()))
                 .ForMember(x => x.Phone, opt => opt.MapFrom(x => x.Phone))
                 .ForMember(x => x.Description, opt => opt.MapFrom(x => x.Description));
+
+            CreateMap<Repository.Model.Application,     Model.Application>();
+            CreateMap<Repository.Model.MessageTemplate, Model.MessageTemplate>();
+            CreateMap<Repository.Model.Permission,      Model.Permission>();
+            CreateMap<Repository.Model.Role,            Model.Role>();
         }
     }
 }

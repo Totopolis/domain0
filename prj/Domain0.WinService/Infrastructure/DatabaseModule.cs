@@ -17,6 +17,9 @@ namespace Domain0.FastSql
             builder.RegisterType<AccountRepository>().As<IAccountRepository>()
                 .WithParameter(new ResolvedParameter((pi, ctx) => pi.ParameterType == typeof(string),
                     (pi, ctx) => ctx.ResolveNamed<string>(nameof(connectionString)))).SingleInstance();
+            builder.RegisterType<ApplicationRepository>().As<IApplicationRepository>()
+                .WithParameter(new ResolvedParameter((pi, ctx) => pi.ParameterType == typeof(string),
+                    (pi, ctx) => ctx.ResolveNamed<string>(nameof(connectionString)))).SingleInstance();
             builder.RegisterType<MessageTemplateRepository>().As<IMessageTemplateRepository>()
                 .WithParameter(new ResolvedParameter((pi, ctx) => pi.ParameterType == typeof(string),
                     (pi, ctx) => ctx.ResolveNamed<string>(nameof(connectionString)))).SingleInstance();

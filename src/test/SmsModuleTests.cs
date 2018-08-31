@@ -127,7 +127,7 @@ namespace Domain0.Test
 
             var roleRepository = container.Resolve<IRoleRepository>();
             var roleMock = Mock.Get(roleRepository);
-            roleMock.Setup(r => r.GetByIds(It.IsAny<string[]>())).ReturnsAsync(roles.Select(role => new Role { Name = role }).ToArray());
+            roleMock.Setup(r => r.GetByRoleNames(It.IsAny<string[]>())).ReturnsAsync(roles.Select(role => new Repository.Model.Role { Name = role }).ToArray());
 
             var passwordGenerator = container.Resolve<IPasswordGenerator>();
             var passwordMock = Mock.Get(passwordGenerator);
@@ -173,7 +173,7 @@ namespace Domain0.Test
 
             var roleRepository = container.Resolve<IRoleRepository>();
             var roleMock = Mock.Get(roleRepository);
-            roleMock.Setup(r => r.GetByIds(It.IsAny<string[]>())).ReturnsAsync(roles.Select(role => new Role { Name = role }).ToArray());
+            roleMock.Setup(r => r.GetByRoleNames(It.IsAny<string[]>())).ReturnsAsync(roles.Select(role => new Repository.Model.Role { Name = role }).ToArray());
 
             var passwordGenerator = container.Resolve<IPasswordGenerator>();
             var passwordMock = Mock.Get(passwordGenerator);
@@ -227,7 +227,7 @@ namespace Domain0.Test
 
             var roleRepository = container.Resolve<IRoleRepository>();
             var roleMock = Mock.Get(roleRepository);
-            roleMock.Setup(r => r.GetByIds(It.IsAny<string[]>())).ReturnsAsync(roles.Select(role => new Role { Name = role }).ToArray());
+            roleMock.Setup(r => r.GetByRoleNames(It.IsAny<string[]>())).ReturnsAsync(roles.Select(role => new Repository.Model.Role { Name = role }).ToArray());
 
             var passwordGenerator = container.Resolve<IPasswordGenerator>();
             var passwordMock = Mock.Get(passwordGenerator);
@@ -318,7 +318,11 @@ namespace Domain0.Test
             accountMock.Setup(a => a.FindByLogin(phone.ToString())).ReturnsAsync(new Account {Id = 1, Login = phone.ToString(), Phone = phone, Password = password});
 
             var permissionMock = Mock.Get(container.Resolve<IPermissionRepository>());
-            permissionMock.Setup(a => a.GetByUserId(It.IsAny<int>())).ReturnsAsync(new[] {"test1", "test2"});
+            permissionMock.Setup(a => a.GetByUserId(It.IsAny<int>())).ReturnsAsync(new[] 
+            {
+                new Repository.Model.Permission { Name = "test1" },
+                new Repository.Model.Permission { Name = "test2" },
+            });
 
             var tokenMock = Mock.Get(container.Resolve<ITokenRegistrationRepository>());
             tokenMock.Setup(a => a.FindLastTokenByUserId(It.IsAny<int>())).ReturnsAsync((TokenRegistration) null);

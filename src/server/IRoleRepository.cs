@@ -3,14 +3,17 @@ using System.Threading.Tasks;
 
 namespace Domain0.Repository
 {
-    public interface IRoleRepository
+    public interface IRoleRepository : IRepository<int, Role>
     {
-        Task<Role> GetById(string id);
-
-        Task<Role[]> GetByIds(params string[] ids);
-
         Task AddUserToRoles(int userId, params string[] roles);
 
         Task AddUserToDefaultRoles(int userId);
+
+        Task AddRolePermissions(int roleId, int[] ids);
+
+        Task RemoveRolePermissions(int roleId, int[] ids);
+
+        Task<Role[]> GetByRoleNames(params string[] roleNames);
+
     }
 }

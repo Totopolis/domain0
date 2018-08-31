@@ -143,7 +143,7 @@ namespace Domain0.Service
                 Name = request.Name
             });
 
-            var roles = await _roleRepository.GetByIds(request.Roles.ToArray());
+            var roles = await _roleRepository.GetByRoleNames(request.Roles.ToArray());
             if (roles.Length != (request.Roles?.Count ?? 0))
                 throw new NotFoundException(nameof(request.Roles), string.Join(",",
                     request.Roles.Where(role =>
@@ -174,7 +174,7 @@ namespace Domain0.Service
 
         public async Task<AccessTokenResponse> GetTokenResponse(Account account)
         {
-            var permissions = await _permissionRepository.GetByUserId(account.Id);
+            var userPermissions = await _permissionRepository.GetByUserId(account.Id);
             var registration = await _tokenRegistrationRepository.FindLastTokenByUserId(account.Id);
             string accessToken = registration?.AccessToken;
             if (!string.IsNullOrEmpty(accessToken))
@@ -183,10 +183,11 @@ namespace Domain0.Service
                 {
                     // if permission changed we should make new token
                     var principal = _tokenGenerator.Parse(accessToken);
-                    if (!principal?.GetPermissions().All(permission => permissions.Contains(permission)) ?? true)
+                    if (principal == null
+                        || isRightsDifferent(userPermissions, principal.GetPermissions()))
                         accessToken = null;
                 }
-                catch (SecurityTokenValidationException ex)
+                catch (SecurityTokenValidationException)
                 {
                     // if token expired or some sensitive properties changes we should make new token
                     accessToken = null;
@@ -195,7 +196,7 @@ namespace Domain0.Service
 
             if (string.IsNullOrEmpty(accessToken))
             {
-                accessToken = _tokenGenerator.GenerateAccessToken(account.Id, permissions);
+                accessToken = _tokenGenerator.GenerateAccessToken(account.Id, userPermissions.Select(p => p.Name).ToArray());
                 await _tokenRegistrationRepository.Save(registration = new TokenRegistration
                 {
                     UserId = account.Id,
@@ -214,6 +215,29 @@ namespace Domain0.Service
                 RefreshToken = refreshToken,
                 Profile = _mapper.Map<UserProfile>(account)
             };
+        }
+
+        private static bool isRightsDifferent(
+            Repository.Model.Permission[] userPermissions, 
+            string[] tokenPermissions)
+        {
+            // assume checking permissions is distinctive
+            if (userPermissions.Length != tokenPermissions.Length)
+                // rigths are different!
+                return true;
+
+                var matchedRights = userPermissions.Select(p => p.Name)
+                .Join(tokenPermissions,
+                    up => up,
+                    tp => tp,
+                    (up, tp) => up)
+                .ToArray();
+
+            if (userPermissions.Length != matchedRights.Length)
+                // rigths are different!
+                return true;
+
+            return false;
         }
 
         public async Task<AccessTokenResponse> Login(SmsLoginRequest request)

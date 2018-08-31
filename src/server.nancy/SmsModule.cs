@@ -5,7 +5,6 @@ using Nancy.ModelBinding;
 using Nancy.Swagger.Annotations.Attributes;
 using Swagger.ObjectModel;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
 using Domain0.Exceptions;
@@ -251,7 +250,7 @@ namespace Domain0.Nancy
         }
 
         [Route(nameof(GetUserByFilter))]
-        [Route(HttpMethod.Get, GetUsersByFilterUrl)]
+        [Route(HttpMethod.Post, GetUsersByFilterUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "UserProfile" }, Summary = "Method for receive profiles by user ids")]

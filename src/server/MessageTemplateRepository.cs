@@ -6,15 +6,12 @@ using Domain0.Repository.Model;
 
 namespace Domain0.FastSql
 {
-    public class MessageTemplateRepository : IMessageTemplateRepository
+    public class MessageTemplateRepository : RepositoryBase<int, MessageTemplate>, IMessageTemplateRepository
     {
-        private readonly string connectionString;
-
-        public const string TableName = "[dom].[Message]";
-
-        public MessageTemplateRepository(string connectionString)
+        public MessageTemplateRepository(string connectionString) :base(connectionString)
         {
-            this.connectionString = connectionString;
+            TableName = "[dom].[Message]";
+            KeyName = "Id";
         }
 
         public Task<string> GetWelcomeTemplate(

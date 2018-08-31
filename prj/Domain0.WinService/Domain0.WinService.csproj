@@ -144,6 +144,8 @@
     <Compile Include="..\..\src\server\X509StoreProvider.cs">
       <Link>Certificate\X509StoreProvider.cs</Link>
     </Compile>
+    <Compile Include="FastSql\ApplicationRepository.cs" />
+    <Compile Include="FastSql\RepositoryBase.cs" />
     <Compile Include="Infrastructure\DatabaseModule.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

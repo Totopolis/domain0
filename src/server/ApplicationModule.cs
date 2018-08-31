@@ -27,6 +27,7 @@ namespace Domain0
             builder.RegisterType<MapperProfile>().As<Profile>().SingleInstance();
             builder.RegisterType<PasswordGenerator>().As<IPasswordGenerator>().SingleInstance();
             builder.RegisterType<AccountService>().As<IAccountService>().InstancePerLifetimeScope();
+            builder.RegisterType<AdminService>().As<IAdminService>().InstancePerLifetimeScope();
             builder.RegisterType<FakeSmsClient>().As<ISmsClient>();
             builder
                 .RegisterType<AuthenticationConfigurationBuilder>()
