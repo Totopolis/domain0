@@ -43,5 +43,14 @@ namespace Domain0.Nancy.Service
         Task AddRolePermissions(int roleId, int[] ids);
 
         Task RemoveRolePermissions(int roleId, int[] ids);
+
+
+        Task AddUserPermissions(int userId, int[] ids);
+
+        Task RemoveUserPermissions(int userId, int[] ids);
+
+        Task AddUserRoles(int userId, int[] ids);
+
+        Task RemoveUserRole(int userId, int[] ids);
     }
 }

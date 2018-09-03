@@ -20,10 +20,18 @@ namespace Domain0.FastSql
                 $"insert into { PermissionRepository.PermissionRoleTableName } " +
                 $"(PermissionId, RoleId) " +
                 $"select Id as PermissionId, @p0 as RoleId " +
-                $"from [dom].[Permission] p " +
+                $"from { PermissionRepository.PermissionTableName } p " +
                 $"where p.Id in ({string.Join(", ", ids)})",
                 roleId);
-  
+
+        public Task AddUserRoles(int userId, int[] ids)
+            => SimpleCommand.ExecuteNonQueryAsync(connectionString,
+                $"insert into { UserRoleTableName } " +
+                $"(RoleId, UserId) " +
+                $"select Id as RoleId, @p0 as UserId " +
+                $"from { TableName } r " +
+                $"where r.Id in ({string.Join(", ", ids)})",
+                userId);
 
         public Task AddUserToDefaultRoles(int userId)
             => SimpleCommand.ExecuteNonQueryAsync(connectionString,
@@ -49,5 +57,13 @@ select r.id, @p0 from {TableName} r where r.{nameof(Role.Name)} in ({string.Join
                 $"  RoleId = @p0 " +
                 $"  and PermissionId in ({string.Join(", ", ids)}) ",
                 roleId);
+
+        public Task RemoveUserRole(int userId, int[] ids)
+            => SimpleCommand.ExecuteNonQueryAsync(connectionString,
+                $"delete from { UserRoleTableName } " +
+                $"where " +
+                $"  UserId = @p0 " +
+                $"  and RoleId in ({string.Join(", ", ids)})",
+                userId);
     }
 }

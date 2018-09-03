@@ -11,10 +11,16 @@ namespace Domain0.FastSql
     {
         public const string PermissionRoleTableName = "[dom].[PermissionRole]";
         public const string PermissionUserTableName = "[dom].[PermissionUser]";
+        public const string PermissionTableName = "[dom].[Permission]";
 
         public PermissionRepository(string connectionString): base(connectionString)
         {
-            TableName = "[dom].[Permission]";
+            TableName = PermissionTableName;
+        }
+
+        public Task AddUserPermission(int userId, int[] ids)
+        {
+            throw new System.NotImplementedException();
         }
 
         public async Task<Permission[]> FindByFilter(Model.PermissionFilter filter)
@@ -82,5 +88,10 @@ namespace Domain0.FastSql
                     $")",
                     userId)
                 .ToArray();
+
+        public Task RemoveUserPermissions(int userId, int[] ids)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

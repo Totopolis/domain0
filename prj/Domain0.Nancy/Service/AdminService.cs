@@ -141,6 +141,29 @@ namespace Domain0.Nancy.Service
         {
             await roleRepository.RemoveRolePermissions(roleId, ids);
         }
+
+        #endregion
+
+        #region User
+        public async Task AddUserPermissions(int userId, int[] ids)
+        {
+            await permissionRepository.AddUserPermission(userId, ids);
+        }
+
+        public async Task RemoveUserPermissions(int userId, int[] ids)
+        {
+            await permissionRepository.RemoveUserPermissions(userId, ids);
+        }
+
+        public async Task AddUserRoles(int userId, int[] ids)
+        {
+            await roleRepository.AddUserRoles(userId, ids);
+        }
+
+        public async Task RemoveUserRole(int userId, int[] ids)
+        {
+            await roleRepository.RemoveUserRole(userId, ids);
+        }
         #endregion
 
         private readonly IApplicationRepository applicationRepository;

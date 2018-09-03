@@ -40,6 +40,10 @@ namespace Domain0.Nancy
         public const string AddRolePermissionsUri = "api/admin/Role/{id}/Permissions";
         public const string RemoveRolePermissionsUri = "api/admin/Role/{id}/Permissions";
 
+        public const string AddUserPermissionsUri = "api/admin/User/{id}/Permissions";
+        public const string RemoveUserPermissionsUri = "api/admin/User/{id}/Permissions";
+        public const string AddUserRolesUri = "api/admin/User/{id}/Roles";
+        public const string RemoveUserRolesUri = "api/admin/User/{id}/Roles";
 
         public AdminModule(
             ILogger loggerInstance,
@@ -125,6 +129,21 @@ namespace Domain0.Nancy
             Delete(RemoveRolePermissionsUri,
                 ctx => RemoveRolePermissions(),
                 name: nameof(RemoveRolePermissionsUri));
+
+
+            Put(AddUserPermissionsUri,
+                ctx => AddUserPermissions(),
+                name: nameof(AddUserPermissionsUri));
+            Delete(RemoveUserPermissionsUri,
+                ctx => RemoveUserPermissions(),
+                name: nameof(RemoveUserPermissionsUri));
+
+            Put(AddUserRolesUri,
+                ctx => AddUserRoles(),
+                name: nameof(AddUserRolesUri));
+            Delete(RemoveUserRolesUri,
+                ctx => RemoveUserRoles(),
+                name: nameof(RemoveUserRolesUri));
         }
 
         #region Application
@@ -573,6 +592,90 @@ namespace Domain0.Nancy
             return HttpStatusCode.NoContent;
         }
 
+        #endregion
+
+        #region User
+
+        [Route(nameof(AddUserPermissionsUri))]
+        [Route(HttpMethod.Put, AddUserPermissionsUri)]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Tags = new[] { "Admin" }, Summary = "Method for add user permissions")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body,
+            Name = "ids",
+            ParamType = typeof(int[]),
+            Required = true,
+            Description = "permission ids to add")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success")]
+        public async Task<object> AddUserPermissions()
+        {
+            var userId = Context.Parameters.id;
+            var ids = this.BindAndValidateModel<int[]>();
+            await adminService.AddUserPermissions(userId, ids);
+            return HttpStatusCode.NoContent;
+        }
+
+        [Route(nameof(RemoveUserPermissionsUri))]
+        [Route(HttpMethod.Delete, RemoveUserPermissionsUri)]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Tags = new[] { "Admin" }, Summary = "Method for remove user permissions")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body,
+            Name = "ids",
+            ParamType = typeof(int[]),
+            Required = true,
+            Description = "permission ids to remove")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success")]
+        public async Task<object> RemoveUserPermissions()
+        {
+            var userId = Context.Parameters.id;
+            var ids = this.BindAndValidateModel<int[]>();
+            await adminService.RemoveUserPermissions(userId, ids);
+            return HttpStatusCode.NoContent;
+        }
+
+
+        [Route(nameof(AddUserRolesUri))]
+        [Route(HttpMethod.Put, AddUserRolesUri)]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Tags = new[] { "Admin" }, Summary = "Method for add user roles")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body,
+            Name = "ids",
+            ParamType = typeof(int[]),
+            Required = true,
+            Description = "permission ids to add")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success")]
+        public async Task<object> AddUserRoles()
+        {
+            var userId = Context.Parameters.id;
+            var ids = this.BindAndValidateModel<int[]>();
+            await adminService.AddUserRoles(userId, ids);
+            return HttpStatusCode.NoContent;
+        }
+
+        [Route(nameof(RemoveUserRolesUri))]
+        [Route(HttpMethod.Delete, RemoveUserRolesUri)]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Tags = new[] { "Admin" }, Summary = "Method for remove user permissions")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body,
+            Name = "ids",
+            ParamType = typeof(int[]),
+            Required = true,
+            Description = "permission ids to remove")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success")]
+        public async Task<object> RemoveUserRoles()
+        {
+            var userId = Context.Parameters.id;
+            var ids = this.BindAndValidateModel<int[]>();
+            await adminService.RemoveUserRole(userId, ids);
+            return HttpStatusCode.NoContent;
+        }
         #endregion
 
         private readonly ILogger logger;

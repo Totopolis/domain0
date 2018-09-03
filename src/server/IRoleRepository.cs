@@ -15,5 +15,8 @@ namespace Domain0.Repository
 
         Task<Role[]> GetByRoleNames(params string[] roleNames);
 
+        Task AddUserRoles(int userId, int[] ids);
+
+        Task RemoveUserRole(int userId, int[] ids);
     }
 }
