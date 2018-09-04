@@ -7,6 +7,8 @@ using NLog;
 using Swagger.ObjectModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Nancy.Security;
+using Domain0.Service.Tokens;
 
 namespace Domain0.Nancy
 {
@@ -49,6 +51,11 @@ namespace Domain0.Nancy
             ILogger loggerInstance,
             IAdminService adminServiceInstance)
         {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c => 
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+
             logger = loggerInstance;
             adminService = adminServiceInstance;
 

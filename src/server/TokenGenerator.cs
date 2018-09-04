@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Domain0.Service.Tokens;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -28,13 +29,6 @@ namespace Domain0.Service
 
         private readonly SymmetricSecurityKey _signatureKey;
 
-        const string CLAIM_SUBJECT = "sub";
-        const string CLAIM_PERMISSIONS = "permissions";
-        const string CLAIM_TOKEN_ID = "tid";
-        const string CLAIM_TOKEN_TYPE = "typ";
-        const string CLAIM_TOKEN_TYPE_ACCESS = "access_token";
-        const string CLAIM_TOKEN_TYPE_REFRESH = "refresh_token";
-
         public TokenGenerator(TokenGeneratorSettings settings)
         {
             _settings = settings;
@@ -49,9 +43,9 @@ namespace Domain0.Service
         {
             var claims = new[]
             {
-                new Claim(CLAIM_TOKEN_TYPE, CLAIM_TOKEN_TYPE_ACCESS),
-                new Claim(CLAIM_SUBJECT, userId.ToString()),
-                new Claim(CLAIM_PERMISSIONS, JsonConvert.SerializeObject(permissions))
+                new Claim(TokenClaims.CLAIM_TOKEN_TYPE, TokenClaims.CLAIM_TOKEN_TYPE_ACCESS),
+                new Claim(TokenClaims.CLAIM_SUBJECT, userId.ToString()),
+                new Claim(TokenClaims.CLAIM_PERMISSIONS, JsonConvert.SerializeObject(permissions))
             };
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -70,9 +64,9 @@ namespace Domain0.Service
         {
             var claims = new[]
             {
-                new Claim(CLAIM_TOKEN_TYPE, CLAIM_TOKEN_TYPE_REFRESH),
-                new Claim(CLAIM_SUBJECT, userId.ToString()),
-                new Claim(CLAIM_TOKEN_ID, tokenId.ToString()),
+                new Claim(TokenClaims.CLAIM_TOKEN_TYPE, TokenClaims.CLAIM_TOKEN_TYPE_REFRESH),
+                new Claim(TokenClaims.CLAIM_SUBJECT, userId.ToString()),
+                new Claim(TokenClaims.CLAIM_TOKEN_ID, tokenId.ToString()),
             };
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -103,7 +97,7 @@ namespace Domain0.Service
             var principal = _handler.ValidateToken(accessToken, parameters, out var token);
             var identity = (ClaimsIdentity)principal.Identity;
             identity.AddClaim(new Claim("id_token", accessToken));
-            foreach (var role in principal.FindAll(CLAIM_PERMISSIONS))
+            foreach (var role in principal.FindAll(TokenClaims.CLAIM_PERMISSIONS))
             foreach (var permission in JsonConvert.DeserializeObject<string[]>(role.Value))
                 identity.AddClaim(new Claim(ClaimTypes.Role, permission));
 
@@ -129,7 +123,7 @@ namespace Domain0.Service
             // refresh token should have tid field
             var tokenIdClaim = principal.Claims.First(x =>
                 x.Type.Equals("http://schemas.microsoft.com/identity/claims/tenantid") 
-                || x.Type.Equals(CLAIM_TOKEN_ID));
+                || x.Type.Equals(TokenClaims.CLAIM_TOKEN_ID));
 
             // tid should be a int
             return int.Parse(tokenIdClaim.Value);

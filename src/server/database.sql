@@ -163,3 +163,18 @@ create table dom.TokenRegistration (
 	[IssuedAt] datetime2 not null,
 	[ExpiredAt] datetime2 null
 )
+go
+
+insert into [dom].[Application]
+([Name], [Description])
+values
+('Domain0', 'Domain0 auth app')
+
+declare @DomainAppId int = SCOPE_IDENTITY();
+  
+
+insert into [dom].[Permission]
+([ApplicationId], [Name], [Description])
+values
+(@DomainAppId, 'Admin', 'Admin permission')
+

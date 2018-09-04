@@ -123,7 +123,6 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
         public async Task<object> ChangePassword()
         {
-            //this.RequiresAuthentication();
             var request = this.BindAndValidateModel<ChangePasswordRequest>();
             try
             {

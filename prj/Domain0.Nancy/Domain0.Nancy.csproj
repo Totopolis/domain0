@@ -232,6 +232,7 @@
     <Compile Include="Service\Repository\IRepository.cs" />
     <Compile Include="Service\Repository\Model\Application.cs" />
     <Compile Include="Service\Repository\Model\Permission.cs" />
+    <Compile Include="Service\Tokens\TokenClaims.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\..\src\swagger\swagger-ui-bundle.js.map">
