@@ -19,9 +19,13 @@ namespace Domain0.FastSql
         }
 
         public Task AddUserPermission(int userId, int[] ids)
-        {
-            throw new System.NotImplementedException();
-        }
+            => SimpleCommand.ExecuteNonQueryAsync(connectionString,
+                $"insert into { PermissionUserTableName } " +
+                $"(PermissionId, UserId) " +
+                $"select Id as PermissionId, @p0 as UserId " +
+                $"from { PermissionTableName } p " +
+                $"where p.Id in ({string.Join(", ", ids)})",
+                userId);
 
         public async Task<Permission[]> FindByFilter(Model.PermissionFilter filter)
         {
@@ -90,8 +94,11 @@ namespace Domain0.FastSql
                 .ToArray();
 
         public Task RemoveUserPermissions(int userId, int[] ids)
-        {
-            throw new System.NotImplementedException();
-        }
+            => SimpleCommand.ExecuteNonQueryAsync(connectionString,
+                $"delete from { PermissionUserTableName } " +
+                $"where " +
+                $"  UserId = @p0 " +
+                $"  and PermissionId in ({string.Join(", ", ids)})",
+                userId);
     }
 }
