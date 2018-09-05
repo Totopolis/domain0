@@ -14,38 +14,38 @@ namespace Domain0.Nancy
 {
     public class AdminModule : NancyModule
     {
-        public const string LoadApplicationsByFilterUri = "api/admin/Application/ByFilter";
-        public const string LoadApplicationUri = "api/admin/Application/{id}";
-        public const string CreateApplicationUri = "api/admin/Application";
-        public const string UpdateApplicationUri = "api/admin/Application";
-        public const string RemoveApplicationUri = "api/admin/Application/{id}";
+        public const string LoadApplicationsByFilterUrl = "api/admin/Application/ByFilter";
+        public const string LoadApplicationUrl = "api/admin/Application/{id}";
+        public const string CreateApplicationUrl = "api/admin/Application";
+        public const string UpdateApplicationUrl = "api/admin/Application";
+        public const string RemoveApplicationUrl = "api/admin/Application/{id}";
 
-        public const string LoadMessageTemplatesByFilterUri = "api/admin/MessageTemplate/ByFilter";
-        public const string LoadMessageTemplateUri = "api/admin/MessageTemplate/{id}";
-        public const string CreateMessageTemplateUri = "api/admin/MessageTemplate";
-        public const string UpdateMessageTemplateUri = "api/admin/MessageTemplate";
-        public const string RemoveMessageTemplateUri = "api/admin/MessageTemplate/{id}";
+        public const string LoadMessageTemplatesByFilterUrl = "api/admin/MessageTemplate/ByFilter";
+        public const string LoadMessageTemplateUrl = "api/admin/MessageTemplate/{id}";
+        public const string CreateMessageTemplateUrl = "api/admin/MessageTemplate";
+        public const string UpdateMessageTemplateUrl = "api/admin/MessageTemplate";
+        public const string RemoveMessageTemplateUrl = "api/admin/MessageTemplate/{id}";
 
-        public const string LoadPermissionsByFilterUri = "api/admin/Permission/ByFilter";
-        public const string LoadPermissionUri = "api/admin/Permission/{id}";
-        public const string CreatePermissionUri = "api/admin/Permission";
-        public const string UpdatePermissionUri = "api/admin/Permission";
-        public const string RemovePermissionUri = "api/admin/Permission/{id}";
+        public const string LoadPermissionsByFilterUrl = "api/admin/Permission/ByFilter";
+        public const string LoadPermissionUrl = "api/admin/Permission/{id}";
+        public const string CreatePermissionUrl = "api/admin/Permission";
+        public const string UpdatePermissionUrl = "api/admin/Permission";
+        public const string RemovePermissionUrl = "api/admin/Permission/{id}";
 
 
-        public const string LoadRolesByFilterUri = "api/admin/Role/ByFilter";
-        public const string LoadRoleUri = "api/admin/Role/{id}";
-        public const string CreateRoleUri = "api/admin/Role";
-        public const string UpdateRoleUri = "api/admin/Role";
-        public const string RemoveRoleUri = "api/admin/Role/{id}";
-        public const string LoadRolePermissionsUri = "api/admin/Role/{id}/Permissions";
-        public const string AddRolePermissionsUri = "api/admin/Role/{id}/Permissions";
-        public const string RemoveRolePermissionsUri = "api/admin/Role/{id}/Permissions";
+        public const string LoadRolesByFilterUrl = "api/admin/Role/ByFilter";
+        public const string LoadRoleUrl = "api/admin/Role/{id}";
+        public const string CreateRoleUrl = "api/admin/Role";
+        public const string UpdateRoleUrl = "api/admin/Role";
+        public const string RemoveRoleUrl = "api/admin/Role/{id}";
+        public const string LoadRolePermissionsUrl = "api/admin/Role/{id}/Permissions";
+        public const string AddRolePermissionsUrl = "api/admin/Role/{id}/Permissions";
+        public const string RemoveRolePermissionsUrl = "api/admin/Role/{id}/Permissions";
 
-        public const string AddUserPermissionsUri = "api/admin/User/{id}/Permissions";
-        public const string RemoveUserPermissionsUri = "api/admin/User/{id}/Permissions";
-        public const string AddUserRolesUri = "api/admin/User/{id}/Roles";
-        public const string RemoveUserRolesUri = "api/admin/User/{id}/Roles";
+        public const string AddUserPermissionsUrl = "api/admin/User/{id}/Permissions";
+        public const string RemoveUserPermissionsUrl = "api/admin/User/{id}/Permissions";
+        public const string AddUserRolesUrl = "api/admin/User/{id}/Roles";
+        public const string RemoveUserRolesUrl = "api/admin/User/{id}/Roles";
 
         public AdminModule(
             ILogger loggerInstance,
@@ -59,103 +59,103 @@ namespace Domain0.Nancy
             logger = loggerInstance;
             adminService = adminServiceInstance;
 
-            Post(LoadApplicationsByFilterUri,
+            Post(LoadApplicationsByFilterUrl,
                 ctx => LoadApplicationsByFilter(),
-                name: nameof(LoadApplicationsByFilterUri));
-            Get(LoadApplicationUri,
+                name: nameof(LoadApplicationsByFilter));
+            Get(LoadApplicationUrl,
                 ctx => LoadApplication(),
-                name: nameof(LoadApplicationUri));
-            Put(CreateApplicationUri,
+                name: nameof(LoadApplication));
+            Put(CreateApplicationUrl,
                 ctx => CreateApplication(),
-                name: nameof(CreateApplicationUri));
-            Post(UpdateApplicationUri,
+                name: nameof(CreateApplication));
+            Post(UpdateApplicationUrl,
                 ctx => UpdateApplication(),
-                name: nameof(UpdateApplicationUri));
-            Delete(RemoveApplicationUri,
+                name: nameof(UpdateApplication));
+            Delete(RemoveApplicationUrl,
                 ctx => RemoveApplication(),
-                name: nameof(RemoveApplicationUri));
+                name: nameof(RemoveApplication));
 
 
             Post(
-                LoadMessageTemplatesByFilterUri,
+                LoadMessageTemplatesByFilterUrl,
                 ctx => LoadMessageTemplatesByFilter(),
-                name: nameof(LoadMessageTemplatesByFilterUri));
-            Get(LoadMessageTemplateUri,
+                name: nameof(LoadMessageTemplatesByFilter));
+            Get(LoadMessageTemplateUrl,
                 ctx => LoadMessageTemplate(),
-                name: nameof(LoadMessageTemplateUri));
-            Put(CreateMessageTemplateUri,
+                name: nameof(LoadMessageTemplate));
+            Put(CreateMessageTemplateUrl,
                 ctx => CreateMessageTemplate(),
-                name: nameof(CreateMessageTemplateUri));
-            Post(UpdateMessageTemplateUri,
+                name: nameof(CreateMessageTemplate));
+            Post(UpdateMessageTemplateUrl,
                 ctx => UpdateMessageTemplate(),
-                name: nameof(UpdateMessageTemplateUri));
-            Delete(RemoveMessageTemplateUri,
+                name: nameof(UpdateMessageTemplate));
+            Delete(RemoveMessageTemplateUrl,
                 ctx => RemoveMessageTemplate(),
-                name: nameof(RemoveMessageTemplateUri));
+                name: nameof(RemoveMessageTemplate));
 
 
-            Post(LoadPermissionsByFilterUri,
+            Post(LoadPermissionsByFilterUrl,
                 ctx => LoadPermissionsByFilter(),
-                name: nameof(LoadPermissionsByFilterUri));
-            Get(LoadPermissionUri,
+                name: nameof(LoadPermissionsByFilter));
+            Get(LoadPermissionUrl,
                 ctx => LoadPermission(),
-                name: nameof(LoadPermissionUri));
-            Put(CreatePermissionUri,
+                name: nameof(LoadPermission));
+            Put(CreatePermissionUrl,
                 ctx => CreatePermission(),
-                name: nameof(CreatePermissionUri));
-            Post(UpdatePermissionUri,
+                name: nameof(CreatePermission));
+            Post(UpdatePermissionUrl,
                 ctx => UpdatePermission(),
-                name: nameof(UpdatePermissionUri));
-            Delete(RemovePermissionUri,
+                name: nameof(UpdatePermission));
+            Delete(RemovePermissionUrl,
                 ctx => RemovePermission(),
-                name: nameof(RemovePermissionUri));
+                name: nameof(RemovePermission));
 
 
-            Post(LoadRolesByFilterUri,
+            Post(LoadRolesByFilterUrl,
                 ctx => LoadRolesByFilter(),
-                name: nameof(LoadRolesByFilterUri));
-            Get(LoadRoleUri,
+                name: nameof(LoadRolesByFilter));
+            Get(LoadRoleUrl,
                 ctx => LoadRole(),
-                name: nameof(LoadRoleUri));
-            Put(CreateRoleUri,
+                name: nameof(LoadRole));
+            Put(CreateRoleUrl,
                 ctx => CreateRole(),
-                name: nameof(CreateRoleUri));
-            Post(UpdateRoleUri,
+                name: nameof(CreateRole));
+            Post(UpdateRoleUrl,
                 ctx => UpdateRole(),
-                name: nameof(UpdateRoleUri));
-            Delete(RemoveRoleUri,
+                name: nameof(UpdateRole));
+            Delete(RemoveRoleUrl,
                 ctx => RemoveRole(),
-                name: nameof(RemoveRoleUri));
+                name: nameof(RemoveRole));
 
-            Post(LoadRolePermissionsUri,
+            Post(LoadRolePermissionsUrl,
                 ctx => LoadRolePermissions(),
-                name: nameof(LoadRolePermissionsUri));
-            Put(AddRolePermissionsUri,
+                name: nameof(LoadRolePermissions));
+            Put(AddRolePermissionsUrl,
                 ctx => AddRolePermissions(),
-                name: nameof(AddRolePermissionsUri));
-            Delete(RemoveRolePermissionsUri,
+                name: nameof(AddRolePermissions));
+            Delete(RemoveRolePermissionsUrl,
                 ctx => RemoveRolePermissions(),
-                name: nameof(RemoveRolePermissionsUri));
+                name: nameof(RemoveRolePermissions));
 
 
-            Put(AddUserPermissionsUri,
+            Put(AddUserPermissionsUrl,
                 ctx => AddUserPermissions(),
-                name: nameof(AddUserPermissionsUri));
-            Delete(RemoveUserPermissionsUri,
+                name: nameof(AddUserPermissions));
+            Delete(RemoveUserPermissionsUrl,
                 ctx => RemoveUserPermissions(),
-                name: nameof(RemoveUserPermissionsUri));
+                name: nameof(RemoveUserPermissions));
 
-            Put(AddUserRolesUri,
+            Put(AddUserRolesUrl,
                 ctx => AddUserRoles(),
-                name: nameof(AddUserRolesUri));
-            Delete(RemoveUserRolesUri,
+                name: nameof(AddUserRoles));
+            Delete(RemoveUserRolesUrl,
                 ctx => RemoveUserRoles(),
-                name: nameof(RemoveUserRolesUri));
+                name: nameof(RemoveUserRoles));
         }
 
         #region Application
-        [Route(nameof(LoadApplicationsByFilterUri))]
-        [Route(HttpMethod.Post, LoadApplicationsByFilterUri)]
+        [Route(nameof(LoadApplicationsByFilter))]
+        [Route(HttpMethod.Post, LoadApplicationsByFilterUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for receive Applications by filter")]
@@ -172,8 +172,8 @@ namespace Domain0.Nancy
             return await adminService.GetByFilter(filter);
         }
 
-        [Route(nameof(LoadApplicationUri))]
-        [Route(HttpMethod.Get, LoadApplicationUri)]
+        [Route(nameof(LoadApplication))]
+        [Route(HttpMethod.Get, LoadApplicationUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for get Application")]
@@ -190,8 +190,8 @@ namespace Domain0.Nancy
             return await adminService.GetByFilter(new ApplicationFilter(id));
         }
 
-        [Route(nameof(CreateApplicationUri))]
-        [Route(HttpMethod.Put, CreateApplicationUri)]
+        [Route(nameof(CreateApplication))]
+        [Route(HttpMethod.Put, CreateApplicationUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for create Application")]
@@ -209,8 +209,8 @@ namespace Domain0.Nancy
             return Response.AsJson(id, HttpStatusCode.OK);
         }
 
-        [Route(nameof(UpdateApplicationUri))]
-        [Route(HttpMethod.Post, UpdateApplicationUri)]
+        [Route(nameof(UpdateApplication))]
+        [Route(HttpMethod.Post, UpdateApplicationUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for update Application")]
@@ -228,8 +228,8 @@ namespace Domain0.Nancy
             return HttpStatusCode.NoContent;
         }
 
-        [Route(nameof(RemoveApplicationUri))]
-        [Route(HttpMethod.Delete, RemoveApplicationUri)]
+        [Route(nameof(RemoveApplication))]
+        [Route(HttpMethod.Delete, RemoveApplicationUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for delete Application by id")]
@@ -251,8 +251,8 @@ namespace Domain0.Nancy
         #endregion
 
         #region MessageTemplate
-        [Route(nameof(LoadMessageTemplatesByFilterUri))]
-        [Route(HttpMethod.Post, LoadMessageTemplatesByFilterUri)]
+        [Route(nameof(LoadMessageTemplatesByFilter))]
+        [Route(HttpMethod.Post, LoadMessageTemplatesByFilterUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for receive MessageTemplates by filter")]
@@ -269,8 +269,8 @@ namespace Domain0.Nancy
             return await adminService.GetByFilter(filter);
         }
 
-        [Route(nameof(LoadMessageTemplateUri))]
-        [Route(HttpMethod.Get, LoadMessageTemplateUri)]
+        [Route(nameof(LoadMessageTemplate))]
+        [Route(HttpMethod.Get, LoadMessageTemplateUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for get MessageTemplate")]
@@ -290,8 +290,8 @@ namespace Domain0.Nancy
             });
         }
 
-        [Route(nameof(CreateMessageTemplateUri))]
-        [Route(HttpMethod.Put, CreateMessageTemplateUri)]
+        [Route(nameof(CreateMessageTemplate))]
+        [Route(HttpMethod.Put, CreateMessageTemplateUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for create MessageTemplate")]
@@ -309,8 +309,8 @@ namespace Domain0.Nancy
             return Response.AsJson(id, HttpStatusCode.OK);
         }
 
-        [Route(nameof(UpdateMessageTemplateUri))]
-        [Route(HttpMethod.Post, UpdateMessageTemplateUri)]
+        [Route(nameof(UpdateMessageTemplate))]
+        [Route(HttpMethod.Post, UpdateMessageTemplateUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for update MessageTemplate")]
@@ -328,8 +328,8 @@ namespace Domain0.Nancy
             return HttpStatusCode.NoContent;
         }
 
-        [Route(nameof(RemoveMessageTemplateUri))]
-        [Route(HttpMethod.Delete, RemoveMessageTemplateUri)]
+        [Route(nameof(RemoveMessageTemplate))]
+        [Route(HttpMethod.Delete, RemoveMessageTemplateUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for delete MessageTemplate by id")]
@@ -349,8 +349,8 @@ namespace Domain0.Nancy
         #endregion
 
         #region Permission
-        [Route(nameof(LoadPermissionsByFilterUri))]
-        [Route(HttpMethod.Post, LoadPermissionsByFilterUri)]
+        [Route(nameof(LoadPermissionsByFilter))]
+        [Route(HttpMethod.Post, LoadPermissionsByFilterUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for receive Permissions by filter")]
@@ -367,8 +367,8 @@ namespace Domain0.Nancy
             return await adminService.GetByFilter(filter);
         }
 
-        [Route(nameof(LoadPermissionUri))]
-        [Route(HttpMethod.Get, LoadPermissionUri)]
+        [Route(nameof(LoadPermission))]
+        [Route(HttpMethod.Get, LoadPermissionUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for get Permission")]
@@ -385,8 +385,8 @@ namespace Domain0.Nancy
             return await adminService.GetByFilter(new PermissionFilter(id));
         }
 
-        [Route(nameof(CreatePermissionUri))]
-        [Route(HttpMethod.Put, CreatePermissionUri)]
+        [Route(nameof(CreatePermission))]
+        [Route(HttpMethod.Put, CreatePermissionUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for create Permission")]
@@ -404,8 +404,8 @@ namespace Domain0.Nancy
             return Response.AsJson(id, HttpStatusCode.OK);
         }
 
-        [Route(nameof(UpdatePermissionUri))]
-        [Route(HttpMethod.Post, UpdatePermissionUri)]
+        [Route(nameof(UpdatePermission))]
+        [Route(HttpMethod.Post, UpdatePermissionUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for update Permission")]
@@ -423,8 +423,8 @@ namespace Domain0.Nancy
             return HttpStatusCode.NoContent;
         }
 
-        [Route(nameof(RemovePermissionUri))]
-        [Route(HttpMethod.Delete, RemovePermissionUri)]
+        [Route(nameof(RemovePermission))]
+        [Route(HttpMethod.Delete, RemovePermissionUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for delete Permission by id")]
@@ -445,8 +445,8 @@ namespace Domain0.Nancy
         #endregion
 
         #region Role
-        [Route(nameof(LoadRolesByFilterUri))]
-        [Route(HttpMethod.Post, LoadRolesByFilterUri)]
+        [Route(nameof(LoadRolesByFilter))]
+        [Route(HttpMethod.Post, LoadRolesByFilterUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for receive Roles by filter")]
@@ -463,8 +463,8 @@ namespace Domain0.Nancy
             return await adminService.GetByFilter(filter);
         }
 
-        [Route(nameof(LoadRoleUri))]
-        [Route(HttpMethod.Get, LoadRoleUri)]
+        [Route(nameof(LoadRole))]
+        [Route(HttpMethod.Get, LoadRoleUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for get Role")]
@@ -481,8 +481,8 @@ namespace Domain0.Nancy
             return await adminService.GetByFilter(new RoleFilter(id));
         }
 
-        [Route(nameof(CreateRoleUri))]
-        [Route(HttpMethod.Put, CreateRoleUri)]
+        [Route(nameof(CreateRole))]
+        [Route(HttpMethod.Put, CreateRoleUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for create Role")]
@@ -500,8 +500,8 @@ namespace Domain0.Nancy
             return Response.AsJson(id, HttpStatusCode.OK);
         }
 
-        [Route(nameof(UpdateRoleUri))]
-        [Route(HttpMethod.Post, UpdateRoleUri)]
+        [Route(nameof(UpdateRole))]
+        [Route(HttpMethod.Post, UpdateRoleUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for update Role")]
@@ -519,8 +519,8 @@ namespace Domain0.Nancy
             return HttpStatusCode.NoContent;
         }
 
-        [Route(nameof(RemoveRoleUri))]
-        [Route(HttpMethod.Delete, RemoveRoleUri)]
+        [Route(nameof(RemoveRole))]
+        [Route(HttpMethod.Delete, RemoveRoleUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for delete Role by id")]
@@ -538,8 +538,8 @@ namespace Domain0.Nancy
             return HttpStatusCode.NoContent;
         }
 
-        [Route(nameof(LoadRolePermissionsUri))]
-        [Route(HttpMethod.Post, LoadRolePermissionsUri)]
+        [Route(nameof(LoadRolePermissions))]
+        [Route(HttpMethod.Post, LoadRolePermissionsUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for receive Role Permissions")]
@@ -559,8 +559,8 @@ namespace Domain0.Nancy
             });
         }
 
-        [Route(nameof(AddRolePermissionsUri))]
-        [Route(HttpMethod.Put, AddRolePermissionsUri)]
+        [Route(nameof(AddRolePermissions))]
+        [Route(HttpMethod.Put, AddRolePermissionsUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for add role permissions")]
@@ -579,8 +579,8 @@ namespace Domain0.Nancy
             return HttpStatusCode.NoContent;
         }
 
-        [Route(nameof(RemoveRolePermissionsUri))]
-        [Route(HttpMethod.Delete, RemoveRolePermissionsUri)]
+        [Route(nameof(RemoveRolePermissions))]
+        [Route(HttpMethod.Delete, RemoveRolePermissionsUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for remove role permissions")]
@@ -603,8 +603,8 @@ namespace Domain0.Nancy
 
         #region User
 
-        [Route(nameof(AddUserPermissionsUri))]
-        [Route(HttpMethod.Put, AddUserPermissionsUri)]
+        [Route(nameof(AddUserPermissions))]
+        [Route(HttpMethod.Put, AddUserPermissionsUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for add user permissions")]
@@ -623,8 +623,8 @@ namespace Domain0.Nancy
             return HttpStatusCode.NoContent;
         }
 
-        [Route(nameof(RemoveUserPermissionsUri))]
-        [Route(HttpMethod.Delete, RemoveUserPermissionsUri)]
+        [Route(nameof(RemoveUserPermissions))]
+        [Route(HttpMethod.Delete, RemoveUserPermissionsUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for remove user permissions")]
@@ -644,8 +644,8 @@ namespace Domain0.Nancy
         }
 
 
-        [Route(nameof(AddUserRolesUri))]
-        [Route(HttpMethod.Put, AddUserRolesUri)]
+        [Route(nameof(AddUserRoles))]
+        [Route(HttpMethod.Put, AddUserRolesUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for add user roles")]
@@ -664,8 +664,8 @@ namespace Domain0.Nancy
             return HttpStatusCode.NoContent;
         }
 
-        [Route(nameof(RemoveUserRolesUri))]
-        [Route(HttpMethod.Delete, RemoveUserRolesUri)]
+        [Route(nameof(RemoveUserRoles))]
+        [Route(HttpMethod.Delete, RemoveUserRolesUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for remove user permissions")]
