@@ -54,7 +54,7 @@ namespace Domain0.Nancy
         [Route(Consumes = new[] { "application/json" })]
         [Route(Produces = new string[] { })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
-        [RouteParam(ParamIn = ParameterIn.Body, Name = "phone", ParamType = typeof(long), Required = true, Description = "user's phone with single number, started from 7 for Russia, 79162233224 for example")]
+        [RouteParam(ParamIn = ParameterIn.Body, Name = "phone", ParamType = typeof(long), Required = true, Description = "user's phone with single number, started from 7 for Russia, 71231234567 for example")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
         public async Task<object> Register()
         {
@@ -142,7 +142,7 @@ namespace Domain0.Nancy
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Produces = new string[] { })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for reset password")]
-        [RouteParam(ParamIn = ParameterIn.Body, Name = "phone", ParamType = typeof(long), Required = true, Description = "user's phone with single number, started from 7 for Russia, 79162233224 for example")]
+        [RouteParam(ParamIn = ParameterIn.Body, Name = "phone", ParamType = typeof(long), Required = true, Description = "user's phone with single number, started from 7 for Russia, 71231234567 for example")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
         public async Task<object> RequestResetPassword()
         {
@@ -169,7 +169,7 @@ namespace Domain0.Nancy
         [Route(HttpMethod.Get, DoesUserExistUrl)]
         [Route(Produces = new[] { "application/json" })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for check user exists")]
-        [RouteParam(ParamIn = ParameterIn.Query, Name = "phone", ParamType = typeof(long), Required = true, Description = "user's phone with single number, started from 7 for Russia, 79162233224 for example")]
+        [RouteParam(ParamIn = ParameterIn.Query, Name = "phone", ParamType = typeof(long), Required = true, Description = "user's phone with single number, started from 7 for Russia, 71231234567 for example")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "True if user exists else false", Model = typeof(bool))]
         public async Task<object> DoesUserExist()
         {
