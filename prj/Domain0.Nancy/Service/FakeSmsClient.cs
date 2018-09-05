@@ -8,7 +8,8 @@ namespace Domain0.Nancy.Service
     {
         public async Task Send(decimal phone, string message)
         {
-            Trace.TraceInformation($"sms to: { phone }, message: { message }");            
+            Trace.TraceInformation($"sms to: { phone }, message: { message }");
+            await Task.CompletedTask;
         }
     }
 }

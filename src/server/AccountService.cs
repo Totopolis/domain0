@@ -22,6 +22,8 @@ namespace Domain0.Service
     {
         Task Register(decimal phone);
 
+        Task Register(string email);
+
         Task<bool> DoesUserExists(decimal phone);
 
         Task<UserProfile> CreateUser(ForceCreateUserRequest request);
@@ -47,52 +49,31 @@ namespace Domain0.Service
 
     public class AccountService : IAccountService
     {
-        private readonly IMapper _mapper;
-
-        private readonly ISmsClient _smsClient;
-
-        private readonly IPasswordGenerator _passwordGenerator;
-
-        private readonly ITokenGenerator _tokenGenerator;
-
-        private readonly IRequestContext _requestContext;
-
-        private readonly IAccountRepository _accountRepository;
-
-        private readonly IRoleRepository _roleRepository;
-
-        private readonly ISmsRequestRepository _smsRequestRepository;
-
-        private readonly IMessageTemplateRepository _messageTemplateRepository;
-
-        private readonly IPermissionRepository _permissionRepository;
-
-        private readonly ITokenRegistrationRepository _tokenRegistrationRepository;
-
         public AccountService(
-            IMapper mapper,
-            ISmsClient smsClient,
-            IPasswordGenerator passwordGenerator,
-            ITokenGenerator tokenGenerator,
-            IRequestContext requestContext,
             IAccountRepository accountRepository,
-            IRoleRepository roleRepository,
-            ISmsRequestRepository smsRequestRepository,
+            IEmailClient emailClientInstance,
+            IMapper mapper,
             IMessageTemplateRepository messageTemplateRepository,
+            IPasswordGenerator passwordGenerator,
             IPermissionRepository permissionRepository,
+            IRequestContext requestContext,
+            IRoleRepository roleRepository,
+            ISmsClient smsClient,
+            ISmsRequestRepository smsRequestRepository,
+            ITokenGenerator tokenGenerator,
             ITokenRegistrationRepository tokenRegistrationRepository)
         {
-            _mapper = mapper;
-            _smsClient = smsClient;
-            _passwordGenerator = passwordGenerator;
-            _tokenGenerator = tokenGenerator;
-            _requestContext = requestContext;
-
             _accountRepository = accountRepository;
-            _roleRepository = roleRepository;
-            _smsRequestRepository = smsRequestRepository;
+            emailClient = emailClientInstance;
+            _mapper = mapper;
             _messageTemplateRepository = messageTemplateRepository;
+            _passwordGenerator = passwordGenerator;
             _permissionRepository = permissionRepository;
+            _requestContext = requestContext;
+            _roleRepository = roleRepository;
+            _smsClient = smsClient;
+            _smsRequestRepository = smsRequestRepository;
+            _tokenGenerator = tokenGenerator;
             _tokenRegistrationRepository = tokenRegistrationRepository;
         }
 
@@ -118,6 +99,11 @@ namespace Domain0.Service
             var message = string.Format(template, password, expiredAt.TotalMinutes);
 
             await _smsClient.Send(phone, message);
+        }
+
+        public async Task Register(string email)
+        {
+            await emailClient.Send("test", email, "test");
         }
 
         public async Task<bool> DoesUserExists(decimal phone)
@@ -376,5 +362,29 @@ namespace Domain0.Service
             var accounts = await _accountRepository.FindByUserIds(filter.UserIds);
             return _mapper.Map<UserProfile[]>(accounts);
         }
+
+        private readonly IEmailClient emailClient;
+
+        private readonly IMapper _mapper;
+
+        private readonly ISmsClient _smsClient;
+
+        private readonly IPasswordGenerator _passwordGenerator;
+
+        private readonly ITokenGenerator _tokenGenerator;
+
+        private readonly IRequestContext _requestContext;
+
+        private readonly IAccountRepository _accountRepository;
+
+        private readonly IRoleRepository _roleRepository;
+
+        private readonly ISmsRequestRepository _smsRequestRepository;
+
+        private readonly IMessageTemplateRepository _messageTemplateRepository;
+
+        private readonly IPermissionRepository _permissionRepository;
+
+        private readonly ITokenRegistrationRepository _tokenRegistrationRepository;
     }
 }

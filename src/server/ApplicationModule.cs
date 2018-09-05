@@ -34,6 +34,16 @@ namespace Domain0
                 .As<IAuthenticationConfigurationBuilder>()
                 .SingleInstance();
 
+            builder.RegisterInstance(new EmailClientSettings
+            {
+                ServerHost = "smtp.gmail.com",
+                Port = 587,
+                Email = "",
+                Username = "",
+                Password = ""
+            });
+            builder.RegisterType<EmailClient>().As<IEmailClient>();
+
             builder.Register(container =>
             {
                 var profiles = container.Resolve<IEnumerable<Profile>>();

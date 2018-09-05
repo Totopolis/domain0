@@ -2,7 +2,7 @@
 using Nancy;
 using System;
 
-namespace Domain0.Nancy.Service
+namespace Domain0.Nancy.Infrastructure
 {
     class JwtAuthenticationRequestContext : IRequestContext
     {

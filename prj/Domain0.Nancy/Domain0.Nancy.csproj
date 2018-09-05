@@ -217,17 +217,22 @@
       <Link>Service\Repository\Model\TokenRegistration.cs</Link>
     </Compile>
     <Compile Include="AdminModule.cs" />
+    <Compile Include="EmailModule.cs" />
     <Compile Include="Infrastructure\AuthenticationConfigurationBuilder.cs" />
     <Compile Include="Infrastructure\IAuthenticationConfigurationBuilder.cs" />
     <Compile Include="Model\Application.cs" />
     <Compile Include="Model\Permission.cs" />
     <Compile Include="Model\MessageTemplate.cs" />
+    <Compile Include="Model\RegisterRequest.cs" />
     <Compile Include="Model\Role.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\AdminService.cs" />
+    <Compile Include="Service\FakeEmailClient.cs" />
+    <Compile Include="Service\EmailClient.cs" />
     <Compile Include="Service\IAdminService.cs" />
-    <Compile Include="Service\JwtAuthenticationRequestContext.cs" />
+    <Compile Include="Infrastructure\JwtAuthenticationRequestContext.cs" />
     <Compile Include="Service\FakeSmsClient.cs" />
+    <Compile Include="Service\IEmailClient.cs" />
     <Compile Include="Service\Repository\IApplicationRepository.cs" />
     <Compile Include="Service\Repository\IRepository.cs" />
     <Compile Include="Service\Repository\Model\Application.cs" />
