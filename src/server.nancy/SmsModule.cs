@@ -9,6 +9,8 @@ using System.Security;
 using System.Threading.Tasks;
 using Domain0.Exceptions;
 using Domain0.Nancy.Infrastructure;
+using Nancy.Security;
+using Domain0.Service.Tokens;
 
 namespace Domain0.Nancy
 {
@@ -81,6 +83,11 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
         public async Task<object> ForceCreateUser()
         {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+
             var request = this.BindAndValidateModel<ForceCreateUserRequest>();
             try
             {
@@ -123,6 +130,8 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
         public async Task<object> ChangePassword()
         {
+            this.RequiresAuthentication();
+
             var request = this.BindAndValidateModel<ChangePasswordRequest>();
             try
             {
@@ -146,6 +155,8 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
         public async Task<object> RequestResetPassword()
         {
+            this.RequiresAuthentication();
+
             var phone = this.BindAndValidateModel<long>();
             await _accountService.RequestResetPassword(phone);
             return HttpStatusCode.NoContent;
@@ -160,6 +171,11 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
         public async Task<object> ForceChangePhone()
         {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+
             var request = this.BindAndValidateModel<ChangePhoneRequest>();
             await _accountService.ForceChangePhone(request);
             return HttpStatusCode.NoContent;
@@ -192,6 +208,11 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.OK, Message = "User phone", Model = typeof(long))]
         public async Task<object> PhoneByUserId()
         {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+
             int id;
             if (!int.TryParse(Request.Query[nameof(id)], out id))
             {
@@ -226,6 +247,8 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(UserProfile))]
         public async Task<object> GetMyProfile()
         {
+            this.RequiresAuthentication();
+
             var profile = await _accountService.GetMyProfile();
             return profile;
         }
@@ -238,6 +261,11 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(UserProfile))]
         public async Task<object> GetUserByPhone()
         {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+
             if (!decimal.TryParse(Context.Parameters.phone.ToString(), out decimal phone))
             {
                 ModelValidationResult.Errors.Add(nameof(phone), "bad format");
@@ -257,6 +285,11 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(IEnumerable<UserProfile>))]
         public async Task<object> GetUserByFilter()
         {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+
             var filter = this.BindAndValidateModel<UserProfileFilter>();
             return await _accountService.GetProfilesByFilter(filter);
         }
@@ -269,6 +302,11 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(UserProfile))]
         public async Task<object> GetUserById()
         {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+
             var id = Context.Parameters.id;
             var profile = await _accountService.GetProfileByUserId(id);
             return profile;

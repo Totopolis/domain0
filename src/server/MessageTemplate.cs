@@ -16,6 +16,16 @@ namespace Domain0.Repository.Model
         public string Description { get; set; }
     }
 
+    public enum MessageTemplateName
+    {
+        WelcomeTemplate,
+        RegisterSubjectTemplate,
+        RegisterTemplate,
+        RequestResetSubjectTemplate,
+        RequestResetTemplate
+
+    }
+
     public enum MessageTemplateLocale
     {
         rus, eng

@@ -38,7 +38,11 @@ namespace Domain0.Service
 
         Task RequestResetPassword(decimal phone);
 
+        Task RequestResetPassword(string email);
+
         Task ForceChangePhone(ChangePhoneRequest request);
+
+        Task ForceChangeEmail(ChangeEmailRequest request);
 
         Task<AccessTokenResponse> Refresh(string refreshToken);
 
@@ -125,8 +129,14 @@ namespace Domain0.Service
                 ExpiredAt = DateTime.UtcNow.Add(expiredAt)
             });
 
-            var subjectTemplate = await _messageTemplateRepository.GetRegisterSubjectTemplate(MessageTemplateLocale.rus, MessageTemplateType.email);
-            var template = await _messageTemplateRepository.GetRegisterTemplate(MessageTemplateLocale.rus, MessageTemplateType.email);
+            var subjectTemplate = await _messageTemplateRepository.GetTemplate(
+                MessageTemplateName.RegisterSubjectTemplate,
+                MessageTemplateLocale.rus, 
+                MessageTemplateType.email);
+            var template = await _messageTemplateRepository.GetTemplate(
+                MessageTemplateName.RegisterTemplate,
+                MessageTemplateLocale.rus, 
+                MessageTemplateType.email);
 
             var message = string.Format(template, password, expiredAt.TotalMinutes);
             var subject = string.Format(subjectTemplate, email, "domain0");
@@ -374,6 +384,39 @@ namespace Domain0.Service
             await _smsClient.Send(phone, message);
         }
 
+        public async Task RequestResetPassword(string email)
+        {
+            var account = await _accountRepository.FindByLogin(email);
+            if (account == null)
+                throw new NotFoundException(nameof(email), "account not found");
+
+            var password = _passwordGenerator.GeneratePassword();
+            var expiredAt = TimeSpan.FromSeconds(90);
+            await emailRequestRepository.Save(new EmailRequest
+            {
+                Email = email,
+                Password = password,
+                ExpiredAt = DateTime.UtcNow.Add(expiredAt)
+            });
+
+
+            var subjectTemplate = await _messageTemplateRepository.GetTemplate(
+                MessageTemplateName.RequestResetSubjectTemplate,
+                MessageTemplateLocale.rus, 
+                MessageTemplateType.email);
+
+            var template = await _messageTemplateRepository.GetTemplate(
+                MessageTemplateName.RequestResetTemplate,
+                MessageTemplateLocale.rus, 
+                MessageTemplateType.email);
+
+            var message = string.Format(template, password, expiredAt.TotalMinutes);
+            var subject = string.Format(subjectTemplate, "domain0", account.Name);
+
+            await emailClient.Send(subject, email, message);
+        }
+
+
         public async Task ForceChangePhone(ChangePhoneRequest request)
         {
             var account = await _accountRepository.FindByUserId(request.UserId);
@@ -383,6 +426,19 @@ namespace Domain0.Service
             if (account.Login == account.Phone.ToString())
                 account.Login = request.NewPhone.ToString();
             account.Phone = request.NewPhone;
+
+            await _accountRepository.Update(account);
+        }
+
+        public async Task ForceChangeEmail(ChangeEmailRequest request)
+        {
+            var account = await _accountRepository.FindByUserId(request.UserId);
+            if (account == null)
+                throw new NotFoundException(nameof(request.UserId), "account not found");
+
+            if (account.Login == account.Email)
+                account.Login = request.NewEmail;
+            account.Email = request.NewEmail;
 
             await _accountRepository.Update(account);
         }

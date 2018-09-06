@@ -14,6 +14,23 @@ namespace Domain0.FastSql
             KeyName = "Id";
         }
 
+        public Task<string> GetTemplate(
+            MessageTemplateName name,
+            MessageTemplateLocale locale,
+            MessageTemplateType type)
+        {
+            return SimpleCommand.ExecuteQueryFirstColumnAsync<string>(
+                    connectionString,
+                    $"select {nameof(MessageTemplate.Template)} " +
+                    $"from {TableName} " +
+                    $"where {nameof(MessageTemplate.Name)}      =@p2 " +
+                    $"  and {nameof(MessageTemplate.Locale)}    =@p0 " +
+                    $"  and {nameof(MessageTemplate.Type)}      =@p1 ",
+                    locale.ToString(), type.ToString(), name.ToString())
+                .FirstOrDefault();
+        }
+
+
         public Task<string> GetWelcomeTemplate(
             MessageTemplateLocale locale,
             MessageTemplateType type)
@@ -38,19 +55,6 @@ namespace Domain0.FastSql
                     $"select {nameof(MessageTemplate.Template)} " +
                     $"from {TableName} " +
                     $"where {nameof(MessageTemplate.Name)}      ='RegisterTemplate'" +
-                    $"  and {nameof(MessageTemplate.Locale)}    =@p0" +
-                    $"  and {nameof(MessageTemplate.Type)}      =@p1",
-                    locale.ToString(), type.ToString())
-                .FirstOrDefault();
-        }
-
-        public Task<string> GetRegisterSubjectTemplate(MessageTemplateLocale locale, MessageTemplateType type)
-        {
-            return SimpleCommand.ExecuteQueryFirstColumnAsync<string>(
-                    connectionString,
-                    $"select {nameof(MessageTemplate.Template)} " +
-                    $"from {TableName} " +
-                    $"where {nameof(MessageTemplate.Name)}      ='RegisterSubjectTemplate'" +
                     $"  and {nameof(MessageTemplate.Locale)}    =@p0" +
                     $"  and {nameof(MessageTemplate.Type)}      =@p1",
                     locale.ToString(), type.ToString())

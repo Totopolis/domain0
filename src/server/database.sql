@@ -155,10 +155,14 @@ values
 ('email',	'eng',		'RegisterTemplate',		'Your password is: {0} will valid for {1} min'),
 ('email',	'eng',		'RegisterSubjectTemplate',	'Dear {0}! Welcome to {1}'),
 ('email',	'eng',		'RequestResetTemplate',	'Your NEW password is: {0} will valid for {1} min'),
+('email',	'eng',		'RequestResetSubjectTemplate',	'{0}.Change password for {1}'),
 ('email',	'rus',		'WelcomeTemplate',		'Добро пожаловать {0}!'),
 ('email',	'rus',		'RegisterTemplate',		'Ваш пароль: {0} действителен {1} мин'),
 ('email',	'rus',		'RegisterSubjectTemplate',	'{0}! Добро пожаловать в {1}'),
-('email',	'rus',		'RequestResetTemplate',	'Ваш НОВЫЙ пароль: {0} действителен {1} мин')
+('email',	'rus',		'RequestResetTemplate',	'Ваш НОВЫЙ пароль: {0} действителен {1} мин'),
+('email',	'rus',		'RequestResetSubjectTemplate',	'{0}. Изменение пароля для {1}')
+
+
 go
 
 
