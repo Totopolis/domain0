@@ -31,6 +31,9 @@ go
 if object_id('dom.SmsRequest') is not null
 	drop table dom.SmsRequest
 go
+if object_id('dom.EmailRequest') is not null
+	drop table dom.EmailRequest
+go
 if object_id('dom.Caching') is not null
 	drop table dom.Caching
 go
@@ -88,6 +91,7 @@ go
 
 create table dom.Account (
 	[Id] int identity(1,1) not null constraint PK_Account_Id primary key,
+	[Email] nvarchar(128) null,
 	[Phone] decimal null,
 	[Login] nvarchar(80) null,
 	[Password] nvarchar(80) null,
@@ -145,12 +149,30 @@ values
 ('sms',		'eng',		'RequestResetTemplate',	'Your NEW password is: {0} will valid for {1} min'),
 ('sms',		'rus',		'WelcomeTemplate',		'Добро пожаловать {0}!'),
 ('sms',		'rus',		'RegisterTemplate',		'Ваш пароль: {0} действителен {1} мин'),
-('sms',		'rus',		'RequestResetTemplate',	'Ваш НОВЫЙ пароль: {0} действителен {1} мин')
+('sms',		'rus',		'RequestResetTemplate',	'Ваш НОВЫЙ пароль: {0} действителен {1} мин'),
+
+('email',	'eng',		'WelcomeTemplate',		'Hello {0}!'),
+('email',	'eng',		'RegisterTemplate',		'Your password is: {0} will valid for {1} min'),
+('email',	'eng',		'RegisterSubjectTemplate',	'Dear {0}! Welcome to {1}'),
+('email',	'eng',		'RequestResetTemplate',	'Your NEW password is: {0} will valid for {1} min'),
+('email',	'rus',		'WelcomeTemplate',		'Добро пожаловать {0}!'),
+('email',	'rus',		'RegisterTemplate',		'Ваш пароль: {0} действителен {1} мин'),
+('email',	'rus',		'RegisterSubjectTemplate',	'{0}! Добро пожаловать в {1}'),
+('email',	'rus',		'RequestResetTemplate',	'Ваш НОВЫЙ пароль: {0} действителен {1} мин')
+go
 
 
 create table dom.SmsRequest (
 	[Id] int identity(1,1) not null constraint PK_SmsRequest_Id primary key,
 	[Phone] decimal not null,
+	[Password] nvarchar(80) not null,
+	[ExpiredAt] datetime2 not null
+)
+go
+
+create table dom.EmailRequest (
+	[Id] int identity(1,1) not null constraint PK_EmailRequest_Id primary key,
+	[Email] nvarchar(128) not null,
 	[Password] nvarchar(80) not null,
 	[ExpiredAt] datetime2 not null
 )

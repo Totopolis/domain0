@@ -122,7 +122,7 @@ namespace Domain0.Test
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountMock = Mock.Get(accountRepository);
             var registers = new Dictionary<decimal, Account>();
-            accountMock.Setup(a => a.Insert(It.IsAny<Account>())).Callback<Account>(a => registers[a.Phone] = a).Returns(Task.FromResult(1));
+            accountMock.Setup(a => a.Insert(It.IsAny<Account>())).Callback<Account>(a => registers[a.Phone.Value] = a).Returns(Task.FromResult(1));
             accountMock.Setup(a => a.FindByPhone(phone)).Returns<decimal>(p => Task.FromResult(registers.TryGetValue(p, out var acc) ? acc : null));
 
             var roleRepository = container.Resolve<IRoleRepository>();
@@ -168,7 +168,7 @@ namespace Domain0.Test
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountMock = Mock.Get(accountRepository);
             var registers = new Dictionary<decimal, Account>();
-            accountMock.Setup(a => a.Insert(It.IsAny<Account>())).Callback<Account>(a => registers[a.Phone] = a).Returns(Task.FromResult(1));
+            accountMock.Setup(a => a.Insert(It.IsAny<Account>())).Callback<Account>(a => registers[a.Phone.Value] = a).Returns(Task.FromResult(1));
             accountMock.Setup(a => a.FindByPhone(phone)).Returns<decimal>(p => Task.FromResult(registers.TryGetValue(p, out var acc) ? acc : null));
 
             var roleRepository = container.Resolve<IRoleRepository>();
@@ -222,7 +222,7 @@ namespace Domain0.Test
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountMock = Mock.Get(accountRepository);
             var registers = new Dictionary<decimal, Account>();
-            accountMock.Setup(a => a.Insert(It.IsAny<Account>())).Callback<Account>(a => registers[a.Phone] = a).Returns(Task.FromResult(1));
+            accountMock.Setup(a => a.Insert(It.IsAny<Account>())).Callback<Account>(a => registers[a.Phone.Value] = a).Returns(Task.FromResult(1));
             accountMock.Setup(a => a.FindByPhone(phone)).Returns<decimal>(p => Task.FromResult(registers.TryGetValue(p, out var acc) ? acc : null));
 
             var roleRepository = container.Resolve<IRoleRepository>();

@@ -23,7 +23,7 @@ namespace Domain0.Repository.Model
 
     public enum MessageTemplateType
     {
-        sms
+        sms, email
     };
 
 }

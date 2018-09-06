@@ -32,6 +32,9 @@ namespace Domain0.FastSql
             builder.RegisterType<SmsRequestRepository>().As<ISmsRequestRepository>()
                 .WithParameter(new ResolvedParameter((pi, ctx) => pi.ParameterType == typeof(string),
                     (pi, ctx) => ctx.ResolveNamed<string>(nameof(connectionString)))).SingleInstance();
+            builder.RegisterType<EmailRequestRepository>().As<IEmailRequestRepository>()
+                .WithParameter(new ResolvedParameter((pi, ctx) => pi.ParameterType == typeof(string),
+                    (pi, ctx) => ctx.ResolveNamed<string>(nameof(connectionString)))).SingleInstance();
             builder.RegisterType<TokenRegistrationRepository>().As<ITokenRegistrationRepository>()
                 .WithParameter(new ResolvedParameter((pi, ctx) => pi.ParameterType == typeof(string),
                     (pi, ctx) => ctx.ResolveNamed<string>(nameof(connectionString)))).SingleInstance();

@@ -10,4 +10,13 @@ namespace Domain0.Repository.Model
 
         public DateTime ExpiredAt { get; set; }
     }
+
+    public class EmailRequest
+    {
+        public string Email { get; set; }
+
+        public string Password { get; set; }
+
+        public DateTime ExpiredAt { get; set; }
+    }
 }

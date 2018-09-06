@@ -9,6 +9,10 @@ namespace Domain0.Repository
             MessageTemplateLocale locale,
             MessageTemplateType type);
 
+        Task<string> GetRegisterSubjectTemplate(
+            MessageTemplateLocale locale,
+            MessageTemplateType type);
+
         Task<string> GetRegisterTemplate(
             MessageTemplateLocale locale,
             MessageTemplateType type);

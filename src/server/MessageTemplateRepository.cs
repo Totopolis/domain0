@@ -44,6 +44,19 @@ namespace Domain0.FastSql
                 .FirstOrDefault();
         }
 
+        public Task<string> GetRegisterSubjectTemplate(MessageTemplateLocale locale, MessageTemplateType type)
+        {
+            return SimpleCommand.ExecuteQueryFirstColumnAsync<string>(
+                    connectionString,
+                    $"select {nameof(MessageTemplate.Template)} " +
+                    $"from {TableName} " +
+                    $"where {nameof(MessageTemplate.Name)}      ='RegisterSubjectTemplate'" +
+                    $"  and {nameof(MessageTemplate.Locale)}    =@p0" +
+                    $"  and {nameof(MessageTemplate.Type)}      =@p1",
+                    locale.ToString(), type.ToString())
+                .FirstOrDefault();
+        }
+
         public Task<string> GetRequestResetTemplate(
             MessageTemplateLocale locale,
             MessageTemplateType type)

@@ -26,9 +26,13 @@ namespace Domain0.Service
 
         Task<bool> DoesUserExists(decimal phone);
 
+        Task<bool> DoesUserExists(string email);
+
         Task<UserProfile> CreateUser(ForceCreateUserRequest request);
 
         Task<AccessTokenResponse> Login(SmsLoginRequest request);
+
+        Task<AccessTokenResponse> Login(EmailLoginRequest request);
 
         Task ChangePassword(ChangePasswordRequest request);
 
@@ -52,6 +56,7 @@ namespace Domain0.Service
         public AccountService(
             IAccountRepository accountRepository,
             IEmailClient emailClientInstance,
+            IEmailRequestRepository emailRequestRepositoryInstance,
             IMapper mapper,
             IMessageTemplateRepository messageTemplateRepository,
             IPasswordGenerator passwordGenerator,
@@ -65,6 +70,7 @@ namespace Domain0.Service
         {
             _accountRepository = accountRepository;
             emailClient = emailClientInstance;
+            emailRequestRepository = emailRequestRepositoryInstance;
             _mapper = mapper;
             _messageTemplateRepository = messageTemplateRepository;
             _passwordGenerator = passwordGenerator;
@@ -103,7 +109,29 @@ namespace Domain0.Service
 
         public async Task Register(string email)
         {
-            await emailClient.Send("test", email, "test");
+            if (await DoesUserExists(email))
+                throw new SecurityException("user exists");
+
+            var existed = await emailRequestRepository.Pick(email);
+            if (existed != null)
+                return;
+
+            var password = _passwordGenerator.GeneratePassword();
+            var expiredAt = TimeSpan.FromSeconds(90);
+            await emailRequestRepository.Save(new EmailRequest
+            {
+                Email = email,
+                Password = password,
+                ExpiredAt = DateTime.UtcNow.Add(expiredAt)
+            });
+
+            var subjectTemplate = await _messageTemplateRepository.GetRegisterSubjectTemplate(MessageTemplateLocale.rus, MessageTemplateType.email);
+            var template = await _messageTemplateRepository.GetRegisterTemplate(MessageTemplateLocale.rus, MessageTemplateType.email);
+
+            var message = string.Format(template, password, expiredAt.TotalMinutes);
+            var subject = string.Format(subjectTemplate, email, "domain0");
+
+            await emailClient.Send(subject, email, message);
         }
 
         public async Task<bool> DoesUserExists(decimal phone)
@@ -111,6 +139,13 @@ namespace Domain0.Service
             var account = await _accountRepository.FindByPhone(phone);
             return account != null;
         }
+
+        public async Task<bool> DoesUserExists(string email)
+        {
+            var account = await _accountRepository.FindByLogin(email);
+            return account != null;
+        }
+
 
         public async Task<UserProfile> CreateUser(ForceCreateUserRequest request)
         {
@@ -267,6 +302,47 @@ namespace Domain0.Service
             return await GetTokenResponse(account);
         }
 
+        public async Task<AccessTokenResponse> Login(EmailLoginRequest request)
+        {
+            var email = request.Email;
+            var hashPassword = _passwordGenerator.HashPassword(request.Password);
+
+            // login account
+            var account = await _accountRepository.FindByLogin(email);
+            if (account != null && _passwordGenerator.CheckPassword(request.Password, account.Password))
+                return await GetTokenResponse(account);
+
+            // remove try confirm registration
+            if (!await emailRequestRepository.ConfirmRegister(email, request.Password))
+                return null;
+
+            // confirm email request
+            if (account != null)
+            {
+                // change password
+                account.Password = hashPassword;
+                await _accountRepository.Update(account);
+            }
+            else
+            {
+                // confirm registration
+                var userId = await _accountRepository.Insert(account = new Account
+                {
+                    Name = email,
+                    Email = email,
+                    Login = email,
+                    Password = hashPassword
+                });
+
+                // store new assigned Id
+                account.Id = userId;
+
+                await _roleRepository.AddUserToDefaultRoles(userId);
+            }
+
+            return await GetTokenResponse(account);
+        }
+
         public async Task ChangePassword(ChangePasswordRequest request)
         {
             var account = await _accountRepository.FindByUserId(_requestContext.UserId);
@@ -364,6 +440,8 @@ namespace Domain0.Service
         }
 
         private readonly IEmailClient emailClient;
+
+        private readonly IEmailRequestRepository emailRequestRepository;
 
         private readonly IMapper _mapper;
 
