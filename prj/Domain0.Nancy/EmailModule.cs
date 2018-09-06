@@ -153,7 +153,6 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
         public async Task<object> RequestResetPassword()
         {
-            this.RequiresAuthentication();
             var request = this.BindAndValidateModel<RegisterRequest>();
             await accountService.RequestResetPassword(request.Email);
             return HttpStatusCode.NoContent;
