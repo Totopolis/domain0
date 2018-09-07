@@ -64,15 +64,20 @@ namespace Domain0.Test
             var messageTemplateRepository = container.Resolve<IMessageTemplateRepository>();
             var messageTemplate = Mock.Get(messageTemplateRepository);
             messageTemplate
-                .Setup(r => r.GetRegisterTemplate(
-                    It.IsAny<MessageTemplateLocale>(), 
-                    It.IsAny<MessageTemplateType>()))
-                .ReturnsAsync("Your password is: {0} will valid for {1} min");
-            messageTemplate
-                .Setup(r => r.GetWelcomeTemplate(
+                .Setup(r => r.GetTemplate(
+                    It.IsAny<MessageTemplateName>(),
                     It.IsAny<MessageTemplateLocale>(),
                     It.IsAny<MessageTemplateType>()))
-                .ReturnsAsync("Hello {0}!");
+                .Returns<MessageTemplateName, MessageTemplateLocale, MessageTemplateType>((n, l, t) =>
+                {
+                    if (n == MessageTemplateName.RegisterTemplate)
+                        return Task.FromResult("Your password is: {0} will valid for {1} min");
+
+                    if (n == MessageTemplateName.WelcomeTemplate)
+                        return Task.FromResult("Hello {0}!");
+
+                    throw new NotImplementedException();
+                });
 
             var passwordGenerator = container.Resolve<IPasswordGenerator>();
             var passwordMock = Mock.Get(passwordGenerator);
@@ -190,7 +195,8 @@ namespace Domain0.Test
             var messageTemplateRepository = container.Resolve<IMessageTemplateRepository>();
             var messageTemplate = Mock.Get(messageTemplateRepository);
             messageTemplate.Setup(r => 
-                r.GetWelcomeTemplate(
+                r.GetTemplate(
+                    It.IsAny<MessageTemplateName>(),
                     It.IsAny<MessageTemplateLocale>(),
                     It.IsAny<MessageTemplateType>())
                 )
@@ -486,7 +492,8 @@ namespace Domain0.Test
 
             var messageTemplateMock = Mock.Get(container.Resolve<IMessageTemplateRepository>());
             messageTemplateMock
-                .Setup(a => a.GetRequestResetTemplate(
+                .Setup(a => a.GetTemplate(
+                    It.IsAny<MessageTemplateName>(),
                     It.IsAny<MessageTemplateLocale>(),
                     It.IsAny<MessageTemplateType>()))
                 .ReturnsAsync("{0}_test");

@@ -10,17 +10,17 @@ namespace Domain0.Repository
             MessageTemplateLocale locale,
             MessageTemplateType type);
 
-        Task<string> GetWelcomeTemplate(
-            MessageTemplateLocale locale,
-            MessageTemplateType type);
+        //Task<string> GetWelcomeTemplate(
+        //    MessageTemplateLocale locale,
+        //    MessageTemplateType type);
 
-        Task<string> GetRegisterTemplate(
-            MessageTemplateLocale locale,
-            MessageTemplateType type);
+        //Task<string> GetRegisterTemplate(
+        //    MessageTemplateLocale locale,
+        //    MessageTemplateType type);
 
-        Task<string> GetRequestResetTemplate(
-            MessageTemplateLocale locale,
-            MessageTemplateType type);
+        //Task<string> GetRequestResetTemplate(
+        //    MessageTemplateLocale locale,
+        //    MessageTemplateType type);
 
     }
 }
