@@ -106,7 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\src\common\BadModelException.cs">
-      <Link>Exception\BadModelException.cs</Link>
+      <Link>Exceptions\BadModelException.cs</Link>
     </Compile>
     <Compile Include="..\..\src\common\NotFoundException.cs">
       <Link>Exceptions\NotFoundException.cs</Link>
@@ -216,31 +216,80 @@
     <Compile Include="..\..\src\server\TokenRegistration.cs">
       <Link>Service\Repository\Model\TokenRegistration.cs</Link>
     </Compile>
-    <Compile Include="AdminModule.cs" />
-    <Compile Include="EmailModule.cs" />
-    <Compile Include="Infrastructure\AuthenticationConfigurationBuilder.cs" />
-    <Compile Include="Infrastructure\IAuthenticationConfigurationBuilder.cs" />
-    <Compile Include="Model\Application.cs" />
-    <Compile Include="Model\ChangeEmailRequest.cs" />
-    <Compile Include="Model\EmailLoginRequest.cs" />
-    <Compile Include="Model\Permission.cs" />
-    <Compile Include="Model\MessageTemplate.cs" />
-    <Compile Include="Model\RegisterRequest.cs" />
-    <Compile Include="Model\Role.cs" />
+    <Compile Include="..\..\src\server\AdminModule.cs">
+      <Link>AdminModule.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\EmailModule.cs">
+      <Link>EmailModule.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\AuthenticationConfigurationBuilder.cs">
+      <Link>Infrastructure\AuthenticationConfigurationBuilder.cs</Link>
+    </Compile>    
+    <Compile Include="..\..\src\server\IAuthenticationConfigurationBuilder.cs">
+      <Link>Infrastructure\IAuthenticationConfigurationBuilder.cs</Link>
+    </Compile>    
+    <Compile Include="..\..\src\server\JwtAuthenticationRequestContext.cs">
+      <Link>Infrastructure\JwtAuthenticationRequestContext.cs</Link>
+    </Compile>    
+
+    <Compile Include="..\..\src\server.nancy\Application.cs">
+      <Link>Model\Application.cs</Link>
+    </Compile>    
+    <Compile Include="..\..\src\server.nancy\ChangeEmailRequest.cs">
+      <Link>Model\ChangeEmailRequest.cs</Link>
+    </Compile>    
+    <Compile Include="..\..\src\server.nancy\EmailLoginRequest.cs">
+      <Link>Model\EmailLoginRequest.cs</Link>
+    </Compile>    
+    <Compile Include="..\..\src\server.nancy\MessageTemplate.cs">
+      <Link>Model\MessageTemplate.cs</Link>
+    </Compile>    
+    <Compile Include="..\..\src\server.nancy\RegisterRequest.cs">
+      <Link>Model\RegisterRequest.cs</Link>
+    </Compile>    
+    <Compile Include="..\..\src\server.nancy\Permission.cs">
+      <Link>Model\Permission.cs</Link>
+    </Compile>    
+    <Compile Include="..\..\src\server.nancy\Role.cs">
+      <Link>Model\Role.cs</Link>
+    </Compile>    
+    <Compile Include="..\..\src\server\AdminService.cs">
+      <Link>Service\AdminService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\FakeEmailClient.cs">
+      <Link>Service\FakeEmailClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\EmailClient.cs">
+      <Link>Service\EmailClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\IAdminService.cs">
+      <Link>Service\IAdminService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\FakeSmsClient.cs">
+      <Link>Service\FakeSmsClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\IEmailClient.cs">
+      <Link>Service\IEmailClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\IApplicationRepository.cs">
+      <Link>Service\Repository\IApplicationRepository.cs</Link>
+    </Compile> 
+    <Compile Include="..\..\src\server\IEmailRequestRepository.cs">
+      <Link>Service\Repository\IEmailRequestRepository.cs</Link>
+    </Compile> 
+    <Compile Include="..\..\src\server\IRepository.cs">
+      <Link>Service\Repository\IRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\Application.cs">
+      <Link>Service\Repository\Model\Application.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\Permission.cs">
+      <Link>Service\Repository\Model\Permission.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\TokenClaims.cs">
+      <Link>Service\Tokens\TokenClaims.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service\AdminService.cs" />
-    <Compile Include="Service\FakeEmailClient.cs" />
-    <Compile Include="Service\EmailClient.cs" />
-    <Compile Include="Service\IAdminService.cs" />
-    <Compile Include="Infrastructure\JwtAuthenticationRequestContext.cs" />
-    <Compile Include="Service\FakeSmsClient.cs" />
-    <Compile Include="Service\IEmailClient.cs" />
-    <Compile Include="Service\Repository\IApplicationRepository.cs" />
-    <Compile Include="Service\Repository\IEmailRequestRepository.cs" />
-    <Compile Include="Service\Repository\IRepository.cs" />
-    <Compile Include="Service\Repository\Model\Application.cs" />
-    <Compile Include="Service\Repository\Model\Permission.cs" />
-    <Compile Include="Service\Tokens\TokenClaims.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\..\src\swagger\swagger-ui-bundle.js.map">

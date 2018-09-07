@@ -126,6 +126,9 @@
     <Compile Include="..\..\src\server\NancyService.cs">
       <Link>Infrastructure\NancyService.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\DatabaseModule.cs">
+      <Link>Infrastructure\DatabaseModule.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\PermissionRepository.cs">
       <Link>FastSql\PermissionRepository.cs</Link>
     </Compile>
@@ -138,16 +141,24 @@
     <Compile Include="..\..\src\server\TokenRegistrationRepository.cs">
       <Link>FastSql\TokenRegistrationRepository.cs</Link>
     </Compile>
+
+    <Compile Include="..\..\src\server\ApplicationRepository.cs">
+      <Link>FastSql\ApplicationRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\EmailRequestRepository.cs">
+      <Link>FastSql\EmailRequestRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\RepositoryBase.cs">
+      <Link>FastSql\RepositoryBase.cs</Link>
+    </Compile>        
+
     <Compile Include="..\..\src\server\X509FileProvider.cs">
       <Link>Certificate\X509FileProvider.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\X509StoreProvider.cs">
       <Link>Certificate\X509StoreProvider.cs</Link>
     </Compile>
-    <Compile Include="FastSql\ApplicationRepository.cs" />
-    <Compile Include="FastSql\EmailRequestRepository.cs" />
-    <Compile Include="FastSql\RepositoryBase.cs" />
-    <Compile Include="Infrastructure\DatabaseModule.cs" />
+
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
