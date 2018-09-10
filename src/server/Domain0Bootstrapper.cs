@@ -17,8 +17,9 @@ using NLog;
 using Nancy.ModelBinding;
 using Nancy.Authentication.Stateless;
 using Domain0.Service;
-using Domain0.Nancy.Service;
 using Autofac.Core;
+using System.Globalization;
+using Nancy.Configuration;
 
 namespace Domain0.Nancy
 {
@@ -118,9 +119,29 @@ namespace Domain0.Nancy
                             (pi, ctx) => pi.ParameterType == typeof(NancyContext),
                             (pi, ctx) => context))
                     .InstancePerLifetimeScope();
+
+                builder
+                    .RegisterType<CultureRequestContext>()
+                    .As<ICultureRequestContext>()
+                    .WithParameter(
+                        new ResolvedParameter(
+                            (pi, ctx) => pi.ParameterType == typeof(NancyContext),
+                            (pi, ctx) => context))
+                    .InstancePerLifetimeScope();
             });
 
             base.ConfigureRequestContainer(container, context);
+        }
+
+        public override void Configure(INancyEnvironment environment)
+        {
+            var suportedCultures = CultureInfo.GetCultures(
+                    CultureTypes.AllCultures & ~CultureTypes.SpecificCultures)
+                .Select(x => x.Name)
+                .ToArray();
+            environment.Globalization(suportedCultures, "en-US");
+
+            base.Configure(environment);
         }
     }
 }

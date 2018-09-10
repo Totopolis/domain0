@@ -144,23 +144,23 @@ go
 insert into dom.Message 
 (Type, Locale, Name, Template)
 values
-('sms',		'eng',		'WelcomeTemplate',		'Hello {0}!'),
-('sms',		'eng',		'RegisterTemplate',		'Your password is: {0} will valid for {1} min'),
-('sms',		'eng',		'RequestResetTemplate',	'Your NEW password is: {0} will valid for {1} min'),
-('sms',		'rus',		'WelcomeTemplate',		'Добро пожаловать {0}!'),
-('sms',		'rus',		'RegisterTemplate',		'Ваш пароль: {0} действителен {1} мин'),
-('sms',		'rus',		'RequestResetTemplate',	'Ваш НОВЫЙ пароль: {0} действителен {1} мин'),
+('sms',		'en',		'WelcomeTemplate',		'Hello {0}!'),
+('sms',		'en',		'RegisterTemplate',		'Your password is: {0} will valid for {1} min'),
+('sms',		'en',		'RequestResetTemplate',	'Your NEW password is: {0} will valid for {1} min'),
+('sms',		'ru',		'WelcomeTemplate',		'Добро пожаловать {0}!'),
+('sms',		'ru',		'RegisterTemplate',		'Ваш пароль: {0} действителен {1} мин'),
+('sms',		'ru',		'RequestResetTemplate',	'Ваш НОВЫЙ пароль: {0} действителен {1} мин'),
 
-('email',	'eng',		'WelcomeTemplate',		'Hello {0}!'),
-('email',	'eng',		'RegisterTemplate',		'Your password is: {0} will valid for {1} min'),
-('email',	'eng',		'RegisterSubjectTemplate',	'Dear {0}! Welcome to {1}'),
-('email',	'eng',		'RequestResetTemplate',	'Your NEW password is: {0} will valid for {1} min'),
-('email',	'eng',		'RequestResetSubjectTemplate',	'{0}.Change password for {1}'),
-('email',	'rus',		'WelcomeTemplate',		'Добро пожаловать {0}!'),
-('email',	'rus',		'RegisterTemplate',		'Ваш пароль: {0} действителен {1} мин'),
-('email',	'rus',		'RegisterSubjectTemplate',	'{0}! Добро пожаловать в {1}'),
-('email',	'rus',		'RequestResetTemplate',	'Ваш НОВЫЙ пароль: {0} действителен {1} мин'),
-('email',	'rus',		'RequestResetSubjectTemplate',	'{0}. Изменение пароля для {1}')
+('email',	'en',		'WelcomeTemplate',		'Hello {0}!'),
+('email',	'en',		'RegisterTemplate',		'Your password is: {0} will valid for {1} min'),
+('email',	'en',		'RegisterSubjectTemplate',	'Dear {0}! Welcome to {1}'),
+('email',	'en',		'RequestResetTemplate',	'Your NEW password is: {0} will valid for {1} min'),
+('email',	'en',		'RequestResetSubjectTemplate',	'{0}.Change password for {1}'),
+('email',	'ru',		'WelcomeTemplate',		'Добро пожаловать {0}!'),
+('email',	'ru',		'RegisterTemplate',		'Ваш пароль: {0} действителен {1} мин'),
+('email',	'ru',		'RegisterSubjectTemplate',	'{0}! Добро пожаловать в {1}'),
+('email',	'ru',		'RequestResetTemplate',	'Ваш НОВЫЙ пароль: {0} действителен {1} мин'),
+('email',	'ru',		'RequestResetSubjectTemplate',	'{0}. Изменение пароля для {1}')
 
 
 go

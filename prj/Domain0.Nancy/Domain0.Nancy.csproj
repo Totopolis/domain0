@@ -150,6 +150,9 @@
     <Compile Include="..\..\src\server\ApplicationModule.cs">
       <Link>Infrastructure\ApplicationModule.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\CultureRequestContext.cs">
+      <Link>Infrastructure\CultureRequestContext.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\Domain0Bootstrapper.cs">
       <Link>Domain0Bootstrapper.cs</Link>
     </Compile>
@@ -158,6 +161,9 @@
     </Compile>
     <Compile Include="..\..\src\server\IAccountRepository.cs">
       <Link>Service\Repository\IAccountRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\ICultureRequestContext.cs">
+      <Link>Infrastructure\ICultureRequestContext.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\IMessageTemplateRepository.cs">
       <Link>Service\Repository\IMessageTemplateRepository.cs</Link>
@@ -224,35 +230,34 @@
     </Compile>
     <Compile Include="..\..\src\server\AuthenticationConfigurationBuilder.cs">
       <Link>Infrastructure\AuthenticationConfigurationBuilder.cs</Link>
-    </Compile>    
+    </Compile>
     <Compile Include="..\..\src\server\IAuthenticationConfigurationBuilder.cs">
       <Link>Infrastructure\IAuthenticationConfigurationBuilder.cs</Link>
-    </Compile>    
+    </Compile>
     <Compile Include="..\..\src\server\JwtAuthenticationRequestContext.cs">
       <Link>Infrastructure\JwtAuthenticationRequestContext.cs</Link>
-    </Compile>    
-
+    </Compile>
     <Compile Include="..\..\src\server.nancy\Application.cs">
       <Link>Model\Application.cs</Link>
-    </Compile>    
+    </Compile>
     <Compile Include="..\..\src\server.nancy\ChangeEmailRequest.cs">
       <Link>Model\ChangeEmailRequest.cs</Link>
-    </Compile>    
+    </Compile>
     <Compile Include="..\..\src\server.nancy\EmailLoginRequest.cs">
       <Link>Model\EmailLoginRequest.cs</Link>
-    </Compile>    
+    </Compile>
     <Compile Include="..\..\src\server.nancy\MessageTemplate.cs">
       <Link>Model\MessageTemplate.cs</Link>
-    </Compile>    
+    </Compile>
     <Compile Include="..\..\src\server.nancy\RegisterRequest.cs">
       <Link>Model\RegisterRequest.cs</Link>
-    </Compile>    
+    </Compile>
     <Compile Include="..\..\src\server.nancy\Permission.cs">
       <Link>Model\Permission.cs</Link>
-    </Compile>    
+    </Compile>
     <Compile Include="..\..\src\server.nancy\Role.cs">
       <Link>Model\Role.cs</Link>
-    </Compile>    
+    </Compile>
     <Compile Include="..\..\src\server\AdminService.cs">
       <Link>Service\AdminService.cs</Link>
     </Compile>
@@ -273,10 +278,10 @@
     </Compile>
     <Compile Include="..\..\src\server\IApplicationRepository.cs">
       <Link>Service\Repository\IApplicationRepository.cs</Link>
-    </Compile> 
+    </Compile>
     <Compile Include="..\..\src\server\IEmailRequestRepository.cs">
       <Link>Service\Repository\IEmailRequestRepository.cs</Link>
-    </Compile> 
+    </Compile>
     <Compile Include="..\..\src\server\IRepository.cs">
       <Link>Service\Repository\IRepository.cs</Link>
     </Compile>

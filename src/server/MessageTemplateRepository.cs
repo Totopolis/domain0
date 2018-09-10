@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Gerakul.FastSql;
 using Domain0.Repository.Model;
+using System.Globalization;
 
 namespace Domain0.FastSql
 {
@@ -16,64 +17,20 @@ namespace Domain0.FastSql
 
         public Task<string> GetTemplate(
             MessageTemplateName name,
-            MessageTemplateLocale locale,
+            CultureInfo culture,
             MessageTemplateType type)
         {
             return SimpleCommand.ExecuteQueryFirstColumnAsync<string>(
                     connectionString,
                     $"select {nameof(MessageTemplate.Template)} " +
                     $"from {TableName} " +
-                    $"where {nameof(MessageTemplate.Name)}      =@p2 " +
-                    $"  and {nameof(MessageTemplate.Locale)}    =@p0 " +
-                    $"  and {nameof(MessageTemplate.Type)}      =@p1 ",
-                    locale.ToString(), type.ToString(), name.ToString())
+                    $"where {nameof(MessageTemplate.Name)}      =@p0 " +
+                    $"  and {nameof(MessageTemplate.Locale)}    =@p1 " +
+                    $"  and {nameof(MessageTemplate.Type)}      =@p2 ",
+                    name.ToString(),
+                    culture.TwoLetterISOLanguageName, 
+                    type.ToString())                    
                 .FirstOrDefault();
         }
-
-
-        //public Task<string> GetWelcomeTemplate(
-        //    MessageTemplateLocale locale,
-        //    MessageTemplateType type)
-        //{
-        //    return SimpleCommand.ExecuteQueryFirstColumnAsync<string>(
-        //            connectionString,
-        //            $"select {nameof(MessageTemplate.Template)} " +
-        //            $"from {TableName} " +
-        //            $"where {nameof(MessageTemplate.Name)}      ='WelcomeTemplate'" +
-        //            $"  and {nameof(MessageTemplate.Locale)}    =@p0" +
-        //            $"  and {nameof(MessageTemplate.Type)}      =@p1",
-        //            locale.ToString(), type.ToString())
-        //        .FirstOrDefault();
-        //}
-
-        //public Task<string> GetRegisterTemplate(
-        //    MessageTemplateLocale locale,
-        //    MessageTemplateType type)
-        //{
-        //    return SimpleCommand.ExecuteQueryFirstColumnAsync<string>(
-        //            connectionString,
-        //            $"select {nameof(MessageTemplate.Template)} " +
-        //            $"from {TableName} " +
-        //            $"where {nameof(MessageTemplate.Name)}      ='RegisterTemplate'" +
-        //            $"  and {nameof(MessageTemplate.Locale)}    =@p0" +
-        //            $"  and {nameof(MessageTemplate.Type)}      =@p1",
-        //            locale.ToString(), type.ToString())
-        //        .FirstOrDefault();
-        //}
-
-        //public Task<string> GetRequestResetTemplate(
-        //    MessageTemplateLocale locale,
-        //    MessageTemplateType type)
-        //{
-        //    return SimpleCommand.ExecuteQueryFirstColumnAsync<string>(
-        //            connectionString,
-        //            $"select {nameof(MessageTemplate.Template)} " +
-        //            $"from {TableName} " +
-        //            $"where {nameof(MessageTemplate.Name)}      ='RequestResetTemplate'" +
-        //            $"  and {nameof(MessageTemplate.Locale)}    =@p0" +
-        //            $"  and {nameof(MessageTemplate.Type)}      =@p1",
-        //            locale.ToString(), type.ToString())
-        //        .FirstOrDefault();
-        //}
     }
 }

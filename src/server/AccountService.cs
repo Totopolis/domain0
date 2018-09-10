@@ -59,6 +59,7 @@ namespace Domain0.Service
     {
         public AccountService(
             IAccountRepository accountRepository,
+            ICultureRequestContext cultureRequestContextInstance,
             IEmailClient emailClientInstance,
             IEmailRequestRepository emailRequestRepositoryInstance,
             IMapper mapper,
@@ -73,6 +74,7 @@ namespace Domain0.Service
             ITokenRegistrationRepository tokenRegistrationRepository)
         {
             _accountRepository = accountRepository;
+            cultureRequestContext = cultureRequestContextInstance;
             emailClient = emailClientInstance;
             emailRequestRepository = emailRequestRepositoryInstance;
             _mapper = mapper;
@@ -107,7 +109,7 @@ namespace Domain0.Service
 
             var template = await _messageTemplateRepository.GetTemplate(
                 MessageTemplateName.RegisterTemplate,
-                MessageTemplateLocale.rus, 
+                cultureRequestContext.Culture, 
                 MessageTemplateType.sms);
             var message = string.Format(template, password, expiredAt.TotalMinutes);
 
@@ -134,11 +136,11 @@ namespace Domain0.Service
 
             var subjectTemplate = await _messageTemplateRepository.GetTemplate(
                 MessageTemplateName.RegisterSubjectTemplate,
-                MessageTemplateLocale.rus, 
+                cultureRequestContext.Culture, 
                 MessageTemplateType.email);
             var template = await _messageTemplateRepository.GetTemplate(
                 MessageTemplateName.RegisterTemplate,
-                MessageTemplateLocale.rus, 
+                cultureRequestContext.Culture, 
                 MessageTemplateType.email);
 
             var message = string.Format(template, password, expiredAt.TotalMinutes);
@@ -196,7 +198,7 @@ namespace Domain0.Service
             if (string.IsNullOrEmpty(request.CustomSmsTemplate))
                 message = string.Format(await _messageTemplateRepository.GetTemplate(
                     MessageTemplateName.WelcomeTemplate,
-                    MessageTemplateLocale.rus, 
+                    cultureRequestContext.Culture, 
                     MessageTemplateType.sms),
                     request.Phone, password);
             else
@@ -386,7 +388,7 @@ namespace Domain0.Service
 
             var template = await _messageTemplateRepository.GetTemplate(
                 MessageTemplateName.RequestResetTemplate,
-                MessageTemplateLocale.rus, 
+                cultureRequestContext.Culture, 
                 MessageTemplateType.sms);
             var message = string.Format(template, password, expiredAt.TotalMinutes);
 
@@ -411,12 +413,12 @@ namespace Domain0.Service
 
             var subjectTemplate = await _messageTemplateRepository.GetTemplate(
                 MessageTemplateName.RequestResetSubjectTemplate,
-                MessageTemplateLocale.rus, 
+                cultureRequestContext.Culture, 
                 MessageTemplateType.email);
 
             var template = await _messageTemplateRepository.GetTemplate(
                 MessageTemplateName.RequestResetTemplate,
-                MessageTemplateLocale.rus, 
+                cultureRequestContext.Culture, 
                 MessageTemplateType.email);
 
             var message = string.Format(template, password, expiredAt.TotalMinutes);
@@ -519,6 +521,8 @@ namespace Domain0.Service
         private readonly IRequestContext _requestContext;
 
         private readonly IAccountRepository _accountRepository;
+
+        private readonly ICultureRequestContext cultureRequestContext;
 
         private readonly IRoleRepository _roleRepository;
 

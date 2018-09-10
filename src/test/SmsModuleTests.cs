@@ -16,6 +16,7 @@ using System.Security.Claims;
 using Sdl.Domain0.Shared;
 using Newtonsoft.Json;
 using Domain0.Service.Tokens;
+using System.Globalization;
 
 namespace Domain0.Test
 {
@@ -66,9 +67,9 @@ namespace Domain0.Test
             messageTemplate
                 .Setup(r => r.GetTemplate(
                     It.IsAny<MessageTemplateName>(),
-                    It.IsAny<MessageTemplateLocale>(),
+                    It.IsAny<CultureInfo>(),
                     It.IsAny<MessageTemplateType>()))
-                .Returns<MessageTemplateName, MessageTemplateLocale, MessageTemplateType>((n, l, t) =>
+                .Returns<MessageTemplateName, CultureInfo, MessageTemplateType>((n, l, t) =>
                 {
                     if (n == MessageTemplateName.RegisterTemplate)
                         return Task.FromResult("Your password is: {0} will valid for {1} min");
@@ -197,7 +198,7 @@ namespace Domain0.Test
             messageTemplate.Setup(r => 
                 r.GetTemplate(
                     It.IsAny<MessageTemplateName>(),
-                    It.IsAny<MessageTemplateLocale>(),
+                    It.IsAny<CultureInfo>(),
                     It.IsAny<MessageTemplateType>())
                 )
                 .ReturnsAsync("hello {1} {0}!");
@@ -494,7 +495,7 @@ namespace Domain0.Test
             messageTemplateMock
                 .Setup(a => a.GetTemplate(
                     It.IsAny<MessageTemplateName>(),
-                    It.IsAny<MessageTemplateLocale>(),
+                    It.IsAny<CultureInfo>(),
                     It.IsAny<MessageTemplateType>()))
                 .ReturnsAsync("{0}_test");
 
