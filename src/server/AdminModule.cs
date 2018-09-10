@@ -65,10 +65,10 @@ namespace Domain0.Nancy
             Get(LoadApplicationUrl,
                 ctx => LoadApplication(),
                 name: nameof(LoadApplication));
-            Put(CreateApplicationUrl,
+            Post(CreateApplicationUrl,
                 ctx => CreateApplication(),
                 name: nameof(CreateApplication));
-            Post(UpdateApplicationUrl,
+            Put(UpdateApplicationUrl,
                 ctx => UpdateApplication(),
                 name: nameof(UpdateApplication));
             Delete(RemoveApplicationUrl,
@@ -83,10 +83,10 @@ namespace Domain0.Nancy
             Get(LoadMessageTemplateUrl,
                 ctx => LoadMessageTemplate(),
                 name: nameof(LoadMessageTemplate));
-            Put(CreateMessageTemplateUrl,
+            Post(CreateMessageTemplateUrl,
                 ctx => CreateMessageTemplate(),
                 name: nameof(CreateMessageTemplate));
-            Post(UpdateMessageTemplateUrl,
+            Put(UpdateMessageTemplateUrl,
                 ctx => UpdateMessageTemplate(),
                 name: nameof(UpdateMessageTemplate));
             Delete(RemoveMessageTemplateUrl,
@@ -100,10 +100,10 @@ namespace Domain0.Nancy
             Get(LoadPermissionUrl,
                 ctx => LoadPermission(),
                 name: nameof(LoadPermission));
-            Put(CreatePermissionUrl,
+            Post(CreatePermissionUrl,
                 ctx => CreatePermission(),
                 name: nameof(CreatePermission));
-            Post(UpdatePermissionUrl,
+            Put(UpdatePermissionUrl,
                 ctx => UpdatePermission(),
                 name: nameof(UpdatePermission));
             Delete(RemovePermissionUrl,
@@ -117,10 +117,10 @@ namespace Domain0.Nancy
             Get(LoadRoleUrl,
                 ctx => LoadRole(),
                 name: nameof(LoadRole));
-            Put(CreateRoleUrl,
+            Post(CreateRoleUrl,
                 ctx => CreateRole(),
                 name: nameof(CreateRole));
-            Post(UpdateRoleUrl,
+            Put(UpdateRoleUrl,
                 ctx => UpdateRole(),
                 name: nameof(UpdateRole));
             Delete(RemoveRoleUrl,
@@ -191,7 +191,7 @@ namespace Domain0.Nancy
         }
 
         [Route(nameof(CreateApplication))]
-        [Route(HttpMethod.Put, CreateApplicationUrl)]
+        [Route(HttpMethod.Post, CreateApplicationUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for create Application")]
@@ -210,7 +210,7 @@ namespace Domain0.Nancy
         }
 
         [Route(nameof(UpdateApplication))]
-        [Route(HttpMethod.Post, UpdateApplicationUrl)]
+        [Route(HttpMethod.Put, UpdateApplicationUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for update Application")]
@@ -291,7 +291,7 @@ namespace Domain0.Nancy
         }
 
         [Route(nameof(CreateMessageTemplate))]
-        [Route(HttpMethod.Put, CreateMessageTemplateUrl)]
+        [Route(HttpMethod.Post, CreateMessageTemplateUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for create MessageTemplate")]
@@ -310,7 +310,7 @@ namespace Domain0.Nancy
         }
 
         [Route(nameof(UpdateMessageTemplate))]
-        [Route(HttpMethod.Post, UpdateMessageTemplateUrl)]
+        [Route(HttpMethod.Put, UpdateMessageTemplateUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for update MessageTemplate")]
@@ -386,7 +386,7 @@ namespace Domain0.Nancy
         }
 
         [Route(nameof(CreatePermission))]
-        [Route(HttpMethod.Put, CreatePermissionUrl)]
+        [Route(HttpMethod.Post, CreatePermissionUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for create Permission")]
@@ -405,7 +405,7 @@ namespace Domain0.Nancy
         }
 
         [Route(nameof(UpdatePermission))]
-        [Route(HttpMethod.Post, UpdatePermissionUrl)]
+        [Route(HttpMethod.Put, UpdatePermissionUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for update Permission")]
