@@ -36,8 +36,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=4.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\packages\Autofac.4.0.0-rc3-316\lib\net451\Autofac.dll</HintPath>
+    <Reference Include="Autofac, Version=4.8.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.8.1\lib\net45\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Gerakul.FastSql, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Gerakul.FastSql.1.0.2\lib\net46\Gerakul.FastSql.dll</HintPath>
@@ -141,7 +141,6 @@
     <Compile Include="..\..\src\server\TokenRegistrationRepository.cs">
       <Link>FastSql\TokenRegistrationRepository.cs</Link>
     </Compile>
-
     <Compile Include="..\..\src\server\ApplicationRepository.cs">
       <Link>FastSql\ApplicationRepository.cs</Link>
     </Compile>
@@ -150,15 +149,13 @@
     </Compile>
     <Compile Include="..\..\src\server\RepositoryBase.cs">
       <Link>FastSql\RepositoryBase.cs</Link>
-    </Compile>        
-
+    </Compile>
     <Compile Include="..\..\src\server\X509FileProvider.cs">
       <Link>Certificate\X509FileProvider.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\X509StoreProvider.cs">
       <Link>Certificate\X509StoreProvider.cs</Link>
     </Compile>
-
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
