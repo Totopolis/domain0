@@ -1,4 +1,5 @@
 ﻿using Monik.Client;
+using Monik.Common;
 using NLog;
 using NLog.Targets;
 using System;
@@ -16,7 +17,7 @@ namespace Domain0.WinService
 
         public string Instance { get; set; }
 
-        private IClientControl _clientControl;
+        private IMonik monikClient;
 
         public MonikNLogTarget()
         {
@@ -39,7 +40,7 @@ namespace Domain0.WinService
                 AutoKeepAliveEnable = true
             };
 
-            _clientControl = new MonikInstance(sender, settings);
+            monikClient = new MonikClient(sender, settings);
         }
 
         protected override void Write(LogEventInfo logEvent)
@@ -47,27 +48,27 @@ namespace Domain0.WinService
             var message = Layout.Render(logEvent);
             if (logEvent.Level == LogLevel.Debug)
             {
-                _clientControl.LogicVerbose(message);
+                monikClient.LogicVerbose(message);
             }
             else if (logEvent.Level == LogLevel.Error)
             {
-                _clientControl.LogicError(message);
+                monikClient.LogicError(message);
             }
             else if (logEvent.Level == LogLevel.Fatal)
             {
-                _clientControl.LogicFatal(message);
+                monikClient.LogicFatal(message);
             }
             else if (logEvent.Level == LogLevel.Info)
             {
-                _clientControl.LogicInfo(message);
+                monikClient.LogicInfo(message);
             }
             else if (logEvent.Level == LogLevel.Trace)
             {
-                _clientControl.LogicVerbose(message);
+                monikClient.LogicVerbose(message);
             }
             else if (logEvent.Level == LogLevel.Warn)
             {
-                _clientControl.LogicWarning(message);
+                monikClient.LogicWarning(message);
             }
         }
 
