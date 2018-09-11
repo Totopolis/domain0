@@ -28,7 +28,13 @@ namespace Domain0
             builder.RegisterType<PasswordGenerator>().As<IPasswordGenerator>().SingleInstance();
             builder.RegisterType<AccountService>().As<IAccountService>().InstancePerLifetimeScope();
             builder.RegisterType<AdminService>().As<IAdminService>().InstancePerLifetimeScope();
-            builder.RegisterType<FakeSmsClient>().As<ISmsClient>();
+
+            builder.RegisterInstance(new SqlQueueSmsClientSettings
+            {
+                ConnectionString = "",
+                QueueName = ""
+            });
+            builder.RegisterType<SqlQueueSmsClient>().As<ISmsClient>();
             builder
                 .RegisterType<AuthenticationConfigurationBuilder>()
                 .As<IAuthenticationConfigurationBuilder>()

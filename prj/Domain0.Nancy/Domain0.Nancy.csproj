@@ -40,6 +40,12 @@
     <Reference Include="Gerakul.ProtoBufSerializer, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Gerakul.ProtoBufSerializer.1.2.1\lib\net46\Gerakul.ProtoBufSerializer.dll</HintPath>
     </Reference>
+    <Reference Include="Gerakul.SqlQueue.Core, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Gerakul.SqlQueue.Core.1.0.4\lib\net46\Gerakul.SqlQueue.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Gerakul.SqlQueue.InMemory, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Gerakul.SqlQueue.InMemory.1.2.0\lib\net46\Gerakul.SqlQueue.InMemory.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.IdentityModel.JsonWebTokens, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.IdentityModel.JsonWebTokens.5.2.4\lib\net451\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
     </Reference>
@@ -222,6 +228,9 @@
     <Compile Include="..\..\src\server\Role.cs">
       <Link>Service\Repository\Model\Role.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\SqlQueueSmsClient.cs">
+      <Link>Service\SqlQueueSmsClient.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\TokenGenerator.cs">
       <Link>Service\TokenGenerator.cs</Link>
     </Compile>
@@ -301,6 +310,7 @@
       <Link>Service\Tokens\TokenClaims.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\SqlQueueSmsClientSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\..\src\swagger\swagger-ui-bundle.js.map">
