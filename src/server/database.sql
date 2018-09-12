@@ -35,6 +35,7 @@ if object_id('dom.TokenRegistration') is not null
 	drop table dom.TokenRegistration
 go
 
+
 create table dom.Role (
 	Id int not null identity(1,1) constraint PK_dom_Role primary key,
 	Name nvarchar(64) not null,
@@ -44,12 +45,17 @@ create table dom.Role (
 	constraint UQ_dom_Role unique(Name)
 )
 go
+create index IX_Role_Name ON dom.Role ([Name])
+
+
 create table dom.Application (
 	Id int not null identity(1,1) constraint PK_dom_Application primary key,
 	Name nvarchar(64) not null,
 	Description nvarchar(max) null
 )
 go
+
+
 create table dom.Permission (
 	Id int not null identity(1,1) constraint PK_dom_Permission primary key,
 	ApplicationId int not null constraint FK_dom_Permission_ApplicationId foreign key references dom.Application(Id),
@@ -59,6 +65,10 @@ create table dom.Permission (
 	constraint UQ_dom_Permission unique(Name)
 )
 go
+create index IX_Permission_Name ON dom.Permission ([Name])
+go
+
+
 create table dom.PermissionRole (
 	PermissionId int not null constraint FK_dom_PermissionRole_PermissionId foreign key references dom.Permission(Id),
 	RoleId int not null constraint FK_dom_PermissionRole_RoleId foreign key references dom.Role(Id)
@@ -66,6 +76,7 @@ create table dom.PermissionRole (
 	constraint PK_dom_PermissionRole primary key(PermissionId, RoleId)
 )
 go
+
 
 create table dom.Account (
 	[Id] int identity(1,1) not null constraint PK_Account_Id primary key,
@@ -82,6 +93,7 @@ create index IX_Account_Email ON dom.Account ([Email])
 create index IX_Account_Login ON dom.Account ([Login])
 go
 
+
 create table dom.RoleUser (
 	RoleId int not null constraint FK_dom_RoleUser_RoleId foreign key references dom.Role(Id),
 	UserId int not null constraint FK_dom_RoleUser_UserId foreign key references dom.Account(Id)
@@ -89,6 +101,8 @@ create table dom.RoleUser (
 	constraint PK_dom_RoleUser primary key(RoleId, UserId)
 )
 go
+
+
 create table dom.PermissionUser (
 	PermissionId int not null,
 	UserId int not null,
@@ -98,6 +112,7 @@ create table dom.PermissionUser (
 	constraint PK_dom_PermissionUser primary key(PermissionId, UserId)
 )
 go
+
 
 create table dom.Message (
 	Id int identity(1,1) not null constraint PK_Message_Id primary key,
@@ -110,7 +125,7 @@ create table dom.Message (
 go
 
 insert into dom.Message 
-(Type, Locale, Name, Template)
+([Type], [Locale], [Name], [Template])
 values
 ('sms',		'en',		'WelcomeTemplate',		'Hello {0}!'),
 ('sms',		'en',		'RegisterTemplate',		'Your password is: {0} will valid for {1} min'),
@@ -130,9 +145,8 @@ values
 ('email',	'ru',		'RequestResetTemplate',	'Ваш НОВЫЙ пароль: {0} действителен {1} мин'),
 ('email',	'ru',		'RequestResetSubjectTemplate',	'{0}. Изменение пароля для {1}')
 go
-
-CREATE INDEX IX_Message_Name ON dom.Message ([Name])
-
+create index IX_Message_Name_Type_Locale ON dom.Message ([Name] asc, [Type] asc, [Locale] asc)
+go
 
 
 create table dom.SmsRequest (
@@ -145,6 +159,7 @@ go
 create index IX_SmsRequest_Phone_ExpiredAt ON dom.SmsRequest ([Phone] ASC, [ExpiredAt] DESC)
 go
 
+
 create table dom.EmailRequest (
 	[Id] int identity(1,1) not null constraint PK_EmailRequest_Id primary key,
 	[Email] nvarchar(128) not null,
@@ -155,6 +170,7 @@ go
 create index IX_EmailRequest_Email_ExpiredAt ON dom.EmailRequest ([Email] ASC, [ExpiredAt] DESC)
 go
 
+
 create table dom.TokenRegistration (
 	[Id] int identity(1,1) not null constraint PK_TokenRegistration_Id primary key,
 	[UserId] int not null,
@@ -164,13 +180,13 @@ create table dom.TokenRegistration (
 )
 go
 
+
 insert into [dom].[Application]
 ([Name], [Description])
 values
 ('Domain0', 'Domain0 auth app')
 
 declare @DomainAppId int = SCOPE_IDENTITY();
-  
 
 insert into [dom].[Permission]
 ([ApplicationId], [Name], [Description])
