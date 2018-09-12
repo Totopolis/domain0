@@ -1,17 +1,11 @@
 ﻿if not exists (select top 1 1 from sys.schemas where name='dom')
 	exec sp_executesql N'create schema dom' 
 go
-if object_id('dom.Token') is not null
-	drop table dom.Token
-go
 if object_id('dom.PermissionUser') is not null
 	drop table dom.PermissionUser
 go
 if object_id('dom.RoleUser') is not null
 	drop table dom.RoleUser
-go
-if object_id('dom.Login') is not null
-	drop table dom.Login
 go
 if object_id('dom.PermissionRole') is not null
 	drop table dom.PermissionRole
@@ -34,9 +28,6 @@ go
 if object_id('dom.EmailRequest') is not null
 	drop table dom.EmailRequest
 go
-if object_id('dom.Caching') is not null
-	drop table dom.Caching
-go
 if object_id('dom.Message') is not null
 	drop table dom.Message
 go
@@ -44,19 +35,6 @@ if object_id('dom.TokenRegistration') is not null
 	drop table dom.TokenRegistration
 go
 
-
-create table dom.Login (
-	Id int not null identity(1,1) constraint PK_dom_Login primary key,
-	Phone decimal(14,0) null,
-	Login varchar(14) not null,
-	Salt varbinary(64) not null,
-	Password varchar(64) not null,
-	Firstname nvarchar(64) null,
-	Secondname nvarchar(64) null,
-	Middlename nvarchar(64) null,
-	Description nvarchar(max) null
-)
-go
 create table dom.Role (
 	Id int not null identity(1,1) constraint PK_dom_Role primary key,
 	Name nvarchar(64) not null,
@@ -99,6 +77,10 @@ create table dom.Account (
 	[Description] nvarchar(max) null
 )
 go
+create index IX_Account_Phone ON dom.Account ([Phone])
+create index IX_Account_Email ON dom.Account ([Email])
+create index IX_Account_Login ON dom.Account ([Login])
+go
 
 create table dom.RoleUser (
 	RoleId int not null constraint FK_dom_RoleUser_RoleId foreign key references dom.Role(Id),
@@ -116,21 +98,6 @@ create table dom.PermissionUser (
 	constraint PK_dom_PermissionUser primary key(PermissionId, UserId)
 )
 go
-create table dom.Token (
-	Id int not null identity(1,1) constraint PK_dom_Token primary key,
-	UserId int not null,
-	AccessToken varchar(max) not null
-)
-go
-
-create table dom.Caching (
-	Id varchar(900) not null constraint PK_dom_Caching primary key,
-	Value varbinary(max) not null,
-	ExpiresAtTime datetimeoffset(7) not null,
-	SlidingExpirationInSeconds bigint null,
-	AbsoluteExpiration datetimeoffset(7) null
-)
-go
 
 create table dom.Message (
 	Id int identity(1,1) not null constraint PK_Message_Id primary key,
@@ -141,6 +108,7 @@ create table dom.Message (
 	Template nvarchar(max) not null
 )
 go
+
 insert into dom.Message 
 (Type, Locale, Name, Template)
 values
@@ -161,9 +129,10 @@ values
 ('email',	'ru',		'RegisterSubjectTemplate',	'{0}! Добро пожаловать в {1}'),
 ('email',	'ru',		'RequestResetTemplate',	'Ваш НОВЫЙ пароль: {0} действителен {1} мин'),
 ('email',	'ru',		'RequestResetSubjectTemplate',	'{0}. Изменение пароля для {1}')
-
-
 go
+
+CREATE INDEX IX_Message_Name ON dom.Message ([Name])
+
 
 
 create table dom.SmsRequest (
@@ -173,6 +142,8 @@ create table dom.SmsRequest (
 	[ExpiredAt] datetime2 not null
 )
 go
+create index IX_SmsRequest_Phone_ExpiredAt ON dom.SmsRequest ([Phone] ASC, [ExpiredAt] DESC)
+go
 
 create table dom.EmailRequest (
 	[Id] int identity(1,1) not null constraint PK_EmailRequest_Id primary key,
@@ -180,6 +151,8 @@ create table dom.EmailRequest (
 	[Password] nvarchar(80) not null,
 	[ExpiredAt] datetime2 not null
 )
+go
+create index IX_EmailRequest_Email_ExpiredAt ON dom.EmailRequest ([Email] ASC, [ExpiredAt] DESC)
 go
 
 create table dom.TokenRegistration (
