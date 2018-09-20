@@ -12,7 +12,7 @@ using Domain0.Service.Tokens;
 
 namespace Domain0.Nancy
 {
-    public class AdminModule : NancyModule
+    public sealed class AdminModule : NancyModule
     {
         public const string LoadApplicationsByFilterUrl = "api/admin/Application/ByFilter";
         public const string LoadApplicationUrl = "api/admin/Application/{id}";
@@ -567,14 +567,14 @@ namespace Domain0.Nancy
         [RouteParam(
             ParamIn = ParameterIn.Body,
             Name = "ids",
-            ParamType = typeof(int[]),
+            ParamType = typeof(IdArrayRequest),
             Required = true,
             Description = "permission ids to add")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success")]
         public async Task<object> AddRolePermissions()
         {
             var roleId = Context.Parameters.id;
-            var ids = this.BindAndValidateModel<int[]>();
+            var ids = this.BindAndValidateModel<IdArrayRequest>().Ids.ToArray();
             await adminService.AddRolePermissions(roleId, ids);
             return HttpStatusCode.NoContent;
         }
@@ -587,14 +587,14 @@ namespace Domain0.Nancy
         [RouteParam(
             ParamIn = ParameterIn.Body,
             Name = "ids",
-            ParamType = typeof(int[]),
+            ParamType = typeof(IdArrayRequest),
             Required = true,
             Description = "permission ids to remove")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success")]
         public async Task<object> RemoveRolePermissions()
         {
             var roleId = Context.Parameters.id;
-            var ids = this.BindAndValidateModel<int[]>();
+            var ids = this.BindAndValidateModel<IdArrayRequest>().Ids.ToArray();
             await adminService.RemoveRolePermissions(roleId, ids);
             return HttpStatusCode.NoContent;
         }
@@ -611,14 +611,14 @@ namespace Domain0.Nancy
         [RouteParam(
             ParamIn = ParameterIn.Body,
             Name = "ids",
-            ParamType = typeof(int[]),
+            ParamType = typeof(IdArrayRequest),
             Required = true,
             Description = "permission ids to add")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success")]
         public async Task<object> AddUserPermissions()
         {
             var userId = Context.Parameters.id;
-            var ids = this.BindAndValidateModel<int[]>();
+            var ids = this.BindAndValidateModel<IdArrayRequest>().Ids.ToArray();
             await adminService.AddUserPermissions(userId, ids);
             return HttpStatusCode.NoContent;
         }
@@ -631,14 +631,14 @@ namespace Domain0.Nancy
         [RouteParam(
             ParamIn = ParameterIn.Body,
             Name = "ids",
-            ParamType = typeof(int[]),
+            ParamType = typeof(IdArrayRequest),
             Required = true,
             Description = "permission ids to remove")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success")]
         public async Task<object> RemoveUserPermissions()
         {
             var userId = Context.Parameters.id;
-            var ids = this.BindAndValidateModel<int[]>();
+            var ids = this.BindAndValidateModel<IdArrayRequest>().Ids.ToArray();
             await adminService.RemoveUserPermissions(userId, ids);
             return HttpStatusCode.NoContent;
         }
@@ -652,14 +652,14 @@ namespace Domain0.Nancy
         [RouteParam(
             ParamIn = ParameterIn.Body,
             Name = "ids",
-            ParamType = typeof(int[]),
+            ParamType = typeof(IdArrayRequest),
             Required = true,
             Description = "permission ids to add")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success")]
         public async Task<object> AddUserRoles()
         {
             var userId = Context.Parameters.id;
-            var ids = this.BindAndValidateModel<int[]>();
+            var ids = this.BindAndValidateModel<IdArrayRequest>().Ids.ToArray();
             await adminService.AddUserRoles(userId, ids);
             return HttpStatusCode.NoContent;
         }
@@ -672,14 +672,14 @@ namespace Domain0.Nancy
         [RouteParam(
             ParamIn = ParameterIn.Body,
             Name = "ids",
-            ParamType = typeof(int[]),
+            ParamType = typeof(IdArrayRequest),
             Required = true,
             Description = "permission ids to remove")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success")]
         public async Task<object> RemoveUserRoles()
         {
             var userId = Context.Parameters.id;
-            var ids = this.BindAndValidateModel<int[]>();
+            var ids = this.BindAndValidateModel<IdArrayRequest>().Ids.ToArray();
             await adminService.RemoveUserRole(userId, ids);
             return HttpStatusCode.NoContent;
         }
