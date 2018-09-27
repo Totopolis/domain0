@@ -31,8 +31,8 @@ namespace Domain0
 
             builder.RegisterInstance(new SqlQueueSmsClientSettings
             {
-                ConnectionString = "",
-                QueueName = ""
+                ConnectionString = "Data Source=WS-00009\\SQLEXPRESS;Initial Catalog=CrmNotification;Integrated Security=True",
+                QueueName = "SmsOutcoming"
             });
             builder.RegisterType<SqlQueueSmsClient>().As<ISmsClient>();
             builder

@@ -17,6 +17,8 @@ namespace Domain0.Service
             CreateMap<Repository.Model.Application,     Model.Application>();
             CreateMap<Repository.Model.MessageTemplate, Model.MessageTemplate>();
             CreateMap<Repository.Model.Permission,      Model.Permission>();
+            CreateMap<Repository.Model.UserPermission,  Model.UserPermission>();
+            CreateMap<Repository.Model.RolePermission,  Model.RolePermission>();
             CreateMap<Repository.Model.Role,            Model.Role>();
         }
     }

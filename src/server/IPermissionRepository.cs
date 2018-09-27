@@ -11,6 +11,10 @@ namespace Domain0.Repository
 
         Task<Permission[]> FindByFilter(Domain0.Model.PermissionFilter filter);
 
+        Task<UserPermission[]> FindByFilter(Domain0.Model.UserPermissionFilter filter);
+
+        Task<RolePermission[]> FindByFilter(Domain0.Model.RolePermissionFilter filter);
+
         Task AddUserPermission(int userId, int[] ids);
 
         Task RemoveUserPermissions(int userId, int[] ids);

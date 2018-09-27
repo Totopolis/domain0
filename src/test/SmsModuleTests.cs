@@ -28,7 +28,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task Registration_Validation_UserExists(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer();
+            var container = TestContainerBuilder.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -52,7 +52,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task Registration_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer();
+            var container = TestContainerBuilder.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -95,7 +95,7 @@ namespace Domain0.Test
             var smsRequestMock = Mock.Get(container.Resolve<ISmsRequestRepository>());
             smsRequestMock
                 .Setup(x => x.ConfirmRegister(It.IsAny<decimal>(), It.IsAny<string>()))
-                .Returns(async () => true);
+                .ReturnsAsync(true);
 
             smsRequestMock.Verify(a => a.Save(It.IsAny<SmsRequest>()), Times.Once());
 
@@ -119,7 +119,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task ForceCreateUser_SendSms_CustomTemplate(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(builder =>
+            var container = TestContainerBuilder.GetContainer(builder =>
                 builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
@@ -127,7 +127,7 @@ namespace Domain0.Test
             var userId = 1;
             var phone = 79000000000;
             var roles = new List<string> {"role1", "role2"};
-            var accessToken = BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
 
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountMock = Mock.Get(accountRepository);
@@ -169,7 +169,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task ForceCreateUser_SendSms_StandardTemplate(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(builder =>
+            var container = TestContainerBuilder.GetContainer(builder =>
                 builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
@@ -177,7 +177,7 @@ namespace Domain0.Test
             var userId = 1;
             var phone = 79000000000;
             var roles = new List<string> { "role1", "role2" };
-            var accessToken = BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
 
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountMock = Mock.Get(accountRepository);
@@ -228,7 +228,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task ForceCreateUser_NotSendSms(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(builder =>
+            var container = TestContainerBuilder.GetContainer(builder =>
                 builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
@@ -236,7 +236,7 @@ namespace Domain0.Test
             var userId = 1;
             var phone = 79000000000;
             var roles = new List<string> {"role1", "role2"};
-            var accessToken = BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
 
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountMock = Mock.Get(accountRepository);
@@ -278,7 +278,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task ForceCreateUser_UserExists(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(builder =>
+            var container = TestContainerBuilder.GetContainer(builder =>
                 builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
@@ -286,7 +286,7 @@ namespace Domain0.Test
             var userId = 1;
             var phone = 79000000000;
             var roles = new List<string> { "role1", "role2" };
-            var accessToken = BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
 
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountMock = Mock.Get(accountRepository);
@@ -314,13 +314,13 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task ForceCreateUser_Validation(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(builder =>
+            var container = TestContainerBuilder.GetContainer(builder =>
                 builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
             var userId = 1;
-            var accessToken = BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
             var response = await browser.Put(SmsModule.ForceCreateUserUrl, with =>
             {
                 with.Accept(format);
@@ -336,7 +336,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task Login_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer();
+            var container = TestContainerBuilder.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -384,7 +384,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task Login_Register_NoRequest(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer();
+            var container = TestContainerBuilder.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -411,7 +411,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task Login_Register_ExpiredRequest(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer();
+            var container = TestContainerBuilder.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -438,7 +438,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task ChangePassword_Account(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(
+            var container = TestContainerBuilder.GetContainer(
                 builder => builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
 
             var bootstrapper = new Domain0Bootstrapper(container);
@@ -449,7 +449,7 @@ namespace Domain0.Test
             var password = "password";
             var newpassword = "newpassword";
 
-            string accessToken = BuildToken(container, userId);
+            string accessToken = TestContainerBuilder.BuildToken(container, userId);
 
             var contextMock = Mock.Get(container.Resolve<IRequestContext>());
             contextMock.Setup(a => a.UserId).Returns(userId);
@@ -480,7 +480,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task ResetPassword_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer();
+            var container = TestContainerBuilder.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -522,7 +522,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task ResetPassword_NotFound(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer();
+            var container = TestContainerBuilder.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -547,7 +547,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task ForceChangePhone_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(builder => 
+            var container = TestContainerBuilder.GetContainer(builder => 
                 builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
 
             var bootstrapper = new Domain0Bootstrapper(container);
@@ -556,7 +556,7 @@ namespace Domain0.Test
             var userId = 1;
             var phone = 79000000000;
             var newphone = 79000000001;
-            var accessToken = BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
 
             var account = new Account { Id = 1, Login = phone.ToString(), Phone = phone };
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
@@ -580,7 +580,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task ForceChangePhone_NotFound(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(builder => 
+            var container = TestContainerBuilder.GetContainer(builder => 
                 builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
 
             var bootstrapper = new Domain0Bootstrapper(container);
@@ -588,7 +588,7 @@ namespace Domain0.Test
 
             var userId = 1;
             var newphone = 79000000001;
-            var accessToken = BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
 
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync((Account) null);
@@ -608,7 +608,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task DoesUserExists_IsTrue(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer();
+            var container = TestContainerBuilder.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -633,7 +633,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task DoesUserExists_IsFalse(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer();
+            var container = TestContainerBuilder.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -658,7 +658,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task GetPhoneByUserId_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(builder =>
+            var container = TestContainerBuilder.GetContainer(builder =>
                 builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
@@ -666,7 +666,7 @@ namespace Domain0.Test
             var phone = 79000000000;
             var id = 1;
             var userId = 1;
-            var accessToken = BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
 
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(id)).ReturnsAsync(new Account {Id = id, Phone = phone});
@@ -688,14 +688,14 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task GetPhoneByUserId_NotFound(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(builder =>
+            var container = TestContainerBuilder.GetContainer(builder =>
                 builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
             var id = 1;
             var userId = 1;
-            var accessToken = BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
 
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(id)).ReturnsAsync((Account) null);
@@ -715,7 +715,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task Refresh_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer();
+            var container = TestContainerBuilder.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -759,7 +759,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task Refresh_Account_NotFound(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer();
+            var container = TestContainerBuilder.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -795,7 +795,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task Refresh_TokenRegistry_NotFound(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer();
+            var container = TestContainerBuilder.GetContainer();
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -822,7 +822,7 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task GetMyProfile_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(
+            var container = TestContainerBuilder.GetContainer(
                 builder => builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
 
             var bootstrapper = new Domain0Bootstrapper(container);
@@ -831,7 +831,7 @@ namespace Domain0.Test
             var phone = 79000000000;
             var userId = 1;
 
-            var accessToken = BuildToken(container, 1);
+            var accessToken = TestContainerBuilder.BuildToken(container, 1);
 
             var requestMock = Mock.Get(container.Resolve<IRequestContext>());
             requestMock.Setup(a => a.UserId).Returns(userId);
@@ -858,14 +858,14 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task GetProfileByPhone_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(builder =>
+            var container = TestContainerBuilder.GetContainer(builder =>
                 builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
             var phone = 79000000000;
             var userId = 1;
-            var accessToken = BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
 
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync(new Account { Id = userId, Phone = phone });
@@ -888,14 +888,14 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task GetProfileByPhone_NotFound(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(builder =>
+            var container = TestContainerBuilder.GetContainer(builder =>
                 builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
             var userId = 1;
             var phone = 79000000000;
-            var accessToken = BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
 
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync((Account) null);
@@ -914,13 +914,13 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task GetProfileByUserId_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(builder =>
+            var container = TestContainerBuilder.GetContainer(builder =>
                 builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
             var userId = 1;
-            var accessToken = BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
 
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync(new Account {Id = userId});
@@ -941,13 +941,13 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task GetProfileByUserId_NotFound(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(builder =>
+            var container = TestContainerBuilder.GetContainer(builder =>
                 builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
             var userId = 1;
-            var accessToken = BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
 
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync((Account)null);
@@ -966,13 +966,13 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task GetProfilesByFilter_Success(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(builder =>
+            var container = TestContainerBuilder.GetContainer(builder =>
                 builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
             var userId = 1;
-            var accessToken = BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
 
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserIds(It.IsAny<IEnumerable<int>>())).Returns<IEnumerable<int>>(ids => Task.FromResult(ids.Select(id => new Account {Id=id}).ToArray()));
@@ -997,13 +997,13 @@ namespace Domain0.Test
         [InlineData(DataFormat.Json)]
         public async Task GetProfilesByFilter_BadRequest(DataFormat format)
         {
-            var container = TestModuleTests.GetContainer(builder =>
+            var container = TestContainerBuilder.GetContainer(builder =>
                 builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
             var userId = 1;
-            var accessToken = BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
 
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserIds(It.IsAny<IEnumerable<int>>())).Returns<IEnumerable<int>>(ids => Task.FromResult(ids.Select(id => new Account { Id = id }).ToArray()));
@@ -1016,28 +1016,6 @@ namespace Domain0.Test
             });
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        }
-
-        private static string BuildToken(
-            IContainer container,
-            int userId,
-            params string[] permissions)
-        {
-            var tokenGenerator = container.Resolve<ITokenGenerator>();
-            var secret = Convert.FromBase64String("kiHLSfGebYvXGTDx0vWb53JhyUpnw6HvgRwOJ6h/hUs=");
-            var userPermission = permissions ?? new[] { "test1", "test2" };
-            var issueTime = DateTime.UtcNow;
-            var accessToken = new JsonWebToken().Encode(new
-            {
-                typ = "access_token",
-                sub = $"{userId}",
-                permissions = JsonConvert.SerializeObject(permissions),
-                exp = new DateTimeOffset(issueTime.AddMinutes(15)).ToUnixTimeSeconds(),
-                iat = new DateTimeOffset(issueTime).ToUnixTimeSeconds(),
-                iss = "issuer",
-                aud = "*",
-            }, secret, JwtHashAlgorithm.HS256);
-            return accessToken;
         }
     }
 }

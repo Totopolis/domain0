@@ -67,10 +67,11 @@
     <Reference Include="Nancy.Metadata.Modules, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.Metadata.Modules.2.0.0-barneyrubble\lib\net452\Nancy.Metadata.Modules.dll</HintPath>
     </Reference>
-    <Reference Include="Nancy.Swagger, Version=2.2.51.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Nancy.Swagger">
       <HintPath>..\packages\Nancy.Swagger.2.2.51-alpha\lib\net452\Nancy.Swagger.dll</HintPath>
     </Reference>
-    <Reference Include="Nancy.Swagger.Annotations, Version=2.2.51.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Nancy.Swagger.Annotations, Version=2.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Nancy.Swagger.Annotations.2.2.51-alpha\lib\net452\Nancy.Swagger.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="Nancy.Validation.DataAnnotations, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -82,7 +83,7 @@
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.5.9\lib\net45\NLog.dll</HintPath>
     </Reference>
-    <Reference Include="Swagger.ObjectModel, Version=2.2.51.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Swagger.ObjectModel">
       <HintPath>..\packages\Swagger.ObjectModel.2.2.51-alpha\lib\net452\Swagger.ObjectModel.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -138,6 +139,9 @@
     <Compile Include="..\..\src\server.nancy\IdArrayRequest.cs">
       <Link>Model\IdArrayRequest.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server.nancy\RolePermission.cs">
+      <Link>Model\RolePermission.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server.nancy\SmsLoginModelDataProvider.cs">
       <Link>Model\SmsLoginModelDataProvider.cs</Link>
     </Compile>
@@ -147,8 +151,8 @@
     <Compile Include="..\..\src\server.nancy\SmsModule.cs">
       <Link>SmsModule.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\server.nancy\TestModule.cs">
-      <Link>TestModule.cs</Link>
+    <Compile Include="..\..\src\server.nancy\UserPermission.cs">
+      <Link>Model\UserPermission.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server.nancy\UserProfile.cs">
       <Link>Model\UserProfile.cs</Link>
@@ -230,6 +234,9 @@
     </Compile>
     <Compile Include="..\..\src\server\Role.cs">
       <Link>Service\Repository\Model\Role.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\RolePermission.cs">
+      <Link>Service\Repository\Model\RolePermission.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\SqlQueueSmsClient.cs">
       <Link>Service\SqlQueueSmsClient.cs</Link>
@@ -314,6 +321,9 @@
     </Compile>
     <Compile Include="..\..\src\server\TokenClaims.cs">
       <Link>Service\Tokens\TokenClaims.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\UserPermission.cs">
+      <Link>Service\Repository\Model\UserPermission.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

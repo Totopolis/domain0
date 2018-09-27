@@ -56,13 +56,7 @@ namespace Domain0.Model
                     1, 
                     c       => c.PermissionIds, 
                     (c, v)  => c.PermissionIds.Add(v), 
-                    c       => c.PermissionIds?.Count > 0),
-
-                FieldSetting<PermissionFilter>.CreateInt32(
-                    2,
-                    c       => c.RoleId.Value,
-                    (c, v)  => c.RoleId = v,
-                    c       => c.RoleId.HasValue)
+                    c       => c.PermissionIds?.Count > 0)
             });
 
         public PermissionFilter()
@@ -79,11 +73,6 @@ namespace Domain0.Model
             PermissionIds.AddRange(ids);
         }
 
-        /// <summary>
-        /// Идентификаторы шаблонов.
-        /// </summary>
         public List<int> PermissionIds { get; set; } = new List<int>();
-
-        public int? RoleId { get;  set; }
     }
 }

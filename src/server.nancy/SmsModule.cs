@@ -14,7 +14,7 @@ using Domain0.Service.Tokens;
 
 namespace Domain0.Nancy
 {
-    public class SmsModule : NancyModule
+    public sealed class SmsModule : NancyModule
     {
         public const string RegisterUrl = "/api/sms/Register";
         public const string ForceCreateUserUrl = "/api/sms/ForceCreateUser";
@@ -27,14 +27,15 @@ namespace Domain0.Nancy
         public const string RefreshUrl = "/api/Refresh/{refreshToken}";
         public const string GetMyProfileUrl = "/api/profile";
         public const string GetUserByPhoneUrl = "/api/users/sms/{phone}";
+        public const string ChangeMyPasswordUrl = "/api/profile/ChangePassword";
         public const string GetUsersByFilterUrl = "/api/profile/filter";
         public const string GetUserByIdUrl = "/api/users/{id}";
 
-        private readonly IAccountService _accountService;
+        private readonly IAccountService accountService;
 
         public SmsModule(IAccountService accountService)
         {
-            _accountService = accountService;
+            this.accountService = accountService;
 
             Put(RegisterUrl, ctx => Register(), name: nameof(Register));
             Put(ForceCreateUserUrl, ctx => ForceCreateUser(), name: nameof(ForceCreateUser));
@@ -47,6 +48,7 @@ namespace Domain0.Nancy
             Get(RefreshUrl, ctx => Refresh(), name: nameof(Refresh));
             Get(GetMyProfileUrl, ctx => GetMyProfile(), name: nameof(GetMyProfile));
             Get(GetUserByPhoneUrl, ctx => GetUserByPhone(), name: nameof(GetUserByPhone));
+            Post(ChangeMyPasswordUrl, ctx => ChangeMyPassword(), name: nameof(ChangeMyPassword));
             Post(GetUsersByFilterUrl, ctx => GetUserByFilter(), name: nameof(GetUserByFilter));
             Get(GetUserByIdUrl, ctx => GetUserById(), name: nameof(GetUserById));
         }
@@ -63,7 +65,7 @@ namespace Domain0.Nancy
             var phone = this.Bind<long>();
             try
             {
-                await _accountService.Register(phone);
+                await accountService.Register(phone);
             }
             catch (SecurityException ex)
             {
@@ -91,7 +93,7 @@ namespace Domain0.Nancy
             var request = this.BindAndValidateModel<ForceCreateUserRequest>();
             try
             {
-                return await _accountService.CreateUser(request);
+                return await accountService.CreateUser(request);
             }
             catch (SecurityException)
             {
@@ -111,7 +113,7 @@ namespace Domain0.Nancy
         {
             var request = this.BindAndValidateModel<SmsLoginRequest>();
 
-            var result = await _accountService.Login(request);
+            var result = await accountService.Login(request);
             if (result == null)
             {
                 ModelValidationResult.Errors.Add(nameof(request.Phone), "user or password incorrect");
@@ -135,7 +137,7 @@ namespace Domain0.Nancy
             var request = this.BindAndValidateModel<ChangePasswordRequest>();
             try
             {
-                await _accountService.ChangePassword(request);
+                await accountService.ChangePassword(request);
             }
             catch (SecurityException)
             {
@@ -156,7 +158,7 @@ namespace Domain0.Nancy
         public async Task<object> RequestResetPassword()
         {
             var phone = this.BindAndValidateModel<long>();
-            await _accountService.RequestResetPassword(phone);
+            await accountService.RequestResetPassword(phone);
             return HttpStatusCode.NoContent;
         }
 
@@ -175,7 +177,7 @@ namespace Domain0.Nancy
                 && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_ADMIN));
 
             var request = this.BindAndValidateModel<ChangePhoneRequest>();
-            await _accountService.ForceChangePhone(request);
+            await accountService.ForceChangePhone(request);
             return HttpStatusCode.NoContent;
         }
 
@@ -194,7 +196,7 @@ namespace Domain0.Nancy
                 throw new BadModelException(ModelValidationResult);
             }
 
-            var result = await _accountService.DoesUserExists(phone);
+            var result = await accountService.DoesUserExists(phone);
             return result;
         }
 
@@ -218,7 +220,7 @@ namespace Domain0.Nancy
                 throw new BadModelException(ModelValidationResult);
             }
 
-            var result = await _accountService.GetProfileByUserId(id);
+            var result = await accountService.GetProfileByUserId(id);
             if (result.Phone == null)
                 throw new NotFoundException(nameof(result.Phone));
 
@@ -234,7 +236,7 @@ namespace Domain0.Nancy
         public async Task<object> Refresh()
         {
             var refreshToken = Context.Parameters.refreshToken;
-            var response = await _accountService.Refresh(refreshToken);
+            var response = await accountService.Refresh(refreshToken);
             return response;
         }
 
@@ -247,7 +249,7 @@ namespace Domain0.Nancy
         {
             this.RequiresAuthentication();
 
-            var profile = await _accountService.GetMyProfile();
+            var profile = await accountService.GetMyProfile();
             return profile;
         }
 
@@ -270,9 +272,39 @@ namespace Domain0.Nancy
                 throw new BadModelException(ModelValidationResult);
             }
 
-            var profile = await _accountService.GetProfileByPhone(phone);
+            var profile = await accountService.GetProfileByPhone(phone);
             return profile;
         }
+
+        [Route(nameof(ChangeMyPassword))]
+        [Route(HttpMethod.Post, ChangeMyPasswordUrl)]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Tags = new[] { "UserProfile" }, Summary = "Method for change password")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body,
+            Name = "request",
+            ParamType = typeof(ChangePasswordRequest),
+            Required = true,
+            Description = "parameters for change password")]
+        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        public async Task<object> ChangeMyPassword()
+        {
+            this.RequiresAuthentication();
+            var request = this.BindAndValidateModel<ChangePasswordRequest>();
+            try
+            {
+                await accountService.ChangePassword(request);
+            }
+            catch (SecurityException)
+            {
+                ModelValidationResult.Errors.Add("oldPassword", "password is not valid");
+                throw new BadModelException(ModelValidationResult);
+            }
+
+            return HttpStatusCode.NoContent;
+        }
+
 
         [Route(nameof(GetUserByFilter))]
         [Route(HttpMethod.Post, GetUsersByFilterUrl)]
@@ -289,7 +321,7 @@ namespace Domain0.Nancy
                 && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_ADMIN));
 
             var filter = this.BindAndValidateModel<UserProfileFilter>();
-            return await _accountService.GetProfilesByFilter(filter);
+            return await accountService.GetProfilesByFilter(filter);
         }
 
         [Route(nameof(GetUserById))]
@@ -306,7 +338,7 @@ namespace Domain0.Nancy
                 && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_ADMIN));
 
             var id = Context.Parameters.id;
-            var profile = await _accountService.GetProfileByUserId(id);
+            var profile = await accountService.GetProfileByUserId(id);
             return profile;
         }
     }

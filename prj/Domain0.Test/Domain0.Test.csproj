@@ -56,6 +56,9 @@
     <Reference Include="Nancy.Bootstrappers.Autofac, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.Bootstrappers.Autofac.2.0.0-clinteastwood\lib\net452\Nancy.Bootstrappers.Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="Nancy.Hosting.Self, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.Hosting.Self.2.0.0-clinteastwood\lib\net452\Nancy.Hosting.Self.dll</HintPath>
+    </Reference>
     <Reference Include="Nancy.Testing, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.Testing.2.0.0-clinteastwood\lib\net452\Nancy.Testing.dll</HintPath>
     </Reference>
@@ -109,14 +112,17 @@
     <Compile Include="..\..\src\test\BrowserResponseBodyWrapperExtensions.cs">
       <Link>BrowserResponseBodyWrapperExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\test\Domain0ClientTests.cs">
+      <Link>Domain0ClientTests.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\test\MoqRegistrationSource.cs">
       <Link>MoqRegistrationSource.cs</Link>
     </Compile>
     <Compile Include="..\..\src\test\SmsModuleTests.cs">
       <Link>SmsModuleTests.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\test\TestModuleTests.cs">
-      <Link>TestModuleTests.cs</Link>
+    <Compile Include="..\..\src\test\TestContainerBuilder.cs">
+      <Link>TestContainerBuilder.cs</Link>
     </Compile>
     <Compile Include="JsonWebToken.cs" />
     <Compile Include="JsonWebTokenTests.cs" />
@@ -131,6 +137,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Domain0.Api.Client\Domain0.Api.Client.csproj">
+      <Project>{2f642cf4-abfc-41a5-bf1e-8dacabfc44f3}</Project>
+      <Name>Domain0.Api.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Domain0.Nancy\Domain0.Nancy.csproj">
       <Project>{b5d06024-a211-4154-bac8-02a517ec391b}</Project>
       <Name>Domain0.Nancy</Name>

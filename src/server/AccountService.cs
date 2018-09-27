@@ -1,6 +1,7 @@
 ﻿using Domain0.Repository;
 using Domain0.Repository.Model;
 using System;
+using System.Globalization;
 using System.Security;
 using System.Threading.Tasks;
 using Domain0.Model;
@@ -388,10 +389,10 @@ namespace Domain0.Service
 
             var template = await _messageTemplateRepository.GetTemplate(
                 MessageTemplateName.RequestResetTemplate,
-                cultureRequestContext.Culture, 
+                cultureRequestContext.Culture,
                 MessageTemplateType.sms);
-            var message = string.Format(template, password, expiredAt.TotalMinutes);
 
+            var message = string.Format(template, password, expiredAt.TotalMinutes);
             await _smsClient.Send(phone, message);
         }
 

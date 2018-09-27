@@ -27,6 +27,9 @@ namespace Domain0.Nancy
         public const string RemoveMessageTemplateUrl = "api/admin/MessageTemplate/{id}";
 
         public const string LoadPermissionsByFilterUrl = "api/admin/Permission/ByFilter";
+        public const string LoadPermissionsByUserFilterUrl = "api/admin/Permission/ByUserFilter";
+        public const string LoadPermissionsByRoleFilterUrl = "api/admin/Permission/ByRoleFilter";
+
         public const string LoadPermissionUrl = "api/admin/Permission/{id}";
         public const string CreatePermissionUrl = "api/admin/Permission";
         public const string UpdatePermissionUrl = "api/admin/Permission";
@@ -94,6 +97,12 @@ namespace Domain0.Nancy
                 name: nameof(RemoveMessageTemplate));
 
 
+            Post(LoadPermissionsByUserFilterUrl,
+                ctx => LoadPermissionsByUserFilter(),
+                name: nameof(LoadPermissionsByUserFilter));
+            Post(LoadPermissionsByRoleFilterUrl,
+                ctx => LoadPermissionsByRoleFilter(),
+                name: nameof(LoadPermissionsByRoleFilter));
             Post(LoadPermissionsByFilterUrl,
                 ctx => LoadPermissionsByFilter(),
                 name: nameof(LoadPermissionsByFilter));
@@ -161,7 +170,7 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Admin" }, Summary = "Method for receive Applications by filter")]
         [RouteParam(
             ParamIn = ParameterIn.Body,
-            Name = "request",
+            Name = "applicationFilter",
             ParamType = typeof(ApplicationFilter),
             Required = true,
             Description = "Applications filter")]
@@ -183,7 +192,7 @@ namespace Domain0.Nancy
             ParamType = typeof(int),
             Required = true,
             Description = "Application id")]
-        [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(int))]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(IEnumerable<Application>))]
         public async Task<object> LoadApplication()
         {
             var id = Context.Parameters.id;
@@ -197,7 +206,7 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Admin" }, Summary = "Method for create Application")]
         [RouteParam(
             ParamIn = ParameterIn.Body,
-            Name = "request",
+            Name = "application",
             ParamType = typeof(Application),
             Required = true,
             Description = "Create Application")]
@@ -216,7 +225,7 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Admin" }, Summary = "Method for update Application")]
         [RouteParam(
             ParamIn = ParameterIn.Body,
-            Name = "request",
+            Name = "application",
             ParamType = typeof(Application),
             Required = true,
             Description = "Update Application")]
@@ -258,7 +267,7 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Admin" }, Summary = "Method for receive MessageTemplates by filter")]
         [RouteParam(
             ParamIn = ParameterIn.Body, 
-            Name = "request", 
+            Name = "messageTemplateFilter", 
             ParamType = typeof(MessageTemplateFilter), 
             Required = true, 
             Description = "Message template filter")]
@@ -280,7 +289,7 @@ namespace Domain0.Nancy
             ParamType = typeof(int),
             Required = true,
             Description = "message template id")]
-        [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(int))]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(IEnumerable<MessageTemplate>))]
         public async Task<object> LoadMessageTemplate()
         {
             var id = Context.Parameters.id;
@@ -297,7 +306,7 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Admin" }, Summary = "Method for create MessageTemplate")]
         [RouteParam(
             ParamIn = ParameterIn.Body,
-            Name = "request",
+            Name = "messageTemplate",
             ParamType = typeof(MessageTemplate),
             Required = true,
             Description = "Create message template")]
@@ -316,7 +325,7 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Admin" }, Summary = "Method for update MessageTemplate")]
         [RouteParam(
             ParamIn = ParameterIn.Body,
-            Name = "request",
+            Name = "messageTemplate",
             ParamType = typeof(MessageTemplate),
             Required = true,
             Description = "Update message template")]
@@ -349,6 +358,42 @@ namespace Domain0.Nancy
         #endregion
 
         #region Permission
+        [Route(nameof(LoadPermissionsByUserFilter))]
+        [Route(HttpMethod.Post, LoadPermissionsByUserFilterUrl)]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Tags = new[] { "Admin" }, Summary = "Method for receive Permissions by filter")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body,
+            Name = "permissionFilter",
+            ParamType = typeof(UserPermissionFilter),
+            Required = true,
+            Description = "Permissions filter")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(IEnumerable<UserPermission>))]
+        public async Task<object> LoadPermissionsByUserFilter()
+        {
+            var filter = this.BindAndValidateModel<UserPermissionFilter>();
+            return await adminService.GetByFilter(filter);
+        }
+
+        [Route(nameof(LoadPermissionsByRoleFilter))]
+        [Route(HttpMethod.Post, LoadPermissionsByRoleFilterUrl)]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Tags = new[] { "Admin" }, Summary = "Method for receive Permissions by filter")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body,
+            Name = "permissionFilter",
+            ParamType = typeof(RolePermissionFilter),
+            Required = true,
+            Description = "Permissions filter")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(IEnumerable<RolePermission>))]
+        public async Task<object> LoadPermissionsByRoleFilter()
+        {
+            var filter = this.BindAndValidateModel<RolePermissionFilter>();
+            return await adminService.GetByFilter(filter);
+        }
+
         [Route(nameof(LoadPermissionsByFilter))]
         [Route(HttpMethod.Post, LoadPermissionsByFilterUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
@@ -356,7 +401,7 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Admin" }, Summary = "Method for receive Permissions by filter")]
         [RouteParam(
             ParamIn = ParameterIn.Body,
-            Name = "request",
+            Name = "permissionFilter",
             ParamType = typeof(PermissionFilter),
             Required = true,
             Description = "Permissions filter")]
@@ -392,7 +437,7 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Admin" }, Summary = "Method for create Permission")]
         [RouteParam(
             ParamIn = ParameterIn.Body,
-            Name = "request",
+            Name = "permission",
             ParamType = typeof(Permission),
             Required = true,
             Description = "Create Permission")]
@@ -411,7 +456,7 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Admin" }, Summary = "Method for update Permission")]
         [RouteParam(
             ParamIn = ParameterIn.Body,
-            Name = "request",
+            Name = "permission",
             ParamType = typeof(Permission),
             Required = true,
             Description = "Update Permission")]
@@ -452,7 +497,7 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Admin" }, Summary = "Method for receive Roles by filter")]
         [RouteParam(
             ParamIn = ParameterIn.Body,
-            Name = "request",
+            Name = "roleFilter",
             ParamType = typeof(RoleFilter),
             Required = true,
             Description = "Roles filter")]
@@ -488,7 +533,7 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Admin" }, Summary = "Method for create Role")]
         [RouteParam(
             ParamIn = ParameterIn.Body,
-            Name = "request",
+            Name = "role",
             ParamType = typeof(Role),
             Required = true,
             Description = "Create Role")]
@@ -507,7 +552,7 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Admin" }, Summary = "Method for update Role")]
         [RouteParam(
             ParamIn = ParameterIn.Body,
-            Name = "request",
+            Name = "role",
             ParamType = typeof(Role),
             Required = true,
             Description = "Update Role")]
@@ -545,7 +590,7 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Admin" }, Summary = "Method for receive Role Permissions")]
         [RouteParam(
             ParamIn = ParameterIn.Path,
-            Name = "request",
+            Name = "id",
             ParamType = typeof(int),
             Required = true,
             Description = "Role id")]
@@ -553,10 +598,7 @@ namespace Domain0.Nancy
         public async Task<object> LoadRolePermissions()
         {
             var id = Context.Parameters.id;
-            return await adminService.GetByFilter(new PermissionFilter
-            {
-                RoleId = id
-            });
+            return await adminService.GetByFilter(new RolePermissionFilter(id));
         }
 
         [Route(nameof(AddRolePermissions))]
@@ -564,6 +606,12 @@ namespace Domain0.Nancy
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for add role permissions")]
+        [RouteParam(
+            ParamIn = ParameterIn.Path,
+            Name = "id",
+            ParamType = typeof(int),
+            Required = true,
+            Description = "role id to add to")]
         [RouteParam(
             ParamIn = ParameterIn.Body,
             Name = "ids",
@@ -584,6 +632,12 @@ namespace Domain0.Nancy
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for remove role permissions")]
+        [RouteParam(
+            ParamIn = ParameterIn.Path,
+            Name = "id",
+            ParamType = typeof(int),
+            Required = true,
+            Description = "role id to remove from")]
         [RouteParam(
             ParamIn = ParameterIn.Body,
             Name = "ids",
@@ -609,6 +663,12 @@ namespace Domain0.Nancy
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for add user permissions")]
         [RouteParam(
+            ParamIn = ParameterIn.Path,
+            Name = "id",
+            ParamType = typeof(int),
+            Required = true,
+            Description = "user id to add to")]
+        [RouteParam(
             ParamIn = ParameterIn.Body,
             Name = "ids",
             ParamType = typeof(IdArrayRequest),
@@ -628,6 +688,12 @@ namespace Domain0.Nancy
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for remove user permissions")]
+        [RouteParam(
+            ParamIn = ParameterIn.Path,
+            Name = "id",
+            ParamType = typeof(int),
+            Required = true,
+            Description = "user id to remove from")]
         [RouteParam(
             ParamIn = ParameterIn.Body,
             Name = "ids",
@@ -650,6 +716,12 @@ namespace Domain0.Nancy
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for add user roles")]
         [RouteParam(
+            ParamIn = ParameterIn.Path,
+            Name = "id",
+            ParamType = typeof(int),
+            Required = true,
+            Description = "user id to add to")]
+        [RouteParam(
             ParamIn = ParameterIn.Body,
             Name = "ids",
             ParamType = typeof(IdArrayRequest),
@@ -669,6 +741,12 @@ namespace Domain0.Nancy
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Admin" }, Summary = "Method for remove user permissions")]
+        [RouteParam(
+            ParamIn = ParameterIn.Path,
+            Name = "id",
+            ParamType = typeof(int),
+            Required = true,
+            Description = "user id to remove from")]
         [RouteParam(
             ParamIn = ParameterIn.Body,
             Name = "ids",

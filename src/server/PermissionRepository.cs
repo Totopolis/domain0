@@ -29,40 +29,43 @@ namespace Domain0.FastSql
 
         public async Task<Permission[]> FindByFilter(Model.PermissionFilter filter)
         {
-            var permissionIds = new HashSet<int>(filter.PermissionIds);
+            return await FindByIds(filter.PermissionIds);
+        }
 
-            var anyCondition = filter.RoleId.HasValue
-                || filter.PermissionIds.Any();
+        public async Task<RolePermission[]> FindByFilter(Model.RolePermissionFilter filter)
+        {
+            var roleIds = string.Join(",", filter.RoleIds);
 
-            var anyConditionAdded = false;
-
-            var query =
-                $"select * from { TableName } p " +
-                $"join { PermissionRoleTableName } pr on " +
-                $"p.Id = pr.PermissionId ";
-
-            if (anyCondition)
-                query += "where ";
-
-            if (filter.RoleId.HasValue)
-            {
-                anyConditionAdded = true;
-                query += $"pr.RoleId = { filter.RoleId.Value } ";
-            }
-
-            if (filter.PermissionIds.Any())
-            {
-                if (anyConditionAdded)
-                    query += " and ";
-
-                anyConditionAdded = true;
-                query += $"p.Id in ({ string.Join(",", filter.PermissionIds) })";
-            }
-
-            return await SimpleCommand.ExecuteQueryAsync<Permission>(
+            var rolePermissions = await SimpleCommand.ExecuteQueryAsync<RolePermission>(
                     connectionString,
-                    query)
+                    $"select p.*, pr.RoleId from {PermissionTableName} p " +
+                    $"join {PermissionRoleTableName} pr on " +
+                    $"  p.Id = pr.PermissionId " +
+                    $"where pr.RoleId in ({roleIds}) ")
+                .ToArray(); 
+            return rolePermissions;
+        }
+
+        public async Task<UserPermission[]> FindByFilter(Model.UserPermissionFilter filter)
+        {
+            var userIds = string.Join(",", filter.UserIds);
+
+            var rolePermissions = await SimpleCommand.ExecuteQueryAsync<UserPermission>(
+                    connectionString,
+                    $"select p.*, ru.UserId, pr.RoleId from {PermissionTableName} p " +
+                    $"join {PermissionRoleTableName} pr on " +
+                    $"       p.Id = pr.PermissionId " +
+                    $"join {RoleRepository.UserRoleTableName} ru on " +
+                    $"       ru.RoleId = pr.RoleId " +
+                    $"where ru.UserId in ({userIds}) " +
+                    $"union all " +
+                    $"select p.*, pu.UserId, null as RoleId from dom.Permission p " +
+                    $"join {PermissionUserTableName} pu on " +
+                    $"   pu.PermissionId = p.Id " +
+                    $"where pu.UserId in ({userIds})")
                 .ToArray();
+
+            return rolePermissions;
         }
 
         public Task<Permission[]> GetByRoleId(int roleId)

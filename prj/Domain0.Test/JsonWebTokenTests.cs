@@ -12,7 +12,7 @@ namespace Domain0.Test
         [Fact]
         public void AccessToken_Basic()
         {
-            var container = TestModuleTests.GetContainer(builder => builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+            var container = TestContainerBuilder.GetContainer(builder => builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var tokenGenerator = container.Resolve<ITokenGenerator>();
             var userId = 165;
             var secret = Convert.FromBase64String("kiHLSfGebYvXGTDx0vWb53JhyUpnw6HvgRwOJ6h/hUs=");
@@ -39,7 +39,7 @@ namespace Domain0.Test
         [Fact]
         public void RefreshToken_Basic()
         {
-            var container = TestModuleTests.GetContainer(builder => builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+            var container = TestContainerBuilder.GetContainer(builder => builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var tokenGenerator = container.Resolve<ITokenGenerator>();
 
             var issueTime = DateTime.UtcNow;

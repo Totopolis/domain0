@@ -15,10 +15,17 @@ namespace Domain0.FastSql
             KeyName = "Id";
         }
 
-        public Task<string> GetTemplate(
+        public async Task<string> GetTemplate(
             MessageTemplateName name,
             CultureInfo culture,
             MessageTemplateType type)
+        {
+            return await GetTemplateInternal(name, culture, type) 
+                // fall back to default culture
+                ?? await GetTemplateInternal(name, CultureInfo.CurrentCulture, type);
+        }
+
+        private Task<string> GetTemplateInternal(MessageTemplateName name, CultureInfo culture, MessageTemplateType type)
         {
             return SimpleCommand.ExecuteQueryFirstColumnAsync<string>(
                     connectionString,

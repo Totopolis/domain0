@@ -57,6 +57,21 @@ namespace Domain0.Nancy.Service
             return mapper.Map<Permission[]>(permissions);
         }
 
+        public async Task<RolePermission[]> GetByFilter(RolePermissionFilter filter)
+        {
+            var permissions = await permissionRepository.FindByFilter(filter);
+
+            return mapper.Map<RolePermission[]>(permissions);
+        }
+
+        public async Task<UserPermission[]> GetByFilter(UserPermissionFilter filter)
+        {
+            var permissions = await permissionRepository.FindByFilter(filter);
+
+            return mapper.Map<UserPermission[]>(permissions);
+        }
+
+
         public async Task<int> Insert(Permission permission)
         {
             var permissionEntity = mapper.Map<Repository.Model.Permission>(permission);

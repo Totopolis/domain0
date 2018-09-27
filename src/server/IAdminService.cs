@@ -25,6 +25,10 @@ namespace Domain0.Nancy.Service
 
         Task<Permission[]> GetByFilter(PermissionFilter filter);
 
+        Task<RolePermission[]> GetByFilter(RolePermissionFilter filter);
+
+        Task<UserPermission[]> GetByFilter(UserPermissionFilter filter);
+
         Task<int> Insert(Permission permission);
 
         Task Update(Permission permission);

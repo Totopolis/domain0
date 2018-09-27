@@ -1,7 +1,7 @@
 ﻿using Gerakul.ProtoBufSerializer;
 using Nancy.Swagger.Annotations.Attributes;
 
-namespace Domain0.Nancy.Model
+namespace Domain0.Model
 {
     [Model("Register by email request")]
     public class RegisterRequest

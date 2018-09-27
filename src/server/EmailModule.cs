@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Domain0.Exceptions;
 using Domain0.Model;
 using Domain0.Nancy.Infrastructure;
-using Domain0.Nancy.Model;
 using Domain0.Service;
 using Domain0.Service.Tokens;
 using Nancy;
@@ -14,14 +13,13 @@ using Swagger.ObjectModel;
 
 namespace Domain0.Nancy
 {
-    public class EmailModule : NancyModule
+    public sealed class EmailModule : NancyModule
     {
-        public const string RegisterUrl = "/api/email/Register";
-        public const string LoginUrl = "/api/email/Login";
-        public const string ChangePasswordUrl = "/api/email/ChangePassword";
-        public const string RequestResetPasswordUrl = "/api/email/RequestResetPassword";
+        public const string RegisterByEmailUrl = "/api/email/Register";
+        public const string LoginByEmailUrl = "/api/email/Login";
+        public const string RequestResetPasswordByEmailUrl = "/api/email/RequestResetPassword";
         public const string ForceChangeEmailUrl = "/api/email/ForceChangeEmail";
-        public const string DoesUserExistUrl = "/api/email/DoesUserExist";
+        public const string DoesUserExistByEmailUrl = "/api/email/DoesUserExist";
 
         public EmailModule(
             IAccountService accountServiceInstance,
@@ -30,16 +28,15 @@ namespace Domain0.Nancy
             accountService = accountServiceInstance;
             logger = loggerInstance;
 
-            Put(RegisterUrl, ctx => Register(), name: nameof(Register));
-            Post(LoginUrl, ctx => Login(), name: nameof(Login));
-            Post(ChangePasswordUrl, ctx => ChangePassword(), name: nameof(ChangePassword));
-            Post(DoesUserExistUrl, ctx => DoesUserExist(), name: nameof(DoesUserExist));
-            Post(RequestResetPasswordUrl, ctx => RequestResetPassword(), name: nameof(RequestResetPassword));
+            Put(RegisterByEmailUrl, ctx => RegisterByEmail(), name: nameof(RegisterByEmail));
+            Post(LoginByEmailUrl, ctx => LoginByEmail(), name: nameof(LoginByEmail));
+            Post(DoesUserExistByEmailUrl, ctx => DoesUserExistByEmail(), name: nameof(DoesUserExistByEmail));
+            Post(RequestResetPasswordByEmailUrl, ctx => RequestResetPasswordByEmail(), name: nameof(RequestResetPasswordByEmail));
             Post(ForceChangeEmailUrl, ctx => ForceChangeEmail(), name: nameof(ForceChangeEmail));
         }
 
-        [Route(nameof(Register))]
-        [Route(HttpMethod.Put, RegisterUrl)]
+        [Route(nameof(RegisterByEmail))]
+        [Route(HttpMethod.Put, RegisterByEmailUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Email" }, Summary = "Method for registration by email")]
@@ -50,7 +47,7 @@ namespace Domain0.Nancy
             Required = true, 
             Description = "user's email")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
-        public async Task<object> Register()
+        public async Task<object> RegisterByEmail()
         {
             var request = this.BindAndValidateModel<RegisterRequest>();
             try
@@ -66,8 +63,8 @@ namespace Domain0.Nancy
             return HttpStatusCode.NoContent;
         }
 
-        [Route(nameof(Login))]
-        [Route(HttpMethod.Post, LoginUrl)]
+        [Route(nameof(LoginByEmail))]
+        [Route(HttpMethod.Post, LoginByEmailUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Email" }, Summary = "Method for login by email")]
@@ -77,7 +74,7 @@ namespace Domain0.Nancy
             ParamType = typeof(EmailLoginRequest), 
             Required = true, Description = "parameters for login")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(AccessTokenResponse))]
-        public async Task<object> Login()
+        public async Task<object> LoginByEmail()
         {
             var request = this.BindAndValidateModel<EmailLoginRequest>();
 
@@ -91,56 +88,27 @@ namespace Domain0.Nancy
             return result;
         }
 
-        [Route(nameof(ChangePassword))]
-        [Route(HttpMethod.Post, ChangePasswordUrl)]
-        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
-        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
-        [Route(Tags = new[] { "Email" }, Summary = "Method for change password")]
-        [RouteParam(
-            ParamIn = ParameterIn.Body, 
-            Name = "request", 
-            ParamType = typeof(ChangePasswordRequest), 
-            Required = true, 
-            Description = "parameters for change password")]
-        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
-        public async Task<object> ChangePassword()
-        {
-            this.RequiresAuthentication();
-            var request = this.BindAndValidateModel<ChangePasswordRequest>();
-            try
-            {
-                await accountService.ChangePassword(request);
-            }
-            catch (SecurityException)
-            {
-                ModelValidationResult.Errors.Add("oldPassword", "password is not valid");
-                throw new BadModelException(ModelValidationResult);
-            }
-
-            return HttpStatusCode.NoContent;
-        }
-
-        [Route(nameof(DoesUserExist))]
-        [Route(HttpMethod.Post, DoesUserExistUrl)]
+        [Route(nameof(DoesUserExistByEmail))]
+        [Route(HttpMethod.Post, DoesUserExistByEmailUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Email" }, Summary = "Method for check user exists")]
         [RouteParam(
-            ParamIn = ParameterIn.Query, 
+            ParamIn = ParameterIn.Body, 
             Name = "email", 
             ParamType = typeof(RegisterRequest), 
             Required = true, 
             Description = "user's email")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "True if user exists else false", Model = typeof(bool))]
-        public async Task<object> DoesUserExist()
+        public async Task<object> DoesUserExistByEmail()
         {
             var request = this.BindAndValidateModel<RegisterRequest>();
             var result = await accountService.DoesUserExists(request.Email);
             return result;
         }
 
-        [Route(nameof(RequestResetPassword))]
-        [Route(HttpMethod.Post, RequestResetPasswordUrl)]
+        [Route(nameof(RequestResetPasswordByEmail))]
+        [Route(HttpMethod.Post, RequestResetPasswordByEmailUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Email" }, Summary = "Method for reset password")]
@@ -151,7 +119,7 @@ namespace Domain0.Nancy
             Required = true, 
             Description = "user's email")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
-        public async Task<object> RequestResetPassword()
+        public async Task<object> RequestResetPasswordByEmail()
         {
             var request = this.BindAndValidateModel<RegisterRequest>();
             await accountService.RequestResetPassword(request.Email);

@@ -40,7 +40,7 @@ create table dom.Role (
 	Id int not null identity(1,1) constraint PK_dom_Role primary key,
 	Name nvarchar(64) not null,
 	Description nvarchar(max) null,
-	IsDefault bit not null,
+	IsDefault bit not null default(0),
 
 	constraint UQ_dom_Role unique(Name)
 )
@@ -100,6 +100,8 @@ create table dom.RoleUser (
 
 	constraint PK_dom_RoleUser primary key(RoleId, UserId)
 )
+go
+create index IX_RoleUser_UserId ON dom.RoleUser ([UserId])
 go
 
 
@@ -180,7 +182,7 @@ create table dom.TokenRegistration (
 )
 go
 
-
+/*
 insert into [dom].[Application]
 ([Name], [Description])
 values
@@ -192,4 +194,4 @@ insert into [dom].[Permission]
 ([ApplicationId], [Name], [Description])
 values
 (@DomainAppId, 'Admin', 'Admin permission')
-
+*/

@@ -19,6 +19,7 @@ using Nancy.Authentication.Stateless;
 using Domain0.Service;
 using Autofac.Core;
 using System.Globalization;
+using Domain0.Model;
 using Nancy.Configuration;
 
 namespace Domain0.Nancy
@@ -49,6 +50,8 @@ namespace Domain0.Nancy
             var modelCatalog = container.Resolve<ISwaggerModelCatalog>();
             modelCatalog.AddModel<IEnumerable<ModelValidationError>>();
             modelCatalog.AddModel<ModelValidationError>();
+            modelCatalog.AddModel<RolePermission>();
+            modelCatalog.AddModel<UserPermission>();
 
             SwaggerAnnotationsConfig.ShowOnlyAnnotatedRoutes = true;
             container.Update(builder =>
