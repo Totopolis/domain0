@@ -9,6 +9,6 @@
         public const string CLAIM_TOKEN_TYPE_ACCESS = "access_token";
         public const string CLAIM_TOKEN_TYPE_REFRESH = "refresh_token";
 
-        public const string CLAIM_PERMISSIONS_ADMIN = "Admin";
+        public const string CLAIM_PERMISSIONS_ADMIN = "domain0.superuser";
     }
 }
