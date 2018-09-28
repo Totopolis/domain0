@@ -31,7 +31,7 @@ namespace Domain0.WinService.Infrastructure
 
         public static bool AddSslCertificate(Uri uri, X509Certificate2 cert)
             => RunElevated(Netsh,
-                $"http add sslcert ipport=0.0.0.0:{uri.Port} certhash={Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(cert.Thumbprint))} appid={{{Guid.NewGuid()}}}");
+                $"http add sslcert ipport=0.0.0.0:{uri.Port} certhash={Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(cert.Thumbprint))} appid={{{Guid.NewGuid()}}} clientcertnegotiation=enable");
 
         public static bool RemoveSslCertificate(Uri uri)
             => RunElevated(Netsh,

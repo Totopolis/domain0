@@ -43,7 +43,7 @@ namespace Domain0.WinService.Infrastructure
         {
             _host.Stop();
 
-            if (hostControl is ConsoleRunHost)
+            if (!(hostControl is ConsoleRunHost))
                 UninstallService(_uri);
 
             return true;

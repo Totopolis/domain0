@@ -48,11 +48,6 @@ namespace Domain0.WinService
             InternalLogger.LogLevel = LogLevel.Error;
 
             Logger = LogManager.GetCurrentClassLogger();
-
-            /// Nancy single exe hook
-            var fields = typeof(TypeResolveStrategies).GetRuntimeFields().Where(f => f.Name.Contains("ExcludeNancy"));
-            foreach (var field in fields)
-                field.SetValue(null, (TypeResolveStrategy)(type => !string.Equals(type.FullName, $"Nancy.{type.Name}")));
         }
 
         static void Main(string[] args)
@@ -77,7 +72,7 @@ namespace Domain0.WinService
             var connectionString = ConfigurationManager.ConnectionStrings["Database"]?.ConnectionString ?? DefaultConnectionString;
             var uri = !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Url"])
                 ? new Uri(ConfigurationManager.AppSettings["Url"])
-                : new Uri(HasX509CertificateSettings() ? DefaultHttpsUri : DefaultHttpUri);
+                : new Uri(CertificateHelper.HasX509CertificateSettings() ? DefaultHttpsUri : DefaultHttpUri);
             Logger.Info("Use Uri={0}", uri);
             Logger.Info("Use ConnectionString={0}", connectionString);
 
@@ -99,10 +94,14 @@ namespace Domain0.WinService
                 var bootstrapper = new Domain0Bootstrapper(container);
                 var configuration = new HostConfiguration
                 {
+                    UrlReservations = new UrlReservations
+                    {
+                        CreateAutomatically = true
+                    },
                     AllowChunkedEncoding = false,
                     UnhandledExceptionCallback = ex => Logger.Fatal(ex, "unhandled nancy exception")
                 };
-                x.WithNancy(uri, configuration, bootstrapper, GetX509Cert(uri));
+                x.WithNancy(uri, configuration, bootstrapper, CertificateHelper.GetX509Cert(uri));
             });
         }
 
@@ -115,51 +114,6 @@ namespace Domain0.WinService
             builder.RegisterModule<ApplicationModule>();
 
             return builder.Build();
-        }
-
-        static bool HasX509CertificateSettings()
-        {
-            return !string.IsNullOrEmpty(ConfigurationManager.AppSettings["X509_Filepath"])
-                || !string.IsNullOrEmpty(ConfigurationManager.AppSettings["X509_Subject"]);
-        }
-
-        static X509Certificate2 GetX509Cert(Uri uri)
-        {
-            if (!string.Equals(uri.Scheme, "https", StringComparison.OrdinalIgnoreCase))
-                return null;
-
-            IX509CertificateProvider provider = null;
-
-            var fileSettings = new X509FileSettings
-            {
-                FilePath = ConfigurationManager.AppSettings["X509_Filepath"],
-                Password = ConfigurationManager.AppSettings["X509_Password"]
-            };
-            if (!string.IsNullOrEmpty(fileSettings.FilePath))
-            {
-                provider = new X509FileProvider(fileSettings);
-            }
-            else
-            {
-                if (!Enum.TryParse(ConfigurationManager.AppSettings["X509_Location"], out StoreLocation location))
-                    location = StoreLocation.LocalMachine;
-                if (!Enum.TryParse(ConfigurationManager.AppSettings["X509_StoreName"], out StoreName storeName))
-                    storeName = StoreName.My;
-
-                var storeSettings = new X509StoreSettings
-                {
-                    Location = location,
-                    Name = storeName,
-                    Subject = ConfigurationManager.AppSettings["X509_Subject"]
-                };
-                if (!string.IsNullOrEmpty(storeSettings.Subject))
-                    provider = new X509StoreProvider(storeSettings);
-            }
-
-            X509Certificate2 x509cert = null;
-            if (uri.Scheme == "https")
-                x509cert = provider?.GetCert();
-            return x509cert;
         }
     }
 }
