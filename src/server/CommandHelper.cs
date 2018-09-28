@@ -39,7 +39,7 @@ namespace Domain0.WinService.Infrastructure
 
         public static bool RunElevated(string file, string args)
         {
-            Logger.Debug("{0} {1}", Netsh, args);
+            Logger.Info("{0} {1}", Netsh, args);
 
             var process = new Process
             {
