@@ -3,7 +3,6 @@ using Domain0.Nancy;
 using Domain0.WinService.Infrastructure;
 using NLog;
 using System;
-using System.Configuration;
 using System.Security.Cryptography.X509Certificates;
 using Nancy.Hosting.Self;
 using Topshelf;
@@ -13,29 +12,8 @@ using Nancy.Bootstrapper;
 
 namespace Domain0.WinService
 {
-    class Program
+    internal class Program
     {
-#if DEBUG
-        public const string ServiceName = "domain0Debug";
-#else
-        public const string ServiceName = "domain0";
-#endif
-
-#if DEBUG
-        public const string DefaultHttpsUri = "https://localhost:4443";
-#else
-        public const string DefaultHttpsUri = "https://localhost";
-#endif
-
-#if DEBUG
-        public const string DefaultHttpUri = "http://localhost:8880";
-#else
-        public const string DefaultHttpUri = "http://localhost";
-#endif
-
-        public const string DefaultConnectionString =
-            "Data Source=.;Initial Catalog=Telematic;Persist Security Info=True;Integrated Security=True";
-
         static Program()
         {
             LogManager.ThrowExceptions = true;
@@ -45,7 +23,7 @@ namespace Domain0.WinService
             Logger = LogManager.GetCurrentClassLogger();
         }
 
-        static void Main(string[] args)
+        private static void Main()
         {
             Logger.Info($"Use BasePath: {AppContext.BaseDirectory}");
             try
@@ -70,9 +48,9 @@ namespace Domain0.WinService
         {
             var host = HostFactory.New(x =>
             {
-                x.SetDisplayName(ServiceName);
-                x.SetDescription($"{ServiceName} auth service based on JWT");
-                x.SetServiceName($"{ServiceName} service");
+                x.SetDisplayName(Settings.ServiceName);
+                x.SetDescription($"{Settings.ServiceName} auth service based on JWT");
+                x.SetServiceName($"{Settings.ServiceName} service");
                 x.StartAutomatically();
                 x.EnableServiceRecovery(r => r.RestartService(0));
                 x.RunAsNetworkService();
@@ -86,23 +64,18 @@ namespace Domain0.WinService
                 };
 
                 Logger.Info("Initialize nancy...");
-                x.WithNancy(uri, configuration, bootstrapper, cert);
+                x.WithNancy(Settings.Uri, configuration, bootstrapper, cert);
             });
             return host;
         }
 
         private static void Initialize()
         {
-            var connectionString =
-                ConfigurationManager.ConnectionStrings["Database"]?.ConnectionString ?? DefaultConnectionString;
-            uri = !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Url"])
-                ? new Uri(ConfigurationManager.AppSettings["Url"])
-                : new Uri(CertificateHelper.HasX509CertificateSettings() ? DefaultHttpsUri : DefaultHttpUri);
-            Logger.Info("Use Uri={0}", uri);
-            Logger.Info("Use ConnectionString={0}", connectionString);
+            Logger.Info("Use Uri={0}", Settings.Uri);
+            Logger.Info("Use ConnectionString={0}", Settings.ConnectionString);
 
             Logger.Info("Making container...");
-            container = CreateContainer(connectionString);
+            container = CreateContainer();
 
             Logger.Info("Initialize database...");
             var dbManager = container.Resolve<DbManager>();
@@ -113,18 +86,18 @@ namespace Domain0.WinService
             bootstrapper = new Domain0Bootstrapper(container);
 
             Logger.Info("Load certificate...");
-            cert = CertificateHelper.GetX509Cert(uri);
+            cert = CertificateHelper.GetX509Cert(Settings.Uri);
             if (cert != null)
                 Logger.Info($"Found certificate: {cert.Thumbprint}");
             else
-                Logger.Warn($"{ConfigurationManager.AppSettings["X509_Filepath"]} certificate not found! ");
+                Logger.Warn("certificate not found!");
 
         }
 
-        static IContainer CreateContainer(string connectionString)
+        private static IContainer CreateContainer()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterInstance(connectionString).Named<string>("connectionString");
+            builder.RegisterInstance(Settings.ConnectionString).Named<string>("connectionString");
             builder.Register(c => LogManager.GetCurrentClassLogger()).As<ILogger>().InstancePerDependency();
             builder.RegisterModule<DatabaseModule>();
             builder.RegisterModule<ApplicationModule>();
@@ -139,7 +112,5 @@ namespace Domain0.WinService
         private static X509Certificate2 cert;
 
         private static IContainer container;
-
-        private static Uri uri;
     }
 }

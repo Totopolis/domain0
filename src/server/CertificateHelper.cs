@@ -7,13 +7,6 @@ namespace Domain0.WinService.Infrastructure
 {
     public class CertificateHelper
     {
-
-        public static bool HasX509CertificateSettings()
-        {
-            return !string.IsNullOrEmpty(ConfigurationManager.AppSettings["X509_Filepath"])
-                   || !string.IsNullOrEmpty(ConfigurationManager.AppSettings["X509_Subject"]);
-        }
-
         public static X509Certificate2 GetX509Cert(Uri uri)
         {
             if (!string.Equals(uri.Scheme, "https", StringComparison.OrdinalIgnoreCase))

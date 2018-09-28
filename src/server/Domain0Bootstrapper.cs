@@ -1,45 +1,41 @@
 ﻿using Autofac;
-using Nancy.Bootstrappers.Autofac;
-using Nancy.Conventions;
-using Nancy.Swagger.Services;
-using Swagger.ObjectModel;
-using Domain0.Nancy.Infrastructure;
-using Nancy.Bootstrapper;
-using Nancy.Swagger.Annotations;
-using Nancy.Swagger;
-using Nancy.Validation;
-using System.Collections.Generic;
-using Nancy;
-using Nancy.Responses.Negotiation;
-using System.Linq;
-using Domain0.Exceptions;
-using NLog;
-using Nancy.ModelBinding;
-using Nancy.Authentication.Stateless;
-using Domain0.Service;
 using Autofac.Core;
-using System.Globalization;
+using Domain0.Exceptions;
 using Domain0.Model;
+using Domain0.Nancy.Infrastructure;
+using Domain0.Service;
+using Nancy;
+using Nancy.Authentication.Stateless;
+using Nancy.Bootstrapper;
+using Nancy.Bootstrappers.Autofac;
 using Nancy.Configuration;
+using Nancy.Conventions;
+using Nancy.ModelBinding;
+using Nancy.Responses.Negotiation;
+using Nancy.Swagger;
+using Nancy.Swagger.Annotations;
+using Nancy.Swagger.Services;
+using Nancy.Validation;
+using NLog;
+using Swagger.ObjectModel;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 
 namespace Domain0.Nancy
 {
 
     public class Domain0Bootstrapper : AutofacNancyBootstrapper
     {
-        private readonly IContainer _container;
-
-        private readonly ILogger _logger;
-
-        public Domain0Bootstrapper(IContainer container)
+        public Domain0Bootstrapper(IContainer rootContainer)
         {
-            _container = container;
-            _logger = _container.Resolve<ILogger>();
+            container = rootContainer;
+            logger = container.Resolve<ILogger>();
         } 
 
-        protected override ILifetimeScope GetApplicationContainer() => _container;
+        protected override ILifetimeScope GetApplicationContainer() => container;
 
-        protected override void ApplicationStartup(ILifetimeScope container, IPipelines pipelines)
+        protected override void ApplicationStartup(ILifetimeScope applicationContainer, IPipelines pipelines)
         {
             // Add swagger info
             SwaggerMetadataProvider.SetInfo("Domain0", "v1", "Domain0 JWT auth service", new Contact
@@ -47,26 +43,23 @@ namespace Domain0.Nancy
                 Name = "domain0"
             });
 
-            var modelCatalog = container.Resolve<ISwaggerModelCatalog>();
+            var modelCatalog = applicationContainer.Resolve<ISwaggerModelCatalog>();
             modelCatalog.AddModel<IEnumerable<ModelValidationError>>();
             modelCatalog.AddModel<ModelValidationError>();
             modelCatalog.AddModel<RolePermission>();
             modelCatalog.AddModel<UserPermission>();
 
             SwaggerAnnotationsConfig.ShowOnlyAnnotatedRoutes = true;
-            container.Update(builder =>
+            applicationContainer.Update(builder =>
             {
                 builder.RegisterType<SwaggerAnnotationsProvider>().As<ISwaggerMetadataProvider>();
             });
         }
 
-        protected override void RequestStartup(ILifetimeScope container, IPipelines pipelines, NancyContext context)
+        protected override void RequestStartup(ILifetimeScope requestContainer, IPipelines pipelines, NancyContext context)
         {
-            base.RequestStartup(container, pipelines, context);
-            pipelines.BeforeRequest.AddItemToEndOfPipeline((ctx) =>
-            {
-                return null;
-            });
+            base.RequestStartup(requestContainer, pipelines, context);
+            pipelines.BeforeRequest.AddItemToEndOfPipeline(ctx => null);
 
             pipelines.OnError.AddItemToStartOfPipeline((ctx, ex) =>
             {
@@ -89,7 +82,7 @@ namespace Domain0.Nancy
                             .WithReasonPhrase("validation error")
                             .WithMediaRangeModel("application/json", new List<ModelValidationError> { new ModelValidationError(binding.BoundType.Name, "couldnt deserialize")});
                     default:
-                        _logger.Error(ex, ex.ToString());
+                        logger.Error(ex, ex.ToString());
                         break;
                 }
 
@@ -98,7 +91,7 @@ namespace Domain0.Nancy
 
             StatelessAuthentication.Enable(
                 pipelines, 
-                container
+                requestContainer
                     .Resolve<IAuthenticationConfigurationBuilder>()
                     .Build());
 
@@ -110,9 +103,11 @@ namespace Domain0.Nancy
             nancyConventions.StaticContentsConventions.AddEmbeddedDirectory<Domain0Bootstrapper>("/swagger-ui", "Swagger-UI");
         }
 
-        protected override void ConfigureRequestContainer(ILifetimeScope container, NancyContext context)
+        protected override void ConfigureRequestContainer(
+            ILifetimeScope requestContainer, 
+            NancyContext context)
         {
-            container.Update(builder =>
+            requestContainer.Update(builder =>
             {
                 builder
                     .RegisterType<JwtAuthenticationRequestContext>()
@@ -133,18 +128,22 @@ namespace Domain0.Nancy
                     .InstancePerLifetimeScope();
             });
 
-            base.ConfigureRequestContainer(container, context);
+            base.ConfigureRequestContainer(requestContainer, context);
         }
 
         public override void Configure(INancyEnvironment environment)
         {
-            var suportedCultures = CultureInfo.GetCultures(
+            var supportedCultures = CultureInfo.GetCultures(
                     CultureTypes.AllCultures & ~CultureTypes.SpecificCultures)
                 .Select(x => x.Name)
                 .ToArray();
-            environment.Globalization(suportedCultures, "en-US");
+            environment.Globalization(supportedCultures, "en-US");
 
             base.Configure(environment);
         }
+
+        private readonly IContainer container;
+
+        private readonly ILogger logger;
     }
 }

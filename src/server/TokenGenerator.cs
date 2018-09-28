@@ -16,7 +16,13 @@ namespace Domain0.Service
 
         public TimeSpan? Lifetime { get; set; }
 
+        public TimeSpan RefreshLifetime { get; set; }
+
         public string Secret { get; set; }
+
+        public string Private { get; set; }
+
+        public string Public { get; set; }
 
         public string Alg { get; set; }
     }
