@@ -6,7 +6,6 @@ using AutoMapper;
 using Domain0.Nancy.Infrastructure;
 using Domain0.Nancy.Service;
 using Domain0.Service;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Domain0
 {
@@ -49,14 +48,14 @@ namespace Domain0
         {
             var settings = new TokenGeneratorSettings
             {
-                Audience = ConfigurationManager.AppSettings["Token_Audience"],
-                Issuer = ConfigurationManager.AppSettings["Token_Issuer"],
-                Lifetime = TimeSpan.FromMinutes(double.Parse(ConfigurationManager.AppSettings["Token_LifeTime"])),
-                RefreshLifetime = TimeSpan.FromMinutes(double.Parse(ConfigurationManager.AppSettings["Token_RefreshLifeTime"])),
-                Secret = ConfigurationManager.AppSettings["Token_Secret"],
+                Audience = ConfigurationManager.AppSettings["Token_Audience"] ?? "*",
+                Issuer = ConfigurationManager.AppSettings["Token_Issuer"] ?? "issuer",
+                Lifetime = TimeSpan.FromMinutes(double.Parse(ConfigurationManager.AppSettings["Token_LifeTime"] ?? "15")),
+                RefreshLifetime = TimeSpan.FromMinutes(double.Parse(ConfigurationManager.AppSettings["Token_RefreshLifeTime"] ?? "480")),
+                Secret = ConfigurationManager.AppSettings["Token_Secret"] ?? "kiHLSfGebYvXGTDx0vWb53JhyUpnw6HvgRwOJ6h/hUs=",
                 Private = ConfigurationManager.AppSettings["Token_Private"],
                 Public = ConfigurationManager.AppSettings["Token_Public"],
-                Alg = ConfigurationManager.AppSettings["Token_Alg"],
+                Alg = ConfigurationManager.AppSettings["Token_Alg"] ?? "HS256",
             };
             return settings;
         }
@@ -66,7 +65,7 @@ namespace Domain0
             return new EmailClientSettings
             {
                 ServerHost = ConfigurationManager.AppSettings["Email_ServerHost"],
-                Port = int.Parse(ConfigurationManager.AppSettings["Email_Port"]),
+                Port = int.Parse(ConfigurationManager.AppSettings["Email_Port"] ?? "587"),
                 Email = ConfigurationManager.AppSettings["Email_Address"],
                 Username = ConfigurationManager.AppSettings["Email_Username"],
                 Password = ConfigurationManager.AppSettings["Email_Password"],
