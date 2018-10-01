@@ -325,6 +325,9 @@
     <Compile Include="..\..\src\server\UserPermission.cs">
       <Link>Service\Repository\Model\UserPermission.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\UsersModule.cs">
+      <Link>UsersModule.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

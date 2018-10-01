@@ -132,7 +132,7 @@ namespace Domain0.Test
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountMock = Mock.Get(accountRepository);
             var registers = new Dictionary<decimal, Account>();
-            accountMock.Setup(a => a.Insert(It.IsAny<Account>())).Callback<Account>(a => registers[a.Phone.Value] = a).Returns(Task.FromResult(1));
+            accountMock.Setup(a => a.Insert(It.IsAny<Account>())).Callback<Account>(a => registers[a.Phone.GetValueOrDefault()] = a).Returns(Task.FromResult(1));
             accountMock.Setup(a => a.FindByPhone(phone)).Returns<decimal>(p => Task.FromResult(registers.TryGetValue(p, out var acc) ? acc : null));
 
             var roleRepository = container.Resolve<IRoleRepository>();
@@ -182,7 +182,7 @@ namespace Domain0.Test
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountMock = Mock.Get(accountRepository);
             var registers = new Dictionary<decimal, Account>();
-            accountMock.Setup(a => a.Insert(It.IsAny<Account>())).Callback<Account>(a => registers[a.Phone.Value] = a).Returns(Task.FromResult(1));
+            accountMock.Setup(a => a.Insert(It.IsAny<Account>())).Callback<Account>(a => registers[a.Phone.GetValueOrDefault()] = a).Returns(Task.FromResult(1));
             accountMock.Setup(a => a.FindByPhone(phone)).Returns<decimal>(p => Task.FromResult(registers.TryGetValue(p, out var acc) ? acc : null));
 
             var roleRepository = container.Resolve<IRoleRepository>();
@@ -241,7 +241,7 @@ namespace Domain0.Test
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountMock = Mock.Get(accountRepository);
             var registers = new Dictionary<decimal, Account>();
-            accountMock.Setup(a => a.Insert(It.IsAny<Account>())).Callback<Account>(a => registers[a.Phone.Value] = a).Returns(Task.FromResult(1));
+            accountMock.Setup(a => a.Insert(It.IsAny<Account>())).Callback<Account>(a => registers[a.Phone.GetValueOrDefault()] = a).Returns(Task.FromResult(1));
             accountMock.Setup(a => a.FindByPhone(phone)).Returns<decimal>(p => Task.FromResult(registers.TryGetValue(p, out var acc) ? acc : null));
 
             var roleRepository = container.Resolve<IRoleRepository>();
@@ -371,7 +371,6 @@ namespace Domain0.Test
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             tokenMock.Verify(t => t.Save(It.IsAny<TokenRegistration>()), Times.Once);
 
-            ;
             var result = response.Body.AsDataFormat<AccessTokenResponse>(format);
             Assert.Equal(1, result.Profile.Id);
             Assert.Equal(phone, result.Profile.Phone);
@@ -527,9 +526,7 @@ namespace Domain0.Test
             var browser = new Browser(bootstrapper);
 
             var phone = 79000000000;
-            var password = "password";
 
-            var account = new Account { Id = 1, Login = phone.ToString(), Phone = phone, Password = password };
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync((Account) null);
 
@@ -839,9 +836,7 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync(new Account {Id = userId, Phone = phone});
 
-            var t = accountMock.Object;
-
-            var response = await browser.Get(SmsModule.GetMyProfileUrl, with =>
+            var response = await browser.Get(UsersModule.GetMyProfileUrl, with =>
             {
                 with.Header("Authorization", $"Bearer {accessToken}");
                 with.Accept(format);
@@ -870,7 +865,7 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync(new Account { Id = userId, Phone = phone });
 
-            var response = await browser.Get(SmsModule.GetUserByPhoneUrl.Replace("{phone}", phone.ToString()), with =>
+            var response = await browser.Get(UsersModule.GetUserByPhoneUrl.Replace("{phone}", phone.ToString()), with =>
             {
                 with.Accept(format);
                 with.Header("Authorization", $"Bearer {accessToken}");
@@ -900,7 +895,7 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync((Account) null);
 
-            var response = await browser.Get(SmsModule.GetUserByPhoneUrl.Replace("{phone}", phone.ToString()), with =>
+            var response = await browser.Get(UsersModule.GetUserByPhoneUrl.Replace("{phone}", phone.ToString()), with =>
             {
                 with.Accept(format);
                 with.Header("Authorization", $"Bearer {accessToken}");
@@ -925,7 +920,7 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync(new Account {Id = userId});
 
-            var response = await browser.Get(SmsModule.GetUserByIdUrl.Replace("{id}", userId.ToString()), with =>
+            var response = await browser.Get(UsersModule.GetUserByIdUrl.Replace("{id}", userId.ToString()), with =>
             {
                 with.Accept(format);
                 with.Header("Authorization", $"Bearer {accessToken}");
@@ -952,7 +947,7 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync((Account)null);
 
-            var response = await browser.Get(SmsModule.GetUserByIdUrl.Replace("{id}", userId.ToString()), with =>
+            var response = await browser.Get(UsersModule.GetUserByIdUrl.Replace("{id}", userId.ToString()), with =>
             {
                 with.Accept(format);
                 with.Header("Authorization", $"Bearer {accessToken}");
