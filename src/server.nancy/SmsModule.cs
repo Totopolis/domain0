@@ -214,7 +214,7 @@ namespace Domain0.Nancy
             this.RequiresAuthentication();
             this.RequiresClaims(c =>
                 c.Type == TokenClaims.CLAIM_PERMISSIONS
-                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_VIEW_USERS));
 
             int id;
             if (!int.TryParse(Request.Query[nameof(id)], out id))

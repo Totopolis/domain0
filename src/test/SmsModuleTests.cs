@@ -127,7 +127,7 @@ namespace Domain0.Test
             var userId = 1;
             var phone = 79000000000;
             var roles = new List<string> {"role1", "role2"};
-            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_FORCE_CREATE_USER);
 
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountMock = Mock.Get(accountRepository);
@@ -177,7 +177,7 @@ namespace Domain0.Test
             var userId = 1;
             var phone = 79000000000;
             var roles = new List<string> { "role1", "role2" };
-            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_FORCE_CREATE_USER);
 
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountMock = Mock.Get(accountRepository);
@@ -236,7 +236,7 @@ namespace Domain0.Test
             var userId = 1;
             var phone = 79000000000;
             var roles = new List<string> {"role1", "role2"};
-            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_FORCE_CREATE_USER);
 
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountMock = Mock.Get(accountRepository);
@@ -286,7 +286,7 @@ namespace Domain0.Test
             var userId = 1;
             var phone = 79000000000;
             var roles = new List<string> { "role1", "role2" };
-            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_FORCE_CREATE_USER);
 
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountMock = Mock.Get(accountRepository);
@@ -320,7 +320,7 @@ namespace Domain0.Test
             var browser = new Browser(bootstrapper);
 
             var userId = 1;
-            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_FORCE_CREATE_USER);
             var response = await browser.Put(SmsModule.ForceCreateUserUrl, with =>
             {
                 with.Accept(format);
@@ -449,7 +449,7 @@ namespace Domain0.Test
             var password = "password";
             var newpassword = "newpassword";
 
-            string accessToken = TestContainerBuilder.BuildToken(container, userId);
+            string accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_BASIC);
 
             var contextMock = Mock.Get(container.Resolve<IRequestContext>());
             contextMock.Setup(a => a.UserId).Returns(userId);
@@ -556,7 +556,7 @@ namespace Domain0.Test
             var userId = 1;
             var phone = 79000000000;
             var newphone = 79000000001;
-            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_FORCE_CHANGE_PHONE);
 
             var account = new Account { Id = 1, Login = phone.ToString(), Phone = phone };
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
@@ -588,7 +588,7 @@ namespace Domain0.Test
 
             var userId = 1;
             var newphone = 79000000001;
-            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_FORCE_CHANGE_PHONE);
 
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync((Account) null);
@@ -666,7 +666,7 @@ namespace Domain0.Test
             var phone = 79000000000;
             var id = 1;
             var userId = 1;
-            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_VIEW_USERS);
 
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(id)).ReturnsAsync(new Account {Id = id, Phone = phone});
@@ -695,7 +695,7 @@ namespace Domain0.Test
 
             var id = 1;
             var userId = 1;
-            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_VIEW_USERS);
 
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(id)).ReturnsAsync((Account) null);
@@ -865,7 +865,7 @@ namespace Domain0.Test
 
             var phone = 79000000000;
             var userId = 1;
-            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_VIEW_USERS);
 
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync(new Account { Id = userId, Phone = phone });
@@ -895,7 +895,7 @@ namespace Domain0.Test
 
             var userId = 1;
             var phone = 79000000000;
-            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_VIEW_USERS);
 
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync((Account) null);
@@ -920,7 +920,7 @@ namespace Domain0.Test
             var browser = new Browser(bootstrapper);
 
             var userId = 1;
-            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_VIEW_USERS);
 
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync(new Account {Id = userId});
@@ -947,7 +947,7 @@ namespace Domain0.Test
             var browser = new Browser(bootstrapper);
 
             var userId = 1;
-            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_VIEW_USERS);
 
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync((Account)null);
@@ -972,7 +972,7 @@ namespace Domain0.Test
             var browser = new Browser(bootstrapper);
 
             var userId = 1;
-            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_VIEW_PROFILE);
 
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserIds(It.IsAny<IEnumerable<int>>())).Returns<IEnumerable<int>>(ids => Task.FromResult(ids.Select(id => new Account {Id=id}).ToArray()));
@@ -1003,7 +1003,7 @@ namespace Domain0.Test
             var browser = new Browser(bootstrapper);
 
             var userId = 1;
-            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN);
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_VIEW_PROFILE);
 
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserIds(It.IsAny<IEnumerable<int>>())).Returns<IEnumerable<int>>(ids => Task.FromResult(ids.Select(id => new Account { Id = id }).ToArray()));

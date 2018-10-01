@@ -158,7 +158,7 @@ namespace Domain0.Test
                 var client = new Domain0Client(TestUrl, http);
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
-                        TestContainerBuilder.BuildToken(container, 1, TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+                        TestContainerBuilder.BuildToken(container, 1, TokenClaims.CLAIM_PERMISSIONS_FORCE_CREATE_USER));
 
                 await client.ForceCreateUserAsync(testRequest);
 
@@ -193,7 +193,7 @@ namespace Domain0.Test
                 var client = new Domain0Client(TestUrl, http);
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
-                        TestContainerBuilder.BuildToken(container, 1, TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+                        TestContainerBuilder.BuildToken(container, 1, TokenClaims.CLAIM_PERMISSIONS_FORCE_CHANGE_PHONE));
 
                 await client.ForceChangePhoneAsync(testRequest);
 
@@ -227,7 +227,7 @@ namespace Domain0.Test
                 var client = new Domain0Client(TestUrl, http);
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
-                        TestContainerBuilder.BuildToken(container, 1, TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+                        TestContainerBuilder.BuildToken(container, 1, TokenClaims.CLAIM_PERMISSIONS_VIEW_USERS));
 
                 var phone = await client.PhoneByUserIdAsync(testId);
                 Assert.Equal(testPhone, phone);
@@ -290,7 +290,7 @@ namespace Domain0.Test
                 var client = new Domain0Client(TestUrl, http);
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
-                        TestContainerBuilder.BuildToken(container, testId, TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+                        TestContainerBuilder.BuildToken(container, testId, TokenClaims.CLAIM_PERMISSIONS_VIEW_USERS));
 
                 var profile = await client.GetUserByPhoneAsync(testPhone);
                 Assert.Equal(testPhone, profile.Phone);
@@ -323,7 +323,7 @@ namespace Domain0.Test
                 var client = new Domain0Client(TestUrl, http);
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
-                        TestContainerBuilder.BuildToken(container, testId, TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+                        TestContainerBuilder.BuildToken(container, testId, TokenClaims.CLAIM_PERMISSIONS_VIEW_USERS));
 
                 var profile = await client.GetUserByIdAsync(testId);
                 Assert.Equal(testPhone, profile.Phone);
@@ -357,7 +357,7 @@ namespace Domain0.Test
                 var client = new Domain0Client(TestUrl, http);
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
-                        TestContainerBuilder.BuildToken(container, 1, TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+                        TestContainerBuilder.BuildToken(container, 1, TokenClaims.CLAIM_PERMISSIONS_VIEW_PROFILE));
 
                 var profiles = await client.GetUserByFilterAsync(filter);
                 Assert.True(profiles.Select(p => p.Id).SequenceEqual(filter.UserIds));
@@ -489,7 +489,7 @@ namespace Domain0.Test
                 var client = new Domain0Client(TestUrl, http);
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
-                        TestContainerBuilder.BuildToken(container, 1, TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+                        TestContainerBuilder.BuildToken(container, 1, TokenClaims.CLAIM_PERMISSIONS_FORCE_CHANGE_EMAIL));
 
                 await client.ForceChangeEmailAsync(testRequest);
 
@@ -687,7 +687,7 @@ namespace Domain0.Test
             {
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
-                        TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+                        TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_BASIC ));
 
                 var client = new Domain0Client(TestUrl, http);
 
