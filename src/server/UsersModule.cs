@@ -22,6 +22,7 @@ namespace Domain0.Nancy
 
         public const string GetUserByPhoneUrl = "/api/users/sms/{phone}";
         public const string GetUserByIdUrl = "/api/users/{id}";
+        public const string PostUserUrl = "/api/users/{id}";
 
 
         public UsersModule(
@@ -33,6 +34,7 @@ namespace Domain0.Nancy
             Post(GetUsersByFilterUrl, ctx => GetUserByFilter(), name: nameof(GetUserByFilter));
             Get(GetUserByPhoneUrl, ctx => GetUserByPhone(), name: nameof(GetUserByPhone));
             Get(GetUserByIdUrl, ctx => GetUserById(), name: nameof(GetUserById));
+            Post(GetUserByIdUrl, ctx => UpdateUser(), name: nameof(UpdateUser));
 
 
             accountService = accountServiceInstance;
@@ -91,6 +93,24 @@ namespace Domain0.Nancy
             var id = Context.Parameters.id;
             var profile = await accountService.GetProfileByUserId(id);
             return profile;
+        }
+
+        [Route(nameof(UpdateUser))]
+        [Route(HttpMethod.Post, PostUserUrl)]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Produces = new string[] { })]
+        [Route(Tags = new[] { "Users" }, Summary = "Method for change user data")]
+        [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(UserProfile), Required = true, Description = "user data")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(UserProfile))]
+        public async Task<object> UpdateUser()
+        {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_EDIT_USERS));
+
+            var request = this.BindAndValidateModel<UserProfile>();
+            return await accountService.UpdateUser(request);
         }
 
         [Route(nameof(ChangeMyPassword))]

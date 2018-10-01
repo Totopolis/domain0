@@ -53,6 +53,8 @@ namespace Domain0.Service
 
         Task<UserProfile> GetProfileByUserId(int id);
 
+        Task<UserProfile> UpdateUser(UserProfile user);
+
         Task<UserProfile[]> GetProfilesByFilter(UserProfileFilter filter);
     }
 
@@ -181,7 +183,7 @@ namespace Domain0.Service
             });
 
             var roles = await _roleRepository.GetByRoleNames(request.Roles.ToArray());
-            if (roles.Length != (request.Roles?.Count ?? 0))
+            if (roles.Length != request.Roles?.Count)
                 throw new NotFoundException(nameof(request.Roles), string.Join(",",
                     request.Roles.Where(role =>
                         roles.All(r => string.Equals(r.Name, role, StringComparison.OrdinalIgnoreCase)))));
@@ -224,7 +226,7 @@ namespace Domain0.Service
                     // if permission changed we should make new token
                     var principal = _tokenGenerator.Parse(accessToken);
                     if (principal == null
-                        || isRightsDifferent(userPermissions, principal.GetPermissions()))
+                        || IsRightsDifferent(userPermissions, principal.GetPermissions()))
                         accessToken = null;
                 }
                 catch (SecurityTokenValidationException)
@@ -257,7 +259,7 @@ namespace Domain0.Service
             };
         }
 
-        private static bool isRightsDifferent(
+        private static bool IsRightsDifferent(
             Repository.Model.Permission[] userPermissions, 
             string[] tokenPermissions)
         {
@@ -306,9 +308,9 @@ namespace Domain0.Service
                 // confirm registration
                 var userId = await _accountRepository.Insert(account = new Account
                 {
-                    Name = phone.ToString(),
+                    Name = phone.ToString(CultureInfo.InvariantCulture),
                     Phone = phone,
-                    Login = phone.ToString(),
+                    Login = phone.ToString(CultureInfo.InvariantCulture),
                     Password = hashPassword
                 });
 
@@ -365,7 +367,10 @@ namespace Domain0.Service
         public async Task ChangePassword(ChangePasswordRequest request)
         {
             var account = await _accountRepository.FindByUserId(_requestContext.UserId);
-            if (!_passwordGenerator.CheckPassword(request.OldPassword, account?.Password))
+            if (account == null)
+                throw new NotFoundException(nameof(IRequestContext.UserId), "account not found");
+
+            if (!_passwordGenerator.CheckPassword(request.OldPassword, account.Password))
                 throw new SecurityException("password not match");
 
             account.Password = _passwordGenerator.HashPassword(request.NewPassword);
@@ -505,6 +510,17 @@ namespace Domain0.Service
         {
             var accounts = await _accountRepository.FindByUserIds(filter.UserIds);
             return _mapper.Map<UserProfile[]>(accounts);
+        }
+
+        public async Task<UserProfile> UpdateUser(UserProfile user)
+        {
+            var account = _mapper.Map<Account>(user);
+
+            await _accountRepository.Update(account);
+
+            var updatedAccount = await _accountRepository.FindByUserId(account.Id);
+
+            return _mapper.Map<UserProfile>(updatedAccount);
         }
 
         private readonly IEmailClient emailClient;
