@@ -25,8 +25,6 @@ namespace Domain0.Nancy
         public const string DoesUserExistUrl = "/api/sms/DoesUserExist";
         public const string PhoneByUserIdUrl = "/api/sms/PhoneByUserId";
         public const string RefreshUrl = "/api/Refresh/{refreshToken}";
-        public const string ChangeMyPasswordUrl = "/api/profile/ChangePassword";
-        public const string GetUsersByFilterUrl = "/api/profile/filter";
 
         private readonly IAccountService accountService;
 
@@ -43,8 +41,6 @@ namespace Domain0.Nancy
             Get(DoesUserExistUrl, ctx => DoesUserExist(), name: nameof(DoesUserExist));
             Get(PhoneByUserIdUrl, ctx => PhoneByUserId(), name: nameof(PhoneByUserId));
             Get(RefreshUrl, ctx => Refresh(), name: nameof(Refresh));
-            Post(ChangeMyPasswordUrl, ctx => ChangeMyPassword(), name: nameof(ChangeMyPassword));
-            Post(GetUsersByFilterUrl, ctx => GetUserByFilter(), name: nameof(GetUserByFilter));
         }
 
         [Route(nameof(Register))]
@@ -235,54 +231,6 @@ namespace Domain0.Nancy
             var refreshToken = Context.Parameters.refreshToken;
             var response = await accountService.Refresh(refreshToken);
             return response;
-        }
-
-        [Route(nameof(ChangeMyPassword))]
-        [Route(HttpMethod.Post, ChangeMyPasswordUrl)]
-        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
-        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
-        [Route(Tags = new[] { "UserProfile" }, Summary = "Method for change password")]
-        [RouteParam(
-            ParamIn = ParameterIn.Body,
-            Name = "request",
-            ParamType = typeof(ChangePasswordRequest),
-            Required = true,
-            Description = "parameters for change password")]
-        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
-        public async Task<object> ChangeMyPassword()
-        {
-            this.RequiresAuthentication();
-            var request = this.BindAndValidateModel<ChangePasswordRequest>();
-            try
-            {
-                await accountService.ChangePassword(request);
-            }
-            catch (SecurityException)
-            {
-                ModelValidationResult.Errors.Add("oldPassword", "password is not valid");
-                throw new BadModelException(ModelValidationResult);
-            }
-
-            return HttpStatusCode.NoContent;
-        }
-
-
-        [Route(nameof(GetUserByFilter))]
-        [Route(HttpMethod.Post, GetUsersByFilterUrl)]
-        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
-        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
-        [Route(Tags = new[] { "UserProfile" }, Summary = "Method for receive profiles by user ids")]
-        [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(UserProfileFilter), Required = true, Description = "Profile filter")]
-        [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(IEnumerable<UserProfile>))]
-        public async Task<object> GetUserByFilter()
-        {
-            this.RequiresAuthentication();
-            this.RequiresClaims(c =>
-                c.Type == TokenClaims.CLAIM_PERMISSIONS
-                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_VIEW_PROFILE));
-
-            var filter = this.BindAndValidateModel<UserProfileFilter>();
-            return await accountService.GetProfilesByFilter(filter);
         }
     }
 }

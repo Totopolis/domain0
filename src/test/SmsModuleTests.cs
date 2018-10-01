@@ -972,7 +972,7 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserIds(It.IsAny<IEnumerable<int>>())).Returns<IEnumerable<int>>(ids => Task.FromResult(ids.Select(id => new Account {Id=id}).ToArray()));
 
-            var response = await browser.Post(SmsModule.GetUsersByFilterUrl, with =>
+            var response = await browser.Post(UsersModule.GetUsersByFilterUrl, with =>
             {
                 with.Accept(format);
                 with.Header("Authorization", $"Bearer {accessToken}");
@@ -1003,7 +1003,7 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserIds(It.IsAny<IEnumerable<int>>())).Returns<IEnumerable<int>>(ids => Task.FromResult(ids.Select(id => new Account { Id = id }).ToArray()));
 
-            var response = await browser.Post(SmsModule.GetUsersByFilterUrl, with =>
+            var response = await browser.Post(UsersModule.GetUsersByFilterUrl, with =>
             {
                 with.Accept(format);
                 with.Header("Authorization", $"Bearer {accessToken}");
