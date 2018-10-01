@@ -88,7 +88,7 @@ namespace Domain0.Nancy
             this.RequiresAuthentication();
             this.RequiresClaims(c =>
                 c.Type == TokenClaims.CLAIM_PERMISSIONS
-                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_FORCE_CREATE_USER));
 
             var request = this.BindAndValidateModel<ForceCreateUserRequest>();
             try
@@ -133,6 +133,9 @@ namespace Domain0.Nancy
         public async Task<object> ChangePassword()
         {
             this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_BASIC));
 
             var request = this.BindAndValidateModel<ChangePasswordRequest>();
             try
@@ -174,7 +177,7 @@ namespace Domain0.Nancy
             this.RequiresAuthentication();
             this.RequiresClaims(c =>
                 c.Type == TokenClaims.CLAIM_PERMISSIONS
-                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_FORCE_CHANGE_PHONE));
 
             var request = this.BindAndValidateModel<ChangePhoneRequest>();
             await accountService.ForceChangePhone(request);
@@ -264,7 +267,7 @@ namespace Domain0.Nancy
             this.RequiresAuthentication();
             this.RequiresClaims(c =>
                 c.Type == TokenClaims.CLAIM_PERMISSIONS
-                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_VIEW_USERS));
 
             if (!decimal.TryParse(Context.Parameters.phone.ToString(), out decimal phone))
             {
@@ -318,7 +321,7 @@ namespace Domain0.Nancy
             this.RequiresAuthentication();
             this.RequiresClaims(c =>
                 c.Type == TokenClaims.CLAIM_PERMISSIONS
-                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_VIEW_PROFILE));
 
             var filter = this.BindAndValidateModel<UserProfileFilter>();
             return await accountService.GetProfilesByFilter(filter);
@@ -335,7 +338,7 @@ namespace Domain0.Nancy
             this.RequiresAuthentication();
             this.RequiresClaims(c =>
                 c.Type == TokenClaims.CLAIM_PERMISSIONS
-                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_VIEW_USERS));
 
             var id = Context.Parameters.id;
             var profile = await accountService.GetProfileByUserId(id);

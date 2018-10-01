@@ -143,7 +143,7 @@ namespace Domain0.Nancy
             this.RequiresAuthentication();
             this.RequiresClaims(c =>
                 c.Type == TokenClaims.CLAIM_PERMISSIONS
-                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_ADMIN));
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_FORCE_CHANGE_EMAIL));
 
             var request = this.BindAndValidateModel<ChangeEmailRequest>();
             await accountService.ForceChangeEmail(request);
