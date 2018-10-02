@@ -19,6 +19,11 @@ namespace Domain0.Service
             => principal.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).Distinct().ToArray();
     }
 
+    public class AccountServiceSettings
+    {
+        public TimeSpan PinExpirationTime { get; set; }
+    }
+
     public interface IAccountService
     {
         Task Register(decimal phone);
@@ -74,7 +79,9 @@ namespace Domain0.Service
             ISmsClient smsClient,
             ISmsRequestRepository smsRequestRepository,
             ITokenGenerator tokenGenerator,
-            ITokenRegistrationRepository tokenRegistrationRepository)
+            ITokenRegistrationRepository tokenRegistrationRepository,
+            TokenGeneratorSettings tokenGeneratorSettingsInstance,
+            AccountServiceSettings accountServiceSettingsInstance)
         {
             _accountRepository = accountRepository;
             cultureRequestContext = cultureRequestContextInstance;
@@ -90,6 +97,8 @@ namespace Domain0.Service
             _smsRequestRepository = smsRequestRepository;
             _tokenGenerator = tokenGenerator;
             _tokenRegistrationRepository = tokenRegistrationRepository;
+            tokenGeneratorSettings = tokenGeneratorSettingsInstance;
+            accountServiceSettings = accountServiceSettingsInstance;
         }
 
         public async Task Register(decimal phone)
@@ -102,7 +111,7 @@ namespace Domain0.Service
                 return;
 
             var password = _passwordGenerator.GeneratePassword();
-            var expiredAt = TimeSpan.FromSeconds(90);
+            var expiredAt = accountServiceSettings.PinExpirationTime;
             await _smsRequestRepository.Save(new SmsRequest
             {
                 Phone = phone,
@@ -129,7 +138,7 @@ namespace Domain0.Service
                 return;
 
             var password = _passwordGenerator.GeneratePassword();
-            var expiredAt = TimeSpan.FromSeconds(90);
+            var expiredAt = accountServiceSettings.PinExpirationTime;
             await emailRequestRepository.Save(new EmailRequest
             {
                 Email = email,
@@ -238,13 +247,18 @@ namespace Domain0.Service
 
             if (string.IsNullOrEmpty(accessToken))
             {
-                accessToken = _tokenGenerator.GenerateAccessToken(account.Id, userPermissions.Select(p => p.Name).ToArray());
+                var issueDate = DateTime.UtcNow;
+                var expiredAt = issueDate.Add(tokenGeneratorSettings.Lifetime);
+                accessToken = _tokenGenerator.GenerateAccessToken(
+                    account.Id, 
+                    issueDate, 
+                    userPermissions.Select(p => p.Name).ToArray());
                 await _tokenRegistrationRepository.Save(registration = new TokenRegistration
                 {
                     UserId = account.Id,
-                    IssuedAt = DateTime.UtcNow,
+                    IssuedAt = issueDate,
                     AccessToken = accessToken,
-                    ExpiredAt = DateTime.UtcNow.Add(TimeSpan.FromDays(10))
+                    ExpiredAt = expiredAt
                 });
             }
             else
@@ -384,7 +398,7 @@ namespace Domain0.Service
                 throw new NotFoundException(nameof(phone), "account not found");
 
             var password = _passwordGenerator.GeneratePassword();
-            var expiredAt = TimeSpan.FromSeconds(90);
+            var expiredAt = accountServiceSettings.PinExpirationTime;
             await _smsRequestRepository.Save(new SmsRequest
             {
                 Phone = phone,
@@ -408,7 +422,7 @@ namespace Domain0.Service
                 throw new NotFoundException(nameof(email), "account not found");
 
             var password = _passwordGenerator.GeneratePassword();
-            var expiredAt = TimeSpan.FromSeconds(90);
+            var expiredAt = accountServiceSettings.PinExpirationTime;
             await emailRequestRepository.Save(new EmailRequest
             {
                 Email = email,
@@ -550,5 +564,9 @@ namespace Domain0.Service
         private readonly IPermissionRepository _permissionRepository;
 
         private readonly ITokenRegistrationRepository _tokenRegistrationRepository;
+
+        private readonly TokenGeneratorSettings tokenGeneratorSettings;
+
+        private readonly AccountServiceSettings accountServiceSettings;
     }
 }

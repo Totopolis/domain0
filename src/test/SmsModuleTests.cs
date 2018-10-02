@@ -99,7 +99,7 @@ namespace Domain0.Test
 
             var smsClient = container.Resolve<ISmsClient>();
             var smsMock = Mock.Get(smsClient);
-            smsMock.Verify(s => s.Send(phone, "Your password is: password will valid for 1,5 min"));
+            smsMock.Verify(s => s.Send(phone, "Your password is: password will valid for 15 min"));
 
             var firstLoginResponse = await browser.Post(SmsModule.LoginUrl, 
                 with =>
@@ -357,7 +357,9 @@ namespace Domain0.Test
             var authGenerator = Mock.Get(container.Resolve<IPasswordGenerator>());
             authGenerator.Setup(a => a.CheckPassword(It.IsAny<string>(), It.IsAny<string>())).Returns<string, string>((pasd, hash) => pasd == hash);
             var tokenGenerator = Mock.Get(container.Resolve<ITokenGenerator>());
-            tokenGenerator.Setup(a => a.GenerateAccessToken(It.IsAny<int>(), It.IsAny<string[]>())).Returns<int, string[]>((userId, perms) => userId + string.Join("", perms));
+            tokenGenerator.Setup(a => a.GenerateAccessToken(
+                It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string[]>()))
+                .Returns<int, DateTime, string[]>((userId, dt, perms) => userId + string.Join("", perms));
             tokenGenerator.Setup(a => a.GenerateRefreshToken(It.IsAny<int>(), It.IsAny<int>())).Returns<int, int>((tid, userId) => $"{tid}_{userId}");
 
             var response = await browser.Post(SmsModule.LoginUrl, with =>

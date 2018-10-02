@@ -18,6 +18,7 @@ namespace Domain0
 
             builder.RegisterType<MapperProfile>().As<Profile>().SingleInstance();
             builder.RegisterType<PasswordGenerator>().As<IPasswordGenerator>().SingleInstance();
+            builder.RegisterInstance(ReadAccountServiceSettings());
             builder.RegisterType<AccountService>().As<IAccountService>().InstancePerLifetimeScope();
             builder.RegisterType<AdminService>().As<IAdminService>().InstancePerLifetimeScope();
 
@@ -42,6 +43,15 @@ namespace Domain0
                 return mapper;
 
             }).As<IMapper>().SingleInstance();
+        }
+
+        private AccountServiceSettings ReadAccountServiceSettings()
+        {
+            return new AccountServiceSettings
+            {
+                PinExpirationTime = TimeSpan.FromMinutes(
+                    double.Parse(ConfigurationManager.AppSettings["AccountService_PinExpirationTime"] ?? "15")),
+            };
         }
 
         private static TokenGeneratorSettings ReadTokenSettings()

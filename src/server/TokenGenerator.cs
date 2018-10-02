@@ -14,7 +14,7 @@ namespace Domain0.Service
 
         public string Audience { get; set; }
 
-        public TimeSpan? Lifetime { get; set; }
+        public TimeSpan Lifetime { get; set; }
 
         public TimeSpan RefreshLifetime { get; set; }
 
@@ -56,7 +56,7 @@ namespace Domain0.Service
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 IssuedAt = issueAt,
-                Expires = issueAt.Add(_settings.Lifetime ?? TimeSpan.FromMinutes(15)),
+                Expires = issueAt.Add(_settings.Lifetime),
                 Audience = _settings.Audience,
                 Issuer = _settings.Issuer,
                 Subject = new ClaimsIdentity(claims),
@@ -77,7 +77,7 @@ namespace Domain0.Service
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 IssuedAt = issueAt,
-                Expires = issueAt.Add(_settings.Lifetime ?? TimeSpan.FromMinutes(15)),
+                Expires = issueAt.Add(_settings.Lifetime),
                 Audience = _settings.Audience,
                 Issuer = _settings.Issuer,
                 Subject = new ClaimsIdentity(claims),
