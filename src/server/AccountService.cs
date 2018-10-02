@@ -50,6 +50,10 @@ namespace Domain0.Service
 
         Task ForceChangeEmail(ChangeEmailRequest request);
 
+        Task ForceResetPassword(long phone);
+
+        Task ForceResetPassword(string email);
+
         Task<AccessTokenResponse> Refresh(string refreshToken);
 
         Task<UserProfile> GetMyProfile();
@@ -472,6 +476,56 @@ namespace Domain0.Service
             account.Email = request.NewEmail;
 
             await _accountRepository.Update(account);
+        }
+
+        public async Task ForceResetPassword(long phone)
+        {
+            var account = await _accountRepository.FindByPhone(phone);
+            if (account == null)
+                throw new NotFoundException(nameof(phone), "account not found");
+
+            var newPassword = _passwordGenerator.GeneratePassword();
+            var hashNewPassword = _passwordGenerator.HashPassword(newPassword);
+
+            // change password
+            account.Password = hashNewPassword;
+            await _accountRepository.Update(account);
+
+            var template = await _messageTemplateRepository.GetTemplate(
+                MessageTemplateName.ForcePasswordResetTemplate,
+                cultureRequestContext.Culture,
+                MessageTemplateType.sms);
+
+            var message = string.Format(template, newPassword);
+            await _smsClient.Send(phone, message);
+        }
+
+        public async Task ForceResetPassword(string email)
+        {
+            var account = await _accountRepository.FindByLogin(email);
+            if (account == null)
+                throw new NotFoundException(nameof(email), "account not found");
+
+            var newPassword = _passwordGenerator.GeneratePassword();
+            var hashNewPassword = _passwordGenerator.HashPassword(newPassword);
+
+            // change password
+            account.Password = hashNewPassword;
+            await _accountRepository.Update(account);
+
+            var template = await _messageTemplateRepository.GetTemplate(
+                MessageTemplateName.ForcePasswordResetTemplate,
+                cultureRequestContext.Culture,
+                MessageTemplateType.email);
+
+            var subjectTemplate = await _messageTemplateRepository.GetTemplate(
+                MessageTemplateName.ForcePasswordResetSubjectTemplate,
+                cultureRequestContext.Culture,
+                MessageTemplateType.email);
+
+            var subject = string.Format(subjectTemplate, email, "domain0");
+            var message = string.Format(template, newPassword);
+            await emailClient.Send(subject, email, message);
         }
 
         public async Task<AccessTokenResponse> Refresh(string refreshToken)

@@ -18,8 +18,10 @@ namespace Domain0.Nancy
         public const string RegisterByEmailUrl = "/api/email/Register";
         public const string LoginByEmailUrl = "/api/email/Login";
         public const string RequestResetPasswordByEmailUrl = "/api/email/RequestResetPassword";
-        public const string ForceChangeEmailUrl = "/api/email/ForceChangeEmail";
         public const string DoesUserExistByEmailUrl = "/api/email/DoesUserExist";
+
+        public const string ForceChangeEmailUrl = "/api/email/ForceChangeEmail";
+        public const string ForceResetPasswordUrl = "/api/email/ForceResetPassword";
 
         public EmailModule(
             IAccountService accountServiceInstance,
@@ -147,6 +149,30 @@ namespace Domain0.Nancy
 
             var request = this.BindAndValidateModel<ChangeEmailRequest>();
             await accountService.ForceChangeEmail(request);
+            return HttpStatusCode.NoContent;
+        }
+
+        [Route(nameof(ForceResetPassword))]
+        [Route(HttpMethod.Post, ForceResetPasswordUrl)]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Produces = new string[] { })]
+        [Route(Tags = new[] { "Email" }, Summary = "Method for force reset password only administrator")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body,
+            Name = "email",
+            ParamType = typeof(string),
+            Required = true,
+            Description = "user's email")]
+        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        public async Task<object> ForceResetPassword()
+        {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_FORCE_PASSWORD_RESET));
+
+            var email = this.BindAndValidateModel<string>();
+            await accountService.ForceResetPassword(email);
             return HttpStatusCode.NoContent;
         }
 

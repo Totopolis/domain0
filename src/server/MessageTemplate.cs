@@ -22,8 +22,9 @@ namespace Domain0.Repository.Model
         RegisterSubjectTemplate,
         RegisterTemplate,
         RequestResetSubjectTemplate,
-        RequestResetTemplate
-
+        RequestResetTemplate,
+        ForcePasswordResetSubjectTemplate,
+        ForcePasswordResetTemplate,
     }
 
     public enum MessageTemplateLocale

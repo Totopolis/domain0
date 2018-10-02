@@ -17,14 +17,17 @@ namespace Domain0.Nancy
     public sealed class SmsModule : NancyModule
     {
         public const string RegisterUrl = "/api/sms/Register";
-        public const string ForceCreateUserUrl = "/api/sms/ForceCreateUser";
         public const string LoginUrl = "/api/sms/Login";
         public const string ChangePasswordUrl = "/api/sms/ChangePassword";
-        public const string RequestResetPasswordUrl = "/api/sms/RequestResetPassword";
-        public const string ForceChangePhoneUrl = "/api/sms/ForceChangePhone";
         public const string DoesUserExistUrl = "/api/sms/DoesUserExist";
         public const string PhoneByUserIdUrl = "/api/sms/PhoneByUserId";
         public const string RefreshUrl = "/api/Refresh/{refreshToken}";
+
+        public const string RequestResetPasswordUrl = "/api/sms/RequestResetPassword";
+
+        public const string ForceCreateUserUrl = "/api/sms/ForceCreateUser";
+        public const string ForceChangePhoneUrl = "/api/sms/ForceChangePhone";
+        public const string ForceResetPasswordUrl = "/api/sms/ForceResetPassword";
 
         private readonly IAccountService accountService;
 
@@ -33,14 +36,18 @@ namespace Domain0.Nancy
             this.accountService = accountService;
 
             Put(RegisterUrl, ctx => Register(), name: nameof(Register));
-            Put(ForceCreateUserUrl, ctx => ForceCreateUser(), name: nameof(ForceCreateUser));
             Post(LoginUrl, ctx => Login(), name: nameof(Login));
-            Post(ChangePasswordUrl, ctx => ChangePassword(), name: nameof(ChangePassword));
-            Post(RequestResetPasswordUrl, ctx => RequestResetPassword(), name: nameof(RequestResetPassword));
-            Post(ForceChangePhoneUrl, ctx => ForceChangePhone(), name: nameof(ForceChangePhone));
+
             Get(DoesUserExistUrl, ctx => DoesUserExist(), name: nameof(DoesUserExist));
             Get(PhoneByUserIdUrl, ctx => PhoneByUserId(), name: nameof(PhoneByUserId));
             Get(RefreshUrl, ctx => Refresh(), name: nameof(Refresh));
+
+            Post(RequestResetPasswordUrl, ctx => RequestResetPassword(), name: nameof(RequestResetPassword));
+            Post(ChangePasswordUrl, ctx => ChangePassword(), name: nameof(ChangePassword));
+
+            Put(ForceCreateUserUrl, ctx => ForceCreateUser(), name: nameof(ForceCreateUser));
+            Post(ForceChangePhoneUrl, ctx => ForceChangePhone(), name: nameof(ForceChangePhone));
+            Post(ForceResetPasswordUrl, ctx => ForceResetPassword(), name: nameof(ForceResetPassword));
         }
 
         [Route(nameof(Register))]
@@ -64,32 +71,6 @@ namespace Domain0.Nancy
             }
 
             return HttpStatusCode.NoContent;
-        }
-
-        [Route(nameof(ForceCreateUser))]
-        [Route(HttpMethod.Put, ForceCreateUserUrl)]
-        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
-        [Route(Produces = new string[] { })]
-        [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
-        [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(ForceCreateUserRequest), Required = true, Description = "parameters for force create")]
-        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
-        public async Task<object> ForceCreateUser()
-        {
-            this.RequiresAuthentication();
-            this.RequiresClaims(c =>
-                c.Type == TokenClaims.CLAIM_PERMISSIONS
-                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_FORCE_CREATE_USER));
-
-            var request = this.BindAndValidateModel<ForceCreateUserRequest>();
-            try
-            {
-                return await accountService.CreateUser(request);
-            }
-            catch (SecurityException)
-            {
-                ModelValidationResult.Errors.Add(nameof(request.Phone), "user exists");
-                throw new BadModelException(ModelValidationResult);
-            }
         }
 
         [Route(nameof(Login))]
@@ -155,25 +136,6 @@ namespace Domain0.Nancy
             return HttpStatusCode.NoContent;
         }
 
-        [Route(nameof(ForceChangePhone))]
-        [Route(HttpMethod.Post, ForceChangePhoneUrl)]
-        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
-        [Route(Produces = new string[] { })]
-        [Route(Tags = new[] { "Sms" }, Summary = "Method for force change phone only administrator")]
-        [RouteParam(ParamIn = ParameterIn.Body, Name = "phone", ParamType = typeof(ChangePhoneRequest), Required = true, Description = "parameters for change phone")]
-        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
-        public async Task<object> ForceChangePhone()
-        {
-            this.RequiresAuthentication();
-            this.RequiresClaims(c =>
-                c.Type == TokenClaims.CLAIM_PERMISSIONS
-                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_FORCE_CHANGE_PHONE));
-
-            var request = this.BindAndValidateModel<ChangePhoneRequest>();
-            await accountService.ForceChangePhone(request);
-            return HttpStatusCode.NoContent;
-        }
-
         [Route(nameof(DoesUserExist))]
         [Route(HttpMethod.Get, DoesUserExistUrl)]
         [Route(Produces = new[] { "application/json" })]
@@ -231,6 +193,77 @@ namespace Domain0.Nancy
             var refreshToken = Context.Parameters.refreshToken;
             var response = await accountService.Refresh(refreshToken);
             return response;
+        }
+
+
+
+        [Route(nameof(ForceCreateUser))]
+        [Route(HttpMethod.Put, ForceCreateUserUrl)]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Produces = new string[] { })]
+        [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
+        [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(ForceCreateUserRequest), Required = true, Description = "parameters for force create")]
+        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        public async Task<object> ForceCreateUser()
+        {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_FORCE_CREATE_USER));
+
+            var request = this.BindAndValidateModel<ForceCreateUserRequest>();
+            try
+            {
+                return await accountService.CreateUser(request);
+            }
+            catch (SecurityException)
+            {
+                ModelValidationResult.Errors.Add(nameof(request.Phone), "user exists");
+                throw new BadModelException(ModelValidationResult);
+            }
+        }
+
+        [Route(nameof(ForceChangePhone))]
+        [Route(HttpMethod.Post, ForceChangePhoneUrl)]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Produces = new string[] { })]
+        [Route(Tags = new[] { "Sms" }, Summary = "Method for force change phone only administrator")]
+        [RouteParam(ParamIn = ParameterIn.Body, Name = "phone", ParamType = typeof(ChangePhoneRequest), Required = true, Description = "parameters for change phone")]
+        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        public async Task<object> ForceChangePhone()
+        {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_FORCE_CHANGE_PHONE));
+
+            var request = this.BindAndValidateModel<ChangePhoneRequest>();
+            await accountService.ForceChangePhone(request);
+            return HttpStatusCode.NoContent;
+        }
+
+        [Route(nameof(ForceResetPassword))]
+        [Route(HttpMethod.Post, ForceResetPasswordUrl)]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Produces = new string[] { })]
+        [Route(Tags = new[] { "Sms" }, Summary = "Method for force reset password only administrator")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body, 
+            Name = "phone", 
+            ParamType = typeof(long), 
+            Required = true, 
+            Description = "user's phone with single number, started from 7 for Russia, 71234561234 for example")]
+        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        public async Task<object> ForceResetPassword()
+        {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_FORCE_PASSWORD_RESET));
+
+            var phone = this.BindAndValidateModel<long>();
+            await accountService.ForceResetPassword(phone);
+            return HttpStatusCode.NoContent;
         }
     }
 }
