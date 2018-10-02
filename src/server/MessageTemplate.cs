@@ -26,6 +26,9 @@ namespace Domain0.Repository.Model
         RequestResetTemplate,
         ForcePasswordResetSubjectTemplate,
         ForcePasswordResetTemplate,
+
+        RequestPhoneChangeTemplate,
+        RequestPhoneChangeSubjectTemplate,
     }
 
     public enum MessageTemplateType

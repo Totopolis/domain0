@@ -9,6 +9,8 @@ namespace Domain0.Repository.Model
         public string Password { get; set; }
 
         public DateTime ExpiredAt { get; set; }
+
+        public int? UserId { get; set; }
     }
 
     public class EmailRequest
@@ -18,5 +20,7 @@ namespace Domain0.Repository.Model
         public string Password { get; set; }
 
         public DateTime ExpiredAt { get; set; }
+
+        public int? UserId { get; set; }
     }
 }

@@ -29,6 +29,9 @@ namespace Domain0.Nancy
         public const string ForceChangePhoneUrl = "/api/sms/ForceChangePhone";
         public const string ForceResetPasswordUrl = "/api/sms/ForceResetPassword";
 
+        public const string RequestChangePhoneUrl = "/api/sms/RequestChangePhone";
+        public const string CommitChangePhoneUrl = "/api/sms/CommitChangePhone";
+
         private readonly IAccountService accountService;
 
         public SmsModule(IAccountService accountService)
@@ -48,6 +51,9 @@ namespace Domain0.Nancy
             Put(ForceCreateUserUrl, ctx => ForceCreateUser(), name: nameof(ForceCreateUser));
             Post(ForceChangePhoneUrl, ctx => ForceChangePhone(), name: nameof(ForceChangePhone));
             Post(ForceResetPasswordUrl, ctx => ForceResetPassword(), name: nameof(ForceResetPassword));
+
+            Post(RequestChangePhoneUrl, ctx => RequestChangePhone(), name: nameof(RequestChangePhone));
+            Post(CommitChangePhoneUrl, ctx => CommitChangePhone(), name: nameof(CommitChangePhone));
         }
 
         [Route(nameof(Register))]
@@ -263,5 +269,60 @@ namespace Domain0.Nancy
             await accountService.ForceResetPassword(phone);
             return HttpStatusCode.NoContent;
         }
+
+        [Route(nameof(RequestChangePhone))]
+        [Route(HttpMethod.Post, RequestChangePhoneUrl)]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Produces = new string[] { })]
+        [Route(Tags = new[] { "Sms" }, Summary = "Method for reset password")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body, 
+            Name = "change phone request", 
+            ParamType = typeof(ChangePhoneUserRequest), 
+            Required = true, 
+            Description = "user's phone with single number, started from 7 for Russia, 71231234567 for example")]
+        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        public async Task<object> RequestChangePhone()
+        {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_BASIC));
+
+            var changePhoneRequest = this.BindAndValidateModel<ChangePhoneUserRequest>();
+            await accountService.RequestChangePhone(changePhoneRequest);
+            return HttpStatusCode.NoContent;
+        }
+
+        [Route(nameof(CommitChangePhone))]
+        [Route(HttpMethod.Post, CommitChangePhoneUrl)]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Produces = new string[] { })]
+        [Route(Tags = new[] { "Sms" }, Summary = "Method for commit change phone request")]
+        [RouteParam(
+            ParamIn = ParameterIn.Query,
+            Name = "pin",
+            ParamType = typeof(long),
+            Required = true,
+            Description = "user's pin code for change phone")]
+        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        public async Task<object> CommitChangePhone()
+        {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_BASIC));
+
+            long pin;
+            if (!long.TryParse(Request.Query[nameof(pin)].ToString(), out pin))
+            {
+                ModelValidationResult.Errors.Add(nameof(pin), "wrong pin code format");
+                throw new BadModelException(ModelValidationResult);
+            }
+
+            await accountService.CommitChangePhone(pin);
+            return HttpStatusCode.NoContent;
+        }
+
     }
 }

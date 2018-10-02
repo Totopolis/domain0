@@ -48,6 +48,10 @@ namespace Domain0.Service
 
         Task RequestResetPassword(string email);
 
+        Task RequestChangePhone(ChangePhoneUserRequest changePhoneRequest);
+
+        Task CommitChangePhone(long pin);
+
         Task ForceChangePhone(ChangePhoneRequest request);
 
         Task ForceChangeEmail(ChangeEmailRequest request);
@@ -67,6 +71,7 @@ namespace Domain0.Service
         Task<UserProfile> UpdateUser(UserProfile user);
 
         Task<UserProfile[]> GetProfilesByFilter(UserProfileFilter filter);
+
     }
 
     public class AccountService : IAccountService
@@ -513,6 +518,53 @@ namespace Domain0.Service
             var subject = string.Format(subjectTemplate, "domain0", account.Name);
 
             await emailClient.Send(subject, email, message);
+        }
+
+        public async Task RequestChangePhone(ChangePhoneUserRequest changePhoneRequest)
+        {
+            var userId = _requestContext.UserId;
+
+            var account = await _accountRepository.FindByUserId(userId);
+            if (account == null)
+                throw new NotFoundException(nameof(account), "account not found");
+
+            if (!_passwordGenerator.CheckPassword(changePhoneRequest.Password, account.Password))
+                throw new SecurityException("password not match");
+
+            var pin = _passwordGenerator.GeneratePassword();
+            var expiredAt = accountServiceSettings.PinExpirationTime;
+            await _smsRequestRepository.Save(new SmsRequest
+            {
+                Phone = changePhoneRequest.Phone,
+                Password = pin,
+                ExpiredAt = DateTime.UtcNow.Add(expiredAt)
+            });
+
+            var template = await _messageTemplateRepository.GetTemplate(
+                MessageTemplateName.RequestPhoneChangeTemplate,
+                cultureRequestContext.Culture,
+                MessageTemplateType.sms);
+
+            var message = string.Format(template, pin, expiredAt.TotalMinutes);
+            await _smsClient.Send(changePhoneRequest.Phone, message);
+        }
+
+        public async Task CommitChangePhone(long pin)
+        {
+            var userId = _requestContext.UserId;
+
+            var account = await _accountRepository.FindByUserId(userId);
+            if (account == null)
+                throw new NotFoundException(nameof(account), "account not found");
+
+            var smsRequest = await _smsRequestRepository.PickByUserId(userId);
+
+            if (pin.ToString() != smsRequest.Password)
+                throw new SecurityException("wrong pin");
+
+            account.Phone = smsRequest.Phone;
+            account.Login = smsRequest.Phone.ToString(CultureInfo.InvariantCulture);
+            await _accountRepository.Update(account);
         }
 
 

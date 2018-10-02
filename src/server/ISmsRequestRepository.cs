@@ -5,28 +5,37 @@ using System.Threading.Tasks;
 namespace Domain0.Repository
 {
     /// <summary>
-    /// Репозиторий запросов регистрации.
+    /// Sms registration repository
     /// </summary>
     public interface ISmsRequestRepository
     {
         /// <summary>
-        /// Сохранение запроса.
+        /// Save sms request
         /// </summary>
-        /// <param name="smsRequest">запрос регистрации.</param>
+        /// <param name="smsRequest">Sms registration request</param>
         /// <returns></returns>
         Task Save(SmsRequest smsRequest);
+        
         /// <summary>
-        /// Получение запроса по номеру телефона.
+        /// Get actual request by phone number
         /// </summary>
-        /// <param name="phone">номер телефона.</param>
+        /// <param name="phone">phone number</param>
         /// <returns></returns>
         Task<SmsRequest> Pick(decimal phone);
+        
         /// <summary>
-        /// Потдтверждение регистрации.
+        /// Confirm request
         /// </summary>
-        /// <param name="phone">номер телефона.</param>
-        /// <param name="password">пароль, присланный в смс-сообщении.</param>
+        /// <param name="phone">phone number</param>
+        /// <param name="password">sms password (pin)</param>
         /// <returns></returns>
         Task<bool> ConfirmRegister(decimal phone, string password);
+
+        /// <summary>
+        /// Get actual request by userId
+        /// </summary>
+        /// <param name="userId">user id</param>
+        /// <returns></returns>
+        Task<SmsRequest> PickByUserId(int userId);
     }
 }

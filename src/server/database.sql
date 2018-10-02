@@ -155,10 +155,13 @@ create table dom.SmsRequest (
 	[Id] int identity(1,1) not null constraint PK_SmsRequest_Id primary key,
 	[Phone] decimal not null,
 	[Password] nvarchar(80) not null,
-	[ExpiredAt] datetime2 not null
+	[ExpiredAt] datetime2 not null,
+	[UserId] int null
 )
 go
 create index IX_SmsRequest_Phone_ExpiredAt ON dom.SmsRequest ([Phone] ASC, [ExpiredAt] DESC)
+go
+create index IX_SmsRequest_UserId_ExpiredAt ON dom.SmsRequest ([UserId] ASC, [ExpiredAt] DESC)
 go
 
 
@@ -166,10 +169,13 @@ create table dom.EmailRequest (
 	[Id] int identity(1,1) not null constraint PK_EmailRequest_Id primary key,
 	[Email] nvarchar(128) not null,
 	[Password] nvarchar(80) not null,
-	[ExpiredAt] datetime2 not null
+	[ExpiredAt] datetime2 not null,
+	[UserId] int null
 )
 go
 create index IX_EmailRequest_Email_ExpiredAt ON dom.EmailRequest ([Email] ASC, [ExpiredAt] DESC)
+go
+create index IX_EmailRequest_UserId_ExpiredAt ON dom.EmailRequest ([UserId] ASC, [ExpiredAt] DESC)
 go
 
 
