@@ -19,6 +19,7 @@ namespace Domain0.Repository.Model
     public enum MessageTemplateName
     {
         WelcomeTemplate,
+        WelcomeSubjectTemplate,
         RegisterSubjectTemplate,
         RegisterTemplate,
         RequestResetSubjectTemplate,
@@ -26,11 +27,6 @@ namespace Domain0.Repository.Model
         ForcePasswordResetSubjectTemplate,
         ForcePasswordResetTemplate,
     }
-
-    public enum MessageTemplateLocale
-    {
-        rus, eng
-    };
 
     public enum MessageTemplateType
     {

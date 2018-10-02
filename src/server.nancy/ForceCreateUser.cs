@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Domain0.Model
 {
     /// <summary>
-    /// Параметры для принудительного создания пользователя
+    /// Parameters for force user creation
     /// </summary>
     [Model("Force create user request")]
     public sealed class ForceCreateUserRequest
@@ -23,25 +23,25 @@ namespace Domain0.Model
             });
 
         /// <summary>
-        /// Телефон пользователя
+        /// User phone number
         /// </summary>
         [Required(ErrorMessage = "Phone is required")]
         [MinLength(11, ErrorMessage = "Phone number at least 11 digits without +")]
         public long? Phone { get; set; }
         /// <summary>
-        /// Имя пользователя
+        /// User name
         /// </summary>
         public string Name { get; set; }
         /// <summary>
-        /// Заблокировать отправку сообщения пользователю
+        /// Prevent sms send to user
         /// </summary>
         public bool BlockSmsSend { get; set; }
         /// <summary>
-        /// Роли, которые будут назначены пользователю
+        /// Roles to assign
         /// </summary>
         public List<string> Roles { get; set; } = new List<string>();
         /// <summary>
-        /// Шаблон сообщения который будет отправлен пользователю
+        /// Template for sms sending
         /// </summary>
         public string CustomSmsTemplate { get; set; }
     }

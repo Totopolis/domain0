@@ -195,8 +195,6 @@ namespace Domain0.Nancy
             return response;
         }
 
-
-
         [Route(nameof(ForceCreateUser))]
         [Route(HttpMethod.Put, ForceCreateUserUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]

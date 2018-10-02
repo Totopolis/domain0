@@ -36,6 +36,8 @@ namespace Domain0.Service
 
         Task<UserProfile> CreateUser(ForceCreateUserRequest request);
 
+        Task<UserProfile> CreateUser(ForceCreateEmailUserRequest request);
+
         Task<AccessTokenResponse> Login(SmsLoginRequest request);
 
         Task<AccessTokenResponse> Login(EmailLoginRequest request);
@@ -181,7 +183,7 @@ namespace Domain0.Service
         public async Task<UserProfile> CreateUser(ForceCreateUserRequest request)
         {
             if (!request.Phone.HasValue)
-                throw new SecurityException("user exists");
+                throw new ArgumentException(nameof(ForceCreateUserRequest.Phone));
 
             var phone = request.Phone.Value;
             if (await DoesUserExists(phone))
@@ -223,6 +225,68 @@ namespace Domain0.Service
                     .Replace("{password}", password);
 
             await _smsClient.Send(request.Phone.Value, message);
+
+            return result;
+        }
+
+        public async Task<UserProfile> CreateUser(ForceCreateEmailUserRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Email))
+                throw new ArgumentException(nameof(ForceCreateEmailUserRequest.Email));
+
+            var email = request.Email;
+            if (await DoesUserExists(email))
+                throw new SecurityException("user exists");
+
+            var password = _passwordGenerator.GeneratePassword();
+            var id = await _accountRepository.Insert(new Account
+            {
+                Email = email,
+                Login = email,
+                Password = _passwordGenerator.HashPassword(password),
+                Name = request.Name
+            });
+
+            var roles = await _roleRepository.GetByRoleNames(request.Roles.ToArray());
+            if (roles.Length != request.Roles?.Count)
+                throw new NotFoundException(nameof(request.Roles), string.Join(",",
+                    request.Roles.Where(role =>
+                        roles.All(r => string.Equals(r.Name, role, StringComparison.OrdinalIgnoreCase)))));
+
+            if (roles.Length == 0)
+                await _roleRepository.AddUserToDefaultRoles(id);
+            else
+                await _roleRepository.AddUserToRoles(id, request.Roles.ToArray());
+
+            var result = _mapper.Map<UserProfile>(await _accountRepository.FindByLogin(email));
+            if (request.BlockSmsSend)
+                return result;
+
+            string message;
+            string subject;
+            if (string.IsNullOrEmpty(request.CustomEmailTemplate)
+                || string.IsNullOrEmpty(request.CustomEmailSubjectTemplate))
+            {
+                subject = await _messageTemplateRepository.GetTemplate(
+                    MessageTemplateName.WelcomeSubjectTemplate,
+                    cultureRequestContext.Culture,
+                    MessageTemplateType.email);
+
+                message = string.Format(await _messageTemplateRepository.GetTemplate(
+                        MessageTemplateName.WelcomeTemplate,
+                        cultureRequestContext.Culture,
+                        MessageTemplateType.email),
+                    request.Email, password);
+            }
+            else
+            {
+                subject = request.CustomEmailSubjectTemplate;
+                message = request.CustomEmailTemplate
+                    .Replace("{email}", request.Email)
+                    .Replace("{password}", password);
+            }
+
+            await emailClient.Send(subject, request.Email, message);
 
             return result;
         }

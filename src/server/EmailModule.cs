@@ -21,6 +21,7 @@ namespace Domain0.Nancy
         public const string DoesUserExistByEmailUrl = "/api/email/DoesUserExist";
 
         public const string ForceChangeEmailUrl = "/api/email/ForceChangeEmail";
+        public const string ForceCreateUserUrl = "/api/email/ForceCreateUser";
         public const string ForceResetPasswordUrl = "/api/email/ForceResetPassword";
 
         public EmailModule(
@@ -34,7 +35,9 @@ namespace Domain0.Nancy
             Post(LoginByEmailUrl, ctx => LoginByEmail(), name: nameof(LoginByEmail));
             Post(DoesUserExistByEmailUrl, ctx => DoesUserExistByEmail(), name: nameof(DoesUserExistByEmail));
             Post(RequestResetPasswordByEmailUrl, ctx => RequestResetPasswordByEmail(), name: nameof(RequestResetPasswordByEmail));
+
             Post(ForceChangeEmailUrl, ctx => ForceChangeEmail(), name: nameof(ForceChangeEmail));
+            Put(ForceCreateUserUrl, ctx => ForceCreateUser(), name: nameof(ForceCreateUser));
         }
 
         [Route(nameof(RegisterByEmail))]
@@ -150,6 +153,37 @@ namespace Domain0.Nancy
             var request = this.BindAndValidateModel<ChangeEmailRequest>();
             await accountService.ForceChangeEmail(request);
             return HttpStatusCode.NoContent;
+        }
+
+        [Route(nameof(ForceCreateUser))]
+        [Route(HttpMethod.Put, ForceCreateUserUrl)]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Produces = new string[] { })]
+        [Route(Tags = new[] { "Email" }, Summary = "Method for force registration by email")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body, 
+            Name = "request", 
+            ParamType = typeof(ForceCreateEmailUserRequest), 
+            Required = true, 
+            Description = "parameters for force create")]
+        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        public async Task<object> ForceCreateUser()
+        {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_FORCE_CREATE_USER));
+
+            var request = this.BindAndValidateModel<ForceCreateEmailUserRequest>();
+            try
+            {
+                return await accountService.CreateUser(request);
+            }
+            catch (SecurityException)
+            {
+                ModelValidationResult.Errors.Add(nameof(request.Email), "user exists");
+                throw new BadModelException(ModelValidationResult);
+            }
         }
 
         [Route(nameof(ForceResetPassword))]
