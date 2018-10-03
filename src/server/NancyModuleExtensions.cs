@@ -4,6 +4,9 @@ using Nancy;
 using Domain0.Exceptions;
 using Nancy.Bootstrapper;
 using Nancy.ModelBinding;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Domain0.Nancy.Infrastructure
 {
@@ -50,6 +53,30 @@ namespace Domain0.Nancy.Infrastructure
                 var allowedHeaders = string.Join(", ", ctx.Request.Headers[RequestHeadersKey]);
                 ctx.Response.Headers[AllowHeadersKey] = allowedHeaders;
             });
+        }
+
+        public static async Task<string> AsString(this Stream stream)
+        {
+            using (var sr = new StreamReader(stream, Encoding.UTF8, true, 4096, true))
+            {
+                var result = string.Empty;
+
+                if (!stream.CanSeek)
+                    return result;
+
+                var initial = stream.Position;
+                try
+                {
+                    stream.Position = 0;
+                    result = await sr.ReadToEndAsync();
+                }
+                finally
+                {
+                    stream.Position = initial;
+                }
+
+                return result;
+            }
         }
     }
 }

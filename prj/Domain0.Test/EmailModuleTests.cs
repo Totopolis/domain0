@@ -141,5 +141,82 @@ namespace Domain0.Test
                         && a.Email == newEmail)),
                     Times.Once);
         }
+
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task ForceResetPassword_Success(DataFormat format)
+        {
+            var container = TestContainerBuilder.GetContainer(builder =>
+                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var userId = 1;
+            var email = "email";
+            var password = "password";
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_FORCE_PASSWORD_RESET);
+
+            var accountRepository = container.Resolve<IAccountRepository>();
+            var accountMock = Mock.Get(accountRepository);
+            accountMock
+                .Setup(a => a.FindByLogin(email))
+                .ReturnsAsync(new Account
+                {
+                    Id = userId,
+                    Email = email,
+                    Login = email,
+                    Password = password
+                });
+
+            var passwordGenerator = container.Resolve<IPasswordGenerator>();
+            var passwordMock = Mock.Get(passwordGenerator);
+            passwordMock.Setup(p => p.GeneratePassword()).Returns(password);
+            passwordMock.Setup(a => a.HashPassword(It.IsAny<string>())).Returns<string>(p => p);
+
+            var messageTemplateRepository = container.Resolve<IMessageTemplateRepository>();
+            var messageTemplate = Mock.Get(messageTemplateRepository);
+            messageTemplate.Setup(r =>
+                r.GetTemplate(
+                    MessageTemplateName.ForcePasswordResetTemplate,
+                    It.IsAny<CultureInfo>(),
+                    It.IsAny<MessageTemplateType>())
+                )
+                .ReturnsAsync("hello, your new password is {0}!");
+            messageTemplate.Setup(r =>
+                    r.GetTemplate(
+                        MessageTemplateName.ForcePasswordResetSubjectTemplate,
+                        It.IsAny<CultureInfo>(),
+                        It.IsAny<MessageTemplateType>()))
+                .ReturnsAsync("subject");
+
+            var response = await browser.Post(
+                EmailModule.ForceResetPasswordUrl,
+                with =>
+                {
+                    with.Accept(format);
+                    with.Header("Authorization", $"Bearer {accessToken}");
+                    with.Body(email);
+                });
+
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+            accountMock.Verify(am => am.FindByLogin(email));
+            accountMock.Verify(am => am.Update(
+                It.Is<Account>(a => a.Password == password)));
+            messageTemplate.Verify(mt => mt.GetTemplate(
+                MessageTemplateName.ForcePasswordResetTemplate,
+                It.IsAny<CultureInfo>(),
+                MessageTemplateType.email));
+            messageTemplate.Verify(mt => mt.GetTemplate(
+                MessageTemplateName.ForcePasswordResetSubjectTemplate,
+                It.IsAny<CultureInfo>(),
+                MessageTemplateType.email));
+
+            var emaClient = container.Resolve<IEmailClient>();
+            var smsMock = Mock.Get(emaClient);
+            smsMock.Verify(s =>
+                s.Send("subject", email, "hello, your new password is password!"));
+        }
     }
 }

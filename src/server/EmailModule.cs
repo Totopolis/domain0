@@ -1,4 +1,5 @@
-﻿using System.Security;
+﻿using System.IO;
+using System.Security;
 using System.Threading.Tasks;
 using Domain0.Exceptions;
 using Domain0.Model;
@@ -42,6 +43,7 @@ namespace Domain0.Nancy
 
             Post(ForceChangeEmailUrl, ctx => ForceChangeEmail(), name: nameof(ForceChangeEmail));
             Put(ForceCreateUserUrl, ctx => ForceCreateUser(), name: nameof(ForceCreateUser));
+            Post(ForceResetPasswordUrl, ctx => ForceResetPassword(), name: nameof(ForceResetPassword));
 
             Post(RequestChangeEmailUrl, ctx => RequestChangeEmail(), name: nameof(RequestChangeEmail));
             Post(CommitChangeEmailUrl, ctx => CommitChangeEmail(), name: nameof(CommitChangeEmail));
@@ -212,7 +214,7 @@ namespace Domain0.Nancy
                 c.Type == TokenClaims.CLAIM_PERMISSIONS
                 && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_FORCE_PASSWORD_RESET));
 
-            var email = this.BindAndValidateModel<string>();
+            var email = await Context.Request.Body.AsString();
             await accountService.ForceResetPassword(email);
             return HttpStatusCode.NoContent;
         }

@@ -221,6 +221,73 @@ namespace Domain0.Test
             smsMock.Verify(s => s.Send(phone, "hello password " + phone + "!"));
         }
 
+        
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task ForceResetPassword_Success(DataFormat format)
+        {
+            var container = TestContainerBuilder.GetContainer(builder =>
+                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var userId = 1;
+            var phone = 79000000000;
+            var password = "password";
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_FORCE_PASSWORD_RESET);
+
+            var accountRepository = container.Resolve<IAccountRepository>();
+            var accountMock = Mock.Get(accountRepository);
+            accountMock
+                .Setup(a => a.FindByPhone(phone))
+                .ReturnsAsync(new Account
+                {
+                    Id = userId,
+                    Phone = phone,
+                    Password = password
+                });
+
+            var passwordGenerator = container.Resolve<IPasswordGenerator>();
+            var passwordMock = Mock.Get(passwordGenerator);
+            passwordMock.Setup(p => p.GeneratePassword()).Returns(password);
+            passwordMock.Setup(a => a.HashPassword(It.IsAny<string>())).Returns<string>(p => p);
+
+            var messageTemplateRepository = container.Resolve<IMessageTemplateRepository>();
+            var messageTemplate = Mock.Get(messageTemplateRepository);
+            messageTemplate.Setup(r =>
+                r.GetTemplate(
+                    It.IsAny<MessageTemplateName>(),
+                    It.IsAny<CultureInfo>(),
+                    It.IsAny<MessageTemplateType>())
+                )
+                .ReturnsAsync("hello, your new password is {0}!");
+
+            var response = await browser.Post(
+                SmsModule.ForceResetPasswordUrl, 
+                with =>
+                {
+                    with.Accept(format);
+                    with.Header("Authorization", $"Bearer {accessToken}");
+                    with.DataFormatBody(format, phone);
+                });
+
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+            accountMock.Verify(am => am.FindByPhone(phone));
+            accountMock.Verify(am => am.Update(
+                It.Is<Account>(a => a.Password == password)));
+            messageTemplate.Verify(mt => mt.GetTemplate(
+                MessageTemplateName.ForcePasswordResetTemplate,
+                It.IsAny<CultureInfo>(),
+                MessageTemplateType.sms));
+
+            var smsClient = container.Resolve<ISmsClient>();
+            var smsMock = Mock.Get(smsClient);
+            smsMock.Verify(s => 
+                s.Send(phone, "hello, your new password is password!"));
+        }
+
         [Theory]
         [InlineData(DataFormat.Json)]
         [InlineData(DataFormat.Proto)]
