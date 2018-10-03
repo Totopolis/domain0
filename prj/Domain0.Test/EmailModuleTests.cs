@@ -218,5 +218,82 @@ namespace Domain0.Test
             smsMock.Verify(s =>
                 s.Send("subject", email, "hello, your new password is password!"));
         }
+
+
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task ForceCreateUser_SendEmail_StandardTemplate(DataFormat format)
+        {
+            var container = TestContainerBuilder.GetContainer(builder =>
+                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var userId = 1;
+            var email = "email";
+            var roles = new List<string> { "role1", "role2" };
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_FORCE_CREATE_USER);
+
+            var accountRepository = container.Resolve<IAccountRepository>();
+            var accountMock = Mock.Get(accountRepository);
+            var registers = new Dictionary<string, Account>();
+            accountMock
+                .Setup(a => a.Insert(It.IsAny<Account>()))
+                .Callback<Account>(a => registers[a.Email] = a)
+                .Returns(Task.FromResult(1));
+            accountMock
+                .Setup(a => a.FindByLogin(email))
+                .Returns<string>(p => 
+                    Task.FromResult(registers.TryGetValue(p, out var acc) 
+                        ? acc 
+                        : null));
+
+            var roleRepository = container.Resolve<IRoleRepository>();
+            var roleMock = Mock.Get(roleRepository);
+            roleMock.Setup(r => r.GetByRoleNames(It.IsAny<string[]>())).ReturnsAsync(roles.Select(role => new Repository.Model.Role { Name = role }).ToArray());
+
+            var passwordGenerator = container.Resolve<IPasswordGenerator>();
+            var passwordMock = Mock.Get(passwordGenerator);
+            passwordMock.Setup(p => p.GeneratePassword()).Returns("password");
+
+            var messageTemplateRepository = container.Resolve<IMessageTemplateRepository>();
+            var messageTemplate = Mock.Get(messageTemplateRepository);
+            messageTemplate.Setup(r =>
+                r.GetTemplate(
+                    MessageTemplateName.WelcomeTemplate,
+                    It.IsAny<CultureInfo>(),
+                    It.IsAny<MessageTemplateType>()))
+                .ReturnsAsync("hello {1} {0}!");
+            messageTemplate.Setup(r =>
+                    r.GetTemplate(
+                        MessageTemplateName.WelcomeSubjectTemplate,
+                        It.IsAny<CultureInfo>(),
+                        It.IsAny<MessageTemplateType>()))
+                .ReturnsAsync("Subject!");
+
+            var response = await browser.Put(
+                EmailModule.ForceCreateUserUrl, 
+                with =>
+                {
+                    with.Accept(format);
+                    with.Header("Authorization", $"Bearer {accessToken}");
+                    with.DataFormatBody(
+                        format, 
+                        new ForceCreateEmailUserRequest
+                        {
+                            BlockSmsSend = false,
+                            Email = email,
+                            Name = "test",
+                            Roles = roles,
+                        });
+                });
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var emailClient = container.Resolve<IEmailClient>();
+            var emailMock = Mock.Get(emailClient);
+            emailMock.Verify(s => s.Send("Subject!", email, "hello password " + email + "!"));
+        }
     }
 }
