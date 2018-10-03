@@ -54,6 +54,8 @@ namespace Domain0.Nancy
             {
                 builder.RegisterType<SwaggerAnnotationsProvider>().As<ISwaggerMetadataProvider>();
             });
+
+            pipelines.EnableCors();
         }
 
         protected override void RequestStartup(ILifetimeScope requestContainer, IPipelines pipelines, NancyContext context)
