@@ -600,6 +600,125 @@ namespace Domain0.Test
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
+
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task RequestChangePhone_Success(DataFormat format)
+        {
+            var container = TestContainerBuilder.GetContainer(builder =>
+                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var accountId = 321;
+            var userId = 1;
+            var phone = 79000000000;
+            var newPhone = 79000000001;
+            var password = "123";
+            var pin = "333";
+            var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_BASIC);
+
+            var account = new Account { Id = accountId, Login = phone.ToString(), Phone = phone, Password = password};
+            var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
+            accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync(account);
+
+            var smsRequestRepository = Mock.Get(container.Resolve<ISmsRequestRepository>());
+            smsRequestRepository
+                .Setup(sr => sr.PickByUserId(
+                    It.Is<int>(x => x == userId)))
+                .ReturnsAsync(new SmsRequest
+                {
+                    Phone = newPhone,
+                    UserId = userId,
+                    Password = pin
+                });
+
+            var authGenerator = Mock.Get(container.Resolve<IPasswordGenerator>());
+            authGenerator.Setup(a => 
+                a.CheckPassword(It.IsAny<string>(), It.IsAny<string>())).Returns<string, string>((pasd, hash) => pasd == hash);
+            authGenerator.Setup(a => a.GeneratePassword())
+                .Returns(pin);
+
+            var messageTemplate = Mock.Get(container.Resolve<IMessageTemplateRepository>());
+            messageTemplate
+                .Setup(r => r.GetTemplate(
+                    It.IsAny<MessageTemplateName>(),
+                    It.IsAny<CultureInfo>(),
+                    It.IsAny<MessageTemplateType>()))
+                .Returns<MessageTemplateName, CultureInfo, MessageTemplateType>((n, l, t) =>
+                {
+                    if (n == MessageTemplateName.RequestPhoneChangeTemplate)
+                        return Task.FromResult("Your password is: {0} will valid for {1} min");
+
+                    throw new NotImplementedException();
+                });
+
+            var smsClient = Mock.Get(container.Resolve<ISmsClient>());
+
+            var responseToChangeRequest = await browser.Post(
+                SmsModule.RequestChangePhoneUrl, 
+                with =>
+                {
+                    with.Accept(format);
+                    with.Header("Authorization", $"Bearer {accessToken}");
+                    with.DataFormatBody(format, 
+                        new ChangePhoneUserRequest
+                        {
+                            Password = password,
+                            Phone = newPhone
+                        });
+                });
+            Assert.Equal(HttpStatusCode.NoContent, responseToChangeRequest.StatusCode);
+
+            authGenerator.Verify(ag => 
+                ag.CheckPassword(
+                    It.Is<string>(x => x == password),
+                    It.Is<string>(x => x == password)),
+                Times.Once);
+
+            smsRequestRepository.Verify(
+                srr => srr.Save(
+                    It.Is<SmsRequest>(r =>
+                        r.UserId == userId
+                        && r.Phone == newPhone
+                        && r.Password == pin)), 
+                Times.Once);
+
+            messageTemplate.Verify(mtr => 
+                mtr.GetTemplate(
+                    It.Is<MessageTemplateName>(mt => mt == MessageTemplateName.RequestPhoneChangeTemplate),
+                    It.IsAny<CultureInfo>(),
+                    It.Is<MessageTemplateType>(mtt => mtt == MessageTemplateType.sms)),
+                Times.Once);
+
+            smsClient.Verify(sc => 
+                sc.Send(
+                    It.Is<decimal>(x => x == newPhone),
+                    It.IsAny<string>()),
+                Times.Once);
+            
+
+            var responseToCommitRequest = await browser.Post(
+                SmsModule.CommitChangePhoneUrl, 
+                with =>
+                {
+                    with.Accept(format);
+                    with.Header("Authorization", $"Bearer {accessToken}");
+                    with.Query("code", pin);
+                });
+            Assert.Equal(HttpStatusCode.NoContent, responseToCommitRequest.StatusCode);
+
+            accountMock.Verify(ar => 
+                ar.Update(
+                    It.Is<Account>(a => 
+                        a.Id == accountId
+                        && a.Login == newPhone.ToString()
+                        && a.Phone == newPhone)), 
+                    Times.Once);
+        }
+
         [Theory]
         [InlineData(DataFormat.Json)]
         [InlineData(DataFormat.Proto)]

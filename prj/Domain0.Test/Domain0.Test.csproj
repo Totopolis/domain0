@@ -124,6 +124,7 @@
     <Compile Include="..\..\src\test\TestContainerBuilder.cs">
       <Link>TestContainerBuilder.cs</Link>
     </Compile>
+    <Compile Include="EmailModuleTests.cs" />
     <Compile Include="JsonWebToken.cs" />
     <Compile Include="JsonWebTokenTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

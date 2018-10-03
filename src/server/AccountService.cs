@@ -540,6 +540,7 @@ namespace Domain0.Service
             var expiredAt = accountServiceSettings.PinExpirationTime;
             await smsRequestRepository.Save(new SmsRequest
             {
+                UserId = userId,
                 Phone = changePhoneRequest.Phone,
                 Password = pin,
                 ExpiredAt = DateTime.UtcNow.Add(expiredAt)
@@ -587,18 +588,24 @@ namespace Domain0.Service
             var expiredAt = accountServiceSettings.EmailCodeExpirationTime;
             await emailRequestRepository.Save(new EmailRequest
             {
+                UserId = userId,
                 Email = changeEmailRequest.Email,
                 Password = pin,
                 ExpiredAt = DateTime.UtcNow.Add(expiredAt)
             });
 
             var template = await messageTemplateRepository.GetTemplate(
-                MessageTemplateName.RequestPhoneChangeTemplate,
+                MessageTemplateName.RequestEmailChangeTemplate,
                 cultureRequestContext.Culture,
-                MessageTemplateType.sms);
+                MessageTemplateType.email);
+
+            var subject = await messageTemplateRepository.GetTemplate(
+                MessageTemplateName.RequestEmailChangeSubjectTemplate,
+                cultureRequestContext.Culture,
+                MessageTemplateType.email);
 
             var message = string.Format(template, pin, expiredAt.TotalMinutes);
-            await emailClient.Send("", changeEmailRequest.Email, message);
+            await emailClient.Send(subject, changeEmailRequest.Email, message);
         }
 
         public async Task CommitChangeEmail(long pin)
@@ -614,7 +621,7 @@ namespace Domain0.Service
             if (pin.ToString() != emailRequest.Password)
                 throw new SecurityException("wrong pin");
 
-            account.Email = emailRequest.Email;
+            account.Login = emailRequest.Email;
             account.Email = emailRequest.Email;
             await accountRepository.Update(account);
         }

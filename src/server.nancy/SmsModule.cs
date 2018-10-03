@@ -301,7 +301,7 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Sms" }, Summary = "Method for commit change phone request")]
         [RouteParam(
             ParamIn = ParameterIn.Query,
-            Name = "pin",
+            Name = "code",
             ParamType = typeof(long),
             Required = true,
             Description = "user's pin code for change phone")]
@@ -313,14 +313,14 @@ namespace Domain0.Nancy
                 c.Type == TokenClaims.CLAIM_PERMISSIONS
                 && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_BASIC));
 
-            long pin;
-            if (!long.TryParse(Request.Query[nameof(pin)].ToString(), out pin))
+            long code;
+            if (!long.TryParse(Request.Query[nameof(code)].ToString(), out code))
             {
-                ModelValidationResult.Errors.Add(nameof(pin), "wrong pin code format");
+                ModelValidationResult.Errors.Add(nameof(code), "wrong pin code format");
                 throw new BadModelException(ModelValidationResult);
             }
 
-            await accountService.CommitChangePhone(pin);
+            await accountService.CommitChangePhone(code);
             return HttpStatusCode.NoContent;
         }
 
