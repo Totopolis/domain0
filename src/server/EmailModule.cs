@@ -24,6 +24,10 @@ namespace Domain0.Nancy
         public const string ForceCreateUserUrl = "/api/email/ForceCreateUser";
         public const string ForceResetPasswordUrl = "/api/email/ForceResetPassword";
 
+        public const string RequestChangeEmailUrl = "/api/email/RequestChangeEmail";
+        public const string CommitChangeEmailUrl = "/api/email/CommitChangeEmail";
+
+
         public EmailModule(
             IAccountService accountServiceInstance,
             ILogger loggerInstance)
@@ -38,6 +42,9 @@ namespace Domain0.Nancy
 
             Post(ForceChangeEmailUrl, ctx => ForceChangeEmail(), name: nameof(ForceChangeEmail));
             Put(ForceCreateUserUrl, ctx => ForceCreateUser(), name: nameof(ForceCreateUser));
+
+            Post(RequestChangeEmailUrl, ctx => RequestChangeEmail(), name: nameof(RequestChangeEmail));
+            Post(CommitChangeEmailUrl, ctx => CommitChangeEmail(), name: nameof(CommitChangeEmail));
         }
 
         [Route(nameof(RegisterByEmail))]
@@ -210,6 +217,59 @@ namespace Domain0.Nancy
             return HttpStatusCode.NoContent;
         }
 
+        [Route(nameof(RequestChangeEmail))]
+        [Route(HttpMethod.Post, RequestChangeEmailUrl)]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Produces = new string[] { })]
+        [Route(Tags = new[] { "Email" }, Summary = "Method for reset email")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body,
+            Name = "change email request",
+            ParamType = typeof(ChangeEmailUserRequest),
+            Required = true,
+            Description = "request with password and new email")]
+        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        public async Task<object> RequestChangeEmail()
+        {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_BASIC));
+
+            var changeEmailRequest = this.BindAndValidateModel<ChangeEmailUserRequest>();
+            await accountService.RequestChangeEmail(changeEmailRequest);
+            return HttpStatusCode.NoContent;
+        }
+
+        [Route(nameof(CommitChangeEmail))]
+        [Route(HttpMethod.Post, CommitChangeEmailUrl)]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Produces = new string[] { })]
+        [Route(Tags = new[] { "Email" }, Summary = "Method for commit change email request")]
+        [RouteParam(
+            ParamIn = ParameterIn.Query,
+            Name = "pin",
+            ParamType = typeof(long),
+            Required = true,
+            Description = "user's pin code for change email")]
+        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        public async Task<object> CommitChangeEmail()
+        {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_BASIC));
+
+            long pin;
+            if (!long.TryParse(Request.Query[nameof(pin)].ToString(), out pin))
+            {
+                ModelValidationResult.Errors.Add(nameof(pin), "wrong pin code format");
+                throw new BadModelException(ModelValidationResult);
+            }
+
+            await accountService.CommitChangeEmail(pin);
+            return HttpStatusCode.NoContent;
+        }
 
         private readonly IAccountService accountService;
         private readonly ILogger logger;

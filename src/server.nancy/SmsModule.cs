@@ -274,13 +274,13 @@ namespace Domain0.Nancy
         [Route(HttpMethod.Post, RequestChangePhoneUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Produces = new string[] { })]
-        [Route(Tags = new[] { "Sms" }, Summary = "Method for reset password")]
+        [Route(Tags = new[] { "Sms" }, Summary = "Method for change phone")]
         [RouteParam(
             ParamIn = ParameterIn.Body, 
             Name = "change phone request", 
             ParamType = typeof(ChangePhoneUserRequest), 
             Required = true, 
-            Description = "user's phone with single number, started from 7 for Russia, 71231234567 for example")]
+            Description = "request with password and new phone number")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
         public async Task<object> RequestChangePhone()
         {

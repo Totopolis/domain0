@@ -127,6 +127,9 @@
     <Compile Include="..\..\src\server.nancy\AccessTokenResponse.cs">
       <Link>Model\AccessTokenResponse.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server.nancy\ChangeEmailUserRequest.cs">
+      <Link>Model\ChangeEmailUserRequest.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server.nancy\ChangePasswordRequest.cs">
       <Link>Model\ChangePasswordRequest.cs</Link>
     </Compile>

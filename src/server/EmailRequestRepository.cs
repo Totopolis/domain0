@@ -32,5 +32,14 @@ namespace Domain0.FastSql
             var request = await Pick(email);
             return request?.Password == password;
         }
+
+        public Task<EmailRequest> PickByUserId(int userId) => 
+            SimpleCommand.ExecuteQueryAsync<EmailRequest>(connectionString,
+                $"select * from {TableName} " +
+                $"where {nameof(EmailRequest.UserId)}=@p0 " +
+                $"and {nameof(EmailRequest.ExpiredAt)}>=@p1 " +
+                $"order by id desc",  // get latest request
+                userId, DateTime.UtcNow)
+            .FirstOrDefault();
     }
 }

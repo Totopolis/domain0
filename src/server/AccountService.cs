@@ -22,6 +22,8 @@ namespace Domain0.Service
     public class AccountServiceSettings
     {
         public TimeSpan PinExpirationTime { get; set; }
+
+        public TimeSpan EmailCodeExpirationTime { get; set; }
     }
 
     public interface IAccountService
@@ -52,6 +54,10 @@ namespace Domain0.Service
 
         Task CommitChangePhone(long pin);
 
+        Task RequestChangeEmail(ChangeEmailUserRequest changeEmailRequest);
+
+        Task CommitChangeEmail(long pin);
+
         Task ForceChangePhone(ChangePhoneRequest request);
 
         Task ForceChangeEmail(ChangeEmailRequest request);
@@ -71,7 +77,6 @@ namespace Domain0.Service
         Task<UserProfile> UpdateUser(UserProfile user);
 
         Task<UserProfile[]> GetProfilesByFilter(UserProfileFilter filter);
-
     }
 
     public class AccountService : IAccountService
@@ -564,6 +569,53 @@ namespace Domain0.Service
 
             account.Phone = smsRequest.Phone;
             account.Login = smsRequest.Phone.ToString(CultureInfo.InvariantCulture);
+            await _accountRepository.Update(account);
+        }
+
+        public async Task RequestChangeEmail(ChangeEmailUserRequest changeEmailRequest)
+        {
+            var userId = _requestContext.UserId;
+
+            var account = await _accountRepository.FindByUserId(userId);
+            if (account == null)
+                throw new NotFoundException(nameof(account), "account not found");
+
+            if (!_passwordGenerator.CheckPassword(changeEmailRequest.Password, account.Password))
+                throw new SecurityException("password not match");
+
+            var pin = _passwordGenerator.GeneratePassword();
+            var expiredAt = accountServiceSettings.EmailCodeExpirationTime;
+            await emailRequestRepository.Save(new EmailRequest
+            {
+                Email = changeEmailRequest.Email,
+                Password = pin,
+                ExpiredAt = DateTime.UtcNow.Add(expiredAt)
+            });
+
+            var template = await _messageTemplateRepository.GetTemplate(
+                MessageTemplateName.RequestPhoneChangeTemplate,
+                cultureRequestContext.Culture,
+                MessageTemplateType.sms);
+
+            var message = string.Format(template, pin, expiredAt.TotalMinutes);
+            await emailClient.Send("", changeEmailRequest.Email, message);
+        }
+
+        public async Task CommitChangeEmail(long pin)
+        {
+            var userId = _requestContext.UserId;
+
+            var account = await _accountRepository.FindByUserId(userId);
+            if (account == null)
+                throw new NotFoundException(nameof(account), "account not found");
+
+            var emailRequest = await emailRequestRepository.PickByUserId(userId);
+
+            if (pin.ToString() != emailRequest.Password)
+                throw new SecurityException("wrong pin");
+
+            account.Email = emailRequest.Email;
+            account.Email = emailRequest.Email;
             await _accountRepository.Update(account);
         }
 

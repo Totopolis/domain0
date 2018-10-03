@@ -51,6 +51,9 @@ namespace Domain0
             {
                 PinExpirationTime = TimeSpan.FromMinutes(
                     double.Parse(ConfigurationManager.AppSettings["AccountService_PinExpirationTime"] ?? "15")),
+
+                EmailCodeExpirationTime = TimeSpan.FromMinutes(
+                    double.Parse(ConfigurationManager.AppSettings["AccountService_EmailCodeExpirationTime"] ?? "120")),
             };
         }
 
