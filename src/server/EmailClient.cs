@@ -14,8 +14,6 @@ namespace Domain0.Service
 
         public async Task Send(string subject, string emailTo, string message)
         {
-            Trace.TraceInformation($"email to: { emailTo }, subject: { subject } message: { message }");
-
             var client = BuildClient();
             var emailMessage = BuildMessage(subject, emailTo, message);
 
