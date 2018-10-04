@@ -29,6 +29,8 @@ namespace Domain0.Nancy.Infrastructure
 
         private const string AllowHeadersKey = "Access-Control-Allow-Headers";
 
+        private const string AllowCredentialsKey = "Access-Control-Allow-Credentials";
+
         private const string OriginKey = "Origin";
 
         public static void EnableCors(this IPipelines pipelines)
@@ -46,6 +48,8 @@ namespace Domain0.Nancy.Infrastructure
 
                 // handle CORS preflight request
                 ctx.Response.Headers[AllowMethodsKey] = "GET, POST, PUT, DELETE, OPTIONS";
+
+                ctx.Response.Headers.Add(AllowCredentialsKey, "true");
 
                 if (!ctx.Request.Headers.Keys.Contains(RequestHeadersKey))
                     return;
