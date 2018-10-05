@@ -23,7 +23,8 @@ namespace Domain0
             builder.RegisterType<AdminService>().As<IAdminService>().InstancePerLifetimeScope();
 
             builder.RegisterInstance(ReadSmsQueueSettings());
-            builder.RegisterType<SqlQueueSmsClient>().As<ISmsClient>();
+            builder.RegisterInstance(ReadSmsGatewaySettings());
+            builder.RegisterType<SmsGatewayClient>().As<ISmsClient>();
             builder
                 .RegisterType<AuthenticationConfigurationBuilder>()
                 .As<IAuthenticationConfigurationBuilder>()
@@ -91,6 +92,15 @@ namespace Domain0
             {
                 ConnectionString = ConfigurationManager.AppSettings["SmsQueueClient_ConnectionString"],
                 QueueName = ConfigurationManager.AppSettings["SmsQueueClient_QueueName"]
+            };
+        }
+
+        private static SmsGatewaySettings ReadSmsGatewaySettings()
+        {
+            return new SmsGatewaySettings
+            {
+                Host = ConfigurationManager.AppSettings["SmsGateway_Host"],
+                Token = ConfigurationManager.AppSettings["SmsGateway_Token"],
             };
         }
     }

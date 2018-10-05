@@ -257,11 +257,17 @@
     <Compile Include="..\..\src\server\RolePermission.cs">
       <Link>Service\Repository\Model\RolePermission.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\SmsGatewayClient.cs">
+      <Link>Service\Sms\SmsGatewayClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\SmsGatewaySettings.cs">
+      <Link>Service\Sms\SmsGatewaySettings.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\SqlQueueSmsClient.cs">
-      <Link>Service\SqlQueueSmsClient.cs</Link>
+      <Link>Service\Sms\SqlQueueSmsClient.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\SqlQueueSmsClientSettings.cs">
-      <Link>Service\SqlQueueSmsClientSettings.cs</Link>
+      <Link>Service\Sms\SqlQueueSmsClientSettings.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\TokenGenerator.cs">
       <Link>Service\TokenGenerator.cs</Link>
