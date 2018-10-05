@@ -227,37 +227,52 @@ create table log.Access(
 )
 go
 
-DROP TABLE [hst_dom].[TokenRegistration]
+if object_id('[hst_dom].[Application]') is not null
+	DROP TABLE [hst_dom].[Application]
 GO
 
-DROP TABLE [hst_dom].[SmsRequest]
+if object_id('[hst_dom].[TokenRegistration]') is not null
+	DROP TABLE [hst_dom].[TokenRegistration]
 GO
 
-DROP TABLE [hst_dom].[RoleUser]
+if object_id('[hst_dom].[SmsRequest]') is not null
+	DROP TABLE [hst_dom].[SmsRequest]
 GO
 
-DROP TABLE [hst_dom].[Role]
+if object_id('[hst_dom].[RoleUser]') is not null
+	DROP TABLE [hst_dom].[RoleUser]
 GO
 
-DROP TABLE [hst_dom].[PermissionUser]
+if object_id('[hst_dom].[Role]') is not null
+	DROP TABLE [hst_dom].[Role]
 GO
 
-DROP TABLE [hst_dom].[PermissionRole]
+if object_id('[hst_dom].[PermissionUser]') is not null
+	DROP TABLE [hst_dom].[PermissionUser]
 GO
 
-DROP TABLE [hst_dom].[Permission]
+if object_id('[hst_dom].[PermissionRole]') is not null
+	DROP TABLE [hst_dom].[PermissionRole]
 GO
 
-DROP TABLE [hst_dom].[Message]
+if object_id('[hst_dom].[Permission]') is not null
+	DROP TABLE [hst_dom].[Permission]
 GO
 
-DROP TABLE [hst_dom].[EmailRequest]
+if object_id('[hst_dom].[Message]') is not null
+	DROP TABLE [hst_dom].[Message]
 GO
 
-DROP TABLE [hst_dom].[Application]
+if object_id('[hst_dom].[EmailRequest]') is not null
+	DROP TABLE [hst_dom].[EmailRequest]
 GO
 
-DROP TABLE [hst_dom].[Account]
+if object_id(' [hst_dom].[Application]') is not null
+	DROP TABLE [hst_dom].[Application]
+GO
+
+if object_id('[hst_dom].[Account]') is not null
+	DROP TABLE [hst_dom].[Account]
 GO
 
 CREATE TABLE [hst_dom].[Account](
