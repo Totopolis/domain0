@@ -77,10 +77,9 @@ namespace Domain0.WinService
             Logger.Info("Making container...");
             container = CreateContainer();
 
-            Logger.Info("Initialize database...");
-            var dbManager = container.Resolve<DbManager>();
-            dbManager.Initialize();
-
+            //Logger.Info("Initialize database...");
+            //var dbManager = container.Resolve<DbManager>();
+            //dbManager.Initialize();
 
             Logger.Info("Making Domain0Bootstrapper...");
             bootstrapper = new Domain0Bootstrapper(container);
