@@ -56,8 +56,6 @@ namespace Domain0.Nancy
         protected override void RequestStartup(ILifetimeScope requestContainer, IPipelines pipelines, NancyContext context)
         {
             base.RequestStartup(requestContainer, pipelines, context);
-            pipelines.BeforeRequest.AddItemToEndOfPipeline(ctx => null);
-
 
             NancyExceptionHandling.Enable(
                 requestContainer, 
