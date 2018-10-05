@@ -1,8 +1,6 @@
 #### Domain0 user authentication service
 
->
-
-## Installation
+# Installation
 
 1. prepare a database
 
@@ -23,8 +21,6 @@ run deploy script: Scripts\database.sql
 Domain0.WinService.exe install -username:user -password:pas
 ```
 
----
-
 # Domain0 user authentication service
 
 **Description**:  Easy authenticate users with login passwords and receive JWT access token and refresh token for your application with user permissions and other grants.
@@ -42,10 +38,6 @@ Other things to include:
 ## Dependencies
 
 Software running under Windows with net462
-
-## Installation
-
-[INSTALL](INSTALL.md).
 
 ## Configuration
 
