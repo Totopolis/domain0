@@ -38,6 +38,11 @@ namespace Domain0.FastSql
             builder.RegisterType<TokenRegistrationRepository>().As<ITokenRegistrationRepository>()
                 .WithParameter(new ResolvedParameter((pi, ctx) => pi.ParameterType == typeof(string),
                     (pi, ctx) => ctx.ResolveNamed<string>(nameof(connectionString)))).SingleInstance();
+
+            builder.RegisterType<AccessLogRepository>().As<IAccessLogRepository>()
+                .WithParameter(new ResolvedParameter((pi, ctx) => pi.ParameterType == typeof(string),
+                    (pi, ctx) => ctx.ResolveNamed<string>(nameof(connectionString)))).SingleInstance();
+            
         }
     }
 }

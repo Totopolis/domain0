@@ -117,6 +117,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\src\server\AccessLogRepository.cs">
+      <Link>FastSql\AccessLogRepository.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\AccountRepository.cs">
       <Link>FastSql\AccountRepository.cs</Link>
     </Compile>

@@ -6,9 +6,9 @@ namespace Domain0.Repository
     public interface IRepository<TKey, TEntity> 
         where TEntity : new()
     {
-        Task<decimal> Insert(TEntity template);
+        Task<decimal> Insert(TEntity entity);
 
-        Task Update(TEntity template);
+        Task Update(TEntity entity);
 
         Task Delete(TKey id);
 

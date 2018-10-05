@@ -1,7 +1,5 @@
 ﻿using Autofac;
 using Autofac.Core;
-using Domain0.Exceptions;
-using Domain0.Model;
 using Domain0.Nancy.Infrastructure;
 using Domain0.Service;
 using Nancy;
@@ -10,17 +8,15 @@ using Nancy.Bootstrapper;
 using Nancy.Bootstrappers.Autofac;
 using Nancy.Configuration;
 using Nancy.Conventions;
-using Nancy.ModelBinding;
-using Nancy.Responses.Negotiation;
 using Nancy.Swagger;
 using Nancy.Swagger.Annotations;
 using Nancy.Swagger.Services;
 using Nancy.Validation;
-using NLog;
 using Swagger.ObjectModel;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Domain0.Model;
 
 namespace Domain0.Nancy
 {
@@ -30,7 +26,6 @@ namespace Domain0.Nancy
         public Domain0Bootstrapper(IContainer rootContainer)
         {
             container = rootContainer;
-            logger = container.Resolve<ILogger>();
         } 
 
         protected override ILifetimeScope GetApplicationContainer() => container;
@@ -63,40 +58,17 @@ namespace Domain0.Nancy
             base.RequestStartup(requestContainer, pipelines, context);
             pipelines.BeforeRequest.AddItemToEndOfPipeline(ctx => null);
 
-            pipelines.OnError.AddItemToStartOfPipeline((ctx, ex) =>
-            {
-                switch (ex)
-                {
-                    case BadModelException bad:
-                        return new Negotiator(ctx)
-                            .WithStatusCode(HttpStatusCode.BadRequest)
-                            .WithHeader("X-Status-Reason", "validation error")
-                            .WithReasonPhrase("validation error")
-                            .WithMediaRangeModel("application/json", bad.ValidationResult.Errors.SelectMany(e => e.Value));
-                    case NotFoundException notFound:
-                        return new Negotiator(ctx)
-                            .WithStatusCode(HttpStatusCode.NotFound)
-                            .WithReasonPhrase("not found error");
-                    case ModelBindingException binding:
-                        return new Negotiator(ctx)
-                            .WithStatusCode(HttpStatusCode.BadRequest)
-                            .WithHeader("X-Status-Reason", "validation error")
-                            .WithReasonPhrase("validation error")
-                            .WithMediaRangeModel("application/json", new List<ModelValidationError> { new ModelValidationError(binding.BoundType.Name, "couldnt deserialize")});
-                    default:
-                        logger.Error(ex, ex.ToString());
-                        break;
-                }
 
-                return null;
-            });
+            NancyExceptionHandling.Enable(
+                requestContainer, 
+                pipelines, 
+                context);
 
             StatelessAuthentication.Enable(
                 pipelines, 
                 requestContainer
                     .Resolve<IAuthenticationConfigurationBuilder>()
                     .Build());
-
         }
 
         protected override void ConfigureConventions(NancyConventions nancyConventions)
@@ -145,7 +117,5 @@ namespace Domain0.Nancy
         }
 
         private readonly IContainer container;
-
-        private readonly ILogger logger;
     }
 }

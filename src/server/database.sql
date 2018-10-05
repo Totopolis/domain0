@@ -6,6 +6,10 @@ if not exists (select top 1 1 from sys.schemas where name='hst_dom')
 	exec sp_executesql N'create schema hst_dom' 
 go
 
+if not exists (select top 1 1 from sys.schemas where name='log')
+	exec sp_executesql N'create schema log' 
+go
+
 if object_id('dom.PermissionUser') is not null
 	drop table dom.PermissionUser
 go
@@ -39,7 +43,9 @@ go
 if object_id('dom.TokenRegistration') is not null
 	drop table dom.TokenRegistration
 go
-
+if object_id('log.Access') is not null
+	drop table log.Access
+go
 
 create table dom.Role (
 	Id int not null identity(1,1) constraint PK_dom_Role primary key,
@@ -207,6 +213,19 @@ values
 (@DomainAppId, 'Admin', 'Admin permission')
 */
 
+create table log.Access(
+	[Id] bigint identity(1,1) not null constraint PK_log_Access_Id primary key,
+	[Action] nvarchar(max) not null,
+	[Method] nvarchar(10) not null,
+	[ClientIp] nvarchar(32) not null,
+	[ProcessedAt] datetime not null,
+	[StatusCode] int null,
+	[UserAgent] nvarchar(128) not null,
+	[UserId] nvarchar(64) null,
+    [Referer] nvarchar(max) null,
+	[ProcessingTime] int null
+)
+go
 
 DROP TABLE [hst_dom].[TokenRegistration]
 GO

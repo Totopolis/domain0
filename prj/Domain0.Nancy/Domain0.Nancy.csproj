@@ -125,6 +125,9 @@
     <Compile Include="..\..\src\common\NotFoundException.cs">
       <Link>Exceptions\NotFoundException.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server.nancy\AccessLogEntry.cs">
+      <Link>Service\Repository\Model\AccessLogEntry.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server.nancy\AccessTokenResponse.cs">
       <Link>Model\AccessTokenResponse.cs</Link>
     </Compile>
@@ -188,6 +191,9 @@
     <Compile Include="..\..\src\server\EmbeddedContentConventionBuilder.cs">
       <Link>Infrastructure\EmbeddedContentConventionBuilder.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\IAccessLogRepository.cs">
+      <Link>Service\Repository\IAccessLogRepository.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\IAccountRepository.cs">
       <Link>Service\Repository\IAccountRepository.cs</Link>
     </Compile>
@@ -223,6 +229,9 @@
     </Compile>
     <Compile Include="..\..\src\server\MessageTemplate.cs">
       <Link>Service\Repository\Model\MessageTemplate.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\NancyExceptionHandling.cs">
+      <Link>Infrastructure\NancyExceptionHandling.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\NancyModuleExtensions.cs">
       <Link>Infrastructure\NancyModuleExtensions.cs</Link>
