@@ -32,7 +32,8 @@ namespace Domain0.FastSql
             => userIds.Any()
                 ? SimpleCommand.ExecuteQueryAsync<Account>(_connectionString,
                     $"select * from {TableName} where id in ({string.Join(",", userIds)})").ToArray()
-                : Task.FromResult(new Account[0]);
+                : SimpleCommand.ExecuteQueryAsync<Account>(_connectionString,
+                    $"select * from {TableName}").ToArray();
 
         public async Task<int> Insert(Account account)
             => (int) await MappedCommand.InsertAndGetIdAsync(_connectionString, TableName, account, nameof(Account.Id));
