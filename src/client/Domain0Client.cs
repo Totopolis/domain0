@@ -73,12 +73,12 @@ namespace Domain0.Api.Client
         System.Threading.Tasks.Task<AccessTokenResponse> RefreshAsync(string refreshToken, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Method for reset password</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, code has been sent</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RequestResetPasswordAsync(long phone);
     
         /// <summary>Method for reset password</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, code has been sent</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         System.Threading.Tasks.Task RequestResetPasswordAsync(long phone, System.Threading.CancellationToken cancellationToken);
@@ -106,47 +106,47 @@ namespace Domain0.Api.Client
         System.Threading.Tasks.Task ForceCreateUserAsync(ForceCreateUserRequest request, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Method for force change phone only administrator</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, phone was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         System.Threading.Tasks.Task ForceChangePhoneAsync(ChangePhoneRequest phone);
     
         /// <summary>Method for force change phone only administrator</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, phone was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         System.Threading.Tasks.Task ForceChangePhoneAsync(ChangePhoneRequest phone, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Method for force reset password only administrator</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, new password sent to user</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         System.Threading.Tasks.Task ForceResetPasswordAsync(long phone);
     
         /// <summary>Method for force reset password only administrator</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, new password sent to user</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         System.Threading.Tasks.Task ForceResetPasswordAsync(long phone, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Method for change phone</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, validation code sent to phone</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RequestChangePhoneAsync(ChangePhoneUserRequest change_phone_request);
     
         /// <summary>Method for change phone</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, validation code sent to phone</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         System.Threading.Tasks.Task RequestChangePhoneAsync(ChangePhoneUserRequest change_phone_request, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Method for commit change phone request</summary>
         /// <param name="code">user's pin code for change phone</param>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, phone was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         System.Threading.Tasks.Task CommitChangePhoneAsync(long code);
     
         /// <summary>Method for commit change phone request</summary>
         /// <param name="code">user's pin code for change phone</param>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, phone was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         System.Threading.Tasks.Task CommitChangePhoneAsync(long code, System.Threading.CancellationToken cancellationToken);
@@ -534,23 +534,23 @@ namespace Domain0.Api.Client
         System.Threading.Tasks.Task<bool> DoesUserExistByEmailAsync(RegisterRequest email, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Method for reset password</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, code has been sent</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RequestResetPasswordByEmailAsync(RegisterRequest email);
     
         /// <summary>Method for reset password</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, code has been sent</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         System.Threading.Tasks.Task RequestResetPasswordByEmailAsync(RegisterRequest email, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Method for force change phone only administrator</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, email was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         System.Threading.Tasks.Task ForceChangeEmailAsync(ChangeEmailRequest change_email_request);
     
         /// <summary>Method for force change phone only administrator</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, email was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         System.Threading.Tasks.Task ForceChangeEmailAsync(ChangeEmailRequest change_email_request, System.Threading.CancellationToken cancellationToken);
@@ -567,36 +567,36 @@ namespace Domain0.Api.Client
         System.Threading.Tasks.Task ForceCreateUser2Async(ForceCreateEmailUserRequest request, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Method for force reset password only administrator</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, new password sent to user</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         System.Threading.Tasks.Task ForceResetPassword2Async(string email);
     
         /// <summary>Method for force reset password only administrator</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, new password sent to user</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         System.Threading.Tasks.Task ForceResetPassword2Async(string email, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Method for reset email</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, validation code sent to email</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RequestChangeEmailAsync(ChangeEmailUserRequest change_email_request);
     
         /// <summary>Method for reset email</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, validation code sent to email</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         System.Threading.Tasks.Task RequestChangeEmailAsync(ChangeEmailUserRequest change_email_request, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Method for commit change email request</summary>
         /// <param name="code">user's pin code for change email</param>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, email was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         System.Threading.Tasks.Task CommitChangeEmailAsync(long code);
     
         /// <summary>Method for commit change email request</summary>
         /// <param name="code">user's pin code for change email</param>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, email was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         System.Threading.Tasks.Task CommitChangeEmailAsync(long code, System.Threading.CancellationToken cancellationToken);
@@ -613,12 +613,12 @@ namespace Domain0.Api.Client
         System.Threading.Tasks.Task<UserProfile> GetMyProfileAsync(System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Method for change password</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         System.Threading.Tasks.Task ChangeMyPasswordAsync(ChangePasswordRequest request);
     
         /// <summary>Method for change password</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         System.Threading.Tasks.Task ChangeMyPasswordAsync(ChangePasswordRequest request, System.Threading.CancellationToken cancellationToken);
@@ -755,6 +755,18 @@ namespace Domain0.Api.Client
                             return;
                         }
                         else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong phone format or user with this phone already existed", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
@@ -832,6 +844,18 @@ namespace Domain0.Api.Client
                             {
                                 throw new Domain0ClientException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
                             }
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong phone format / wrong phone and password pair", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -919,6 +943,18 @@ namespace Domain0.Api.Client
                             }
                         }
                         else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong phone format", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
@@ -1002,6 +1038,18 @@ namespace Domain0.Api.Client
                             {
                                 throw new Domain0ClientException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
                             }
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong phone format", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -1109,7 +1157,7 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for reset password</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, code has been sent</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task RequestResetPasswordAsync(long phone)
         {
@@ -1117,7 +1165,7 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for reset password</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, code has been sent</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public async System.Threading.Tasks.Task RequestResetPasswordAsync(long phone, System.Threading.CancellationToken cancellationToken)
@@ -1153,6 +1201,18 @@ namespace Domain0.Api.Client
                         ProcessResponse(client_, response_);
     
                         var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("user with this phone doesn\'t exist", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
                         if (status_ == "204") 
                         {
                             return;
@@ -1226,6 +1286,30 @@ namespace Domain0.Api.Client
                             return;
                         }
                         else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong old password or too easy new password", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("authentication required. jwt token in header", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("domain0.basic permission required", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
@@ -1294,6 +1378,30 @@ namespace Domain0.Api.Client
                             return;
                         }
                         else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong phone or user with this phone already created", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("authentication required. jwt token in header", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("domain0.forceCreateUser permission required", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
@@ -1313,7 +1421,7 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for force change phone only administrator</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, phone was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task ForceChangePhoneAsync(ChangePhoneRequest phone)
         {
@@ -1321,7 +1429,7 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for force change phone only administrator</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, phone was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public async System.Threading.Tasks.Task ForceChangePhoneAsync(ChangePhoneRequest phone, System.Threading.CancellationToken cancellationToken)
@@ -1362,6 +1470,30 @@ namespace Domain0.Api.Client
                             return;
                         }
                         else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong code/user pair", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("authentication required. jwt token in header", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("domain0.forceChangePhone permission required", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
@@ -1381,7 +1513,7 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for force reset password only administrator</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, new password sent to user</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task ForceResetPasswordAsync(long phone)
         {
@@ -1389,7 +1521,7 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for force reset password only administrator</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, new password sent to user</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public async System.Threading.Tasks.Task ForceResetPasswordAsync(long phone, System.Threading.CancellationToken cancellationToken)
@@ -1430,6 +1562,30 @@ namespace Domain0.Api.Client
                             return;
                         }
                         else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong phone or user with this phone not found", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("authentication required. jwt token in header", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("domain0.forceResetPassword permission required", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
@@ -1449,7 +1605,7 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for change phone</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, validation code sent to phone</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task RequestChangePhoneAsync(ChangePhoneUserRequest change_phone_request)
         {
@@ -1457,7 +1613,7 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for change phone</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, validation code sent to phone</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public async System.Threading.Tasks.Task RequestChangePhoneAsync(ChangePhoneUserRequest change_phone_request, System.Threading.CancellationToken cancellationToken)
@@ -1498,6 +1654,30 @@ namespace Domain0.Api.Client
                             return;
                         }
                         else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong password or incorrect new phone", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("authentication required. jwt token in header", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("domain0.basic permission required", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
@@ -1518,7 +1698,7 @@ namespace Domain0.Api.Client
     
         /// <summary>Method for commit change phone request</summary>
         /// <param name="code">user's pin code for change phone</param>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, phone was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task CommitChangePhoneAsync(long code)
         {
@@ -1527,7 +1707,7 @@ namespace Domain0.Api.Client
     
         /// <summary>Method for commit change phone request</summary>
         /// <param name="code">user's pin code for change phone</param>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, phone was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public async System.Threading.Tasks.Task CommitChangePhoneAsync(long code, System.Threading.CancellationToken cancellationToken)
@@ -1569,6 +1749,30 @@ namespace Domain0.Api.Client
                         if (status_ == "204") 
                         {
                             return;
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong code/user pair", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("authentication required. jwt token in header", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("domain0.basic permission required", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -3870,6 +4074,18 @@ namespace Domain0.Api.Client
                             return;
                         }
                         else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong email format or user with this email already existed", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
@@ -3947,6 +4163,18 @@ namespace Domain0.Api.Client
                             {
                                 throw new Domain0ClientException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
                             }
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong email format / wrong email and password pair", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -4030,6 +4258,18 @@ namespace Domain0.Api.Client
                             }
                         }
                         else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong email format", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
@@ -4051,7 +4291,7 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for reset password</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, code has been sent</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task RequestResetPasswordByEmailAsync(RegisterRequest email)
         {
@@ -4059,7 +4299,7 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for reset password</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, code has been sent</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public async System.Threading.Tasks.Task RequestResetPasswordByEmailAsync(RegisterRequest email, System.Threading.CancellationToken cancellationToken)
@@ -4095,6 +4335,18 @@ namespace Domain0.Api.Client
                         ProcessResponse(client_, response_);
     
                         var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("user with this email doesn\'t exist", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
                         if (status_ == "204") 
                         {
                             return;
@@ -4119,7 +4371,7 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for force change phone only administrator</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, email was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task ForceChangeEmailAsync(ChangeEmailRequest change_email_request)
         {
@@ -4127,7 +4379,7 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for force change phone only administrator</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, email was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public async System.Threading.Tasks.Task ForceChangeEmailAsync(ChangeEmailRequest change_email_request, System.Threading.CancellationToken cancellationToken)
@@ -4166,6 +4418,30 @@ namespace Domain0.Api.Client
                         if (status_ == "204") 
                         {
                             return;
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong code/user pair", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("authentication required. jwt token in header", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("domain0.forceChangePhone permission required", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -4236,6 +4512,30 @@ namespace Domain0.Api.Client
                             return;
                         }
                         else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong email or user with this email already created", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("authentication required. jwt token in header", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("domain0.forceCreateUser permission required", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
@@ -4255,7 +4555,7 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for force reset password only administrator</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, new password sent to user</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task ForceResetPassword2Async(string email)
         {
@@ -4263,7 +4563,7 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for force reset password only administrator</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, new password sent to user</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public async System.Threading.Tasks.Task ForceResetPassword2Async(string email, System.Threading.CancellationToken cancellationToken)
@@ -4304,6 +4604,30 @@ namespace Domain0.Api.Client
                             return;
                         }
                         else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong phone or user with this phone not found", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("authentication required. jwt token in header", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("domain0.forceResetPassword permission required", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
@@ -4323,7 +4647,7 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for reset email</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, validation code sent to email</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task RequestChangeEmailAsync(ChangeEmailUserRequest change_email_request)
         {
@@ -4331,7 +4655,7 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for reset email</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, validation code sent to email</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public async System.Threading.Tasks.Task RequestChangeEmailAsync(ChangeEmailUserRequest change_email_request, System.Threading.CancellationToken cancellationToken)
@@ -4372,6 +4696,30 @@ namespace Domain0.Api.Client
                             return;
                         }
                         else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong password or incorrect new email", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("authentication required. jwt token in header", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("domain0.basic permission required", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
@@ -4392,7 +4740,7 @@ namespace Domain0.Api.Client
     
         /// <summary>Method for commit change email request</summary>
         /// <param name="code">user's pin code for change email</param>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, email was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task CommitChangeEmailAsync(long code)
         {
@@ -4401,7 +4749,7 @@ namespace Domain0.Api.Client
     
         /// <summary>Method for commit change email request</summary>
         /// <param name="code">user's pin code for change email</param>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully, email was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public async System.Threading.Tasks.Task CommitChangeEmailAsync(long code, System.Threading.CancellationToken cancellationToken)
@@ -4443,6 +4791,30 @@ namespace Domain0.Api.Client
                         if (status_ == "204") 
                         {
                             return;
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong code/user pair", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("authentication required. jwt token in header", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("domain0.basic permission required", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -4521,6 +4893,24 @@ namespace Domain0.Api.Client
                             }
                         }
                         else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("Incorrect ids format or unsupported auth type", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("Provide domain0 auth token", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "404") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("Profile not found", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
@@ -4542,7 +4932,7 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for change password</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task ChangeMyPasswordAsync(ChangePasswordRequest request)
         {
@@ -4550,7 +4940,7 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for change password</summary>
-        /// <returns>Success</returns>
+        /// <returns>operation completes successfully</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public async System.Threading.Tasks.Task ChangeMyPasswordAsync(ChangePasswordRequest request, System.Threading.CancellationToken cancellationToken)
@@ -4586,9 +4976,33 @@ namespace Domain0.Api.Client
                         ProcessResponse(client_, response_);
     
                         var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong old password or too easy new password", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
                         if (status_ == "204") 
                         {
                             return;
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("authentication required. jwt token in header", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("domain0.basic permission required", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -4668,6 +5082,30 @@ namespace Domain0.Api.Client
                             {
                                 throw new Domain0ClientException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
                             }
+                        }
+                        else
+                        if (status_ == "404") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("User with this profile id for the auth type wasn\'t found", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("incorrect ids format or unsupported auth type", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("Provide domain0 auth token", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("you need \'domain0.viewProfile\' permission", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -4754,6 +5192,30 @@ namespace Domain0.Api.Client
                             }
                         }
                         else
+                        if (status_ == "404") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("User with this profile id wasn\'t found", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("incorrect id format or unsupported auth type", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("Provide domain0 auth token", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("you need \'domain0.viewUsers\' permission", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
@@ -4838,6 +5300,30 @@ namespace Domain0.Api.Client
                             }
                         }
                         else
+                        if (status_ == "404") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("User with this profile id for the auth type wasn\'t found", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("incorrect id format", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("Provide domain0 auth token", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("you need \'domain0.viewUsers\' permission", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
@@ -4917,6 +5403,30 @@ namespace Domain0.Api.Client
                             {
                                 throw new Domain0ClientException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
                             }
+                        }
+                        else
+                        if (status_ == "404") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("User with this profile id for the auth type wasn\'t found", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("incorrect input format", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("Provide domain0 auth token", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("you need \'domain0.editUsers\' permission", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -5693,9 +6203,9 @@ namespace Domain0.Api.Client
     public partial class ForceCreateEmailUserRequest 
     {
         [Newtonsoft.Json.JsonConstructor]
-        public ForceCreateEmailUserRequest(bool @blockSmsSend, string @customEmailSubjectTemplate, string @customEmailTemplate, string @email, string @name, System.Collections.Generic.List<string> @roles)
+        public ForceCreateEmailUserRequest(bool @blockEmailSend, string @customEmailSubjectTemplate, string @customEmailTemplate, string @email, string @name, System.Collections.Generic.List<string> @roles)
         {
-            BlockSmsSend = @blockSmsSend;
+            BlockEmailSend = @blockEmailSend;
             CustomEmailSubjectTemplate = @customEmailSubjectTemplate;
             CustomEmailTemplate = @customEmailTemplate;
             Email = @email;
@@ -5703,8 +6213,8 @@ namespace Domain0.Api.Client
             Roles = @roles;
         }
     
-        [Newtonsoft.Json.JsonProperty("blockSmsSend", Required = Newtonsoft.Json.Required.Always)]
-        public bool BlockSmsSend { get; }
+        [Newtonsoft.Json.JsonProperty("blockEmailSend", Required = Newtonsoft.Json.Required.Always)]
+        public bool BlockEmailSend { get; }
     
         [Newtonsoft.Json.JsonProperty("customEmailSubjectTemplate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string CustomEmailSubjectTemplate { get; }
