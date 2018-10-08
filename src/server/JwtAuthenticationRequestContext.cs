@@ -27,6 +27,8 @@ namespace Domain0.Nancy.Infrastructure
             }
         }
 
+        public string ClientHost => nancyContext.Request.UserHostAddress;
+
         private readonly NancyContext nancyContext;
     }
 }

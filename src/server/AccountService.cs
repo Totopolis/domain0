@@ -826,21 +826,21 @@ namespace Domain0.Service
             var tokenRegistry = await tokenRegistrationRepository.FindById(id);
             if (tokenRegistry == null)
             {
-                logger.Warn($"User { requestContext.UserId } trying to refresh with unexisted or revoked token { id }");
+                logger.Warn($"User { requestContext.ClientHost } trying to refresh with unexisted or revoked token { id }");
                 throw new NotFoundException(nameof(tokenRegistry), id);
             }
 
             var account = await accountRepository.FindByUserId(tokenRegistry.UserId);
             if (account == null)
             {
-                logger.Warn($"User { requestContext.UserId } trying to refresh but the user does not exists { id }");
+                logger.Warn($"User { tokenRegistry.UserId } trying to refresh but the user does not exists { id }");
                 throw new NotFoundException(nameof(account), tokenRegistry.UserId);
             }
 
             var principal = tokenGenerator.Parse(tokenRegistry.AccessToken);
             var accessToken = tokenGenerator.GenerateAccessToken(account.Id, principal.GetPermissions());
 
-            logger.Info($"User { requestContext.UserId } get refreshed token");
+            logger.Info($"User { tokenRegistry.UserId } get refreshed token");
 
             return new AccessTokenResponse
             {
