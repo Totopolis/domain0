@@ -46,6 +46,9 @@ namespace Domain0.Nancy
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "UserProfile" }, Summary = "Method for receive own profile")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(UserProfile))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "Incorrect ids format or unsupported auth type")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "Provide domain0 auth token")]
+        [SwaggerResponse(HttpStatusCode.NotFound, "Profile not found")]
         public async Task<object> GetMyProfile()
         {
             this.RequiresAuthentication();
@@ -60,6 +63,10 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Users" }, Summary = "Method for receive profile by phone")]
         [RouteParam(ParamIn = ParameterIn.Path, Name = "phone", ParamType = typeof(long), Required = true, Description = "User phone")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(UserProfile))]
+        [SwaggerResponse(HttpStatusCode.NotFound, "User with this profile id wasn't found")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "incorrect id format or unsupported auth type")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "Provide domain0 auth token")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "you need 'domain0.viewUsers' permission")]
         public async Task<object> GetUserByPhone()
         {
             this.RequiresAuthentication();
@@ -83,6 +90,10 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Users" }, Summary = "Method for receive profile by user id")]
         [RouteParam(ParamIn = ParameterIn.Path, Name = "id", ParamType = typeof(int), Required = true, Description = "User id")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(UserProfile))]
+        [SwaggerResponse(HttpStatusCode.NotFound, "User with this profile id for the auth type wasn't found")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "incorrect id format")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "Provide domain0 auth token")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "you need 'domain0.viewUsers' permission")]
         public async Task<object> GetUserById()
         {
             this.RequiresAuthentication();
@@ -102,6 +113,10 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Users" }, Summary = "Method for change user data")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(UserProfile), Required = true, Description = "user data")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(UserProfile))]
+        [SwaggerResponse(HttpStatusCode.NotFound, "User with this profile id for the auth type wasn't found")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "incorrect input format")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "Provide domain0 auth token")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "you need 'domain0.editUsers' permission")]
         public async Task<object> UpdateUser()
         {
             this.RequiresAuthentication();
@@ -125,9 +140,18 @@ namespace Domain0.Nancy
             Required = true,
             Description = "parameters for change password")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong old password or too easy new password")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.NoContent, "operation completes successfully")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.basic permission required")]
         public async Task<object> ChangeMyPassword()
         {
             this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_BASIC));
+
             var request = this.BindAndValidateModel<ChangePasswordRequest>();
             try
             {
@@ -150,6 +174,10 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "UserProfile" }, Summary = "Method for receive profiles by user ids")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(UserProfileFilter), Required = true, Description = "Profile filter")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(IEnumerable<UserProfile>))]
+        [SwaggerResponse(HttpStatusCode.NotFound, "User with this profile id for the auth type wasn't found")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "incorrect ids format or unsupported auth type")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "Provide domain0 auth token")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "you need 'domain0.viewProfile' permission")]
         public async Task<object> GetUserByFilter()
         {
             this.RequiresAuthentication();

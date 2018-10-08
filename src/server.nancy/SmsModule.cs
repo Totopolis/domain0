@@ -4,7 +4,6 @@ using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Swagger.Annotations.Attributes;
 using Swagger.ObjectModel;
-using System.Collections.Generic;
 using System.Security;
 using System.Threading.Tasks;
 using Domain0.Exceptions;
@@ -63,6 +62,8 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "phone", ParamType = typeof(long), Required = true, Description = "user's phone with single number, started from 7 for Russia, 71231234567 for example")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone format or user with this phone already existed")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
         public async Task<object> Register()
         {
             var phone = this.Bind<long>();
@@ -86,6 +87,8 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(SmsLoginRequest), Required = true, Description = "parameters for login")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(AccessTokenResponse))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone format / wrong phone and password pair")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
         public async Task<object> Login()
         {
             var request = this.BindAndValidateModel<SmsLoginRequest>();
@@ -107,6 +110,10 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(ChangePasswordRequest), Required = true, Description = "parameters for change password")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong old password or too easy new password")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.basic permission required")]
         public async Task<object> ChangePassword()
         {
             this.RequiresAuthentication();
@@ -134,7 +141,9 @@ namespace Domain0.Nancy
         [Route(Produces = new string[] { })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for reset password")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "phone", ParamType = typeof(long), Required = true, Description = "user's phone with single number, started from 7 for Russia, 71231234567 for example")]
-        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "user with this phone doesn't exist")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.NoContent, "operation completes successfully, code has been sent")]
         public async Task<object> RequestResetPassword()
         {
             var phone = this.BindAndValidateModel<long>();
@@ -148,6 +157,8 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Sms" }, Summary = "Method for check user exists")]
         [RouteParam(ParamIn = ParameterIn.Query, Name = "phone", ParamType = typeof(long), Required = true, Description = "user's phone with single number, started from 7 for Russia, 71231234567 for example")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "True if user exists else false", Model = typeof(bool))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone format")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
         public async Task<object> DoesUserExist()
         {
             decimal phone;
@@ -167,6 +178,8 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Sms" }, Summary = "Method for get phone by user id")]
         [RouteParam(ParamIn = ParameterIn.Query, Name = "id", ParamType = typeof(int), Required = true, Description = "User Id")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "User phone", Model = typeof(long))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone format")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
         public async Task<object> PhoneByUserId()
         {
             this.RequiresAuthentication();
@@ -208,6 +221,10 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(ForceCreateUserRequest), Required = true, Description = "parameters for force create")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone or user with this phone already created")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.forceCreateUser permission required")]
         public async Task<object> ForceCreateUser()
         {
             this.RequiresAuthentication();
@@ -233,7 +250,11 @@ namespace Domain0.Nancy
         [Route(Produces = new string[] { })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for force change phone only administrator")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "phone", ParamType = typeof(ChangePhoneRequest), Required = true, Description = "parameters for change phone")]
-        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.NoContent, "operation completes successfully, phone was changed")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong code/user pair")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.forceChangePhone permission required")]
         public async Task<object> ForceChangePhone()
         {
             this.RequiresAuthentication();
@@ -257,7 +278,11 @@ namespace Domain0.Nancy
             ParamType = typeof(long), 
             Required = true, 
             Description = "user's phone with single number, started from 7 for Russia, 71234561234 for example")]
-        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.NoContent, "operation completes successfully, new password sent to user")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone or user with this phone not found")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.forceResetPassword permission required")]
         public async Task<object> ForceResetPassword()
         {
             this.RequiresAuthentication();
@@ -281,7 +306,11 @@ namespace Domain0.Nancy
             ParamType = typeof(ChangePhoneUserRequest), 
             Required = true, 
             Description = "request with password and new phone number")]
-        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.NoContent, "operation completes successfully, validation code sent to phone")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong password or incorrect new phone")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.basic permission required")]
         public async Task<object> RequestChangePhone()
         {
             this.RequiresAuthentication();
@@ -305,7 +334,11 @@ namespace Domain0.Nancy
             ParamType = typeof(long),
             Required = true,
             Description = "user's pin code for change phone")]
-        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.NoContent, "operation completes successfully, phone was changed")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong code/user pair")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.basic permission required")]
         public async Task<object> CommitChangePhone()
         {
             this.RequiresAuthentication();

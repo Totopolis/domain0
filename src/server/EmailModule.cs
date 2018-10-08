@@ -61,6 +61,8 @@ namespace Domain0.Nancy
             Required = true, 
             Description = "user's email")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong email format or user with this email already existed")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
         public async Task<object> RegisterByEmail()
         {
             var request = this.BindAndValidateModel<RegisterRequest>();
@@ -88,6 +90,8 @@ namespace Domain0.Nancy
             ParamType = typeof(EmailLoginRequest), 
             Required = true, Description = "parameters for login")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(AccessTokenResponse))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong email format / wrong email and password pair")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
         public async Task<object> LoginByEmail()
         {
             var request = this.BindAndValidateModel<EmailLoginRequest>();
@@ -114,6 +118,8 @@ namespace Domain0.Nancy
             Required = true, 
             Description = "user's email")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "True if user exists else false", Model = typeof(bool))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong email format")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
         public async Task<object> DoesUserExistByEmail()
         {
             var request = this.BindAndValidateModel<RegisterRequest>();
@@ -132,7 +138,9 @@ namespace Domain0.Nancy
             ParamType = typeof(RegisterRequest), 
             Required = true, 
             Description = "user's email")]
-        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "user with this email doesn't exist")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.NoContent, "operation completes successfully, code has been sent")]
         public async Task<object> RequestResetPasswordByEmail()
         {
             var request = this.BindAndValidateModel<RegisterRequest>();
@@ -151,7 +159,11 @@ namespace Domain0.Nancy
             ParamType = typeof(ChangeEmailRequest), 
             Required = true, 
             Description = "parameters for change email")]
-        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.NoContent, "operation completes successfully, email was changed")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong code/user pair")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.forceChangePhone permission required")]
         public async Task<object> ForceChangeEmail()
         {
             this.RequiresAuthentication();
@@ -176,6 +188,10 @@ namespace Domain0.Nancy
             Required = true, 
             Description = "parameters for force create")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong email or user with this email already created")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.forceCreateUser permission required")]
         public async Task<object> ForceCreateUser()
         {
             this.RequiresAuthentication();
@@ -206,7 +222,11 @@ namespace Domain0.Nancy
             ParamType = typeof(string),
             Required = true,
             Description = "user's email")]
-        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.NoContent, "operation completes successfully, new password sent to user")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone or user with this phone not found")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.forceResetPassword permission required")]
         public async Task<object> ForceResetPassword()
         {
             this.RequiresAuthentication();
@@ -230,7 +250,11 @@ namespace Domain0.Nancy
             ParamType = typeof(ChangeEmailUserRequest),
             Required = true,
             Description = "request with password and new email")]
-        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.NoContent, "operation completes successfully, validation code sent to email")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong password or incorrect new email")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.basic permission required")]
         public async Task<object> RequestChangeEmail()
         {
             this.RequiresAuthentication();
@@ -254,7 +278,11 @@ namespace Domain0.Nancy
             ParamType = typeof(long),
             Required = true,
             Description = "user's pin code for change email")]
-        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.NoContent, "operation completes successfully, email was changed")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong code/user pair")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.basic permission required")]
         public async Task<object> CommitChangeEmail()
         {
             this.RequiresAuthentication();
