@@ -5,6 +5,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using Domain0.Exceptions;
 
 namespace Domain0.Service
 {
@@ -92,47 +93,61 @@ namespace Domain0.Service
 
         public ClaimsPrincipal Parse(string accessToken)
         {
-            var parameters = new TokenValidationParameters
+            try
             {
-                IssuerSigningKey = _signatureKey,
-                NameClaimType = ClaimTypes.Name,
-                ValidateAudience = true,
-                ValidAudience = _settings.Audience,
-                ValidIssuer = _settings.Issuer,
-            };
-            var principal = _handler.ValidateToken(accessToken, parameters, out var token);
-            var identity = (ClaimsIdentity)principal.Identity;
-            identity.AddClaim(new Claim("id_token", accessToken));
-            foreach (var role in principal.FindAll(TokenClaims.CLAIM_PERMISSIONS))
-            foreach (var permission in JsonConvert.DeserializeObject<string[]>(role.Value))
-                identity.AddClaim(new Claim(ClaimTypes.Role, permission));
+                var parameters = new TokenValidationParameters
+                {
+                    IssuerSigningKey = _signatureKey,
+                    NameClaimType = ClaimTypes.Name,
+                    ValidateAudience = true,
+                    ValidAudience = _settings.Audience,
+                    ValidIssuer = _settings.Issuer,
+                };
+                var principal = _handler.ValidateToken(accessToken, parameters, out var token);
+                var identity = (ClaimsIdentity)principal.Identity;
+                identity.AddClaim(new Claim("id_token", accessToken));
+                foreach (var role in principal.FindAll(TokenClaims.CLAIM_PERMISSIONS))
+                foreach (var permission in JsonConvert.DeserializeObject<string[]>(role.Value))
+                    identity.AddClaim(new Claim(ClaimTypes.Role, permission));
 
-            var subClaim = principal.FindFirst(ClaimTypes.NameIdentifier);
-            if (subClaim != null)
-                identity.AddClaim(new Claim(ClaimTypes.Name, subClaim.Value));
+                var subClaim = principal.FindFirst(ClaimTypes.NameIdentifier);
+                if (subClaim != null)
+                    identity.AddClaim(new Claim(ClaimTypes.Name, subClaim.Value));
 
-            return principal;
+                return principal;
+            }
+            catch (Exception ex)
+            {
+                throw new TokenParseException("token parse exception.", ex);
+            }
         }
 
         public int GetTid(string refreshToken)
         {
-            var parameters = new TokenValidationParameters
+            try
             {
-                IssuerSigningKey = _signatureKey,
-                NameClaimType = ClaimTypes.Name,
-                ValidateAudience = true,
-                ValidAudience = _settings.Audience,
-                ValidIssuer = _settings.Issuer,
-            };
-            var principal = _handler.ValidateToken(refreshToken, parameters, out var token);
+                var parameters = new TokenValidationParameters
+                {
+                    IssuerSigningKey = _signatureKey,
+                    NameClaimType = ClaimTypes.Name,
+                    ValidateAudience = true,
+                    ValidAudience = _settings.Audience,
+                    ValidIssuer = _settings.Issuer,
+                };
+                var principal = _handler.ValidateToken(refreshToken, parameters, out var token);
 
-            // refresh token should have tid field
-            var tokenIdClaim = principal.Claims.First(x =>
-                x.Type.Equals("http://schemas.microsoft.com/identity/claims/tenantid") 
-                || x.Type.Equals(TokenClaims.CLAIM_TOKEN_ID));
+                // refresh token should have tid field
+                var tokenIdClaim = principal.Claims.First(x =>
+                    x.Type.Equals("http://schemas.microsoft.com/identity/claims/tenantid") 
+                    || x.Type.Equals(TokenClaims.CLAIM_TOKEN_ID));
 
-            // tid should be a int
-            return int.Parse(tokenIdClaim.Value);
+                // tid should be a int
+                return int.Parse(tokenIdClaim.Value);
+            }
+            catch (Exception ex)
+            {
+                throw new TokenParseException("token validation exception.", ex);
+            }
         }
     }
 }

@@ -106,7 +106,11 @@ namespace Domain0.Nancy.Infrastructure
                         .WithStatusCode(HttpStatusCode.BadRequest)
                         .WithHeader("X-Status-Reason", "validation error")
                         .WithReasonPhrase("validation error")
-                        .WithMediaRangeModel("application/json", new List<ModelValidationError> { new ModelValidationError(binding.BoundType.Name, "couldnt deserialize") });
+                        .WithMediaRangeModel("application/json", new List<ModelValidationError> { new ModelValidationError(binding.BoundType.Name, "could`t deserialize") });
+                case TokenParseException _:
+                    return new Negotiator(ctx)
+                        .WithStatusCode(HttpStatusCode.Unauthorized)
+                        .WithReasonPhrase("no luck");
                 default:
                     var logger = requestContainer.Resolve<ILogger>();
                     logger.Error(ex, "Unexpected exception");
@@ -126,6 +130,8 @@ namespace Domain0.Nancy.Infrastructure
                     return HttpStatusCode.NotFound;
                 case ModelBindingException _:
                     return HttpStatusCode.BadRequest;
+                case TokenParseException _:
+                    return HttpStatusCode.Unauthorized;
                 default:
                     return HttpStatusCode.InternalServerError;
             }
