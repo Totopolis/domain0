@@ -139,7 +139,6 @@ namespace Domain0.Nancy
             ParamType = typeof(ChangePasswordRequest),
             Required = true,
             Description = "parameters for change password")]
-        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "wrong old password or too easy new password")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
         [SwaggerResponse(HttpStatusCode.NoContent, "operation completes successfully")]
