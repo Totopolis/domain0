@@ -10,6 +10,7 @@ using Domain0.Exceptions;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
+using NLog;
 
 namespace Domain0.Service
 {
@@ -86,6 +87,7 @@ namespace Domain0.Service
             ICultureRequestContext cultureRequestContextInstance,
             IEmailClient emailClientInstance,
             IEmailRequestRepository emailRequestRepositoryInstance,
+            ILogger loggerInstance,
             IMapper mapperInstance,
             IMessageTemplateRepository messageTemplateRepositoryInstance,
             IPasswordGenerator passwordGeneratorInstance,
@@ -103,6 +105,7 @@ namespace Domain0.Service
             cultureRequestContext = cultureRequestContextInstance;
             emailClient = emailClientInstance;
             emailRequestRepository = emailRequestRepositoryInstance;
+            logger = loggerInstance;
             mapper = mapperInstance;
             messageTemplateRepository = messageTemplateRepositoryInstance;
             passwordGenerator = passwordGeneratorInstance;
@@ -120,11 +123,17 @@ namespace Domain0.Service
         public async Task Register(decimal phone)
         {
             if (await DoesUserExists(phone))
+            {
+                logger.Warn($"Attempt to register an existing user! Phone: {phone}");
                 throw new SecurityException("user exists");
+            }
 
             var existed = await smsRequestRepository.Pick(phone);
             if (existed != null)
+            {
+                logger.Warn($"Attempt to get pin multiple times! Phone: {phone}");
                 return;
+            }
 
             var password = passwordGenerator.GeneratePassword();
             var expiredAt = accountServiceSettings.PinExpirationTime;
@@ -134,6 +143,7 @@ namespace Domain0.Service
                 Password = password,
                 ExpiredAt = DateTime.UtcNow.Add(expiredAt)
             });
+            logger.Info($"New user registration request. Phone: {phone}");
 
             var template = await messageTemplateRepository.GetTemplate(
                 MessageTemplateName.RegisterTemplate,
@@ -142,16 +152,23 @@ namespace Domain0.Service
             var message = string.Format(template, password, expiredAt.TotalMinutes);
 
             await smsClient.Send(phone, message);
+            logger.Info($"New user pin has been sent to phone: {phone}");
         }
 
         public async Task Register(string email)
         {
             if (await DoesUserExists(email))
+            {
+                logger.Warn($"Attempt to register an existing user! Email: {email}");
                 throw new SecurityException("user exists");
+            }
 
             var existed = await emailRequestRepository.Pick(email);
             if (existed != null)
+            {
+                logger.Warn($"Attempt to get pin multiple times! Email: {email}");
                 return;
+            }
 
             var password = passwordGenerator.GeneratePassword();
             var expiredAt = accountServiceSettings.PinExpirationTime;
@@ -161,6 +178,7 @@ namespace Domain0.Service
                 Password = password,
                 ExpiredAt = DateTime.UtcNow.Add(expiredAt)
             });
+            logger.Info($"New user registration request. Email: {email}");
 
             var subjectTemplate = await messageTemplateRepository.GetTemplate(
                 MessageTemplateName.RegisterSubjectTemplate,
@@ -175,6 +193,8 @@ namespace Domain0.Service
             var subject = string.Format(subjectTemplate, email, "domain0");
 
             await emailClient.Send(subject, email, message);
+            logger.Info($"New user pin has been sent to Email: {email}");
+
         }
 
         public async Task<bool> DoesUserExists(decimal phone)
@@ -189,15 +209,18 @@ namespace Domain0.Service
             return account != null;
         }
 
-
         public async Task<UserProfile> CreateUser(ForceCreateUserRequest request)
         {
+            logger.Info($"User width id: { requestContext.UserId } execute force create user with phone: {request.Phone}");
             if (!request.Phone.HasValue)
                 throw new ArgumentException(nameof(ForceCreateUserRequest.Phone));
 
             var phone = request.Phone.Value;
             if (await DoesUserExists(phone))
+            {
+                logger.Warn($"Attempt to register an existing user! phone: {request.Phone}");
                 throw new SecurityException("user exists");
+            }
 
             var password = passwordGenerator.GeneratePassword();
             var id = await accountRepository.Insert(new Account
@@ -220,7 +243,10 @@ namespace Domain0.Service
 
             var result = mapper.Map<UserProfile>(await accountRepository.FindByLogin(phone.ToString()));
             if (request.BlockSmsSend)
+            {
+                logger.Info($"User created. phone: {request.Phone}");
                 return result;
+            }
 
             string message;
             if (string.IsNullOrEmpty(request.CustomSmsTemplate))
@@ -236,17 +262,24 @@ namespace Domain0.Service
 
             await smsClient.Send(request.Phone.Value, message);
 
+            logger.Info($"User created. New user pin has been sent to phone: {request.Phone}");
+
             return result;
         }
 
         public async Task<UserProfile> CreateUser(ForceCreateEmailUserRequest request)
         {
+            logger.Info($"User width id: { requestContext.UserId } execute force create user with email: {request.Email}");
+
             if (string.IsNullOrWhiteSpace(request.Email))
                 throw new ArgumentException(nameof(ForceCreateEmailUserRequest.Email));
 
             var email = request.Email;
             if (await DoesUserExists(email))
+            {
+                logger.Warn($"Attempt to register an existing user! email: {request.Email}");
                 throw new SecurityException("user exists");
+            }
 
             var password = passwordGenerator.GeneratePassword();
             var id = await accountRepository.Insert(new Account
@@ -269,8 +302,11 @@ namespace Domain0.Service
                 await roleRepository.AddUserToRoles(id, request.Roles.ToArray());
 
             var result = mapper.Map<UserProfile>(await accountRepository.FindByLogin(email));
-            if (request.BlockSmsSend)
+            if (request.BlockEmailSend)
+            {
+                logger.Info($"User created. Email: {request.Email}");
                 return result;
+            }
 
             string message;
             string subject;
@@ -297,6 +333,8 @@ namespace Domain0.Service
             }
 
             await emailClient.Send(subject, request.Email, message);
+
+            logger.Info($"User created. New user pin has been sent to email: {request.Email}");
 
             return result;
         }
@@ -377,16 +415,23 @@ namespace Domain0.Service
         public async Task<AccessTokenResponse> Login(SmsLoginRequest request)
         {
             var phone = decimal.Parse(request.Phone);
-            var hashPassword = passwordGenerator.HashPassword(request.Password);
 
             // login account
             var account = await accountRepository.FindByLogin(request.Phone);
             if (account != null && passwordGenerator.CheckPassword(request.Password, account.Password))
+            {
+                logger.Info($"User {request.Phone} logged in");
                 return await GetTokenResponse(account);
+            }
 
             // remove try confirm registration
             if (!await smsRequestRepository.ConfirmRegister(phone, request.Password))
+            {
+                logger.Warn($"User {request.Phone} wrong password!");
                 return null;
+            }
+
+            var hashPassword = passwordGenerator.HashPassword(request.Password);
 
             // confirm sms request
             if (account != null)
@@ -394,6 +439,7 @@ namespace Domain0.Service
                 // change password
                 account.Password = hashPassword;
                 await accountRepository.Update(account);
+                logger.Info($"User {request.Phone} change password successful!");
             }
             else
             {
@@ -410,6 +456,7 @@ namespace Domain0.Service
                 account.Id = userId;
 
                 await roleRepository.AddUserToDefaultRoles(userId);
+                logger.Info($"User {request.Phone} account created successful!");
             }
 
             return await GetTokenResponse(account);
@@ -423,11 +470,17 @@ namespace Domain0.Service
             // login account
             var account = await accountRepository.FindByLogin(email);
             if (account != null && passwordGenerator.CheckPassword(request.Password, account.Password))
+            {
+                logger.Info($"User { request.Email } logged in");
                 return await GetTokenResponse(account);
+            }
 
             // remove try confirm registration
             if (!await emailRequestRepository.ConfirmRegister(email, request.Password))
+            {
+                logger.Warn($"User { request.Email } wrong password!");
                 return null;
+            }
 
             // confirm email request
             if (account != null)
@@ -435,6 +488,7 @@ namespace Domain0.Service
                 // change password
                 account.Password = hashPassword;
                 await accountRepository.Update(account);
+                logger.Info($"User { request.Email } change password successful!");
             }
             else
             {
@@ -451,6 +505,7 @@ namespace Domain0.Service
                 account.Id = userId;
 
                 await roleRepository.AddUserToDefaultRoles(userId);
+                logger.Info($"User { request.Email } account created successful!");
             }
 
             return await GetTokenResponse(account);
@@ -460,20 +515,30 @@ namespace Domain0.Service
         {
             var account = await accountRepository.FindByUserId(requestContext.UserId);
             if (account == null)
+            {
+                logger.Warn($"Attempt to change password for unexisted user { requestContext.UserId }!");
                 throw new NotFoundException(nameof(IRequestContext.UserId), "account not found");
+            }
 
             if (!passwordGenerator.CheckPassword(request.OldPassword, account.Password))
+            {
+                logger.Warn($"Attempt to change password for user { requestContext.UserId }. Wrong password!");
                 throw new SecurityException("password not match");
+            }
 
             account.Password = passwordGenerator.HashPassword(request.NewPassword);
             await accountRepository.Update(account);
+            logger.Warn($"Change password for user { requestContext.UserId } successful!");
         }
 
         public async Task RequestResetPassword(decimal phone)
         {
             var account = await accountRepository.FindByPhone(phone);
             if (account == null)
+            {
+                logger.Warn($"Attempt to reset password for unexisted user { phone }!");
                 throw new NotFoundException(nameof(phone), "account not found");
+            }
 
             var password = passwordGenerator.GeneratePassword();
             var expiredAt = accountServiceSettings.PinExpirationTime;
@@ -491,13 +556,17 @@ namespace Domain0.Service
 
             var message = string.Format(template, password, expiredAt.TotalMinutes);
             await smsClient.Send(phone, message);
+            logger.Info($"Attempt to reset password. New user pin has been sent to phone: { phone }");
         }
 
         public async Task RequestResetPassword(string email)
         {
             var account = await accountRepository.FindByLogin(email);
             if (account == null)
+            {
+                logger.Warn($"Attempt to reset password for unexisted user { email }!");
                 throw new NotFoundException(nameof(email), "account not found");
+            }
 
             var password = passwordGenerator.GeneratePassword();
             var expiredAt = accountServiceSettings.PinExpirationTime;
@@ -507,7 +576,6 @@ namespace Domain0.Service
                 Password = password,
                 ExpiredAt = DateTime.UtcNow.Add(expiredAt)
             });
-
 
             var subjectTemplate = await messageTemplateRepository.GetTemplate(
                 MessageTemplateName.RequestResetSubjectTemplate,
@@ -523,6 +591,7 @@ namespace Domain0.Service
             var subject = string.Format(subjectTemplate, "domain0", account.Name);
 
             await emailClient.Send(subject, email, message);
+            logger.Info($"Attempt to reset password. New user pin has been sent to email: { email }");
         }
 
         public async Task RequestChangePhone(ChangePhoneUserRequest changePhoneRequest)
@@ -531,10 +600,16 @@ namespace Domain0.Service
 
             var account = await accountRepository.FindByUserId(userId);
             if (account == null)
+            {
+                logger.Warn($"Attempt to change phone for unexisted user { userId }");
                 throw new NotFoundException(nameof(account), "account not found");
+            }
 
             if (!passwordGenerator.CheckPassword(changePhoneRequest.Password, account.Password))
+            {
+                logger.Warn($"User { userId } tries to change phone. But provide a wrong password!");
                 throw new SecurityException("password not match");
+            }
 
             var pin = passwordGenerator.GeneratePassword();
             var expiredAt = accountServiceSettings.PinExpirationTime;
@@ -553,6 +628,7 @@ namespace Domain0.Service
 
             var message = string.Format(template, pin, expiredAt.TotalMinutes);
             await smsClient.Send(changePhoneRequest.Phone, message);
+            logger.Info($"Attempt to change phone for user { userId }. New user pin has been sent to phone: { changePhoneRequest.Phone }");
         }
 
         public async Task CommitChangePhone(long pin)
@@ -561,16 +637,23 @@ namespace Domain0.Service
 
             var account = await accountRepository.FindByUserId(userId);
             if (account == null)
+            {
+                logger.Warn($"Attempt to change phone for unexisted user {userId}");
                 throw new NotFoundException(nameof(account), "account not found");
+            }
 
             var smsRequest = await smsRequestRepository.PickByUserId(userId);
 
-            if (pin.ToString() != smsRequest.Password)
+            if (pin.ToString() != smsRequest?.Password)
+            {
+                logger.Warn($"Attempt to change phone for user { userId }. Wrong pin!");
                 throw new SecurityException("wrong pin");
+            }
 
             account.Phone = smsRequest.Phone;
             account.Login = smsRequest.Phone.ToString(CultureInfo.InvariantCulture);
             await accountRepository.Update(account);
+            logger.Warn($"User { userId } changed phone to { account.Phone }");
         }
 
         public async Task RequestChangeEmail(ChangeEmailUserRequest changeEmailRequest)
@@ -579,10 +662,16 @@ namespace Domain0.Service
 
             var account = await accountRepository.FindByUserId(userId);
             if (account == null)
+            {
+                logger.Warn($"Attempt to change email for unexisted user {userId}");
                 throw new NotFoundException(nameof(account), "account not found");
+            }
 
             if (!passwordGenerator.CheckPassword(changeEmailRequest.Password, account.Password))
+            {
+                logger.Warn($"User { userId } tries to change email. But provide a wrong password!");
                 throw new SecurityException("password not match");
+            }
 
             var pin = passwordGenerator.GeneratePassword();
             var expiredAt = accountServiceSettings.EmailCodeExpirationTime;
@@ -606,6 +695,7 @@ namespace Domain0.Service
 
             var message = string.Format(template, pin, expiredAt.TotalMinutes);
             await emailClient.Send(subject, changeEmailRequest.Email, message);
+            logger.Info($"Attempt to change phone for user { userId }. New user pin has been sent to phone: { changeEmailRequest.Email }");
         }
 
         public async Task CommitChangeEmail(long pin)
@@ -614,16 +704,24 @@ namespace Domain0.Service
 
             var account = await accountRepository.FindByUserId(userId);
             if (account == null)
+            {
+                logger.Warn($"Attempt to change email for unexisted user {userId}");
                 throw new NotFoundException(nameof(account), "account not found");
+            }
 
             var emailRequest = await emailRequestRepository.PickByUserId(userId);
 
-            if (pin.ToString() != emailRequest.Password)
+            if (pin.ToString() != emailRequest?.Password)
+            {
+                logger.Warn($"Attempt to change email for user {userId}. Wrong pin!");
                 throw new SecurityException("wrong pin");
+            }
 
             account.Login = emailRequest.Email;
             account.Email = emailRequest.Email;
             await accountRepository.Update(account);
+
+            logger.Info($"User { userId } changed email to { account.Email }");
         }
 
 
@@ -631,33 +729,44 @@ namespace Domain0.Service
         {
             var account = await accountRepository.FindByUserId(request.UserId);
             if (account == null)
+            {
+                logger.Warn($"User {requestContext.UserId} attempt to force change phone for unexisted user { request.UserId }");
                 throw new NotFoundException(nameof(request.UserId), "account not found");
+            }
 
             if (account.Login == account.Phone.ToString())
                 account.Login = request.NewPhone.ToString();
             account.Phone = request.NewPhone;
 
             await accountRepository.Update(account);
+            logger.Info($"User {requestContext.UserId} changed phone for user { request.UserId }");
         }
 
         public async Task ForceChangeEmail(ChangeEmailRequest request)
         {
             var account = await accountRepository.FindByUserId(request.UserId);
             if (account == null)
+            {
+                logger.Warn($"User {requestContext.UserId} attempt to force change email for unexisted user { request.UserId }");
                 throw new NotFoundException(nameof(request.UserId), "account not found");
+            }
 
             if (account.Login == account.Email)
                 account.Login = request.NewEmail;
             account.Email = request.NewEmail;
 
             await accountRepository.Update(account);
+            logger.Info($"User {requestContext.UserId} changed email for user { request.UserId }");
         }
 
         public async Task ForceResetPassword(long phone)
         {
             var account = await accountRepository.FindByPhone(phone);
             if (account == null)
+            {
+                logger.Warn($"User { requestContext.UserId } trys reset password for unexisted user { phone }");
                 throw new NotFoundException(nameof(phone), "account not found");
+            }
 
             var newPassword = passwordGenerator.GeneratePassword();
             var hashNewPassword = passwordGenerator.HashPassword(newPassword);
@@ -665,6 +774,7 @@ namespace Domain0.Service
             // change password
             account.Password = hashNewPassword;
             await accountRepository.Update(account);
+            logger.Info($"User { requestContext.UserId } reset password for user { account.Id }");
 
             var template = await messageTemplateRepository.GetTemplate(
                 MessageTemplateName.ForcePasswordResetTemplate,
@@ -673,13 +783,17 @@ namespace Domain0.Service
 
             var message = string.Format(template, newPassword);
             await smsClient.Send(phone, message);
+            logger.Info($"New password sent to user { account.Id }");
         }
 
         public async Task ForceResetPassword(string email)
         {
             var account = await accountRepository.FindByLogin(email);
             if (account == null)
+            {
+                logger.Warn($"User { requestContext.UserId } tries reset password for unexisted user { email }");
                 throw new NotFoundException(nameof(email), "account not found");
+            }
 
             var newPassword = passwordGenerator.GeneratePassword();
             var hashNewPassword = passwordGenerator.HashPassword(newPassword);
@@ -687,6 +801,8 @@ namespace Domain0.Service
             // change password
             account.Password = hashNewPassword;
             await accountRepository.Update(account);
+            logger.Info($"User { requestContext.UserId } reset password for user { account.Id }");
+
 
             var template = await messageTemplateRepository.GetTemplate(
                 MessageTemplateName.ForcePasswordResetTemplate,
@@ -701,6 +817,7 @@ namespace Domain0.Service
             var subject = string.Format(subjectTemplate, email, "domain0");
             var message = string.Format(template, newPassword);
             await emailClient.Send(subject, email, message);
+            logger.Info($"New password sent to user { account.Id }");
         }
 
         public async Task<AccessTokenResponse> Refresh(string refreshToken)
@@ -708,13 +825,22 @@ namespace Domain0.Service
             var id = tokenGenerator.GetTid(refreshToken);
             var tokenRegistry = await tokenRegistrationRepository.FindById(id);
             if (tokenRegistry == null)
+            {
+                logger.Warn($"User { requestContext.UserId } trying to refresh with unexisted or revoked token { id }");
                 throw new NotFoundException(nameof(tokenRegistry), id);
+            }
+
             var account = await accountRepository.FindByUserId(tokenRegistry.UserId);
             if (account == null)
+            {
+                logger.Warn($"User { requestContext.UserId } trying to refresh but the user does not exists { id }");
                 throw new NotFoundException(nameof(account), tokenRegistry.UserId);
+            }
 
             var principal = tokenGenerator.Parse(tokenRegistry.AccessToken);
             var accessToken = tokenGenerator.GenerateAccessToken(account.Id, principal.GetPermissions());
+
+            logger.Info($"User { requestContext.UserId } get refreshed token");
 
             return new AccessTokenResponse
             {
@@ -737,7 +863,11 @@ namespace Domain0.Service
         {
             var account = await accountRepository.FindByPhone(phone);
             if (account == null)
+            {
+                logger.Warn($"User { requestContext.UserId } trying to refresh profile of not existed user with phone: { phone }");
                 throw new NotFoundException(nameof(account), phone);
+            }
+
             return mapper.Map<UserProfile>(account);
         }
 
@@ -745,7 +875,11 @@ namespace Domain0.Service
         {
             var account = await accountRepository.FindByUserId(id);
             if (account == null)
+            {
+                logger.Warn($"User { requestContext.UserId } trying to refresh profile of not existed user with id: { id }");
                 throw new NotFoundException(nameof(account), id);
+            }
+
             return mapper.Map<UserProfile>(account);
         }
 
@@ -763,12 +897,16 @@ namespace Domain0.Service
 
             var updatedAccount = await accountRepository.FindByUserId(account.Id);
 
+            logger.Info($"User { requestContext.UserId } update profile of user: {account.Id}");
+
             return mapper.Map<UserProfile>(updatedAccount);
         }
 
         private readonly IEmailClient emailClient;
 
         private readonly IEmailRequestRepository emailRequestRepository;
+
+        private readonly ILogger logger;
 
         private readonly IMapper mapper;
 

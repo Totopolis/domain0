@@ -282,7 +282,7 @@ namespace Domain0.Test
                         format, 
                         new ForceCreateEmailUserRequest
                         {
-                            BlockSmsSend = false,
+                            BlockEmailSend = false,
                             Email = email,
                             Name = "test",
                             Roles = roles,

@@ -17,7 +17,7 @@ namespace Domain0.Model
             {
                 FieldSetting<ForceCreateEmailUserRequest>.CreateString(1, c => c.Email, (c, v) => c.Email = v, c => !string.IsNullOrWhiteSpace(c.Email)),
                 FieldSetting<ForceCreateEmailUserRequest>.CreateString(2, c => c.Name, (c, v) => c.Name = v, c => c.Name?.Length > 0),
-                FieldSetting<ForceCreateEmailUserRequest>.CreateBool(3, c => c.BlockSmsSend, (c, v) => c.BlockSmsSend = v),
+                FieldSetting<ForceCreateEmailUserRequest>.CreateBool(3, c => c.BlockEmailSend, (c, v) => c.BlockEmailSend = v),
                 FieldSetting<ForceCreateEmailUserRequest>.CreateStringArray(4, c => c.Roles, (c, v) => c.Roles.Add(v), c => c.Roles?.Count > 0),
                 FieldSetting<ForceCreateEmailUserRequest>.CreateString(
                     5, 
@@ -43,7 +43,7 @@ namespace Domain0.Model
         /// <summary>
         /// Prevent sms send to user
         /// </summary>
-        public bool BlockSmsSend { get; set; }
+        public bool BlockEmailSend { get; set; }
         /// <summary>
         /// Roles to assign
         /// </summary>
