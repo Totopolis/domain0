@@ -130,7 +130,8 @@ namespace Domain0.Test
             }
 
             accountRepositoryMock.Verify(t => t.FindByLogin(It.Is<string>(e => e == testPhone.ToString())), Times.Once);
-            passwordGeneratorMock.Verify(t => t.HashPassword(It.Is<string>(p => p == testPassword)), Times.Once);
+            passwordGeneratorMock.Verify(t => 
+                t.CheckPassword(testPassword, It.IsAny<string>()), Times.Once);
         }
 
         [Fact]
