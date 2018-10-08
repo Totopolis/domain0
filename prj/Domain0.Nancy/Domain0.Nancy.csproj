@@ -239,6 +239,9 @@
     <Compile Include="..\..\src\server\NancyModuleExtensions.cs">
       <Link>Infrastructure\NancyModuleExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\NancySecurityCriticalActionsHandling.cs">
+      <Link>Infrastructure\NancySecurityCriticalActionsHandling.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\PasswordGenerator.cs">
       <Link>Service\PasswordGenerator.cs</Link>
     </Compile>

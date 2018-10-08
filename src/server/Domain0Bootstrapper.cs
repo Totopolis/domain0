@@ -67,6 +67,10 @@ namespace Domain0.Nancy
                 requestContainer
                     .Resolve<IAuthenticationConfigurationBuilder>()
                     .Build());
+
+            NancySecurityCriticalActionsHandling.Enable(
+                requestContainer,
+                pipelines);
         }
 
         protected override void ConfigureConventions(NancyConventions nancyConventions)

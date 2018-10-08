@@ -118,7 +118,7 @@ namespace Domain0.Service
             }
             catch (Exception ex)
             {
-                throw new TokenParseException("token parse exception.", ex);
+                throw new TokenSecurityException("token parse exception.", ex);
             }
         }
 
@@ -146,7 +146,7 @@ namespace Domain0.Service
             }
             catch (Exception ex)
             {
-                throw new TokenParseException("token validation exception.", ex);
+                throw new TokenSecurityException("token validation exception.", ex);
             }
         }
     }

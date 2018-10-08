@@ -2,9 +2,9 @@
 
 namespace Domain0.Exceptions
 {
-    public class TokenParseException : Exception
+    public class TokenSecurityException : Exception
     {
-        public TokenParseException(string message, Exception ex)
+        public TokenSecurityException(string message, Exception ex)
             : base(message, ex)
         {
 
