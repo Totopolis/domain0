@@ -661,15 +661,17 @@ namespace Domain0.Api.Client
         System.Threading.Tasks.Task<UserProfile> GetUserByIdAsync(int id, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Method for change user data</summary>
+        /// <param name="id">User id</param>
         /// <returns>Success</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<UserProfile> UpdateUserAsync(UserProfile request);
+        System.Threading.Tasks.Task<UserProfile> UpdateUserAsync(int id, UserProfile request);
     
         /// <summary>Method for change user data</summary>
+        /// <param name="id">User id</param>
         /// <returns>Success</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        System.Threading.Tasks.Task<UserProfile> UpdateUserAsync(UserProfile request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<UserProfile> UpdateUserAsync(int id, UserProfile request, System.Threading.CancellationToken cancellationToken);
     
     }
     
@@ -5345,21 +5347,27 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for change user data</summary>
+        /// <param name="id">User id</param>
         /// <returns>Success</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<UserProfile> UpdateUserAsync(UserProfile request)
+        public System.Threading.Tasks.Task<UserProfile> UpdateUserAsync(int id, UserProfile request)
         {
-            return UpdateUserAsync(request, System.Threading.CancellationToken.None);
+            return UpdateUserAsync(id, request, System.Threading.CancellationToken.None);
         }
     
         /// <summary>Method for change user data</summary>
+        /// <param name="id">User id</param>
         /// <returns>Success</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<UserProfile> UpdateUserAsync(UserProfile request, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<UserProfile> UpdateUserAsync(int id, UserProfile request, System.Threading.CancellationToken cancellationToken)
         {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+    
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/users/{id}");
+            urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;
             try
