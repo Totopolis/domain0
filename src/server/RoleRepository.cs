@@ -41,14 +41,28 @@ select r.id, @p0 from {TableName} r where {nameof(Role.IsDefault)}=1
 
         public Task AddUserToRoles(int userId, params string[] roles)
             => SimpleCommand.ExecuteNonQueryAsync(connectionString,
-                $@"insert into {UserRoleTableName}(roleId, userId)
-select r.id, @p0 from {TableName} r where r.{nameof(Role.Name)} in ({string.Join(",", roles.Select(role => $"'{role}'"))})
-    and not exists (select top 1 1 from {UserRoleTableName} ru where ru.roleId=r.id and ru.userid=@p0)", userId);
+                $"insert into {UserRoleTableName}(roleId, userId) " +
+                $"select r.id, @p0 from {TableName} r " +
+                $"where r.{nameof(Role.Name)} in " +
+                $"(" +
+                $"  {string.Join(",", roles.Select((r, i) => $"@P{i + 1}"))}" +
+                $")" +
+                $"and not exists " +
+                $"(" +
+                $"  select top 1 1 from {UserRoleTableName} ru " +
+                $"  where ru.roleId=r.id and ru.userid=@p0" +
+                $")", userId, roles);
 
         public Task<Role[]> GetByRoleNames(params string[] roleNames)
-            => SimpleCommand.ExecuteQueryAsync<Role>(connectionString,
-                    $"select * from {TableName} where {nameof(Role.Name)} in ({string.Join(",", roleNames)})")
-                .ToArray();
+            => SimpleCommand.ExecuteQueryAsync<Role>(
+                connectionString,
+                $"select * from {TableName} " +
+                $"where {nameof(Role.Name)} in " +
+                $"(" +
+                $"  {string.Join(",", roleNames.Select((r, i) => $"@P{i}"))}" +
+                $")",
+                roleNames)
+            .ToArray();
 
         public Task RemoveRolePermissions(int roleId, int[] ids)
             => SimpleCommand.ExecuteNonQueryAsync(connectionString,
