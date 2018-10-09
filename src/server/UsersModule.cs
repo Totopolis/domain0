@@ -111,7 +111,18 @@ namespace Domain0.Nancy
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Produces = new string[] { })]
         [Route(Tags = new[] { "Users" }, Summary = "Method for change user data")]
-        [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(UserProfile), Required = true, Description = "user data")]
+        [RouteParam(
+            ParamIn = ParameterIn.Path,
+            Name = "id",
+            ParamType = typeof(int),
+            Required = true,
+            Description = "User id")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body, 
+            Name = "request", 
+            ParamType = typeof(UserProfile), 
+            Required = true, 
+            Description = "user data")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(UserProfile))]
         [SwaggerResponse(HttpStatusCode.NotFound, "User with this profile id for the auth type wasn't found")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "incorrect input format")]
@@ -125,6 +136,8 @@ namespace Domain0.Nancy
                 && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_EDIT_USERS));
 
             var request = this.BindAndValidateModel<UserProfile>();
+            request.Id = (int)Context.Parameters.id;
+
             return await accountService.UpdateUser(request);
         }
 
