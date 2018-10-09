@@ -891,15 +891,21 @@ namespace Domain0.Service
 
         public async Task<UserProfile> UpdateUser(UserProfile user)
         {
-            var account = mapper.Map<Account>(user);
+            var oldAccount = await accountRepository.FindByUserId(user.Id);
+
+            var account = mapper.Map(
+                user, 
+                oldAccount, 
+                opts => opts
+                    .ConfigureMap()
+                    .ForMember(x => x.Email, o => o.Ignore())
+                    .ForMember(x => x.Phone, o => o.Ignore()));
 
             await accountRepository.Update(account);
 
-            var updatedAccount = await accountRepository.FindByUserId(account.Id);
-
             logger.Info($"User { requestContext.UserId } update profile of user: {account.Id}");
 
-            return mapper.Map<UserProfile>(updatedAccount);
+            return mapper.Map<UserProfile>(account);
         }
 
         private readonly IEmailClient emailClient;
