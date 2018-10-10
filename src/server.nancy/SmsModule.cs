@@ -8,6 +8,7 @@ using System.Security;
 using System.Threading.Tasks;
 using Domain0.Exceptions;
 using Domain0.Nancy.Infrastructure;
+using Domain0.Service.Throttling;
 using Nancy.Security;
 using Domain0.Service.Tokens;
 
@@ -32,10 +33,13 @@ namespace Domain0.Nancy
         public const string CommitChangePhoneUrl = "/api/sms/CommitChangePhone";
 
         private readonly IAccountService accountService;
+        private readonly IRequestThrottleManager requestThrottleManager;
 
         public SmsModule(
-            IAccountService accountServiceInstance)
+            IAccountService accountServiceInstance,
+            IRequestThrottleManager requestThrottleManagerInstance)
         {
+            requestThrottleManager = requestThrottleManagerInstance;
             accountService = accountServiceInstance;
 
             Put(RegisterUrl, ctx => Register(), name: nameof(Register));

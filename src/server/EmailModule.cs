@@ -5,6 +5,7 @@ using Domain0.Exceptions;
 using Domain0.Model;
 using Domain0.Nancy.Infrastructure;
 using Domain0.Service;
+using Domain0.Service.Throttling;
 using Domain0.Service.Tokens;
 using Nancy;
 using Nancy.Security;
@@ -31,9 +32,11 @@ namespace Domain0.Nancy
 
         public EmailModule(
             IAccountService accountServiceInstance,
-            ILogger loggerInstance)
+            ILogger loggerInstance,
+            IRequestThrottleManager requestThrottleManagerInstance)
         {
             accountService = accountServiceInstance;
+            requestThrottleManager = requestThrottleManagerInstance;
             logger = loggerInstance;
 
             Put(RegisterByEmailUrl, ctx => RegisterByEmail(), name: nameof(RegisterByEmail));
@@ -302,6 +305,7 @@ namespace Domain0.Nancy
         }
 
         private readonly IAccountService accountService;
+        private readonly IRequestThrottleManager requestThrottleManager;
         private readonly ILogger logger;
     }
 }

@@ -7,6 +7,7 @@ using NLog;
 using Swagger.ObjectModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Domain0.Service.Throttling;
 using Nancy.Security;
 using Domain0.Service.Tokens;
 
@@ -51,16 +52,19 @@ namespace Domain0.Nancy
         public const string RemoveUserRolesUrl = "api/admin/User/{id}/Roles";
 
         public AdminModule(
+            IAdminService adminServiceInstance,
             ILogger loggerInstance,
-            IAdminService adminServiceInstance)
+            IRequestThrottleManager requestThrottleManagerInstance)
         {
+            logger = loggerInstance;
+            adminService = adminServiceInstance;
+            requestThrottleManager = requestThrottleManagerInstance;
+
             this.RequiresAuthentication();
             this.RequiresClaims(c => 
                 c.Type == TokenClaims.CLAIM_PERMISSIONS
                 && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_ADMIN));
 
-            logger = loggerInstance;
-            adminService = adminServiceInstance;
 
             Post(LoadApplicationsByFilterUrl,
                 ctx => LoadApplicationsByFilter(),
@@ -764,6 +768,7 @@ namespace Domain0.Nancy
         #endregion
 
         private readonly ILogger logger;
-        private readonly IAdminService adminService;        
+        private readonly IAdminService adminService;
+        private readonly IRequestThrottleManager requestThrottleManager;
     }
 }

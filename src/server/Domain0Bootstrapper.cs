@@ -92,6 +92,15 @@ namespace Domain0.Nancy
             NancySecurityCriticalActionsHandling.Enable(
                 requestContainer,
                 pipelines);
+
+
+            var requestThrottleManager = requestContainer.Resolve<IRequestThrottleManager>();
+
+            requestThrottleManager.RequiresThrottlingByPathAndIp(
+                pipelines, ThrottlingPeriod.Minute, requestCountLimit: 300);
+            requestThrottleManager.RequiresThrottlingByPathAndIp(
+                pipelines, ThrottlingPeriod.Hour, requestCountLimit: 3000);
+
         }
 
         protected override void ConfigureConventions(NancyConventions nancyConventions)

@@ -5,6 +5,7 @@ using Domain0.Exceptions;
 using Domain0.Model;
 using Domain0.Nancy.Infrastructure;
 using Domain0.Service;
+using Domain0.Service.Throttling;
 using Domain0.Service.Tokens;
 using Nancy;
 using Nancy.Security;
@@ -27,18 +28,19 @@ namespace Domain0.Nancy
 
         public UsersModule(
             IAccountService accountServiceInstance,
-            ILogger loggerInstance)
+            ILogger loggerInstance,
+            IRequestThrottleManager requestThrottleManagerInstance)
         {
+            accountService = accountServiceInstance;
+            logger = loggerInstance;
+            requestThrottleManager = requestThrottleManagerInstance;
+
             Get(GetMyProfileUrl, ctx => GetMyProfile(), name: nameof(GetMyProfile));
             Post(ChangeMyPasswordUrl, ctx => ChangeMyPassword(), name: nameof(ChangeMyPassword));
             Post(GetUsersByFilterUrl, ctx => GetUserByFilter(), name: nameof(GetUserByFilter));
             Get(GetUserByPhoneUrl, ctx => GetUserByPhone(), name: nameof(GetUserByPhone));
             Get(GetUserByIdUrl, ctx => GetUserById(), name: nameof(GetUserById));
             Post(GetUserByIdUrl, ctx => UpdateUser(), name: nameof(UpdateUser));
-
-
-            accountService = accountServiceInstance;
-            logger = loggerInstance;
         }
 
         [Route(nameof(GetMyProfile))]
@@ -205,5 +207,7 @@ namespace Domain0.Nancy
         private readonly IAccountService accountService;
 
         private readonly ILogger logger;
+
+        private readonly IRequestThrottleManager requestThrottleManager;
     }
 }

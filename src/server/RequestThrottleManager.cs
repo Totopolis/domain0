@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using Microsoft.Extensions.Caching.Memory;
 using Nancy;
+using Nancy.Bootstrapper;
 using Nancy.Extensions;
 
 namespace Domain0.Service.Throttling
@@ -29,6 +30,18 @@ namespace Domain0.Service.Throttling
     public interface IRequestThrottleManager
     {
         void RequiresThrottlingByPathAndIp(
+            IPipelines pipeline,
+            ThrottlingPeriod period,
+            int requestCountLimit);
+
+        void RequiresThrottling(
+            IPipelines pipelines,
+            ThrottlingProperties propertiesSet,
+            ThrottlingPeriod period,
+            int requestCountLimit,
+            params string[] requestKeys);
+
+        void RequiresThrottlingByPathAndIp(
             INancyModule module, 
             ThrottlingPeriod period, 
             int requestCountLimit);
@@ -46,6 +59,31 @@ namespace Domain0.Service.Throttling
         public RequestThrottleManager(IMemoryCache memoryCache)
         {
             cache = memoryCache;
+        }
+
+        public void RequiresThrottlingByPathAndIp(
+            IPipelines pipeline, 
+            ThrottlingPeriod period, 
+            int requestCountLimit)
+        {
+            RequiresThrottling(
+                pipeline,
+                ThrottlingProperties.RemoteIp
+                | ThrottlingProperties.Method
+                | ThrottlingProperties.Path,
+                period,
+                requestCountLimit);
+        }
+
+        public void RequiresThrottling(
+            IPipelines pipelines, 
+            ThrottlingProperties propertiesSet, 
+            ThrottlingPeriod period,
+            int requestCountLimit, 
+            params string[] requestKeys)
+        {
+            pipelines.BeforeRequest.AddItemToStartOfPipeline(
+                ctx => CheckThrottlingLimitHook(ctx, propertiesSet, period, requestCountLimit, requestKeys));
         }
 
         public void RequiresThrottlingByPathAndIp(
