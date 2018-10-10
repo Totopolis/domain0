@@ -40,7 +40,10 @@ select r.id, @p0 from {TableName} r where {nameof(Role.IsDefault)}=1
     and not exists (select top 1 1 from {UserRoleTableName} ru where ru.roleId=r.id and ru.userid=@p0)", userId);
 
         public Task AddUserToRoles(int userId, params string[] roles)
-            => SimpleCommand.ExecuteNonQueryAsync(connectionString,
+        {
+            var commandParams = new object[] {userId}.Concat(roles).ToArray();
+
+            return SimpleCommand.ExecuteNonQueryAsync(connectionString,
                 $"insert into {UserRoleTableName}(roleId, userId) " +
                 $"select r.id, @p0 from {TableName} r " +
                 $"where r.{nameof(Role.Name)} in " +
@@ -51,7 +54,8 @@ select r.id, @p0 from {TableName} r where {nameof(Role.IsDefault)}=1
                 $"(" +
                 $"  select top 1 1 from {UserRoleTableName} ru " +
                 $"  where ru.roleId=r.id and ru.userid=@p0" +
-                $")", userId, roles);
+                $")", commandParams);
+        }
 
         public Task<Role[]> GetByRoleNames(params string[] roleNames)
             => SimpleCommand.ExecuteQueryAsync<Role>(

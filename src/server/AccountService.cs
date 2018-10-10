@@ -230,16 +230,21 @@ namespace Domain0.Service
                 Name = request.Name
             });
 
-            var roles = await roleRepository.GetByRoleNames(request.Roles.ToArray());
-            if (roles.Length != request.Roles?.Count)
-                throw new NotFoundException(nameof(request.Roles), string.Join(",",
-                    request.Roles.Where(role =>
-                        roles.All(r => string.Equals(r.Name, role, StringComparison.OrdinalIgnoreCase)))));
 
-            if (roles.Length == 0)
-                await roleRepository.AddUserToDefaultRoles(id);
-            else
+            if (request.Roles != null && request.Roles.Any())
+            {
+                var roles = await roleRepository.GetByRoleNames(request.Roles.ToArray());
+                if (roles.Length != request.Roles?.Count)
+                    throw new NotFoundException(nameof(request.Roles), string.Join(",",
+                        request.Roles.Where(role =>
+                            roles.All(r => string.Equals(r.Name, role, StringComparison.OrdinalIgnoreCase)))));
+
                 await roleRepository.AddUserToRoles(id, request.Roles.ToArray());
+            }
+            else
+            {
+                await roleRepository.AddUserToDefaultRoles(id);
+            }
 
             var result = mapper.Map<UserProfile>(await accountRepository.FindByLogin(phone.ToString()));
             if (request.BlockSmsSend)
@@ -290,16 +295,20 @@ namespace Domain0.Service
                 Name = request.Name
             });
 
-            var roles = await roleRepository.GetByRoleNames(request.Roles.ToArray());
-            if (roles.Length != request.Roles?.Count)
-                throw new NotFoundException(nameof(request.Roles), string.Join(",",
-                    request.Roles.Where(role =>
-                        roles.All(r => string.Equals(r.Name, role, StringComparison.OrdinalIgnoreCase)))));
+            if (request.Roles != null && request.Roles.Any())
+            {
+                var roles = await roleRepository.GetByRoleNames(request.Roles.ToArray());
+                if (roles.Length != request.Roles?.Count)
+                    throw new NotFoundException(nameof(request.Roles), string.Join(",",
+                        request.Roles.Where(role =>
+                            roles.All(r => string.Equals(r.Name, role, StringComparison.OrdinalIgnoreCase)))));
 
-            if (roles.Length == 0)
-                await roleRepository.AddUserToDefaultRoles(id);
-            else
                 await roleRepository.AddUserToRoles(id, request.Roles.ToArray());
+            }
+            else
+            {
+                await roleRepository.AddUserToDefaultRoles(id);
+            }
 
             var result = mapper.Map<UserProfile>(await accountRepository.FindByLogin(email));
             if (request.BlockEmailSend)
