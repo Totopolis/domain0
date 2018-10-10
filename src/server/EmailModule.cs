@@ -179,7 +179,7 @@ namespace Domain0.Nancy
         [Route(nameof(ForceCreateUser))]
         [Route(HttpMethod.Put, ForceCreateUserUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
-        [Route(Produces = new string[] { })]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Email" }, Summary = "Method for force registration by email")]
         [RouteParam(
             ParamIn = ParameterIn.Body, 
@@ -187,7 +187,7 @@ namespace Domain0.Nancy
             ParamType = typeof(ForceCreateEmailUserRequest), 
             Required = true, 
             Description = "parameters for force create")]
-        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(UserProfile))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "wrong email or user with this email already created")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]

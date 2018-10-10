@@ -33,9 +33,10 @@ namespace Domain0.Nancy
 
         private readonly IAccountService accountService;
 
-        public SmsModule(IAccountService accountService)
+        public SmsModule(
+            IAccountService accountServiceInstance)
         {
-            this.accountService = accountService;
+            accountService = accountServiceInstance;
 
             Put(RegisterUrl, ctx => Register(), name: nameof(Register));
             Post(LoginUrl, ctx => Login(), name: nameof(Login));
@@ -217,10 +218,10 @@ namespace Domain0.Nancy
         [Route(nameof(ForceCreateUser))]
         [Route(HttpMethod.Put, ForceCreateUserUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
-        [Route(Produces = new string[] { })]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "request", ParamType = typeof(ForceCreateUserRequest), Required = true, Description = "parameters for force create")]
-        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(UserProfile))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone or user with this phone already created")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]
