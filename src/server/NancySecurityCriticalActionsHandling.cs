@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Autofac;
 using Domain0.Exceptions;
 using Nancy.Bootstrapper;

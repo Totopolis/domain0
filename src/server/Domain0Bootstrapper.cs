@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using Autofac.Core;
 using Domain0.Nancy.Infrastructure;
 using Domain0.Service;
@@ -17,6 +18,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Domain0.Model;
+using Domain0.Service.Throttling;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Domain0.Nancy
 {
@@ -47,7 +50,25 @@ namespace Domain0.Nancy
             SwaggerAnnotationsConfig.ShowOnlyAnnotatedRoutes = true;
             applicationContainer.Update(builder =>
             {
-                builder.RegisterType<SwaggerAnnotationsProvider>().As<ISwaggerMetadataProvider>();
+                builder
+                    .RegisterType<SwaggerAnnotationsProvider>()
+                    .As<ISwaggerMetadataProvider>();
+
+                builder
+                    .RegisterInstance(new MemoryCache(
+                        new MemoryCacheOptions
+                        {
+                            ExpirationScanFrequency = TimeSpan.FromMinutes(5),
+                            SizeLimit = 200 * 1024 * 1024
+                        }))
+                    .As<IMemoryCache>()
+                    .SingleInstance();
+
+
+                builder
+                    .RegisterType<RequestThrottleManager>()
+                    .As<IRequestThrottleManager>()
+                    .SingleInstance();
             });
 
             pipelines.EnableCors();
