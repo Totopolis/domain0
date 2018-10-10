@@ -97,13 +97,13 @@ namespace Domain0.Api.Client
         /// <summary>Method for registration by phone</summary>
         /// <returns>Success</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task ForceCreateUserAsync(ForceCreateUserRequest request);
+        System.Threading.Tasks.Task<UserProfile> ForceCreateUserAsync(ForceCreateUserRequest request);
     
         /// <summary>Method for registration by phone</summary>
         /// <returns>Success</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        System.Threading.Tasks.Task ForceCreateUserAsync(ForceCreateUserRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<UserProfile> ForceCreateUserAsync(ForceCreateUserRequest request, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Method for force change phone only administrator</summary>
         /// <returns>operation completes successfully, phone was changed</returns>
@@ -558,13 +558,13 @@ namespace Domain0.Api.Client
         /// <summary>Method for force registration by email</summary>
         /// <returns>Success</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task ForceCreateUser2Async(ForceCreateEmailUserRequest request);
+        System.Threading.Tasks.Task<UserProfile> ForceCreateUser2Async(ForceCreateEmailUserRequest request);
     
         /// <summary>Method for force registration by email</summary>
         /// <returns>Success</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        System.Threading.Tasks.Task ForceCreateUser2Async(ForceCreateEmailUserRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<UserProfile> ForceCreateUser2Async(ForceCreateEmailUserRequest request, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Method for force reset password only administrator</summary>
         /// <returns>operation completes successfully, new password sent to user</returns>
@@ -1333,7 +1333,7 @@ namespace Domain0.Api.Client
         /// <summary>Method for registration by phone</summary>
         /// <returns>Success</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task ForceCreateUserAsync(ForceCreateUserRequest request)
+        public System.Threading.Tasks.Task<UserProfile> ForceCreateUserAsync(ForceCreateUserRequest request)
         {
             return ForceCreateUserAsync(request, System.Threading.CancellationToken.None);
         }
@@ -1342,7 +1342,7 @@ namespace Domain0.Api.Client
         /// <returns>Success</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task ForceCreateUserAsync(ForceCreateUserRequest request, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<UserProfile> ForceCreateUserAsync(ForceCreateUserRequest request, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/sms/ForceCreateUser");
@@ -1356,6 +1356,7 @@ namespace Domain0.Api.Client
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("PUT");
+                    request_.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
     
                     PrepareRequest(client_, request_, urlBuilder_);
                     var url_ = urlBuilder_.ToString();
@@ -1375,9 +1376,19 @@ namespace Domain0.Api.Client
                         ProcessResponse(client_, response_);
     
                         var status_ = ((int)response_.StatusCode).ToString();
-                        if (status_ == "204") 
+                        if (status_ == "200") 
                         {
-                            return;
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            var result_ = default(UserProfile); 
+                            try
+                            {
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<UserProfile>(responseData_, _settings.Value);
+                                return result_; 
+                            } 
+                            catch (System.Exception exception_) 
+                            {
+                                throw new Domain0ClientException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
+                            }
                         }
                         else
                         if (status_ == "400") 
@@ -1409,6 +1420,8 @@ namespace Domain0.Api.Client
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
                             throw new Domain0ClientException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
+            
+                        return default(UserProfile);
                     }
                     finally
                     {
@@ -4467,7 +4480,7 @@ namespace Domain0.Api.Client
         /// <summary>Method for force registration by email</summary>
         /// <returns>Success</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task ForceCreateUser2Async(ForceCreateEmailUserRequest request)
+        public System.Threading.Tasks.Task<UserProfile> ForceCreateUser2Async(ForceCreateEmailUserRequest request)
         {
             return ForceCreateUser2Async(request, System.Threading.CancellationToken.None);
         }
@@ -4476,7 +4489,7 @@ namespace Domain0.Api.Client
         /// <returns>Success</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task ForceCreateUser2Async(ForceCreateEmailUserRequest request, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<UserProfile> ForceCreateUser2Async(ForceCreateEmailUserRequest request, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/email/ForceCreateUser");
@@ -4490,6 +4503,7 @@ namespace Domain0.Api.Client
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("PUT");
+                    request_.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
     
                     PrepareRequest(client_, request_, urlBuilder_);
                     var url_ = urlBuilder_.ToString();
@@ -4509,9 +4523,19 @@ namespace Domain0.Api.Client
                         ProcessResponse(client_, response_);
     
                         var status_ = ((int)response_.StatusCode).ToString();
-                        if (status_ == "204") 
+                        if (status_ == "200") 
                         {
-                            return;
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            var result_ = default(UserProfile); 
+                            try
+                            {
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<UserProfile>(responseData_, _settings.Value);
+                                return result_; 
+                            } 
+                            catch (System.Exception exception_) 
+                            {
+                                throw new Domain0ClientException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
+                            }
                         }
                         else
                         if (status_ == "400") 
@@ -4543,6 +4567,8 @@ namespace Domain0.Api.Client
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
                             throw new Domain0ClientException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
+            
+                        return default(UserProfile);
                     }
                     finally
                     {
@@ -5697,6 +5723,47 @@ namespace Domain0.Api.Client
     
     }
     
+    /// <summary>User profile</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.10.73.0 (Newtonsoft.Json v9.0.0.0)")]
+    public partial class UserProfile 
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public UserProfile(string @description, string @email, int @id, string @name, decimal? @phone)
+        {
+            Description = @description;
+            Email = @email;
+            Id = @id;
+            Name = @name;
+            Phone = @phone;
+        }
+    
+        [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Description { get; }
+    
+        [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Email { get; }
+    
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
+        public int Id { get; }
+    
+        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Name { get; }
+    
+        [Newtonsoft.Json.JsonProperty("phone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public decimal? Phone { get; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+        
+        public static UserProfile FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<UserProfile>(data);
+        }
+    
+    }
+    
     /// <summary>Force create user request</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.10.73.0 (Newtonsoft.Json v9.0.0.0)")]
     public partial class ForceCreateUserRequest 
@@ -6276,47 +6343,6 @@ namespace Domain0.Api.Client
         public static ChangeEmailUserRequest FromJson(string data)
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<ChangeEmailUserRequest>(data);
-        }
-    
-    }
-    
-    /// <summary>User profile</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.10.73.0 (Newtonsoft.Json v9.0.0.0)")]
-    public partial class UserProfile 
-    {
-        [Newtonsoft.Json.JsonConstructor]
-        public UserProfile(string @description, string @email, int @id, string @name, decimal? @phone)
-        {
-            Description = @description;
-            Email = @email;
-            Id = @id;
-            Name = @name;
-            Phone = @phone;
-        }
-    
-        [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Description { get; }
-    
-        [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Email { get; }
-    
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
-        public int Id { get; }
-    
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Name { get; }
-    
-        [Newtonsoft.Json.JsonProperty("phone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public decimal? Phone { get; }
-    
-        public string ToJson() 
-        {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
-        }
-        
-        public static UserProfile FromJson(string data)
-        {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<UserProfile>(data);
         }
     
     }
