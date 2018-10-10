@@ -96,7 +96,9 @@ create table dom.Account (
 	[Login] nvarchar(80) null,
 	[Password] nvarchar(80) null,
 	[Name] nvarchar(256) not null,
-	[Description] nvarchar(max) null
+	[Description] nvarchar(max) null,
+	[FirstDate] datetime null,
+	[LastDate] datetime null
 )
 go
 create index IX_Account_Phone ON dom.Account ([Phone])
@@ -291,6 +293,9 @@ CREATE TABLE [hst_dom].[Account](
 	[Password] [nvarchar](80) NULL,
 	[Name] [nvarchar](256) NULL,
 	[Description] [nvarchar](max) NULL,
+	[FirstDate] datetime null,
+	[LastDate] datetime null
+
  CONSTRAINT [PK_Account_History] PRIMARY KEY CLUSTERED 
 (
 	[H_ID] ASC
@@ -549,7 +554,10 @@ insert into [hst_dom].[Account] ([H_ConnectionID], [H_TransactionID], [H_Session
 	,[Login]
 	,[Password]
 	,[Name]
-	,[Description])
+	,[Description]
+	,[FirstDate]
+	,[LastDate]
+)
 select @connection_id, @transaction_id, @@SPID, @login, @time, @opType, h.H_IsNew
 -- data columns
 	,h.[Id]
@@ -559,6 +567,8 @@ select @connection_id, @transaction_id, @@SPID, @login, @time, @opType, h.H_IsNe
 	,h.[Password]
 	,h.[Name]
 	,h.[Description]
+	,h.[FirstDate]
+	,h.[LastDate]
 from 
 (
 	select 0 as H_IsNew, t.* 
