@@ -33,9 +33,11 @@ namespace Domain0.Nancy
         public EmailModule(
             IAccountService accountServiceInstance,
             ILogger loggerInstance,
+            IRequestContext requestContextInstance,
             IRequestThrottleManager requestThrottleManagerInstance)
         {
             accountService = accountServiceInstance;
+            requestContext = requestContextInstance;
             requestThrottleManager = requestThrottleManagerInstance;
             logger = loggerInstance;
 
@@ -68,6 +70,14 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
         public async Task<object> RegisterByEmail()
         {
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path | ThrottlingProperties.RemoteIp,
+                ThrottlingPeriod.Minute, requestCountLimit: 100);
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path | ThrottlingProperties.RemoteIp,
+                ThrottlingPeriod.Hour, requestCountLimit: 300);
+
             var request = this.BindAndValidateModel<RegisterRequest>();
             try
             {
@@ -99,6 +109,16 @@ namespace Domain0.Nancy
         {
             var request = this.BindAndValidateModel<EmailLoginRequest>();
 
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Minute, requestCountLimit: 20,
+                request.Email);
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Hour, requestCountLimit: 100,
+                request.Email);
+
             var result = await accountService.Login(request);
             if (result == null)
             {
@@ -126,6 +146,15 @@ namespace Domain0.Nancy
         public async Task<object> DoesUserExistByEmail()
         {
             var request = this.BindAndValidateModel<RegisterRequest>();
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Minute, requestCountLimit: 100);
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Hour, requestCountLimit: 300);
+
             var result = await accountService.DoesUserExists(request.Email);
             return result;
         }
@@ -147,6 +176,17 @@ namespace Domain0.Nancy
         public async Task<object> RequestResetPasswordByEmail()
         {
             var request = this.BindAndValidateModel<RegisterRequest>();
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Minute, requestCountLimit: 1,
+                request.Email);
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Hour, requestCountLimit: 10,
+                request.Email);
+
             await accountService.RequestResetPassword(request.Email);
             return HttpStatusCode.NoContent;
         }
@@ -260,12 +300,23 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.basic permission required")]
         public async Task<object> RequestChangeEmail()
         {
+            var changeEmailRequest = this.BindAndValidateModel<ChangeEmailUserRequest>();
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Minute, requestCountLimit: 1,
+                changeEmailRequest.Email);
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Hour, requestCountLimit: 10,
+                changeEmailRequest.Email);
+
             this.RequiresAuthentication();
             this.RequiresClaims(c =>
                 c.Type == TokenClaims.CLAIM_PERMISSIONS
                 && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_BASIC));
 
-            var changeEmailRequest = this.BindAndValidateModel<ChangeEmailUserRequest>();
             await accountService.RequestChangeEmail(changeEmailRequest);
             return HttpStatusCode.NoContent;
         }
@@ -293,6 +344,16 @@ namespace Domain0.Nancy
                 c.Type == TokenClaims.CLAIM_PERMISSIONS
                 && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_BASIC));
 
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Minute, requestCountLimit: 10,
+                requestContext.UserId.ToString());
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Hour, requestCountLimit: 100,
+                requestContext.UserId.ToString());
+
             long code;
             if (!long.TryParse(Request.Query[nameof(code)].ToString(), out code))
             {
@@ -307,5 +368,6 @@ namespace Domain0.Nancy
         private readonly IAccountService accountService;
         private readonly IRequestThrottleManager requestThrottleManager;
         private readonly ILogger logger;
+        private readonly IRequestContext requestContext;
     }
 }

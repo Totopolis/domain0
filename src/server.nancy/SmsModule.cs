@@ -34,13 +34,16 @@ namespace Domain0.Nancy
 
         private readonly IAccountService accountService;
         private readonly IRequestThrottleManager requestThrottleManager;
+        private readonly IRequestContext requestContext;
 
         public SmsModule(
             IAccountService accountServiceInstance,
+            IRequestContext requestContextInstance,
             IRequestThrottleManager requestThrottleManagerInstance)
         {
-            requestThrottleManager = requestThrottleManagerInstance;
             accountService = accountServiceInstance;
+            requestContext = requestContextInstance;
+            requestThrottleManager = requestThrottleManagerInstance;
 
             Put(RegisterUrl, ctx => Register(), name: nameof(Register));
             Post(LoginUrl, ctx => Login(), name: nameof(Login));
@@ -72,6 +75,15 @@ namespace Domain0.Nancy
         public async Task<object> Register()
         {
             var phone = this.Bind<long>();
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path | ThrottlingProperties.RemoteIp,
+                ThrottlingPeriod.Minute, requestCountLimit: 50);
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path | ThrottlingProperties.RemoteIp,
+                ThrottlingPeriod.Hour, requestCountLimit: 300);
+
             try
             {
                 await accountService.Register(phone);
@@ -97,6 +109,16 @@ namespace Domain0.Nancy
         public async Task<object> Login()
         {
             var request = this.BindAndValidateModel<SmsLoginRequest>();
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Minute, requestCountLimit: 20,
+                request.Phone);
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Hour, requestCountLimit: 100,
+                request.Phone);
 
             var result = await accountService.Login(request);
             if (result == null)
@@ -152,6 +174,17 @@ namespace Domain0.Nancy
         public async Task<object> RequestResetPassword()
         {
             var phone = this.BindAndValidateModel<long>();
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Minute, requestCountLimit: 1,
+                phone.ToString());
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Hour, requestCountLimit: 10,
+                phone.ToString());
+
             await accountService.RequestResetPassword(phone);
             return HttpStatusCode.NoContent;
         }
@@ -166,6 +199,14 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
         public async Task<object> DoesUserExist()
         {
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Minute, requestCountLimit: 100);
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Hour, requestCountLimit: 300);
+
             decimal phone;
             if (!decimal.TryParse(Request.Query[nameof(phone)].ToString(), out phone))
             {
@@ -318,12 +359,23 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.basic permission required")]
         public async Task<object> RequestChangePhone()
         {
+            var changePhoneRequest = this.BindAndValidateModel<ChangePhoneUserRequest>();
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Minute, requestCountLimit: 1,
+                changePhoneRequest.Phone.ToString());
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Hour, requestCountLimit: 10,
+                changePhoneRequest.Phone.ToString());
+
             this.RequiresAuthentication();
             this.RequiresClaims(c =>
                 c.Type == TokenClaims.CLAIM_PERMISSIONS
                 && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_BASIC));
 
-            var changePhoneRequest = this.BindAndValidateModel<ChangePhoneUserRequest>();
             await accountService.RequestChangePhone(changePhoneRequest);
             return HttpStatusCode.NoContent;
         }
@@ -350,6 +402,16 @@ namespace Domain0.Nancy
             this.RequiresClaims(c =>
                 c.Type == TokenClaims.CLAIM_PERMISSIONS
                 && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_BASIC));
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Minute, requestCountLimit: 10,
+                requestContext.UserId.ToString());
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Hour, requestCountLimit: 100,
+                requestContext.UserId.ToString());
 
             long code;
             if (!long.TryParse(Request.Query[nameof(code)].ToString(), out code))
