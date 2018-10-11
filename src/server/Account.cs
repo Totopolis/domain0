@@ -1,4 +1,6 @@
-﻿namespace Domain0.Repository.Model
+﻿using System;
+
+namespace Domain0.Repository.Model
 {
     public class Account
     {
@@ -15,5 +17,9 @@
         public string Name { get; set; }
 
         public string Description { get; set; }
+
+        public DateTime? FirstDate { get; set; }
+
+        public DateTime? LastDate { get; set; }
     }
 }

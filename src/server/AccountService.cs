@@ -430,6 +430,12 @@ namespace Domain0.Service
             if (account != null && passwordGenerator.CheckPassword(request.Password, account.Password))
             {
                 logger.Info($"User {request.Phone} logged in");
+
+                var currentDateTime = DateTime.UtcNow;
+                account.FirstDate = account.FirstDate ?? currentDateTime;
+                account.LastDate = currentDateTime;
+                await accountRepository.Update(account);
+
                 return await GetTokenResponse(account);
             }
 
@@ -447,18 +453,22 @@ namespace Domain0.Service
             {
                 // change password
                 account.Password = hashPassword;
+                account.LastDate = DateTime.UtcNow;
                 await accountRepository.Update(account);
                 logger.Info($"User {request.Phone} change password successful!");
             }
             else
             {
                 // confirm registration
+                var currentDateTime = DateTime.UtcNow;
                 var userId = await accountRepository.Insert(account = new Account
                 {
                     Name = phone.ToString(CultureInfo.InvariantCulture),
                     Phone = phone,
                     Login = phone.ToString(CultureInfo.InvariantCulture),
-                    Password = hashPassword
+                    Password = hashPassword,
+                    FirstDate = currentDateTime,
+                    LastDate = currentDateTime
                 });
 
                 // store new assigned Id
@@ -481,6 +491,11 @@ namespace Domain0.Service
             if (account != null && passwordGenerator.CheckPassword(request.Password, account.Password))
             {
                 logger.Info($"User { request.Email } logged in");
+                var currentDateTime = DateTime.UtcNow;
+                account.FirstDate = account.FirstDate ?? currentDateTime;
+                account.LastDate = currentDateTime;
+                await accountRepository.Update(account);
+
                 return await GetTokenResponse(account);
             }
 
@@ -496,18 +511,23 @@ namespace Domain0.Service
             {
                 // change password
                 account.Password = hashPassword;
+                account.LastDate = DateTime.UtcNow;
                 await accountRepository.Update(account);
                 logger.Info($"User { request.Email } change password successful!");
             }
             else
             {
+                var currentDateTime = DateTime.UtcNow;
+
                 // confirm registration
                 var userId = await accountRepository.Insert(account = new Account
                 {
                     Name = email,
                     Email = email,
                     Login = email,
-                    Password = hashPassword
+                    Password = hashPassword,
+                    FirstDate = currentDateTime,
+                    LastDate = currentDateTime
                 });
 
                 // store new assigned Id
