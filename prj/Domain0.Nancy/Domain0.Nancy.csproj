@@ -217,6 +217,9 @@
     <Compile Include="..\..\src\server\CultureRequestContext.cs">
       <Link>Infrastructure\CultureRequestContext.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\CustomStatusCodeHandler.cs">
+      <Link>Infrastructure\CustomStatusCodeHandler.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\Domain0Bootstrapper.cs">
       <Link>Domain0Bootstrapper.cs</Link>
     </Compile>
