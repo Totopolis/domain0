@@ -142,23 +142,37 @@ go
 insert into dom.Message 
 ([Type], [Locale], [Name], [Template])
 values
-('sms',		'en',		'WelcomeTemplate',		'Hello {0}!'),
-('sms',		'en',		'RegisterTemplate',		'Your password is: {0} will valid for {1} min'),
-('sms',		'en',		'RequestResetTemplate',	'Your NEW password is: {0} will valid for {1} min'),
-('sms',		'ru',		'WelcomeTemplate',		'Добро пожаловать {0}!'),
-('sms',		'ru',		'RegisterTemplate',		'Ваш пароль: {0} действителен {1} мин'),
-('sms',		'ru',		'RequestResetTemplate',	'Ваш НОВЫЙ пароль: {0} действителен {1} мин'),
+('sms',		'en',		'WelcomeTemplate',				'Hello {0}!'),
+('sms',		'en',		'RegisterTemplate',				'Your password is: {0} will valid for {1} min'),
+('sms',		'en',		'RequestResetTemplate',			'Your NEW password is: {0} will valid for {1} min'),
+('sms',		'en',		'ForcePasswordResetTemplate',	'Your NEW password is: {0}'),
+('sms',		'en',		'RequestPhoneChangeTemplate',	'Your phone change pin is: {0}'),
 
-('email',	'en',		'WelcomeTemplate',		'Hello {0}!'),
-('email',	'en',		'RegisterTemplate',		'Your password is: {0} will valid for {1} min'),
-('email',	'en',		'RegisterSubjectTemplate',	'Dear {0}! Welcome to {1}'),
-('email',	'en',		'RequestResetTemplate',	'Your NEW password is: {0} will valid for {1} min'),
+('sms',		'ru',		'WelcomeTemplate',				'Добро пожаловать {0}!'),
+('sms',		'ru',		'RegisterTemplate',				'Ваш пароль: {0} действителен {1} мин'),
+('sms',		'ru',		'RequestResetTemplate',			'Ваш НОВЫЙ пароль: {0} действителен {1} мин'),
+('sms',		'ru',		'ForcePasswordResetTemplate',	'Ваш НОВЫЙ пароль: {0}'),
+('sms',		'ru',		'RequestPhoneChangeTemplate',	'Ваш PIN для смены пароля: {0}'),
+
+('email',	'en',		'WelcomeTemplate',				'Hello {0}!'),
+('email',	'en',		'WelcomeSubjectTemplate',		'Hello {0}!'),
+('email',	'en',		'RegisterTemplate',				'Your password is: {0} will valid for {1} min'),
+('email',	'en',		'RegisterSubjectTemplate',		'Dear {0}! Welcome to {1}'),
+('email',	'en',		'RequestResetTemplate',			'Your NEW password is: {0} will valid for {1} min'),
 ('email',	'en',		'RequestResetSubjectTemplate',	'{0}.Change password for {1}'),
-('email',	'ru',		'WelcomeTemplate',		'Добро пожаловать {0}!'),
-('email',	'ru',		'RegisterTemplate',		'Ваш пароль: {0} действителен {1} мин'),
-('email',	'ru',		'RegisterSubjectTemplate',	'{0}! Добро пожаловать в {1}'),
-('email',	'ru',		'RequestResetTemplate',	'Ваш НОВЫЙ пароль: {0} действителен {1} мин'),
-('email',	'ru',		'RequestResetSubjectTemplate',	'{0}. Изменение пароля для {1}')
+('email',	'en',		'ForcePasswordResetTemplate',	'Your NEW password is: {0}'),
+('email',	'en',		'RequestEmailChangeTemplate',	'Your email change pin is: {0}'),
+('email',	'en',		'RequestEmailChangeSubjectTemplate',	'Email change confirmation'),
+
+('email',	'ru',		'WelcomeTemplate',				'Добро пожаловать {0}!'),
+('email',	'ru',		'WelcomeSubjectTemplate',		'Добро пожаловать {0}!'),
+('email',	'ru',		'RegisterTemplate',				'Ваш пароль: {0} действителен {1} мин'),
+('email',	'ru',		'RegisterSubjectTemplate',		'{0}! Добро пожаловать в {1}'),
+('email',	'ru',		'RequestResetTemplate',			'Ваш НОВЫЙ пароль: {0} действителен {1} мин'),
+('email',	'ru',		'RequestResetSubjectTemplate',	'{0}. Изменение пароля для {1}'),
+('email',	'ru',		'ForcePasswordResetTemplate',	'Ваш НОВЫЙ пароль: {0}'),
+('email',	'ru',		'RequestEmailChangeTemplate',	'Ваш PIN для смены email: {0}'),
+('email',	'ru',		'RequestEmailChangeSubjectTemplate',	'Подтверждение смены email')
 go
 create index IX_Message_Name_Type_Locale ON dom.Message ([Name] asc, [Type] asc, [Locale] asc)
 go
