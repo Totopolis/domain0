@@ -112,12 +112,12 @@ namespace Domain0.Nancy
             requestThrottleManager.RequiresThrottling(
                 this, ThrottlingProperties.Path,
                 ThrottlingPeriod.Minute, requestCountLimit: 20,
-                request.Email);
+                requestKeys: request.Email);
 
             requestThrottleManager.RequiresThrottling(
                 this, ThrottlingProperties.Path,
                 ThrottlingPeriod.Hour, requestCountLimit: 100,
-                request.Email);
+                requestKeys: request.Email);
 
             var result = await accountService.Login(request);
             if (result == null)
@@ -180,12 +180,12 @@ namespace Domain0.Nancy
             requestThrottleManager.RequiresThrottling(
                 this, ThrottlingProperties.Path,
                 ThrottlingPeriod.Minute, requestCountLimit: 1,
-                request.Email);
+                requestKeys: request.Email);
 
             requestThrottleManager.RequiresThrottling(
                 this, ThrottlingProperties.Path,
                 ThrottlingPeriod.Hour, requestCountLimit: 10,
-                request.Email);
+                requestKeys: request.Email);
 
             await accountService.RequestResetPassword(request.Email);
             return HttpStatusCode.NoContent;
@@ -305,12 +305,12 @@ namespace Domain0.Nancy
             requestThrottleManager.RequiresThrottling(
                 this, ThrottlingProperties.Path,
                 ThrottlingPeriod.Minute, requestCountLimit: 1,
-                changeEmailRequest.Email);
+                requestKeys: changeEmailRequest.Email);
 
             requestThrottleManager.RequiresThrottling(
                 this, ThrottlingProperties.Path,
                 ThrottlingPeriod.Hour, requestCountLimit: 10,
-                changeEmailRequest.Email);
+                requestKeys: changeEmailRequest.Email);
 
             this.RequiresAuthentication();
             this.RequiresClaims(c =>
@@ -347,12 +347,12 @@ namespace Domain0.Nancy
             requestThrottleManager.RequiresThrottling(
                 this, ThrottlingProperties.Path,
                 ThrottlingPeriod.Minute, requestCountLimit: 10,
-                requestContext.UserId.ToString());
+                requestKeys: requestContext.UserId.ToString());
 
             requestThrottleManager.RequiresThrottling(
                 this, ThrottlingProperties.Path,
                 ThrottlingPeriod.Hour, requestCountLimit: 100,
-                requestContext.UserId.ToString());
+                requestKeys: requestContext.UserId.ToString());
 
             long code;
             if (!long.TryParse(Request.Query[nameof(code)].ToString(), out code))
