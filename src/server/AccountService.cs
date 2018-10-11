@@ -77,6 +77,8 @@ namespace Domain0.Service
 
         Task<UserProfile> UpdateUser(UserProfile user);
 
+        Task DeleteUser(int id);
+
         Task<UserProfile[]> GetProfilesByFilter(UserProfileFilter filter);
     }
 
@@ -935,6 +937,11 @@ namespace Domain0.Service
             logger.Info($"User { requestContext.UserId } update profile of user: {account.Id}");
 
             return mapper.Map<UserProfile>(account);
+        }
+
+        public async Task DeleteUser(int id)
+        {
+            await accountRepository.Delete(id);
         }
 
         private readonly IEmailClient emailClient;

@@ -109,7 +109,7 @@ go
 
 create table dom.RoleUser (
 	RoleId int not null constraint FK_dom_RoleUser_RoleId foreign key references dom.Role(Id),
-	UserId int not null constraint FK_dom_RoleUser_UserId foreign key references dom.Account(Id)
+	UserId int not null constraint FK_dom_RoleUser_UserId foreign key references dom.Account(Id) on delete cascade
 
 	constraint PK_dom_RoleUser primary key(RoleId, UserId)
 )
@@ -120,7 +120,7 @@ go
 
 create table dom.PermissionUser (
 	PermissionId int not null,
-	UserId int not null,
+	UserId int not null constraint FK_dom_PermissionUser_UserId foreign key references dom.Account(Id) on delete cascade,
 	Since datetime2 null,
 	Until datetime2 null
 

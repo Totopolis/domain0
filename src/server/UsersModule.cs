@@ -25,14 +25,17 @@ namespace Domain0.Nancy
         public const string GetUserByIdUrl = "/api/users/{id}";
         public const string PostUserUrl = "/api/users/{id}";
 
+        public const string DeleteUserUrl = "/api/sms/{phone}";
 
         public UsersModule(
             IAccountService accountServiceInstance,
             ILogger loggerInstance,
+            IRequestContext requestContextInstance,
             IRequestThrottleManager requestThrottleManagerInstance)
         {
             accountService = accountServiceInstance;
             logger = loggerInstance;
+            requestContext = requestContextInstance;
             requestThrottleManager = requestThrottleManagerInstance;
 
             Get(GetMyProfileUrl, ctx => GetMyProfile(), name: nameof(GetMyProfile));
@@ -40,7 +43,8 @@ namespace Domain0.Nancy
             Post(GetUsersByFilterUrl, ctx => GetUserByFilter(), name: nameof(GetUserByFilter));
             Get(GetUserByPhoneUrl, ctx => GetUserByPhone(), name: nameof(GetUserByPhone));
             Get(GetUserByIdUrl, ctx => GetUserById(), name: nameof(GetUserById));
-            Post(GetUserByIdUrl, ctx => UpdateUser(), name: nameof(UpdateUser));
+            Post(PostUserUrl, ctx => UpdateUser(), name: nameof(UpdateUser));
+            Delete(DeleteUserUrl, ctx => DeleteUser(), name: nameof(DeleteUser));
         }
 
         [Route(nameof(GetMyProfile))]
@@ -143,6 +147,48 @@ namespace Domain0.Nancy
             return await accountService.UpdateUser(request);
         }
 
+        [Route(nameof(DeleteUser))]
+        [Route(HttpMethod.Post, DeleteUserUrl)]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Produces = new string[] { })]
+        [Route(Tags = new[] { "Sms" }, Summary = "Method for delete user")]
+        [RouteParam(
+            ParamIn = ParameterIn.Path,
+            Name = "phone",
+            ParamType = typeof(long),
+            Required = true,
+            Description = "phone")]
+        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone format")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.NotFound, "User with this profile id for the auth type wasn't found")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "Provide domain0 auth token")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "you need 'domain0.editUsers' permission")]
+        public async Task<object> DeleteUser()
+        {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_BASIC));
+
+            var phone = (long)Context.Parameters.phone;
+
+            var profile = await accountService.GetProfileByPhone(phone);
+            if (profile == null)
+            {
+                return HttpStatusCode.NotFound;
+            }
+
+            if (requestContext.UserId != profile.Id)
+            {
+                return HttpStatusCode.Forbidden;
+            }
+
+            await accountService.DeleteUser(profile.Id);
+
+            return HttpStatusCode.NoContent;
+        }
+
         [Route(nameof(ChangeMyPassword))]
         [Route(HttpMethod.Post, ChangeMyPasswordUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
@@ -209,5 +255,7 @@ namespace Domain0.Nancy
         private readonly ILogger logger;
 
         private readonly IRequestThrottleManager requestThrottleManager;
+
+        private readonly IRequestContext requestContext;
     }
 }
