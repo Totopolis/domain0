@@ -30,9 +30,10 @@ namespace Domain0.FastSql
                     $"select {nameof(MessageTemplate.Template)} " +
                     $"from {TableName} " +
                     $"where {nameof(MessageTemplate.Name)}      =@p0 " +
-                    $"  and {nameof(MessageTemplate.Type)}      =@p2 ",
+                    $"  and {nameof(MessageTemplate.Type)}      =@p2 " +
+                    $"order by {nameof(MessageTemplate.Locale)} ",
                     name.ToString(),
-                    type.ToString())                    
+                    type.ToString())
                 .ToArray();
 
             return GetTemplateMatch(culture, templates) ??
