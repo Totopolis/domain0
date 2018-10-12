@@ -133,7 +133,7 @@ create table dom.Message (
 	Id int identity(1,1) not null constraint PK_Message_Id primary key,
 	Description nvarchar(max) null,
 	Type nvarchar(10) null,
-	Locale nvarchar(3) null,
+	Locale nvarchar(20) null,
 	Name nvarchar(256) not null,
 	Template nvarchar(max) not null
 )
@@ -372,7 +372,7 @@ CREATE TABLE [hst_dom].[Message](
 	[Id] [int] NULL,
 	[Description] [nvarchar](max) NULL,
 	[Type] [nvarchar](10) NULL,
-	[Locale] [nvarchar](3) NULL,
+	[Locale] [nvarchar](20) NULL,
 	[Name] [nvarchar](256) NULL,
 	[Template] [nvarchar](max) NULL,
  CONSTRAINT [PK_Message_History] PRIMARY KEY CLUSTERED 
