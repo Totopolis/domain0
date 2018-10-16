@@ -22,7 +22,11 @@ namespace Domain0.Nancy.Infrastructure
             }
             else
             {
-                tokenGenerator = requestContainer.ResolveKeyed<ITokenGenerator>(SecurityAlgorithms.HmacSha256);
+                var settings = requestContainer.Resolve<TokenGeneratorSettings>();
+                if (string.IsNullOrWhiteSpace(settings.Alg))
+                    tokenGenerator = requestContainer.ResolveKeyed<ITokenGenerator>(SecurityAlgorithms.HmacSha256);
+                else
+                    tokenGenerator = requestContainer.ResolveKeyed<ITokenGenerator>(settings.Alg);
             }
 
             return tokenGenerator;
