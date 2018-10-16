@@ -111,6 +111,10 @@ namespace Domain0.Nancy.Infrastructure
                     return new Negotiator(ctx)
                         .WithStatusCode(HttpStatusCode.Unauthorized)
                         .WithReasonPhrase("no luck");
+                case UserLockedSecurityException _:
+                    return new Negotiator(ctx)
+                        .WithStatusCode(HttpStatusCode.Locked)
+                        .WithReasonPhrase("User locked");
                 default:
                     var logger = requestContainer.Resolve<ILogger>();
                     logger.Error(ex, "Unexpected exception");
@@ -132,6 +136,8 @@ namespace Domain0.Nancy.Infrastructure
                     return HttpStatusCode.BadRequest;
                 case TokenSecurityException _:
                     return HttpStatusCode.Unauthorized;
+                case UserLockedSecurityException _:
+                    return HttpStatusCode.Locked;
                 default:
                     return HttpStatusCode.InternalServerError;
             }

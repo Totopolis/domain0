@@ -157,6 +157,9 @@
     <Compile Include="..\..\src\common\TokenSecurityException.cs">
       <Link>Exceptions\TokenSecurityException.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\common\UserLockedSecurityException.cs">
+      <Link>Exceptions\UserLockedSecurityException.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server.nancy\AccessLogEntry.cs">
       <Link>Service\Repository\Model\AccessLogEntry.cs</Link>
     </Compile>

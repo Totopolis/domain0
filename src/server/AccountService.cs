@@ -433,16 +433,26 @@ namespace Domain0.Service
 
             // login account
             var account = await accountRepository.FindByLogin(request.Phone);
-            if (account != null && passwordGenerator.CheckPassword(request.Password, account.Password))
+            if (account != null)
             {
-                logger.Info($"User {request.Phone} logged in");
+                if (account.IsLocked)
+                {
+                    var errorText = $"Locked user attempt to login: { request.Phone }";
+                    logger.Warn(errorText);
+                    throw new UserLockedSecurityException(errorText);
+                }
 
-                var currentDateTime = DateTime.UtcNow;
-                account.FirstDate = account.FirstDate ?? currentDateTime;
-                account.LastDate = currentDateTime;
-                await accountRepository.Update(account);
+                if (passwordGenerator.CheckPassword(request.Password, account.Password))
+                {
+                    logger.Info($"User {request.Phone} logged in");
 
-                return await GetTokenResponse(account);
+                    var currentDateTime = DateTime.UtcNow;
+                    account.FirstDate = account.FirstDate ?? currentDateTime;
+                    account.LastDate = currentDateTime;
+                    await accountRepository.Update(account);
+
+                    return await GetTokenResponse(account);
+                }
             }
 
             // remove try confirm registration
@@ -494,15 +504,25 @@ namespace Domain0.Service
 
             // login account
             var account = await accountRepository.FindByLogin(email);
-            if (account != null && passwordGenerator.CheckPassword(request.Password, account.Password))
+            if (account != null)
             {
-                logger.Info($"User { request.Email } logged in");
-                var currentDateTime = DateTime.UtcNow;
-                account.FirstDate = account.FirstDate ?? currentDateTime;
-                account.LastDate = currentDateTime;
-                await accountRepository.Update(account);
+                if (account.IsLocked)
+                {
+                    var errorText = $"Locked user attempt to login: { request.Email }";
+                    logger.Warn(errorText);
+                    throw new UserLockedSecurityException(errorText);
+                }
 
-                return await GetTokenResponse(account);
+                if (passwordGenerator.CheckPassword(request.Password, account.Password))
+                {
+                    logger.Info($"User {request.Email} logged in");
+                    var currentDateTime = DateTime.UtcNow;
+                    account.FirstDate = account.FirstDate ?? currentDateTime;
+                    account.LastDate = currentDateTime;
+                    await accountRepository.Update(account);
+
+                    return await GetTokenResponse(account);
+                }
             }
 
             // remove try confirm registration
@@ -555,6 +575,13 @@ namespace Domain0.Service
                 throw new NotFoundException(nameof(IRequestContext.UserId), "account not found");
             }
 
+            if (account.IsLocked)
+            {
+                var errorText = $"Attempt to change password for locked user {requestContext.UserId}!";
+                logger.Warn(errorText);
+                throw new UserLockedSecurityException(errorText);
+            }
+
             if (!passwordGenerator.CheckPassword(request.OldPassword, account.Password))
             {
                 logger.Warn($"Attempt to change password for user { requestContext.UserId }. Wrong password!");
@@ -573,6 +600,13 @@ namespace Domain0.Service
             {
                 logger.Warn($"Attempt to reset password for unexisted user { phone }!");
                 throw new NotFoundException(nameof(phone), "account not found");
+            }
+
+            if (account.IsLocked)
+            {
+                var errorText = $"Attempt to reset password for locked user {phone}!";
+                logger.Warn(errorText);
+                throw new UserLockedSecurityException(errorText);
             }
 
             var password = passwordGenerator.GeneratePassword();
@@ -601,6 +635,13 @@ namespace Domain0.Service
             {
                 logger.Warn($"Attempt to reset password for unexisted user { email }!");
                 throw new NotFoundException(nameof(email), "account not found");
+            }
+
+            if (account.IsLocked)
+            {
+                var errorText = $"Attempt to reset password for locked user {email}!";
+                logger.Warn(errorText);
+                throw new UserLockedSecurityException(errorText);
             }
 
             var password = passwordGenerator.GeneratePassword();
@@ -640,6 +681,13 @@ namespace Domain0.Service
                 throw new NotFoundException(nameof(account), "account not found");
             }
 
+            if (account.IsLocked)
+            {
+                var errorText = $"Attempt to change phone for locked user { userId }";
+                logger.Warn(errorText);
+                throw new UserLockedSecurityException(errorText);
+            }
+
             if (!passwordGenerator.CheckPassword(changePhoneRequest.Password, account.Password))
             {
                 logger.Warn($"User { userId } tries to change phone. But provide a wrong password!");
@@ -673,8 +721,15 @@ namespace Domain0.Service
             var account = await accountRepository.FindByUserId(userId);
             if (account == null)
             {
-                logger.Warn($"Attempt to change phone for unexisted user {userId}");
+                logger.Warn($"Attempt to commit change phone for unexisted user {userId}");
                 throw new NotFoundException(nameof(account), "account not found");
+            }
+
+            if (account.IsLocked)
+            {
+                var errorText = $"Attempt to commit change phone for locked user { userId }";
+                logger.Warn(errorText);
+                throw new UserLockedSecurityException(errorText);
             }
 
             var smsRequest = await smsRequestRepository.PickByUserId(userId);
@@ -700,6 +755,13 @@ namespace Domain0.Service
             {
                 logger.Warn($"Attempt to change email for unexisted user {userId}");
                 throw new NotFoundException(nameof(account), "account not found");
+            }
+
+            if (account.IsLocked)
+            {
+                var errorText = $"Attempt to change email for locked user {userId}";
+                logger.Warn(errorText);
+                throw new UserLockedSecurityException(errorText);
             }
 
             if (!passwordGenerator.CheckPassword(changeEmailRequest.Password, account.Password))
@@ -740,8 +802,15 @@ namespace Domain0.Service
             var account = await accountRepository.FindByUserId(userId);
             if (account == null)
             {
-                logger.Warn($"Attempt to change email for unexisted user {userId}");
+                logger.Warn($"Attempt to commit change email for unexisted user {userId}");
                 throw new NotFoundException(nameof(account), "account not found");
+            }
+
+            if (account.IsLocked)
+            {
+                var errorText = $"Attempt to commit change email for locked user {userId}";
+                logger.Warn(errorText);
+                throw new UserLockedSecurityException(errorText);
             }
 
             var emailRequest = await emailRequestRepository.PickByUserId(userId);
@@ -861,15 +930,22 @@ namespace Domain0.Service
             var tokenRegistry = await tokenRegistrationRepository.FindById(id);
             if (tokenRegistry == null)
             {
-                logger.Warn($"User { requestContext.ClientHost } trying to refresh with unexisted or revoked token { id }");
+                logger.Warn($"User { requestContext.ClientHost } trying to refresh with unexisted or revoked token id: { id }");
                 throw new NotFoundException(nameof(tokenRegistry), id);
             }
 
             var account = await accountRepository.FindByUserId(tokenRegistry.UserId);
             if (account == null)
             {
-                logger.Warn($"User { tokenRegistry.UserId } trying to refresh but the user does not exists { id }");
+                logger.Warn($"User { tokenRegistry.UserId } trying to refresh but the user does not exists token id: { id }");
                 throw new NotFoundException(nameof(account), tokenRegistry.UserId);
+            }
+
+            if (account.IsLocked)
+            {
+                var errorText = $"User { tokenRegistry.UserId } trying to refresh but the user has been locked";
+                logger.Warn(errorText);
+                throw new UserLockedSecurityException(errorText);
             }
 
             var principal = tokenGenerator.Parse(tokenRegistry.AccessToken);
@@ -927,6 +1003,12 @@ namespace Domain0.Service
         public async Task<UserProfile> UpdateUser(UserProfile user)
         {
             var oldAccount = await accountRepository.FindByUserId(user.Id);
+
+            if (oldAccount == null)
+            {
+                logger.Warn($"User { requestContext.UserId } trying to update profile of not existed user with id: { user.Id }");
+                throw new NotFoundException(nameof(oldAccount), user.Id);
+            }
 
             var account = mapper.Map(
                 user, 
