@@ -27,10 +27,10 @@ namespace Domain0.FastSql
         {
             var templates = await SimpleCommand.ExecuteQueryAsync<MessageTemplate>(
                     connectionString,
-                    $"select {nameof(MessageTemplate.Template)} " +
+                    $"select * " +
                     $"from {TableName} " +
                     $"where {nameof(MessageTemplate.Name)}      =@p0 " +
-                    $"  and {nameof(MessageTemplate.Type)}      =@p2 " +
+                    $"  and {nameof(MessageTemplate.Type)}      =@p1 " +
                     $"order by {nameof(MessageTemplate.Locale)} ",
                     name.ToString(),
                     type.ToString())
