@@ -674,17 +674,56 @@ namespace Domain0.Api.Client
         System.Threading.Tasks.Task<UserProfile> UpdateUserAsync(int id, UserProfile request, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Method for delete user</summary>
+        /// <param name="id">id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task DeleteUserAsync(int id);
+    
+        /// <summary>Method for delete user</summary>
+        /// <param name="id">id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        System.Threading.Tasks.Task DeleteUserAsync(int id, System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Method for lock user</summary>
+        /// <param name="id">id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task LockUserAsync(int id);
+    
+        /// <summary>Method for lock user</summary>
+        /// <param name="id">id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        System.Threading.Tasks.Task LockUserAsync(int id, System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Method for unlock user</summary>
+        /// <param name="id">id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task UnlockUserAsync(int id);
+    
+        /// <summary>Method for unlock user</summary>
+        /// <param name="id">id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        System.Threading.Tasks.Task UnlockUserAsync(int id, System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Method for delete user</summary>
         /// <param name="phone">phone</param>
         /// <returns>Success</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task DeleteUserAsync(long phone);
+        System.Threading.Tasks.Task DeleteUserByPhoneAsync(long phone);
     
         /// <summary>Method for delete user</summary>
         /// <param name="phone">phone</param>
         /// <returns>Success</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        System.Threading.Tasks.Task DeleteUserAsync(long phone, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task DeleteUserByPhoneAsync(long phone, System.Threading.CancellationToken cancellationToken);
     
     }
     
@@ -5497,12 +5536,317 @@ namespace Domain0.Api.Client
         }
     
         /// <summary>Method for delete user</summary>
+        /// <param name="id">id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task DeleteUserAsync(int id)
+        {
+            return DeleteUserAsync(id, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Method for delete user</summary>
+        /// <param name="id">id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public async System.Threading.Tasks.Task DeleteUserAsync(int id, System.Threading.CancellationToken cancellationToken)
+        {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/users/{id}");
+            urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "204") 
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong id format", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "404") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("User with this id wasn\'t found", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("Provide domain0 auth token", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("you need \'domain0.editUsers\' permission", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Method for lock user</summary>
+        /// <param name="id">id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task LockUserAsync(int id)
+        {
+            return LockUserAsync(id, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Method for lock user</summary>
+        /// <param name="id">id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public async System.Threading.Tasks.Task LockUserAsync(int id, System.Threading.CancellationToken cancellationToken)
+        {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/users/{id}/lock");
+            urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "204") 
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong id format", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "404") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("User with this id wasn\'t found", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("Provide domain0 auth token", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("you need \'domain0.editUsers\' permission", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Method for unlock user</summary>
+        /// <param name="id">id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task UnlockUserAsync(int id)
+        {
+            return UnlockUserAsync(id, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Method for unlock user</summary>
+        /// <param name="id">id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public async System.Threading.Tasks.Task UnlockUserAsync(int id, System.Threading.CancellationToken cancellationToken)
+        {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/users/{id}/unlock");
+            urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "204") 
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong id format", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "404") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("User with this id wasn\'t found", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("Provide domain0 auth token", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("you need \'domain0.editUsers\' permission", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Method for delete user</summary>
         /// <param name="phone">phone</param>
         /// <returns>Success</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task DeleteUserAsync(long phone)
+        public System.Threading.Tasks.Task DeleteUserByPhoneAsync(long phone)
         {
-            return DeleteUserAsync(phone, System.Threading.CancellationToken.None);
+            return DeleteUserByPhoneAsync(phone, System.Threading.CancellationToken.None);
         }
     
         /// <summary>Method for delete user</summary>
@@ -5510,7 +5854,7 @@ namespace Domain0.Api.Client
         /// <returns>Success</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task DeleteUserAsync(long phone, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task DeleteUserByPhoneAsync(long phone, System.Threading.CancellationToken cancellationToken)
         {
             if (phone == null)
                 throw new System.ArgumentNullException("phone");
@@ -5576,7 +5920,7 @@ namespace Domain0.Api.Client
                         if (status_ == "403") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new Domain0ClientException("you need \'domain0.editUsers\' permission", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new Domain0ClientException("you need \'domain0.basic\' permission", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")

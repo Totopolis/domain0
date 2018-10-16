@@ -51,6 +51,8 @@ namespace Domain0.Nancy
             Get(GetUserByIdUrl, ctx => GetUserById(), name: nameof(GetUserById));
             Post(PostUserUrl, ctx => UpdateUser(), name: nameof(UpdateUser));
             Delete(DeleteUserUrl, ctx => DeleteUser(), name: nameof(DeleteUser));
+            Post(LockUserUrl, ctx => LockUser(), name: nameof(LockUser));
+            Post(UnlockUserUrl, ctx => UnlockUser(), name: nameof(UnlockUser));
 
             Delete(DeleteUserByPhoneUrl, ctx => DeleteUserByPhone(), name: nameof(DeleteUserByPhone));
         }
