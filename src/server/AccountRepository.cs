@@ -37,5 +37,16 @@ namespace Domain0.FastSql
         public new async Task<int> Insert(Account account)
             => (int) await MappedCommand.InsertAndGetIdAsync(connectionString, TableName, account, nameof(Account.Id));
 
+        public Task Lock(int userId)
+            => SimpleCommand.ExecuteNonQueryAsync(
+                connectionString,
+                $"update {TableName} set {nameof(Account.IsLocked)} = 1 where {nameof(Account.Id)} = @p0",
+                userId);
+
+        public Task Unlock(int userId)
+            => SimpleCommand.ExecuteNonQueryAsync(
+                connectionString,
+                $"update {TableName} set {nameof(Account.IsLocked)} = 0 where {nameof(Account.Id)} = @p0",
+                userId);
     }
 }

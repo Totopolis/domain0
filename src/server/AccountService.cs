@@ -79,6 +79,10 @@ namespace Domain0.Service
 
         Task DeleteUser(int id);
 
+        Task LockUser(int id);
+
+        Task UnlockUser(int id);
+
         Task<UserProfile[]> GetProfilesByFilter(UserProfileFilter filter);
     }
 
@@ -941,7 +945,21 @@ namespace Domain0.Service
 
         public async Task DeleteUser(int id)
         {
+            logger.Info($"User { requestContext.UserId } removing profile of user: {id}");
             await accountRepository.Delete(id);
+        }
+
+        public async Task LockUser(int id)
+        {
+            logger.Info($"User { requestContext.UserId } locking profile of user: {id}");
+            await accountRepository.Lock(id);
+            await tokenRegistrationRepository.RevokeByUserId(id);
+        }
+
+        public async Task UnlockUser(int id)
+        {
+            logger.Info($"User { requestContext.UserId } unlocking profile of user: {id}");
+            await accountRepository.Unlock(id);
         }
 
         private readonly IEmailClient emailClient;

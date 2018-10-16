@@ -22,7 +22,7 @@ namespace Domain0.FastSql
 
         public Task<TokenRegistration> FindLastTokenByUserId(int userId)
             => SimpleCommand.ExecuteQueryAsync<TokenRegistration>(_connectionString,
-                    $"select * from {TableName} where {nameof(TokenRegistration.Id)}=@p0", userId)
+                    $"select * from {TableName} where {nameof(TokenRegistration.UserId)}=@p0", userId)
                 .FirstOrDefault();
 
         public async Task Save(TokenRegistration registration)
@@ -38,5 +38,11 @@ namespace Domain0.FastSql
                     registration, nameof(TokenRegistration.Id));
             }
         }
+
+        public Task RevokeByUserId(int userId)
+            => SimpleCommand.ExecuteNonQueryAsync(
+                _connectionString,
+                $"delete from {TableName} where {nameof(TokenRegistration.UserId)} = @p0",
+                userId);
     }
 }

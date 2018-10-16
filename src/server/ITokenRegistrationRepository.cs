@@ -26,5 +26,7 @@ namespace Domain0.Repository
         /// <param name="registration"></param>
         /// <returns></returns>
         Task Save(TokenRegistration registration);
+
+        Task RevokeByUserId(int userId);
     }
 }

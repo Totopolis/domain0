@@ -15,5 +15,9 @@ namespace Domain0.Repository
         new Task<int> Insert(Account account);
 
         Task<Account[]> FindByUserIds(IEnumerable<int> userIds);
+
+        Task Lock(int userId);
+
+        Task Unlock(int userId);
     }
 }

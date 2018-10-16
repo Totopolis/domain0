@@ -26,6 +26,9 @@ namespace Domain0.Nancy
         public const string PostUserUrl = "/api/users/{id}";
         public const string DeleteUserUrl = "/api/users/{id}";
 
+        public const string LockUserUrl = "/api/users/{id}/lock";
+        public const string UnlockUserUrl = "/api/users/{id}/unlock";
+
         public const string DeleteUserByPhoneUrl = "/api/sms/{phone}";
 
         public UsersModule(
@@ -154,8 +157,6 @@ namespace Domain0.Nancy
 
         [Route(nameof(DeleteUser))]
         [Route(HttpMethod.Post, DeleteUserUrl)]
-        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
-        [Route(Produces = new string[] { })]
         [Route(Tags = new[] { "User" }, Summary = "Method for delete user")]
         [RouteParam(
             ParamIn = ParameterIn.Path,
@@ -164,7 +165,7 @@ namespace Domain0.Nancy
             Required = true,
             Description = "id")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone format")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong id format")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
         [SwaggerResponse(HttpStatusCode.NotFound, "User with this id wasn't found")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Provide domain0 auth token")]
@@ -189,11 +190,78 @@ namespace Domain0.Nancy
             return HttpStatusCode.NoContent;
         }
 
+        [Route(nameof(LockUser))]
+        [Route(HttpMethod.Post, LockUserUrl)]
+        [Route(Tags = new[] { "User" }, Summary = "Method for lock user")]
+        [RouteParam(
+            ParamIn = ParameterIn.Path,
+            Name = "id",
+            ParamType = typeof(int),
+            Required = true,
+            Description = "id")]
+        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong id format")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.NotFound, "User with this id wasn't found")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "Provide domain0 auth token")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "you need 'domain0.editUsers' permission")]
+        public async Task<object> LockUser()
+        {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_EDIT_USERS));
+
+            var id = (int)Context.Parameters.id;
+
+            var profile = await accountService.GetProfileByUserId(id);
+            if (profile == null)
+            {
+                return HttpStatusCode.NotFound;
+            }
+
+            await accountService.LockUser(profile.Id);
+
+            return HttpStatusCode.NoContent;
+        }
+
+        [Route(nameof(UnlockUser))]
+        [Route(HttpMethod.Post, UnlockUserUrl)]
+        [Route(Tags = new[] { "User" }, Summary = "Method for unlock user")]
+        [RouteParam(
+            ParamIn = ParameterIn.Path,
+            Name = "id",
+            ParamType = typeof(int),
+            Required = true,
+            Description = "id")]
+        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong id format")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.NotFound, "User with this id wasn't found")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "Provide domain0 auth token")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "you need 'domain0.editUsers' permission")]
+        public async Task<object> UnlockUser()
+        {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_EDIT_USERS));
+
+            var id = (int)Context.Parameters.id;
+
+            var profile = await accountService.GetProfileByUserId(id);
+            if (profile == null)
+            {
+                return HttpStatusCode.NotFound;
+            }
+
+            await accountService.UnlockUser(profile.Id);
+
+            return HttpStatusCode.NoContent;
+        }
 
         [Route(nameof(DeleteUserByPhone))]
         [Route(HttpMethod.Post, DeleteUserByPhoneUrl)]
-        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
-        [Route(Produces = new string[] { })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for delete user")]
         [RouteParam(
             ParamIn = ParameterIn.Path,
