@@ -26,7 +26,7 @@ namespace Domain0.Test
         public async Task RequestChangeEmail_Success(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
 
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
@@ -148,7 +148,7 @@ namespace Domain0.Test
         public async Task ForceResetPassword_Success(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -226,7 +226,7 @@ namespace Domain0.Test
         public async Task ForceCreateUser_SendEmail_StandardTemplate(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 

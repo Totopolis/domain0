@@ -113,8 +113,13 @@ namespace Domain0.Nancy
             ILifetimeScope requestContainer, 
             NancyContext context)
         {
+            var tokenGenerator = TokenGeneratorBuilder.Build(requestContainer, context);
+
             requestContainer.Update(builder =>
             {
+                builder.RegisterInstance(tokenGenerator)
+                    .As<ITokenGenerator>();
+
                 builder
                     .RegisterType<JwtAuthenticationRequestContext>()
                     .As<IRequestContext>()

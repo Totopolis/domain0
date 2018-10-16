@@ -28,7 +28,21 @@ namespace Sdl.Domain0.Shared
             {
                 { JwtHashAlgorithm.HS256, (key, value) => { using (var sha = new HMACSHA256(key)) { return sha.ComputeHash(value); } } },
                 { JwtHashAlgorithm.HS384, (key, value) => { using (var sha = new HMACSHA384(key)) { return sha.ComputeHash(value); } } },
-                { JwtHashAlgorithm.HS512, (key, value) => { using (var sha = new HMACSHA512(key)) { return sha.ComputeHash(value); } } }
+                { JwtHashAlgorithm.HS512, (key, value) => { using (var sha = new HMACSHA512(key)) { return sha.ComputeHash(value); } } },
+                { JwtHashAlgorithm.RS256, (key, value) =>
+                    {
+                        using (var rsaProvider = new RSACryptoServiceProvider(2048))
+                        {
+                            rsaProvider.FromXmlString(
+                                Encoding.UTF8.GetString(key));
+
+                            return rsaProvider.SignData(
+                                value, 
+                                HashAlgorithmName.SHA256, 
+                                RSASignaturePadding.Pkcs1);
+                        }
+                    }
+                },
             };
         }
 

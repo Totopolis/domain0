@@ -23,7 +23,7 @@ namespace Domain0.Test
         public async Task GetMyProfile_Success(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(
-                builder => builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder => builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
 
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
@@ -57,7 +57,7 @@ namespace Domain0.Test
         public async Task GetProfileByPhone_Success(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -87,7 +87,7 @@ namespace Domain0.Test
         public async Task GetProfileByPhone_NotFound(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -113,7 +113,7 @@ namespace Domain0.Test
         public async Task GetProfileByUserId_Success(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -140,7 +140,7 @@ namespace Domain0.Test
         public async Task UpdateUser_Success(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -200,7 +200,7 @@ namespace Domain0.Test
         public async Task GetProfileByUserId_NotFound(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -225,7 +225,7 @@ namespace Domain0.Test
         public async Task GetProfilesByFilter_Success(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -256,7 +256,7 @@ namespace Domain0.Test
         public async Task GetProfilesByFilter_BadRequest(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 

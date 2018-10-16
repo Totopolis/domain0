@@ -118,7 +118,7 @@ namespace Domain0.Test
         public async Task ForceCreateUser_SendSms_CustomTemplate(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -168,7 +168,7 @@ namespace Domain0.Test
         public async Task ForceCreateUser_SendSms_StandardTemplate(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -228,7 +228,7 @@ namespace Domain0.Test
         public async Task ForceResetPassword_Success(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -294,7 +294,7 @@ namespace Domain0.Test
         public async Task ForceCreateUser_NotSendSms(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -344,7 +344,7 @@ namespace Domain0.Test
         public async Task ForceCreateUser_UserExists(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -380,7 +380,7 @@ namespace Domain0.Test
         public async Task ForceCreateUser_Validation(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -401,7 +401,13 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task Login_Success(DataFormat format)
         {
-            var container = TestContainerBuilder.GetContainer();
+            var container = TestContainerBuilder.GetContainer(builder =>
+            {
+                builder
+                    .RegisterInstance(new Mock<ITokenGenerator>().Object)
+                    .Keyed<ITokenGenerator>("HS256");
+
+            });
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -423,7 +429,7 @@ namespace Domain0.Test
 
             var authGenerator = Mock.Get(container.Resolve<IPasswordGenerator>());
             authGenerator.Setup(a => a.CheckPassword(It.IsAny<string>(), It.IsAny<string>())).Returns<string, string>((pasd, hash) => pasd == hash);
-            var tokenGenerator = Mock.Get(container.Resolve<ITokenGenerator>());
+            var tokenGenerator = Mock.Get(container.ResolveKeyed<ITokenGenerator>("HS256"));
             tokenGenerator.Setup(a => a.GenerateAccessToken(
                 It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string[]>()))
                 .Returns<int, DateTime, string[]>((userId, dt, perms) => userId + string.Join("", perms));
@@ -505,7 +511,7 @@ namespace Domain0.Test
         public async Task ChangePassword_Account(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(
-                builder => builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder => builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
 
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
@@ -612,7 +618,7 @@ namespace Domain0.Test
         public async Task ForceChangePhone_Success(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder => 
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
 
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
@@ -645,7 +651,7 @@ namespace Domain0.Test
         public async Task ForceChangePhone_NotFound(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder => 
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
 
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
@@ -674,7 +680,7 @@ namespace Domain0.Test
         public async Task RequestChangePhone_Success(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
 
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
@@ -842,7 +848,7 @@ namespace Domain0.Test
         public async Task GetPhoneByUserId_Success(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -872,7 +878,7 @@ namespace Domain0.Test
         public async Task GetPhoneByUserId_NotFound(DataFormat format)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
-                builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance());
+                builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance());
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -898,7 +904,13 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task Refresh_Success(DataFormat format)
         {
-            var container = TestContainerBuilder.GetContainer();
+            var container = TestContainerBuilder.GetContainer(builder =>
+            {
+                builder
+                    .RegisterInstance(new Mock<ITokenGenerator>().Object)
+                    .Keyed<ITokenGenerator>("HS256");
+
+            });
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -910,7 +922,7 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync(new Account {Id = userId});
 
-            var tokenGeneratorMock = Mock.Get(container.Resolve<ITokenGenerator>());
+            var tokenGeneratorMock = Mock.Get(container.ResolveKeyed<ITokenGenerator>("HS256"));
             tokenGeneratorMock.Setup(p => p.GetTid(refreshToken)).Returns(tid);
             tokenGeneratorMock.Setup(a => a.Parse(It.IsAny<string>())).Returns<string>(token =>
                 new ClaimsPrincipal(new ClaimsIdentity(token.Split(',').Select(r => new Claim(ClaimTypes.Role, r)))));
@@ -942,7 +954,13 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task Refresh_Account_NotFound(DataFormat format)
         {
-            var container = TestContainerBuilder.GetContainer();
+            var container = TestContainerBuilder.GetContainer(builder =>
+            {
+                builder
+                    .RegisterInstance(new Mock<ITokenGenerator>().Object)
+                    .Keyed<ITokenGenerator>("HS256");
+
+            });
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -954,7 +972,7 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync((Account) null);
 
-            var tokenGenerator = Mock.Get(container.Resolve<ITokenGenerator>());
+            var tokenGenerator = Mock.Get(container.ResolveKeyed<ITokenGenerator>("HS256"));
             tokenGenerator.Setup(p => p.GetTid(refreshToken)).Returns(tid);
 
             var tokenMock = Mock.Get(container.Resolve<ITokenRegistrationRepository>());
@@ -978,7 +996,13 @@ namespace Domain0.Test
         [InlineData(DataFormat.Proto)]
         public async Task Refresh_TokenRegistry_NotFound(DataFormat format)
         {
-            var container = TestContainerBuilder.GetContainer();
+            var container = TestContainerBuilder.GetContainer(builder =>
+            {
+                builder
+                    .RegisterInstance(new Mock<ITokenGenerator>().Object)
+                    .Keyed<ITokenGenerator>("HS256");
+
+            });
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
 
@@ -989,7 +1013,7 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync(new Account { Id = userId });
 
-            var tokenGenerator = Mock.Get(container.Resolve<ITokenGenerator>());
+            var tokenGenerator = Mock.Get(container.ResolveKeyed<ITokenGenerator>("HS256"));
             tokenGenerator.Setup(p => p.GetTid(refreshToken)).Returns(tid);
 
             var response = await browser.Get(SmsModule.RefreshUrl.Replace("{refreshToken}", refreshToken), with =>

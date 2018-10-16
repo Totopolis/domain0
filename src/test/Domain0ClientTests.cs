@@ -31,7 +31,7 @@ namespace Domain0.Test
             container = TestContainerBuilder.GetContainer(
                 builder =>
                 {
-                    builder.RegisterType<TokenGenerator>().As<ITokenGenerator>().SingleInstance();
+                    builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance();
                 });
 
             var bootstrapper = new Domain0Bootstrapper(container);

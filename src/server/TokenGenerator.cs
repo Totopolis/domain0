@@ -5,6 +5,8 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using Domain0.Exceptions;
 
 namespace Domain0.Service
@@ -28,18 +30,15 @@ namespace Domain0.Service
         public string Alg { get; set; }
     }
 
-    public class TokenGenerator : ITokenGenerator
+    public abstract class TokenGenerator : ITokenGenerator, IDisposable
     {
-        private readonly TokenGeneratorSettings settings;
+        protected readonly TokenGeneratorSettings Settings;
 
         private readonly JwtSecurityTokenHandler handler;
 
-        private readonly SymmetricSecurityKey signatureKey;
-
-        public TokenGenerator(TokenGeneratorSettings settings)
+        protected TokenGenerator(TokenGeneratorSettings settings)
         {
-            this.settings = settings;
-            signatureKey = new SymmetricSecurityKey(Convert.FromBase64String(settings.Secret));
+            Settings = settings;
             handler = new JwtSecurityTokenHandler {SetDefaultTimesOnTokenCreation = false};
         }
 
@@ -118,29 +117,27 @@ namespace Domain0.Service
             }
         }
 
-        private TokenValidationParameters BuildTokenValidationParameters()
+        protected virtual TokenValidationParameters BuildTokenValidationParameters()
         {
             var parameters = new TokenValidationParameters
             {
-                IssuerSigningKey = signatureKey,
                 NameClaimType = ClaimTypes.Name,
                 ValidateAudience = true,
-                ValidAudience = settings.Audience,
-                ValidIssuer = settings.Issuer,
+                ValidAudience = Settings.Audience,
+                ValidIssuer = Settings.Issuer,
             };
             return parameters;
         }
 
-        private SecurityTokenDescriptor BuildSecurityTokenDescriptor(DateTime issueAt, Claim[] claims)
+        protected virtual SecurityTokenDescriptor BuildSecurityTokenDescriptor(DateTime issueAt, Claim[] claims)
         {
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 IssuedAt = issueAt,
-                Expires = issueAt.Add(settings.Lifetime),
-                Audience = settings.Audience,
-                Issuer = settings.Issuer,
+                Expires = issueAt.Add(Settings.Lifetime),
+                Audience = Settings.Audience,
+                Issuer = Settings.Issuer,
                 Subject = new ClaimsIdentity(claims),
-                SigningCredentials = new SigningCredentials(signatureKey, settings.Alg)
             };
             return tokenDescriptor;
         }
@@ -155,5 +152,81 @@ namespace Domain0.Service
             };
             return claims;
         }
+
+        public virtual void Dispose()
+        {
+        }
+    }
+
+    public class SymmetricKeyTokenGenerator : TokenGenerator
+    {
+        public SymmetricKeyTokenGenerator(TokenGeneratorSettings settings)
+            : base(settings)
+        {
+            signatureKey = new SymmetricSecurityKey(Convert.FromBase64String(settings.Secret));
+        }
+
+        protected override SecurityTokenDescriptor BuildSecurityTokenDescriptor(DateTime issueAt, Claim[] claims)
+        {
+            var securityTokenDescriptor = base.BuildSecurityTokenDescriptor(issueAt, claims);
+            securityTokenDescriptor.SigningCredentials = new SigningCredentials(signatureKey, SecurityAlgorithms.HmacSha256);
+            return securityTokenDescriptor;
+        }
+
+        protected override TokenValidationParameters BuildTokenValidationParameters()
+        {
+            var validationProvider = base.BuildTokenValidationParameters();
+            validationProvider.IssuerSigningKey = signatureKey;
+            return validationProvider;
+        }
+
+        private readonly SymmetricSecurityKey signatureKey;
+    }
+
+    public class AsymmetricKeyPairTokenGenerator : TokenGenerator
+    {
+        private const int KeySize = 2048;
+
+        public AsymmetricKeyPairTokenGenerator(TokenGeneratorSettings settings)
+            : base(settings)
+        {
+            publicKeyRsaProvider = new RSACryptoServiceProvider(KeySize);
+            publicKeyRsaProvider.FromXmlString(
+                Encoding.UTF8.GetString(
+                    Convert.FromBase64String(settings.Public)));
+            publicSecurityKey = new RsaSecurityKey(publicKeyRsaProvider);
+
+            privateKeyRsaProvider = new RSACryptoServiceProvider(KeySize);
+            privateKeyRsaProvider.FromXmlString(
+                Encoding.UTF8.GetString(
+                    Convert.FromBase64String(settings.Private)));
+            privateSecurityKey = new RsaSecurityKey(privateKeyRsaProvider);
+        }
+
+        protected override SecurityTokenDescriptor BuildSecurityTokenDescriptor(DateTime issueAt, Claim[] claims)
+        {
+            var securityTokenDescriptor = base.BuildSecurityTokenDescriptor(issueAt, claims);
+            securityTokenDescriptor.SigningCredentials = new SigningCredentials(privateSecurityKey, SecurityAlgorithms.RsaSha256);
+            return securityTokenDescriptor;
+        }
+
+        protected override TokenValidationParameters BuildTokenValidationParameters()
+        {
+            var validationProvider = base.BuildTokenValidationParameters();
+            validationProvider.IssuerSigningKey = publicSecurityKey;
+            return validationProvider;
+        }
+
+        public override void Dispose()
+        {
+            publicKeyRsaProvider?.Dispose();
+            privateKeyRsaProvider?.Dispose();
+            base.Dispose();
+        }
+
+        private readonly RSACryptoServiceProvider publicKeyRsaProvider;
+        private readonly RsaSecurityKey publicSecurityKey;
+        private readonly RSACryptoServiceProvider privateKeyRsaProvider;
+        private readonly RsaSecurityKey privateSecurityKey;
     }
 }

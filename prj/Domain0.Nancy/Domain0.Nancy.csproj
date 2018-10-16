@@ -310,6 +310,9 @@
     <Compile Include="..\..\src\server\SqlQueueSmsClientSettings.cs">
       <Link>Service\Sms\SqlQueueSmsClientSettings.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\TokenGenerathorBuilder.cs">
+      <Link>Infrastructure\TokenGenerathorBuilder.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\TokenGenerator.cs">
       <Link>Service\TokenGenerator.cs</Link>
     </Compile>
