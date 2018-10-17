@@ -6186,11 +6186,12 @@ namespace Domain0.Api.Client
     public partial class UserProfile 
     {
         [Newtonsoft.Json.JsonConstructor]
-        public UserProfile(string @description, string @email, int @id, string @name, decimal? @phone)
+        public UserProfile(string @description, string @email, int @id, bool @isLocked, string @name, decimal? @phone)
         {
             Description = @description;
             Email = @email;
             Id = @id;
+            IsLocked = @isLocked;
             Name = @name;
             Phone = @phone;
         }
@@ -6203,6 +6204,9 @@ namespace Domain0.Api.Client
     
         [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
         public int Id { get; }
+    
+        [Newtonsoft.Json.JsonProperty("isLocked", Required = Newtonsoft.Json.Required.Always)]
+        public bool IsLocked { get; }
     
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Name { get; }
