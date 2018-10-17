@@ -7,6 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Extensions;
+using NLog;
 
 namespace Domain0.Service.Throttling
 {
@@ -56,9 +57,12 @@ namespace Domain0.Service.Throttling
 
     public class RequestThrottleManager : IRequestThrottleManager
     {
-        public RequestThrottleManager(IMemoryCache memoryCache)
+        public RequestThrottleManager(
+            IMemoryCache memoryCache,
+            ILogger loggerInstance)
         {
             cache = memoryCache;
+            logger = loggerInstance;
         }
 
         public void RequiresThrottlingByPathAndIp(
@@ -126,6 +130,9 @@ namespace Domain0.Service.Throttling
 
             if (IsLimitExceeded(requestCountLimit, counterValue))
             {
+                logger.Error($"Flood detected ({counterValue} in {period.ToString()} allowed {requestCountLimit})" +
+                             $" on path: {context?.Request?.Path}" +
+                             $" ip: {context?.Request?.UserHostAddress}");
                 return new Response
                 {
                     StatusCode = HttpStatusCode.TooManyRequests
@@ -241,5 +248,6 @@ namespace Domain0.Service.Throttling
         }
 
         private readonly IMemoryCache cache;
+        private readonly ILogger logger;
     }
 }
