@@ -1,17 +1,18 @@
-﻿using Domain0.Repository;
-using Gerakul.FastSql;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Gerakul.FastSql.Common;
+using Gerakul.FastSql.SqlServer;
 
 namespace Domain0.Repository
 {
     public class RepositoryBase<TKey, TEntity> : IRepository<TKey, TEntity>
         where TEntity : new()
     {
-        public RepositoryBase(string connectionStringArg)
+        public RepositoryBase(Func<DbContext> getContextFunc)
         {
-            connectionString = connectionStringArg;
+            getContext = getContextFunc;
             KeyName = "Id";
         }
 
@@ -19,35 +20,40 @@ namespace Domain0.Repository
         {
             if (!ids.Any())
             {
-                return SimpleCommand.ExecuteQueryAsync<TEntity>(
-                        connectionString,
-                        $"select * from {TableName}")
+                return getContext()
+                    .CreateSimple($"select * from {TableName}")
+                    .ExecuteQueryAsync<TEntity>()
                     .ToArray();
             }
 
             var idsStr = string.Join(",", ids);
 
-            return SimpleCommand.ExecuteQueryAsync<TEntity>(
-                    connectionString,
+            return getContext()
+                .CreateSimple(
                     $"select * from {TableName} " +
                     $"where { KeyName } in ({idsStr})")
+                .ExecuteQueryAsync<TEntity>()
                 .ToArray();
         }
 
         public async Task<decimal> Insert(TEntity entity)
-            => await MappedCommand.InsertAndGetIdAsync(connectionString, TableName, entity, KeyName);
-
+        {
+            // TODO use crosbase CreateInsertWithOutput
+            return await (getContext() as ISqlCommandCreator)
+                .CreateInsertAndGetID(TableName, entity, ignoreFields: KeyName)
+                //.CreateInsertWithOutput(TableName, entity, ignoreFields: new [] { KeyName }, outputFields: KeyName)
+                .ExecuteQueryFirstColumnAsync<decimal>()
+                .First();
+        }
 
         public Task Update(TEntity entity)
-            => MappedCommand.UpdateAsync(connectionString, TableName, entity, KeyName);
+            => getContext()
+                .UpdateAsync(TableName, entity, KeyName);
 
         public Task Delete(TKey id)
-            => SimpleCommand.ExecuteNonQueryAsync(connectionString,
-                $"delete from {TableName} " +
-                $"where { KeyName } = @p0",
-                id);
+            => getContext().DeleteAsync(TableName, id, KeyName);
 
-        protected readonly string connectionString;
+        protected readonly Func<DbContext> getContext;
 
         protected string TableName { get; set; }
 

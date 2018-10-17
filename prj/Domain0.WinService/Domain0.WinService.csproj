@@ -39,8 +39,11 @@
     <Reference Include="Autofac, Version=4.8.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.4.8.1\lib\net45\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Gerakul.FastSql, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Gerakul.FastSql.1.0.3\lib\net46\Gerakul.FastSql.dll</HintPath>
+    <Reference Include="Gerakul.FastSql.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Gerakul.FastSql.Common.1.0.0\lib\net46\Gerakul.FastSql.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Gerakul.FastSql.SqlServer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Gerakul.FastSql.SqlServer.1.0.0\lib\net46\Gerakul.FastSql.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Google.Protobuf, Version=3.6.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Protobuf.3.6.1\lib\net45\Google.Protobuf.dll</HintPath>

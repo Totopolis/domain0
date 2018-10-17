@@ -1,7 +1,8 @@
 ﻿using System.Configuration;
 using Autofac;
-using Autofac.Core;
 using Domain0.Repository;
+using Gerakul.FastSql.Common;
+using Gerakul.FastSql.SqlServer;
 
 namespace Domain0.FastSql
 {
@@ -12,37 +13,18 @@ namespace Domain0.FastSql
             var connectionString = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
             builder.RegisterInstance(connectionString).Named<string>(nameof(connectionString));
 
-            builder.RegisterType<DbManager>().WithParameter((p, c) => p.ParameterType == typeof(string),
-                (p, c) => c.ResolveNamed<string>(nameof(connectionString))).AsSelf();
-            builder.RegisterType<AccountRepository>().As<IAccountRepository>()
-                .WithParameter(new ResolvedParameter((pi, ctx) => pi.ParameterType == typeof(string),
-                    (pi, ctx) => ctx.ResolveNamed<string>(nameof(connectionString)))).SingleInstance();
-            builder.RegisterType<ApplicationRepository>().As<IApplicationRepository>()
-                .WithParameter(new ResolvedParameter((pi, ctx) => pi.ParameterType == typeof(string),
-                    (pi, ctx) => ctx.ResolveNamed<string>(nameof(connectionString)))).SingleInstance();
-            builder.RegisterType<MessageTemplateRepository>().As<IMessageTemplateRepository>()
-                .WithParameter(new ResolvedParameter((pi, ctx) => pi.ParameterType == typeof(string),
-                    (pi, ctx) => ctx.ResolveNamed<string>(nameof(connectionString)))).SingleInstance();
-            builder.RegisterType<PermissionRepository>().As<IPermissionRepository>()
-                .WithParameter(new ResolvedParameter((pi, ctx) => pi.ParameterType == typeof(string),
-                    (pi, ctx) => ctx.ResolveNamed<string>(nameof(connectionString)))).SingleInstance();
-            builder.RegisterType<RoleRepository>().As<IRoleRepository>()
-                .WithParameter(new ResolvedParameter((pi, ctx) => pi.ParameterType == typeof(string),
-                    (pi, ctx) => ctx.ResolveNamed<string>(nameof(connectionString)))).SingleInstance();
-            builder.RegisterType<SmsRequestRepository>().As<ISmsRequestRepository>()
-                .WithParameter(new ResolvedParameter((pi, ctx) => pi.ParameterType == typeof(string),
-                    (pi, ctx) => ctx.ResolveNamed<string>(nameof(connectionString)))).SingleInstance();
-            builder.RegisterType<EmailRequestRepository>().As<IEmailRequestRepository>()
-                .WithParameter(new ResolvedParameter((pi, ctx) => pi.ParameterType == typeof(string),
-                    (pi, ctx) => ctx.ResolveNamed<string>(nameof(connectionString)))).SingleInstance();
-            builder.RegisterType<TokenRegistrationRepository>().As<ITokenRegistrationRepository>()
-                .WithParameter(new ResolvedParameter((pi, ctx) => pi.ParameterType == typeof(string),
-                    (pi, ctx) => ctx.ResolveNamed<string>(nameof(connectionString)))).SingleInstance();
+            builder.Register<DbContext>(c => SqlContextProvider.DefaultInstance.CreateContext(connectionString));
 
-            builder.RegisterType<AccessLogRepository>().As<IAccessLogRepository>()
-                .WithParameter(new ResolvedParameter((pi, ctx) => pi.ParameterType == typeof(string),
-                    (pi, ctx) => ctx.ResolveNamed<string>(nameof(connectionString)))).SingleInstance();
-            
+            builder.RegisterType<DbManager>().AsSelf();
+            builder.RegisterType<AccountRepository>().As<IAccountRepository>().SingleInstance();
+            builder.RegisterType<ApplicationRepository>().As<IApplicationRepository>().SingleInstance();
+            builder.RegisterType<MessageTemplateRepository>().As<IMessageTemplateRepository>().SingleInstance();
+            builder.RegisterType<PermissionRepository>().As<IPermissionRepository>().SingleInstance();
+            builder.RegisterType<RoleRepository>().As<IRoleRepository>().SingleInstance();
+            builder.RegisterType<SmsRequestRepository>().As<ISmsRequestRepository>().SingleInstance();
+            builder.RegisterType<EmailRequestRepository>().As<IEmailRequestRepository>().SingleInstance();
+            builder.RegisterType<TokenRegistrationRepository>().As<ITokenRegistrationRepository>().SingleInstance();
+            builder.RegisterType<AccessLogRepository>().As<IAccessLogRepository>().SingleInstance();
         }
     }
 }

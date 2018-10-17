@@ -1,6 +1,6 @@
 ﻿using Domain0.Repository;
 using Domain0.Repository.Model;
-using Gerakul.FastSql;
+using Gerakul.FastSql.Common;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,23 +9,25 @@ namespace Domain0.FastSql
 {
     public class EmailRequestRepository : RepositoryBase<int, EmailRequest>, IEmailRequestRepository
     {
-        public EmailRequestRepository(string connectionString)
-            :base(connectionString)
+        public EmailRequestRepository(Func<DbContext> getContextFunc)
+            : base(getContextFunc)
         {
             TableName = "[dom].[EmailRequest]";
         }
 
         public Task<EmailRequest> Pick(string email)
-            => SimpleCommand.ExecuteQueryAsync<EmailRequest>(connectionString,
+            => getContext()
+                .CreateSimple(
                     $"select * from {TableName} " +
                     $"where {nameof(EmailRequest.Email)}=@p0 " +
                     $"and {nameof(EmailRequest.ExpiredAt)}>=@p1 " +
                     $"order by id desc",  // get latest request
                     email, DateTime.UtcNow)
+                .ExecuteQueryAsync<EmailRequest>()
                 .FirstOrDefault();
 
         public Task Save(EmailRequest emailRequest)
-            => MappedCommand.InsertAsync(connectionString, TableName, emailRequest);
+            => getContext().InsertAsync(TableName, emailRequest);
 
         public async Task<bool> ConfirmRegister(string email, string password)
         {
@@ -33,13 +35,15 @@ namespace Domain0.FastSql
             return request?.Password == password;
         }
 
-        public Task<EmailRequest> PickByUserId(int userId) => 
-            SimpleCommand.ExecuteQueryAsync<EmailRequest>(connectionString,
-                $"select * from {TableName} " +
-                $"where {nameof(EmailRequest.UserId)}=@p0 " +
-                $"and {nameof(EmailRequest.ExpiredAt)}>=@p1 " +
-                $"order by id desc",  // get latest request
-                userId, DateTime.UtcNow)
-            .FirstOrDefault();
+        public Task<EmailRequest> PickByUserId(int userId) 
+            => getContext()
+                .CreateSimple(
+                    $"select * from {TableName} " +
+                    $"where {nameof(EmailRequest.UserId)}=@p0 " +
+                    $"and {nameof(EmailRequest.ExpiredAt)}>=@p1 " +
+                    $"order by id desc",  // get latest request
+                    userId, DateTime.UtcNow)
+                .ExecuteQueryAsync<EmailRequest>()
+                .FirstOrDefault();
     }
 }

@@ -1,15 +1,17 @@
 ﻿using Domain0.Repository;
 using System.Linq;
 using System.Threading.Tasks;
-using Gerakul.FastSql;
 using Domain0.Repository.Model;
 using System.Globalization;
+using Gerakul.FastSql.Common;
+using System;
 
 namespace Domain0.FastSql
 {
     public class MessageTemplateRepository : RepositoryBase<int, MessageTemplate>, IMessageTemplateRepository
     {
-        public MessageTemplateRepository(string connectionString) :base(connectionString)
+        public MessageTemplateRepository(Func<DbContext> getContextFunc)
+            :base(getContextFunc)
         {
             TableName = "[dom].[Message]";
             KeyName = "Id";
@@ -25,16 +27,18 @@ namespace Domain0.FastSql
 
         private async Task<string> GetTemplateInternal(MessageTemplateName name, CultureInfo culture, MessageTemplateType type)
         {
-            var templates = await SimpleCommand.ExecuteQueryAsync<MessageTemplate>(
-                    connectionString,
-                    $"select * " +
-                    $"from {TableName} " +
-                    $"where {nameof(MessageTemplate.Name)}      =@p0 " +
-                    $"  and {nameof(MessageTemplate.Type)}      =@p1 " +
-                    $"order by {nameof(MessageTemplate.Locale)} ",
-                    name.ToString(),
-                    type.ToString())
-                .ToArray();
+            var templates = await 
+                getContext()
+                    .CreateSimple(
+                        $"select * " +
+                        $"from {TableName} " +
+                        $"where {nameof(MessageTemplate.Name)}      =@p0 " +
+                        $"  and {nameof(MessageTemplate.Type)}      =@p1 " +
+                        $"order by {nameof(MessageTemplate.Locale)} ",
+                        name.ToString(),
+                        type.ToString())
+                    .ExecuteQueryAsync<MessageTemplate>()
+                    .ToArray();
 
             return GetTemplateMatch(culture, templates) ??
                    // fall back to default culture

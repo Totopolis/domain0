@@ -1,4 +1,5 @@
 ﻿using Gerakul.FastSql;
+using Gerakul.FastSql.Common;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -8,11 +9,11 @@ namespace Domain0.FastSql
 {
     public class DbManager
     {
-        private readonly string _connectionString;
+        private readonly Func<DbContext> getContext;
 
-        public DbManager(string connectionString)
+        public DbManager(Func<DbContext> getContextFunc)
         {
-            _connectionString = connectionString;
+            getContext = getContextFunc;
         }
 
         public void Initialize()
@@ -27,7 +28,9 @@ namespace Domain0.FastSql
                 {
                     try
                     {
-                        SimpleCommand.ExecuteNonQuery(_connectionString, script);
+                        getContext()
+                            .CreateSimple(script)
+                            .ExecuteNonQuery();
                     }
                     catch (Exception ex)
                     {

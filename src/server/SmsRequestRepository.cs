@@ -3,30 +3,32 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain0.Repository;
 using Domain0.Repository.Model;
-using Gerakul.FastSql;
+using Gerakul.FastSql.Common;
 
 namespace Domain0.FastSql
 {
     public class SmsRequestRepository : ISmsRequestRepository
     {
-        private readonly string _connectionString;
-
+        private readonly Func<DbContext> getContext;
         public const string TableName = "[dom].[SmsRequest]";
-         
-        public SmsRequestRepository(string connectionString)
-            => _connectionString = connectionString;
+
+        public SmsRequestRepository(Func<DbContext> getContextFunc)
+        {
+            getContext = getContextFunc;
+        }
 
         public Task<SmsRequest> Pick(decimal phone)
-            => SimpleCommand.ExecuteQueryAsync<SmsRequest>(_connectionString,
+            => getContext()
+                .CreateSimple(
                     $"select * from {TableName} " +
                     $"where {nameof(SmsRequest.Phone)}=@p0 " +
                     $"and {nameof(SmsRequest.ExpiredAt)}>=@p1 " +
                     $"order by id desc",  // get latest request
                     phone, DateTime.UtcNow)
+                .ExecuteQueryAsync<SmsRequest>()
                 .FirstOrDefault();
 
-        public Task Save(SmsRequest smsRequest)
-            => MappedCommand.InsertAsync(_connectionString, TableName, smsRequest);
+        public Task Save(SmsRequest smsRequest) => getContext().InsertAsync(TableName, smsRequest);
 
         public async Task<bool> ConfirmRegister(decimal phone, string password)
         {
@@ -35,12 +37,14 @@ namespace Domain0.FastSql
         }
 
         public Task<SmsRequest> PickByUserId(int userId)
-            => SimpleCommand.ExecuteQueryAsync<SmsRequest>(_connectionString,
+            => getContext()
+                .CreateSimple(
                     $"select * from {TableName} " +
                     $"where {nameof(SmsRequest.UserId)}=@p0 " +
                     $"and {nameof(SmsRequest.ExpiredAt)}>=@p1 " +
                     $"order by id desc",  // get latest request
                     userId, DateTime.UtcNow)
+                .ExecuteQueryAsync<SmsRequest>()
                 .FirstOrDefault();
     }
 }
