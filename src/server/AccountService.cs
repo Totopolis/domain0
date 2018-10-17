@@ -1045,7 +1045,8 @@ namespace Domain0.Service
                 opts => opts
                     .ConfigureMap()
                     .ForMember(x => x.Email, o => o.Ignore())
-                    .ForMember(x => x.Phone, o => o.Ignore()));
+                    .ForMember(x => x.Phone, o => o.Ignore())
+                    .ForMember(x => x.IsLocked, o => o.Ignore()));
 
             await accountRepository.Update(account);
 

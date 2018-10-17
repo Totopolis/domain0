@@ -15,6 +15,7 @@ namespace Domain0.Model
                 FieldSetting<UserProfile>.CreateInt64(3, c => (long) c.Phone, (c, v) => c.Phone = v, c => c.Phone != null),
                 FieldSetting<UserProfile>.CreateString(4, c => c.Description, (c, v) => c.Description = v, c => c.Description?.Length > 0),
                 FieldSetting<UserProfile>.CreateString(5, c => c.Email, (c, v) => c.Email = v, c => !string.IsNullOrWhiteSpace(c.Email)),
+                FieldSetting<UserProfile>.CreateBool(6, c => c.IsLocked, (c, v) => c.IsLocked= v),
             });
 
         /// <summary>
@@ -39,5 +40,10 @@ namespace Domain0.Model
         /// Description
         /// </summary>
         public string Description { get; set; }
+
+        /// <summary>
+        /// If user is temprorary locked
+        /// </summary>
+        public bool IsLocked { get; set; }
     }
 }
