@@ -79,6 +79,12 @@ namespace Domain0.Nancy
                 ThrottlingPeriod.Hour, requestCountLimit: 300);
 
             var request = this.BindAndValidateModel<RegisterRequest>();
+
+            requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Day, requestCountLimit: 20,
+                requestKeys: request.Email);
+
             try
             {
                 await accountService.Register(request.Email);

@@ -77,6 +77,11 @@ namespace Domain0.Nancy
             var phone = this.Bind<long>();
 
             requestThrottleManager.RequiresThrottling(
+                this, ThrottlingProperties.Path,
+                ThrottlingPeriod.Day, requestCountLimit: 20,
+                requestKeys: phone.ToString());
+
+            requestThrottleManager.RequiresThrottling(
                 this, ThrottlingProperties.Path | ThrottlingProperties.RemoteIp,
                 ThrottlingPeriod.Minute, requestCountLimit: 50);
 
