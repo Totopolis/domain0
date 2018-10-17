@@ -371,7 +371,7 @@ namespace Domain0.Service
                         || IsRightsDifferent(userPermissions, principal.GetPermissions()))
                         accessToken = null;
                 }
-                catch (SecurityTokenValidationException)
+                catch (TokenSecurityException)
                 {
                     // if token expired or some sensitive properties changes we should make new token
                     accessToken = null;
