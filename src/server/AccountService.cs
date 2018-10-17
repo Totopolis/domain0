@@ -22,6 +22,8 @@ namespace Domain0.Service
 
     public class AccountServiceSettings
     {
+        public TimeSpan MessagesResendCooldown { get; internal set; }
+
         public TimeSpan PinExpirationTime { get; set; }
 
         public TimeSpan EmailCodeExpirationTime { get; set; }
@@ -135,19 +137,19 @@ namespace Domain0.Service
             }
 
             var existed = await smsRequestRepository.Pick(phone);
-            if (existed != null)
+            if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.PinExpirationTime))
             {
                 logger.Warn($"Attempt to get pin multiple times! Phone: {phone}");
                 return;
             }
 
+            var expirationTime = accountServiceSettings.PinExpirationTime;
             var password = passwordGenerator.GeneratePassword();
-            var expiredAt = accountServiceSettings.PinExpirationTime;
             await smsRequestRepository.Save(new SmsRequest
             {
                 Phone = phone,
                 Password = password,
-                ExpiredAt = DateTime.UtcNow.Add(expiredAt)
+                ExpiredAt = DateTime.UtcNow.Add(expirationTime)
             });
             logger.Info($"New user registration request. Phone: {phone}");
 
@@ -155,7 +157,7 @@ namespace Domain0.Service
                 MessageTemplateName.RegisterTemplate,
                 cultureRequestContext.Culture, 
                 MessageTemplateType.sms);
-            var message = string.Format(template, password, expiredAt.TotalMinutes);
+            var message = string.Format(template, password, expirationTime.TotalMinutes);
 
             await smsClient.Send(phone, message);
             logger.Info($"New user pin has been sent to phone: {phone}");
@@ -170,19 +172,19 @@ namespace Domain0.Service
             }
 
             var existed = await emailRequestRepository.Pick(email);
-            if (existed != null)
+            if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.EmailCodeExpirationTime))
             {
                 logger.Warn($"Attempt to get pin multiple times! Email: {email}");
                 return;
             }
 
             var password = passwordGenerator.GeneratePassword();
-            var expiredAt = accountServiceSettings.PinExpirationTime;
+            var expirationTime = accountServiceSettings.EmailCodeExpirationTime;
             await emailRequestRepository.Save(new EmailRequest
             {
                 Email = email,
                 Password = password,
-                ExpiredAt = DateTime.UtcNow.Add(expiredAt)
+                ExpiredAt = DateTime.UtcNow.Add(expirationTime)
             });
             logger.Info($"New user registration request. Email: {email}");
 
@@ -195,7 +197,7 @@ namespace Domain0.Service
                 cultureRequestContext.Culture, 
                 MessageTemplateType.email);
 
-            var message = string.Format(template, password, expiredAt.TotalMinutes);
+            var message = string.Format(template, password, expirationTime.TotalMinutes);
             var subject = string.Format(subjectTemplate, email, "domain0");
 
             await emailClient.Send(subject, email, message);
@@ -609,13 +611,19 @@ namespace Domain0.Service
                 throw new UserLockedSecurityException(errorText);
             }
 
+            var existed = await smsRequestRepository.Pick(phone);
+            if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.PinExpirationTime))
+            {
+                logger.Warn($"Attempt to get pasword reset pin multiple times! Phone: {phone}");
+                return;
+            }
             var password = passwordGenerator.GeneratePassword();
-            var expiredAt = accountServiceSettings.PinExpirationTime;
+            var expirationTime = accountServiceSettings.PinExpirationTime;
             await smsRequestRepository.Save(new SmsRequest
             {
                 Phone = phone,
                 Password = password,
-                ExpiredAt = DateTime.UtcNow.Add(expiredAt)
+                ExpiredAt = DateTime.UtcNow.Add(expirationTime)
             });
 
             var template = await messageTemplateRepository.GetTemplate(
@@ -623,7 +631,7 @@ namespace Domain0.Service
                 cultureRequestContext.Culture,
                 MessageTemplateType.sms);
 
-            var message = string.Format(template, password, expiredAt.TotalMinutes);
+            var message = string.Format(template, password, expirationTime.TotalMinutes);
             await smsClient.Send(phone, message);
             logger.Info($"Attempt to reset password. New user pin has been sent to phone: { phone }");
         }
@@ -639,18 +647,25 @@ namespace Domain0.Service
 
             if (account.IsLocked)
             {
-                var errorText = $"Attempt to reset password for locked user {email}!";
+                var errorText = $"Attempt to reset password for locked user { email }!";
                 logger.Warn(errorText);
                 throw new UserLockedSecurityException(errorText);
             }
 
+            var existed = await emailRequestRepository.Pick(email);
+            if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.EmailCodeExpirationTime))
+            {
+                logger.Warn($"Attempt to get pasword reset pin multiple times! Email: { email }");
+                return;
+            }
+
             var password = passwordGenerator.GeneratePassword();
-            var expiredAt = accountServiceSettings.PinExpirationTime;
+            var expirationTime = accountServiceSettings.EmailCodeExpirationTime;
             await emailRequestRepository.Save(new EmailRequest
             {
                 Email = email,
                 Password = password,
-                ExpiredAt = DateTime.UtcNow.Add(expiredAt)
+                ExpiredAt = DateTime.UtcNow.Add(expirationTime)
             });
 
             var subjectTemplate = await messageTemplateRepository.GetTemplate(
@@ -663,7 +678,7 @@ namespace Domain0.Service
                 cultureRequestContext.Culture, 
                 MessageTemplateType.email);
 
-            var message = string.Format(template, password, expiredAt.TotalMinutes);
+            var message = string.Format(template, password, expirationTime.TotalMinutes);
             var subject = string.Format(subjectTemplate, "domain0", account.Name);
 
             await emailClient.Send(subject, email, message);
@@ -688,6 +703,13 @@ namespace Domain0.Service
                 throw new UserLockedSecurityException(errorText);
             }
 
+            var existed = await smsRequestRepository.Pick(changePhoneRequest.Phone);
+            if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.PinExpirationTime))
+            {
+                logger.Warn($"Attempt to change phone multiple times! Phone: {changePhoneRequest.Phone}");
+                return;
+            }
+
             if (!passwordGenerator.CheckPassword(changePhoneRequest.Password, account.Password))
             {
                 logger.Warn($"User { userId } tries to change phone. But provide a wrong password!");
@@ -695,13 +717,13 @@ namespace Domain0.Service
             }
 
             var pin = passwordGenerator.GeneratePassword();
-            var expiredAt = accountServiceSettings.PinExpirationTime;
+            var expirationTime = accountServiceSettings.PinExpirationTime;
             await smsRequestRepository.Save(new SmsRequest
             {
                 UserId = userId,
                 Phone = changePhoneRequest.Phone,
                 Password = pin,
-                ExpiredAt = DateTime.UtcNow.Add(expiredAt)
+                ExpiredAt = DateTime.UtcNow.Add(expirationTime)
             });
 
             var template = await messageTemplateRepository.GetTemplate(
@@ -709,7 +731,7 @@ namespace Domain0.Service
                 cultureRequestContext.Culture,
                 MessageTemplateType.sms);
 
-            var message = string.Format(template, pin, expiredAt.TotalMinutes);
+            var message = string.Format(template, pin, expirationTime.TotalMinutes);
             await smsClient.Send(changePhoneRequest.Phone, message);
             logger.Info($"Attempt to change phone for user { userId }. New user pin has been sent to phone: { changePhoneRequest.Phone }");
         }
@@ -770,14 +792,21 @@ namespace Domain0.Service
                 throw new SecurityException("password not match");
             }
 
+            var existed = await emailRequestRepository.Pick(changeEmailRequest.Email);
+            if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.EmailCodeExpirationTime))
+            {
+                logger.Warn($"Attempt to change email multiple times! Email: { changeEmailRequest.Email }");
+                return;
+            }
+
             var pin = passwordGenerator.GeneratePassword();
-            var expiredAt = accountServiceSettings.EmailCodeExpirationTime;
+            var expirationTime = accountServiceSettings.EmailCodeExpirationTime;
             await emailRequestRepository.Save(new EmailRequest
             {
                 UserId = userId,
                 Email = changeEmailRequest.Email,
                 Password = pin,
-                ExpiredAt = DateTime.UtcNow.Add(expiredAt)
+                ExpiredAt = DateTime.UtcNow.Add(expirationTime)
             });
 
             var template = await messageTemplateRepository.GetTemplate(
@@ -790,7 +819,7 @@ namespace Domain0.Service
                 cultureRequestContext.Culture,
                 MessageTemplateType.email);
 
-            var message = string.Format(template, pin, expiredAt.TotalMinutes);
+            var message = string.Format(template, pin, expirationTime.TotalMinutes);
             await emailClient.Send(subject, changeEmailRequest.Email, message);
             logger.Info($"Attempt to change phone for user { userId }. New user pin has been sent to phone: { changeEmailRequest.Email }");
         }
@@ -1042,6 +1071,11 @@ namespace Domain0.Service
         {
             logger.Info($"User { requestContext.UserId } unlocking profile of user: {id}");
             await accountRepository.Unlock(id);
+        }
+
+        private bool IsNeedCooldown(DateTime expiredAt, TimeSpan expirationTime)
+        {
+            return expiredAt - expirationTime - DateTime.UtcNow < accountServiceSettings.MessagesResendCooldown;
         }
 
         private readonly IEmailClient emailClient;

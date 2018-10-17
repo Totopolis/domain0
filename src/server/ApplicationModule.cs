@@ -58,6 +58,9 @@ namespace Domain0
         {
             return new AccountServiceSettings
             {
+                MessagesResendCooldown = TimeSpan.FromMinutes(
+                    double.Parse(ConfigurationManager.AppSettings["AccountService_MessagesResendCooldown"] ?? "1")),
+
                 PinExpirationTime = TimeSpan.FromMinutes(
                     double.Parse(ConfigurationManager.AppSettings["AccountService_PinExpirationTime"] ?? "15")),
 
