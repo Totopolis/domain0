@@ -13,13 +13,17 @@ namespace Domain0.Nancy.Infrastructure
         public IEnumerable<Tuple<string, MediaRange>> ExtensionMappings => extensionMappings;
 
         public ProcessorMatch CanProcess(MediaRange mediaRange, dynamic model, NancyContext context)
-            => new ProcessorMatch
+        {
+            return new ProcessorMatch
             {
                 ModelResult = MatchResult.DontCare,
-                RequestedContentTypeResult = mediaRange.Matches(ProtobufResponse.ContentType_Protobuf)
-                    ? MatchResult.ExactMatch
-                    : MatchResult.NoMatch
+                RequestedContentTypeResult = 
+                    !mediaRange.IsWildcard 
+                    && mediaRange.Equals(ProtobufResponse.ContentType_Protobuf)
+                        ? MatchResult.ExactMatch
+                        : MatchResult.NoMatch
             };
+        }
 
         public Response Process(MediaRange mediaRange, dynamic model, NancyContext context)
             => new ProtobufResponse((object) model);
