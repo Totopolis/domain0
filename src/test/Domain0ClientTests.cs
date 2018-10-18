@@ -46,7 +46,20 @@ namespace Domain0.Test
 
             var smsRequestRepository = container.Resolve<ISmsRequestRepository>();
             var smsRequestRepositoryMock = Mock.Get(smsRequestRepository);
-            smsRequestRepositoryMock.Setup(a => a.Pick(phone)).ReturnsAsync(() => new SmsRequest());
+            smsRequestRepositoryMock.Setup(a => a.Pick(phone))
+                .ReturnsAsync(() => new SmsRequest()
+                {
+                    ExpiredAt = DateTime.UtcNow.AddHours(1)
+                });
+
+            var messageTemplateRepository = container.Resolve<IMessageTemplateRepository>();
+            var messageTemplateMock = Mock.Get(messageTemplateRepository);
+            messageTemplateMock
+                .Setup(r => r.GetTemplate(
+                    It.IsAny<MessageTemplateName>(),
+                    It.IsAny<CultureInfo>(),
+                    It.IsAny<MessageTemplateType>()))
+                .ReturnsAsync("Your password is: {0} will valid for {1} min");
 
             using (var http = new HttpClient())
             {
@@ -63,7 +76,20 @@ namespace Domain0.Test
             var testEmail = "email";
             var emailRequestRepository = container.Resolve<IEmailRequestRepository>();
             var emailRequestRepositoryMock = Mock.Get(emailRequestRepository);
-            emailRequestRepositoryMock.Setup(a => a.Pick(It.IsAny<string>())).ReturnsAsync(() => new EmailRequest());
+            emailRequestRepositoryMock.Setup(a => a.Pick(It.IsAny<string>()))
+                .ReturnsAsync(() => new EmailRequest()
+                {
+                    ExpiredAt = DateTime.UtcNow.AddHours(1)
+                });
+
+            var messageTemplateRepository = container.Resolve<IMessageTemplateRepository>();
+            var messageTemplateMock = Mock.Get(messageTemplateRepository);
+            messageTemplateMock
+                .Setup(r => r.GetTemplate(
+                    It.IsAny<MessageTemplateName>(),
+                    It.IsAny<CultureInfo>(),
+                    It.IsAny<MessageTemplateType>()))
+                .ReturnsAsync("Your password is: {0} will valid for {1} min");
 
             using (var http = new HttpClient())
             {
@@ -84,6 +110,14 @@ namespace Domain0.Test
             var passwordGeneratorMock = Mock.Get(passwordGenerator);
             passwordGeneratorMock.Setup(p => p.HashPassword(It.IsAny<string>())).Returns(testPassword);
             passwordGeneratorMock.Setup(p => p.CheckPassword(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
+
+
+            var permissionRepository = container.Resolve<IPermissionRepository>();
+            var permissionRepositoryMock = Mock.Get(permissionRepository);
+
+            permissionRepositoryMock
+                .Setup(p => p.GetByUserId(It.IsAny<int>()))
+                .ReturnsAsync(new[] { new Repository.Model.Permission() });
 
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountRepositoryMock = Mock.Get(accountRepository);
@@ -122,6 +156,13 @@ namespace Domain0.Test
                 .Returns<string>(x =>
                     Task.FromResult(new Account { Login = x }));
 
+
+            var permissionRepository = container.Resolve<IPermissionRepository>();
+            var permissionRepositoryMock = Mock.Get(permissionRepository);
+
+            permissionRepositoryMock
+                .Setup(p => p.GetByUserId(It.IsAny<int>()))
+                .ReturnsAsync(new[] { new Repository.Model.Permission() });
 
             using (var http = new HttpClient())
             {

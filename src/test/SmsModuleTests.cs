@@ -60,6 +60,13 @@ namespace Domain0.Test
             var accountMock = Mock.Get(accountRepository);
             accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync((Account)null);
 
+            var permissionRepository = container.Resolve<IPermissionRepository>();
+            var permissionRepositoryMock = Mock.Get(permissionRepository);
+
+            permissionRepositoryMock
+                .Setup(p => p.GetByUserId(It.IsAny<int>()))
+                .ReturnsAsync(new[] {new Repository.Model.Permission()});
+
             var messageTemplateRepository = container.Resolve<IMessageTemplateRepository>();
             var messageTemplate = Mock.Get(messageTemplateRepository);
             messageTemplate
