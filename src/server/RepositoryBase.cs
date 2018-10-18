@@ -51,7 +51,14 @@ namespace Domain0.Repository
                 .UpdateAsync(TableName, entity, KeyName);
 
         public Task Delete(TKey id)
-            => getContext().DeleteAsync(TableName, id, KeyName);
+            //=> getContext().DeleteAsync(TableName, id, KeyName);
+            => getContext()
+                .CreateSimple(
+                    $"delete from { TableName } " +
+                    $"where " +
+                    $"  { KeyName } = @p0 ",
+                    id)
+                .ExecuteNonQueryAsync();
 
         protected readonly Func<DbContext> getContext;
 
