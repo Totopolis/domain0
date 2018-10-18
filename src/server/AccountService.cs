@@ -690,8 +690,15 @@ namespace Domain0.Service
 
         public async Task RequestChangePhone(ChangePhoneUserRequest changePhoneRequest)
         {
-            var userId = requestContext.UserId;
+            var accountWithNewPhone = await accountRepository.FindByLogin(changePhoneRequest.Phone.ToString());
+            if (accountWithNewPhone != null)
+            {
+                var warning = $"Attempt to change phone alredy used { changePhoneRequest.Phone }";
+                logger.Warn(warning);
+                throw new BadModelException(nameof(changePhoneRequest.Phone), warning);
+            }
 
+            var userId = requestContext.UserId;
             var account = await accountRepository.FindByUserId(userId);
             if (account == null)
             {
@@ -773,8 +780,15 @@ namespace Domain0.Service
 
         public async Task RequestChangeEmail(ChangeEmailUserRequest changeEmailRequest)
         {
-            var userId = requestContext.UserId;
+            var accountWithNewEmail = await accountRepository.FindByLogin(changeEmailRequest.Email);
+            if (accountWithNewEmail != null)
+            {
+                var warning = $"Attempt to change email alredy used { changeEmailRequest.Email }";
+                logger.Warn(warning);
+                throw new BadModelException(nameof(changeEmailRequest.Email), warning);
+            }
 
+            var userId = requestContext.UserId;
             var account = await accountRepository.FindByUserId(userId);
             if (account == null)
             {
@@ -863,6 +877,14 @@ namespace Domain0.Service
 
         public async Task ForceChangePhone(ChangePhoneRequest request)
         {
+            var accountWithNewPhone = await accountRepository.FindByLogin(request.NewPhone.ToString());
+            if (accountWithNewPhone != null)
+            {
+                var warning = $"Attempt to change phone alredy used { request.NewPhone.ToString() }";
+                logger.Warn(warning);
+                throw new BadModelException(nameof(request.NewPhone), warning);
+            }
+
             var account = await accountRepository.FindByUserId(request.UserId);
             if (account == null)
             {
@@ -880,6 +902,14 @@ namespace Domain0.Service
 
         public async Task ForceChangeEmail(ChangeEmailRequest request)
         {
+            var accountWithNewEmail = await accountRepository.FindByLogin(request.NewEmail);
+            if (accountWithNewEmail != null)
+            {
+                var warning = $"Attempt to change email alredy used { request.NewEmail }";
+                logger.Warn(warning);
+                throw new BadModelException(nameof(request.NewEmail), warning);
+            }
+
             var account = await accountRepository.FindByUserId(request.UserId);
             if (account == null)
             {
