@@ -111,6 +111,10 @@ namespace Domain0.Nancy.Infrastructure
                     return new Negotiator(ctx)
                         .WithStatusCode(HttpStatusCode.Unauthorized)
                         .WithReasonPhrase("no luck");
+                case ForbiddenSecurityException _:
+                    return new Negotiator(ctx)
+                        .WithStatusCode(HttpStatusCode.Forbidden)
+                        .WithReasonPhrase("have no rights");
                 case UserLockedSecurityException _:
                     return new Negotiator(ctx)
                         .WithStatusCode(HttpStatusCode.Locked)
@@ -136,6 +140,8 @@ namespace Domain0.Nancy.Infrastructure
                     return HttpStatusCode.BadRequest;
                 case TokenSecurityException _:
                     return HttpStatusCode.Unauthorized;
+                case ForbiddenSecurityException _:
+                    return HttpStatusCode.Forbidden;
                 case UserLockedSecurityException _:
                     return HttpStatusCode.Locked;
                 default:

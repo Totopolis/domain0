@@ -151,6 +151,9 @@
     <Compile Include="..\..\src\common\BadModelException.cs">
       <Link>Exceptions\BadModelException.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\common\ForbiddenSecurityException.cs">
+      <Link>Exceptions\ForbiddenSecurityException.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\common\NotFoundException.cs">
       <Link>Exceptions\NotFoundException.cs</Link>
     </Compile>

@@ -359,6 +359,10 @@ namespace Domain0.Service
         public async Task<AccessTokenResponse> GetTokenResponse(Account account)
         {
             var userPermissions = await permissionRepository.GetByUserId(account.Id);
+            if (userPermissions == null
+                || !userPermissions.Any())
+                throw new ForbiddenSecurityException();
+
             var registration = await tokenRegistrationRepository.FindLastTokenByUserId(account.Id);
             string accessToken = registration?.AccessToken;
             if (!string.IsNullOrEmpty(accessToken))
