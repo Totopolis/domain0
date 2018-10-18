@@ -26,7 +26,7 @@ namespace Domain0.Model
                     c => c.Description,
                     (c, v) => c.Description = v),
                 FieldSetting<UserPermission>.CreateInt32(5,
-                    c => c.UserId.Value,
+                    c => c.UserId,
                     (c, v) => c.UserId = v),
                 FieldSetting<UserPermission>.CreateInt32(6,
                     c => c.RoleId.Value,
@@ -35,9 +35,9 @@ namespace Domain0.Model
 
         public int? Id { get; set; }
 
-        public int? RoleId { get; set; }
+        public int UserId { get; set; }
 
-        public int? UserId { get; set; }
+        public int? RoleId { get; set; }
 
         public int ApplicationId { get; set; }
 

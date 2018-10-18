@@ -26,13 +26,13 @@ namespace Domain0.Model
                     c => c.Description,
                     (c, v) => c.Description = v),
                 FieldSetting<RolePermission>.CreateInt32(5,
-                    c => c.RoleId.Value,
+                    c => c.RoleId,
                     (c, v) => c.RoleId = v),
             });
 
         public int? Id { get; set; }
 
-        public int? RoleId { get; set; }
+        public int RoleId { get; set; }
 
         public int ApplicationId { get; set; }
 
