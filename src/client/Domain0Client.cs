@@ -6038,7 +6038,7 @@ namespace Domain0.Api.Client
     public partial class RolePermission 
     {
         [Newtonsoft.Json.JsonConstructor]
-        public RolePermission(int @applicationId, string @description, int? @id, string @name, int? @roleId)
+        public RolePermission(int @applicationId, string @description, int? @id, string @name, int @roleId)
         {
             ApplicationId = @applicationId;
             Description = @description;
@@ -6059,8 +6059,8 @@ namespace Domain0.Api.Client
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Name { get; }
     
-        [Newtonsoft.Json.JsonProperty("roleId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int? RoleId { get; }
+        [Newtonsoft.Json.JsonProperty("roleId", Required = Newtonsoft.Json.Required.Always)]
+        public int RoleId { get; }
     
         public string ToJson() 
         {
@@ -6079,7 +6079,7 @@ namespace Domain0.Api.Client
     public partial class UserPermission 
     {
         [Newtonsoft.Json.JsonConstructor]
-        public UserPermission(int @applicationId, string @description, int? @id, string @name, int? @roleId, int? @userId)
+        public UserPermission(int @applicationId, string @description, int? @id, string @name, int? @roleId, int @userId)
         {
             ApplicationId = @applicationId;
             Description = @description;
@@ -6104,8 +6104,8 @@ namespace Domain0.Api.Client
         [Newtonsoft.Json.JsonProperty("roleId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? RoleId { get; }
     
-        [Newtonsoft.Json.JsonProperty("userId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int? UserId { get; }
+        [Newtonsoft.Json.JsonProperty("userId", Required = Newtonsoft.Json.Required.Always)]
+        public int UserId { get; }
     
         public string ToJson() 
         {
