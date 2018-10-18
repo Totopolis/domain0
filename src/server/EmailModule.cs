@@ -79,6 +79,7 @@ namespace Domain0.Nancy
                 ThrottlingPeriod.Hour, requestCountLimit: 300);
 
             var request = this.BindAndValidateModel<RegisterRequest>();
+            request.Email = request.Email.Trim();
 
             requestThrottleManager.RequiresThrottling(
                 this, ThrottlingProperties.Path,
@@ -114,6 +115,7 @@ namespace Domain0.Nancy
         public async Task<object> LoginByEmail()
         {
             var request = this.BindAndValidateModel<EmailLoginRequest>();
+            request.Email = request.Email.Trim();
 
             requestThrottleManager.RequiresThrottling(
                 this, ThrottlingProperties.Path,
@@ -152,6 +154,7 @@ namespace Domain0.Nancy
         public async Task<object> DoesUserExistByEmail()
         {
             var request = this.BindAndValidateModel<RegisterRequest>();
+            request.Email = request.Email.Trim();
 
             requestThrottleManager.RequiresThrottling(
                 this, ThrottlingProperties.Path,
@@ -182,6 +185,7 @@ namespace Domain0.Nancy
         public async Task<object> RequestResetPasswordByEmail()
         {
             var request = this.BindAndValidateModel<RegisterRequest>();
+            request.Email = request.Email.Trim();
 
             requestThrottleManager.RequiresThrottling(
                 this, ThrottlingProperties.Path,
@@ -221,6 +225,8 @@ namespace Domain0.Nancy
                 && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_FORCE_CHANGE_EMAIL));
 
             var request = this.BindAndValidateModel<ChangeEmailRequest>();
+            request.NewEmail = request.NewEmail.Trim();
+
             await accountService.ForceChangeEmail(request);
             return HttpStatusCode.NoContent;
         }
@@ -249,6 +255,7 @@ namespace Domain0.Nancy
                 && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_FORCE_CREATE_USER));
 
             var request = this.BindAndValidateModel<ForceCreateEmailUserRequest>();
+            request.Email = request.Email.Trim();
             try
             {
                 return await accountService.CreateUser(request);
@@ -307,6 +314,7 @@ namespace Domain0.Nancy
         public async Task<object> RequestChangeEmail()
         {
             var changeEmailRequest = this.BindAndValidateModel<ChangeEmailUserRequest>();
+            changeEmailRequest.Email = changeEmailRequest.Email.Trim();
 
             requestThrottleManager.RequiresThrottling(
                 this, ThrottlingProperties.Path,
