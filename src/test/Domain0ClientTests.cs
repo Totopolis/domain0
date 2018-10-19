@@ -141,7 +141,7 @@ namespace Domain0.Test
         [Fact]
         public async Task Sms_ClientLoginTest()
         {
-            var testPhone = "3579";
+            var testPhone = 3579;
             var testPassword = "password";
 
             var passwordGenerator = container.Resolve<IPasswordGenerator>();

@@ -544,12 +544,12 @@ namespace Domain0.Api.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         System.Threading.Tasks.Task RequestResetPasswordByEmailAsync(RegisterRequest email, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Method for force change phone only administrator</summary>
+        /// <summary>Method for force change email only administrator</summary>
         /// <returns>operation completes successfully, email was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         System.Threading.Tasks.Task ForceChangeEmailAsync(ChangeEmailRequest change_email_request);
     
-        /// <summary>Method for force change phone only administrator</summary>
+        /// <summary>Method for force change email only administrator</summary>
         /// <returns>operation completes successfully, email was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -4437,7 +4437,7 @@ namespace Domain0.Api.Client
             }
         }
     
-        /// <summary>Method for force change phone only administrator</summary>
+        /// <summary>Method for force change email only administrator</summary>
         /// <returns>operation completes successfully, email was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task ForceChangeEmailAsync(ChangeEmailRequest change_email_request)
@@ -4445,7 +4445,7 @@ namespace Domain0.Api.Client
             return ForceChangeEmailAsync(change_email_request, System.Threading.CancellationToken.None);
         }
     
-        /// <summary>Method for force change phone only administrator</summary>
+        /// <summary>Method for force change email only administrator</summary>
         /// <returns>operation completes successfully, email was changed</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -4508,7 +4508,7 @@ namespace Domain0.Api.Client
                         if (status_ == "403") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new Domain0ClientException("domain0.forceChangePhone permission required", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new Domain0ClientException("domain0.forceChange permission required", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -4687,7 +4687,7 @@ namespace Domain0.Api.Client
                         if (status_ == "400") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new Domain0ClientException("wrong phone or user with this phone not found", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new Domain0ClientException("wrong phone or user with this email not found", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                         else
                         if (status_ == "500") 
@@ -5981,7 +5981,7 @@ namespace Domain0.Api.Client
     public partial class SmsLoginRequest 
     {
         [Newtonsoft.Json.JsonConstructor]
-        public SmsLoginRequest(string @password, string @phone)
+        public SmsLoginRequest(string @password, long @phone)
         {
             Password = @password;
             Phone = @phone;
@@ -5990,8 +5990,8 @@ namespace Domain0.Api.Client
         [Newtonsoft.Json.JsonProperty("password", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Password { get; }
     
-        [Newtonsoft.Json.JsonProperty("phone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Phone { get; }
+        [Newtonsoft.Json.JsonProperty("phone", Required = Newtonsoft.Json.Required.Always)]
+        public long Phone { get; }
     
         public string ToJson() 
         {
@@ -6131,13 +6131,13 @@ namespace Domain0.Api.Client
             RefreshToken = @refreshToken;
         }
     
-        [Newtonsoft.Json.JsonProperty("accessToken", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("access_token", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string AccessToken { get; }
     
         [Newtonsoft.Json.JsonProperty("profile", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public UserProfile Profile { get; }
     
-        [Newtonsoft.Json.JsonProperty("refreshToken", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("refresh_token", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string RefreshToken { get; }
     
         public string ToJson() 
