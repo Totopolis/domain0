@@ -29,6 +29,7 @@ namespace Domain0.Nancy
         public Domain0Bootstrapper(IContainer rootContainer)
         {
             container = rootContainer;
+            thresholdSettings = rootContainer.Resolve<ThresholdSettings>();
         } 
 
         protected override ILifetimeScope GetApplicationContainer() => container;
@@ -59,7 +60,7 @@ namespace Domain0.Nancy
                         new MemoryCacheOptions
                         {
                             ExpirationScanFrequency = TimeSpan.FromMinutes(5),
-                            SizeLimit = 200 * 1024 * 1024
+                            SizeLimit = thresholdSettings.CacheLimitMB * 1024 * 1024
                         }))
                     .As<IMemoryCache>()
                     .SingleInstance();
@@ -97,9 +98,9 @@ namespace Domain0.Nancy
             var requestThrottleManager = requestContainer.Resolve<IRequestThrottleManager>();
 
             requestThrottleManager.RequiresThrottlingByPathAndIp(
-                pipelines, ThrottlingPeriod.Minute, requestCountLimit: 300);
+                pipelines, ThrottlingPeriod.Minute, requestCountLimit: thresholdSettings.MinuteRequestsLimitByActionByIP);
             requestThrottleManager.RequiresThrottlingByPathAndIp(
-                pipelines, ThrottlingPeriod.Hour, requestCountLimit: 3000);
+                pipelines, ThrottlingPeriod.Hour, requestCountLimit: thresholdSettings.HourlyRequestsLimitByActionByIP);
 
         }
 
@@ -154,5 +155,6 @@ namespace Domain0.Nancy
         }
 
         private readonly IContainer container;
+        private readonly ThresholdSettings thresholdSettings;
     }
 }

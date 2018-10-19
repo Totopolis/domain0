@@ -41,6 +41,8 @@ namespace Domain0
             builder.RegisterInstance(ReadEmailClientSettings());
             builder.RegisterType<EmailClient>().As<IEmailClient>();
 
+            builder.RegisterInstance<ThresholdSettings>(ReadThresholdSettings());
+
             builder.Register(container =>
             {
                 var profiles = container.Resolve<IEnumerable<Profile>>();
@@ -67,6 +69,23 @@ namespace Domain0
                 EmailCodeExpirationTime = TimeSpan.FromMinutes(
                     double.Parse(ConfigurationManager.AppSettings["AccountService_EmailCodeExpirationTime"] ?? "120")),
             };
+        }
+
+        private static ThresholdSettings ReadThresholdSettings()
+        {
+            var settings = new ThresholdSettings
+            {
+                HourlyRequestsLimitByActionByIP = 
+                    int.Parse(ConfigurationManager.AppSettings["ThresholdSettings_HourlyRequestsLimitByActionByIP"] ?? "6000"),
+
+                MinuteRequestsLimitByActionByIP =
+                    int.Parse(ConfigurationManager.AppSettings["ThresholdSettings_MinuteRequestsLimitByActionByIP"] ?? "300"),
+
+                CacheLimitMB = 
+                    int.Parse(ConfigurationManager.AppSettings["ThresholdSettings_CacheLimitMB"] ?? "512")
+            };
+
+            return settings;
         }
 
         private static TokenGeneratorSettings ReadTokenSettings()
