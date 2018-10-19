@@ -434,10 +434,10 @@ namespace Domain0.Service
 
         public async Task<AccessTokenResponse> Login(SmsLoginRequest request)
         {
-            var phone = decimal.Parse(request.Phone);
+            var phone = (decimal)request.Phone;
 
             // login account
-            var account = await accountRepository.FindByLogin(request.Phone);
+            var account = await accountRepository.FindByLogin(phone.ToString());
             if (account != null)
             {
                 if (account.IsLocked)

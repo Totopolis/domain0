@@ -113,7 +113,7 @@ namespace Domain0.Test
                 {
                     with.Accept(format);
                     with.DataFormatBody(format,
-                        new SmsLoginRequest { Phone = phone.ToString(), Password = "password" });
+                        new SmsLoginRequest { Phone = phone, Password = "password" });
                 });
 
             Assert.Equal(HttpStatusCode.OK, firstLoginResponse.StatusCode);
@@ -445,7 +445,7 @@ namespace Domain0.Test
             var response = await browser.Post(SmsModule.LoginUrl, with =>
             {
                 with.Accept(format);
-                with.DataFormatBody(format, new SmsLoginRequest {Phone = phone.ToString(), Password = password});
+                with.DataFormatBody(format, new SmsLoginRequest {Phone = phone, Password = password});
             });
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -479,7 +479,7 @@ namespace Domain0.Test
             var response = await browser.Post(SmsModule.LoginUrl, with =>
             {
                 with.Accept(format);
-                with.DataFormatBody(format, new SmsLoginRequest { Phone = phone.ToString(), Password = password });
+                with.DataFormatBody(format, new SmsLoginRequest { Phone = phone, Password = password });
             });
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -506,7 +506,7 @@ namespace Domain0.Test
             var response = await browser.Post(SmsModule.LoginUrl, with =>
             {
                 with.Accept(format);
-                with.DataFormatBody(format, new SmsLoginRequest { Phone = phone.ToString(), Password = password });
+                with.DataFormatBody(format, new SmsLoginRequest { Phone = phone, Password = password });
             });
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

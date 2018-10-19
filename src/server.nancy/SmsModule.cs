@@ -118,12 +118,12 @@ namespace Domain0.Nancy
             requestThrottleManager.RequiresThrottling(
                 this, ThrottlingProperties.Path,
                 ThrottlingPeriod.Minute, requestCountLimit: 20,
-                requestKeys: request.Phone);
+                requestKeys: request.Phone.ToString());
 
             requestThrottleManager.RequiresThrottling(
                 this, ThrottlingProperties.Path,
                 ThrottlingPeriod.Hour, requestCountLimit: 100,
-                requestKeys: request.Phone);
+                requestKeys: request.Phone.ToString());
 
             var result = await accountService.Login(request);
             if (result == null)
