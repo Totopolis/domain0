@@ -16,7 +16,7 @@ namespace Domain0.Nancy.Infrastructure
         {
             var settings = new JsonSerializerSettings
             {
-                ContractResolver = new DefaultContractResolver()
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
             };
 
             _serializer = JsonSerializer.Create(settings);
