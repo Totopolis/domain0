@@ -265,6 +265,9 @@
     <Compile Include="..\..\src\server\ITokenRegistrationRepository.cs">
       <Link>Service\Repository\ITokenRegistrationRepository.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\JsonSerializer.cs">
+      <Link>Infrastructure\JsonSerializer.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\MapperProfile.cs">
       <Link>Infrastructure\MapperProfile.cs</Link>
     </Compile>

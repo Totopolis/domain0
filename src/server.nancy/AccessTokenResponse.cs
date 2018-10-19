@@ -1,5 +1,6 @@
 ﻿using Gerakul.ProtoBufSerializer;
 using Nancy.Swagger.Annotations.Attributes;
+using Newtonsoft.Json;
 
 namespace Domain0.Model
 {
@@ -15,10 +16,13 @@ namespace Domain0.Model
                 FieldSetting<AccessTokenResponse>.CreateMessage(3, c => c.Profile, (c, v) => c.Profile = v, UserProfile.DefaultDescriptor, c => c.Profile != null)
             });
 
+        [JsonProperty(PropertyName = "access_token")]
         public string AccessToken { get; set; }
 
+        [JsonProperty(PropertyName = "refresh_token")]
         public string RefreshToken { get; set; }
 
+        [JsonProperty(PropertyName = "profile")]
         public UserProfile Profile { get; set; }
     }
 }
