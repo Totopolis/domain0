@@ -205,7 +205,7 @@ namespace Domain0.Nancy
         [Route(HttpMethod.Post, ForceChangeEmailUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
-        [Route(Tags = new[] { "Email" }, Summary = "Method for force change phone only administrator")]
+        [Route(Tags = new[] { "Email" }, Summary = "Method for force change email only administrator")]
         [RouteParam(
             ParamIn = ParameterIn.Body, 
             Name = "Change email request", 
@@ -216,7 +216,7 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.BadRequest, "wrong code/user pair")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.forceChangePhone permission required")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.forceChange permission required")]
         public async Task<object> ForceChangeEmail()
         {
             this.RequiresAuthentication();
@@ -279,7 +279,7 @@ namespace Domain0.Nancy
             Required = true,
             Description = "user's email")]
         [SwaggerResponse(HttpStatusCode.NoContent, "operation completes successfully, new password sent to user")]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone or user with this phone not found")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone or user with this email not found")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]
         [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.forceResetPassword permission required")]
