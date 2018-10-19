@@ -19,7 +19,14 @@ namespace Domain0.Nancy.Infrastructure
                 if (string.IsNullOrWhiteSpace(jwtToken))
                     return null;
 
-                return tokenGenerator.Parse(jwtToken.Replace("Bearer ", ""));
+                try
+                {
+                    return tokenGenerator.Parse(jwtToken.Replace("Bearer ", ""));
+                }
+                catch (System.Exception)
+                {
+                    return null;
+                }
             });
 
             return configuration;
