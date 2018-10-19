@@ -1,5 +1,6 @@
 ﻿using Domain0.Service;
 using Nancy.Authentication.Stateless;
+using System;
 
 namespace Domain0.Nancy.Infrastructure
 {
@@ -23,7 +24,7 @@ namespace Domain0.Nancy.Infrastructure
                 {
                     return tokenGenerator.Parse(jwtToken.Replace("Bearer ", ""));
                 }
-                catch (System.Exception)
+                catch (Exception)
                 {
                     return null;
                 }
