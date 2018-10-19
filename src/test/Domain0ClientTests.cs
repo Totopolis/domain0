@@ -130,7 +130,8 @@ namespace Domain0.Test
             using (var http = new HttpClient())
             {
                 var client = new Domain0Client(TestUrl, http);
-                await client.LoginByEmailAsync(new Api.Client.EmailLoginRequest(testEmail, testPassword));
+                var response = await client.LoginByEmailAsync(new Api.Client.EmailLoginRequest(testEmail, testPassword));
+                Assert.NotNull(response.AccessToken);
             }
 
             accountRepositoryMock.Verify(t => t.FindByLogin(It.Is<string>(e => e == testEmail)), Times.Once);
@@ -167,7 +168,8 @@ namespace Domain0.Test
             using (var http = new HttpClient())
             {
                 var client = new Domain0Client(TestUrl, http);
-                await client.LoginAsync(new SmsLoginRequest(testPassword, testPhone));
+                var response = await client.LoginAsync(new SmsLoginRequest(testPassword, testPhone));
+                Assert.NotNull(response.AccessToken);
             }
 
             accountRepositoryMock.Verify(t => t.FindByLogin(It.Is<string>(e => e == testPhone.ToString())), Times.Once);
