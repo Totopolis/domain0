@@ -50,7 +50,7 @@ namespace Domain0.Service
             var claims = BuildClaims(TokenClaims.CLAIM_TOKEN_TYPE_ACCESS, userId, 
                 TokenClaims.CLAIM_PERMISSIONS, JsonConvert.SerializeObject(permissions));
 
-            var tokenDescriptor = BuildSecurityTokenDescriptor(issueAt, claims);
+            var tokenDescriptor = BuildSecurityTokenDescriptor(issueAt, issueAt.Add(Settings.Lifetime), claims);
             var token = handler.CreateToken(tokenDescriptor);
             return handler.WriteToken(token);
         }
@@ -60,7 +60,7 @@ namespace Domain0.Service
             var claims = BuildClaims(TokenClaims.CLAIM_TOKEN_TYPE_REFRESH, userId,
                 TokenClaims.CLAIM_TOKEN_ID, tokenId.ToString());
 
-            var tokenDescriptor = BuildSecurityTokenDescriptor(issueAt, claims);
+            var tokenDescriptor = BuildSecurityTokenDescriptor(issueAt, issueAt.Add(Settings.RefreshLifetime), claims);
             var token = handler.CreateToken(tokenDescriptor);
             return handler.WriteToken(token);
         }
@@ -129,12 +129,15 @@ namespace Domain0.Service
             return parameters;
         }
 
-        protected virtual SecurityTokenDescriptor BuildSecurityTokenDescriptor(DateTime issueAt, Claim[] claims)
+        protected virtual SecurityTokenDescriptor BuildSecurityTokenDescriptor(
+            DateTime issueAt, 
+            DateTime expireAt, 
+            Claim[] claims)
         {
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 IssuedAt = issueAt,
-                Expires = issueAt.Add(Settings.Lifetime),
+                Expires = expireAt,
                 Audience = Settings.Audience,
                 Issuer = Settings.Issuer,
                 Subject = new ClaimsIdentity(claims),
@@ -166,9 +169,11 @@ namespace Domain0.Service
             signatureKey = new SymmetricSecurityKey(Convert.FromBase64String(settings.Secret));
         }
 
-        protected override SecurityTokenDescriptor BuildSecurityTokenDescriptor(DateTime issueAt, Claim[] claims)
+        protected override SecurityTokenDescriptor BuildSecurityTokenDescriptor(
+            DateTime issueAt, DateTime expireAt, 
+            Claim[] claims)
         {
-            var securityTokenDescriptor = base.BuildSecurityTokenDescriptor(issueAt, claims);
+            var securityTokenDescriptor = base.BuildSecurityTokenDescriptor(issueAt, expireAt, claims);
             securityTokenDescriptor.SigningCredentials = new SigningCredentials(signatureKey, SecurityAlgorithms.HmacSha256);
             return securityTokenDescriptor;
         }
@@ -203,9 +208,11 @@ namespace Domain0.Service
             privateSecurityKey = new RsaSecurityKey(privateKeyRsaProvider);
         }
 
-        protected override SecurityTokenDescriptor BuildSecurityTokenDescriptor(DateTime issueAt, Claim[] claims)
+        protected override SecurityTokenDescriptor BuildSecurityTokenDescriptor(
+            DateTime issueAt, DateTime expireAt,
+            Claim[] claims)
         {
-            var securityTokenDescriptor = base.BuildSecurityTokenDescriptor(issueAt, claims);
+            var securityTokenDescriptor = base.BuildSecurityTokenDescriptor(issueAt, expireAt, claims);
             securityTokenDescriptor.SigningCredentials = new SigningCredentials(privateSecurityKey, SecurityAlgorithms.RsaSha256);
             return securityTokenDescriptor;
         }
