@@ -931,8 +931,10 @@ namespace Domain0.Test
 
             var tokenGeneratorMock = Mock.Get(container.ResolveKeyed<ITokenGenerator>("HS256"));
             tokenGeneratorMock.Setup(p => p.GetTid(refreshToken)).Returns(tid);
-            tokenGeneratorMock.Setup(a => a.Parse(It.IsAny<string>())).Returns<string>(token =>
-                new ClaimsPrincipal(new ClaimsIdentity(token.Split(',').Select(r => new Claim(ClaimTypes.Role, r)))));
+            tokenGeneratorMock
+                .Setup(a => a.Parse(It.IsAny<string>(),It.IsAny<bool>()))
+                .Returns<string,bool>((token,x) =>
+                    new ClaimsPrincipal(new ClaimsIdentity(token.Split(',').Select(r => new Claim(ClaimTypes.Role, r)))));
             tokenGeneratorMock.Setup(a => a.GenerateAccessToken(It.IsAny<int>(), It.IsAny<string[]>()))
                 .Returns<int, string[]>((uid, roles) => $"{uid}_{string.Join("_", roles)}");
 

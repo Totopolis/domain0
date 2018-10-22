@@ -74,7 +74,7 @@ namespace Domain0.Test
                 typ = "refresh_token",
                 sub = $"{userId}",
                 tid = $"{tid}",
-                exp = new DateTimeOffset(issueTime.AddMinutes(15)).ToUnixTimeSeconds(),
+                exp = new DateTimeOffset(issueTime.AddHours(8)).ToUnixTimeSeconds(),
                 iat = new DateTimeOffset(issueTime).ToUnixTimeSeconds(),
                 iss = "issuer",
                 aud = "*"
