@@ -68,11 +68,11 @@ namespace Domain0.Service
         public string GenerateRefreshToken(int tokenId, int userId)
             => GenerateRefreshToken(tokenId, DateTime.UtcNow, userId);
 
-        public ClaimsPrincipal Parse(string accessToken)
+        public ClaimsPrincipal Parse(string accessToken, bool skipLifetimeCheck = false)
         {
             try
             {
-                var parameters = BuildTokenValidationParameters();
+                var parameters = BuildTokenValidationParameters(skipLifetimeCheck);
                 var principal = handler.ValidateToken(accessToken, parameters, out _);
                 var identity = (ClaimsIdentity)principal.Identity;
                 identity.AddClaim(new Claim("id_token", accessToken));
@@ -117,7 +117,7 @@ namespace Domain0.Service
             }
         }
 
-        protected virtual TokenValidationParameters BuildTokenValidationParameters()
+        protected virtual TokenValidationParameters BuildTokenValidationParameters(bool skipLifetimeCheck = false)
         {
             var parameters = new TokenValidationParameters
             {
@@ -125,6 +125,7 @@ namespace Domain0.Service
                 ValidateAudience = true,
                 ValidAudience = Settings.Audience,
                 ValidIssuer = Settings.Issuer,
+                ValidateLifetime = !skipLifetimeCheck
             };
             return parameters;
         }
@@ -178,9 +179,9 @@ namespace Domain0.Service
             return securityTokenDescriptor;
         }
 
-        protected override TokenValidationParameters BuildTokenValidationParameters()
+        protected override TokenValidationParameters BuildTokenValidationParameters(bool skipLifetimeCheck = false)
         {
-            var validationProvider = base.BuildTokenValidationParameters();
+            var validationProvider = base.BuildTokenValidationParameters(skipLifetimeCheck);
             validationProvider.IssuerSigningKey = signatureKey;
             return validationProvider;
         }
@@ -217,9 +218,9 @@ namespace Domain0.Service
             return securityTokenDescriptor;
         }
 
-        protected override TokenValidationParameters BuildTokenValidationParameters()
+        protected override TokenValidationParameters BuildTokenValidationParameters(bool skipLifetimeCheck = false)
         {
-            var validationProvider = base.BuildTokenValidationParameters();
+            var validationProvider = base.BuildTokenValidationParameters(skipLifetimeCheck);
             validationProvider.IssuerSigningKey = publicSecurityKey;
             return validationProvider;
         }

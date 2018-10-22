@@ -1010,7 +1010,7 @@ namespace Domain0.Service
                 throw new UserLockedSecurityException(errorText);
             }
 
-            var principal = tokenGenerator.Parse(tokenRegistry.AccessToken);
+            var principal = tokenGenerator.Parse(tokenRegistry.AccessToken, skipLifetimeCheck: true);
             var accessToken = tokenGenerator.GenerateAccessToken(account.Id, principal.GetPermissions());
 
             logger.Info($"User { tokenRegistry.UserId } get refreshed token");

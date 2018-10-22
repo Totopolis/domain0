@@ -13,7 +13,7 @@ namespace Domain0.Service
 
         string GenerateRefreshToken(int tokenId, DateTime issueAt, int userId);
 
-        ClaimsPrincipal Parse(string accessToken);
+        ClaimsPrincipal Parse(string accessToken, bool skipLifetimeCheck = false);
 
         int GetTid(string refreshToken);
     }
