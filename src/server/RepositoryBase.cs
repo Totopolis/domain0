@@ -36,7 +36,7 @@ namespace Domain0.Repository
                 .ToArray();
         }
 
-        public async Task<decimal> Insert(TEntity entity)
+        public virtual async Task<decimal> Insert(TEntity entity)
         {
             // TODO use crosbase CreateInsertWithOutput
             return await (getContext() as ISqlCommandCreator)
