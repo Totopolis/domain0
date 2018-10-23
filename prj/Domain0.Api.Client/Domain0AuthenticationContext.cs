@@ -77,12 +77,18 @@ namespace Domain0.Api.Client
         {
             get
             {
-                return domain0Client.BaseUrl;
+                using (requestSetupLock.ReaderLock())
+                {
+                    return domain0Client.BaseUrl;
+                }
             }
             set
             {
-                domain0Client.BaseUrl = value;
-                AdjustConnectionsLimit();
+                using (requestSetupLock.WriterLock())
+                {
+                    domain0Client.BaseUrl = value;
+                    AdjustConnectionsLimit();
+                }
             }
         }
 
@@ -200,7 +206,7 @@ namespace Domain0.Api.Client
 
         private void SetAuthorizationHeader()
         {
-            using (defaultRequestHeadersSetupLock.WriterLock())
+            using (requestSetupLock.WriterLock())
             { 
                 if (string.IsNullOrWhiteSpace(loginInfo?.AccessToken))
                 {
@@ -237,7 +243,7 @@ namespace Domain0.Api.Client
         private readonly HttpClient httpClient;
         private readonly LoginInfoStorage loginInfoStorage;
         private readonly ReaderWriterLockSlim tokenChangeLock = new ReaderWriterLockSlim();
-        private readonly AsyncReaderWriterLock defaultRequestHeadersSetupLock = new AsyncReaderWriterLock();
+        private readonly AsyncReaderWriterLock requestSetupLock = new AsyncReaderWriterLock();
 
         private class RefreshTokenInterceptor : AsyncInterceptorBase
         {
@@ -251,9 +257,12 @@ namespace Domain0.Api.Client
             protected override async Task InterceptAsync(IInvocation invocation, Func<IInvocation, Task> proceed)
             {
                 if (context.NeedAndAbleToRefresh())
+                {
+                    Trace.TraceInformation($"Refreshing token...");
                     context.LoginInfo = await context.domain0Client.RefreshAsync(context.LoginInfo.RefreshToken);
+                }
 
-                using (await context.defaultRequestHeadersSetupLock.ReaderLockAsync())
+                using (await context.requestSetupLock.ReaderLockAsync())
                 {
                     await proceed(invocation).ConfigureAwait(false);
                 }
@@ -262,9 +271,12 @@ namespace Domain0.Api.Client
             protected override async Task<TResult> InterceptAsync<TResult>(IInvocation invocation, Func<IInvocation, Task<TResult>> proceed)
             {
                 if (context.NeedAndAbleToRefresh())
+                {
+                    Trace.TraceInformation($"Refreshing token...");
                     context.LoginInfo = await context.domain0Client.RefreshAsync(context.LoginInfo.RefreshToken);
+                }
 
-                using (await context.defaultRequestHeadersSetupLock.ReaderLockAsync())
+                using (await context.requestSetupLock.ReaderLockAsync())
                 {
                     return await proceed(invocation).ConfigureAwait(false);
                 }
