@@ -158,6 +158,7 @@ namespace Domain0.Api.Client
                     if (loginInfo != null)
                     {
                         ReadExpireDates();
+                        SetAuthorizationHeader();
                         loginInfoStorage.Save(loginInfo);
                     }
                     else
