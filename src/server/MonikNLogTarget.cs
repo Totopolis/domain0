@@ -48,7 +48,7 @@ namespace Domain0.WinService
             var message = Layout.Render(logEvent);
             if (logEvent.Level == LogLevel.Debug)
             {
-                monikClient.LogicVerbose(message);
+                monikClient.ApplicationVerbose(message);
             }
             else if (logEvent.Level == LogLevel.Error)
             {

@@ -23,7 +23,7 @@ namespace Domain0.FastSql
         public override async Task<decimal> Insert(AccessLogEntry entity)
         {
             var id = await base.Insert(entity);
-            Logger.Info($"{entity.Action} | {entity.ClientIp} | {entity.ProcessingTime }");
+            Logger.Debug($"{entity.Action} | {entity.ClientIp} | {entity.ProcessingTime }");
             return id;
         }
 
