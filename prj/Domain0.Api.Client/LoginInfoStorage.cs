@@ -10,17 +10,7 @@ namespace Domain0.Api.Client
 
         public LoginInfoStorage()
         {
-            try
-            {
-                storage = IsolatedStorageFile.GetUserStoreForApplication();
-                return;
-            }
-            catch (Exception)
-            {
-            }
-
-            // last chance fallback
-            storage = IsolatedStorageFile.GetUserStoreForAssembly();
+            storage = GetIsolatedStorage();
         }
 
         public void Delete()
@@ -48,6 +38,23 @@ namespace Domain0.Api.Client
             {
                 return AccessTokenResponse.FromJson(sr.ReadToEnd());
             }
+        }
+
+        private IsolatedStorageFile GetIsolatedStorage()
+        {
+            if (AppDomain.CurrentDomain.ActivationContext != null)
+            {
+                try
+                {
+                    return IsolatedStorageFile.GetUserStoreForApplication();
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            // last chance fallback
+            return IsolatedStorageFile.GetUserStoreForAssembly();
         }
     }
 }
