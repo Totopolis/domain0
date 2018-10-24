@@ -226,6 +226,9 @@
     <Compile Include="..\..\src\server\CustomStatusCodeHandler.cs">
       <Link>Infrastructure\CustomStatusCodeHandler.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\DefaultResponseProcessor.cs">
+      <Link>Infrastructure\DefaultResponseProcessor.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\Domain0Bootstrapper.cs">
       <Link>Domain0Bootstrapper.cs</Link>
     </Compile>

@@ -20,6 +20,7 @@ using System.Linq;
 using Domain0.Model;
 using Domain0.Service.Throttling;
 using Microsoft.Extensions.Caching.Memory;
+using Nancy.Responses.Negotiation;
 
 namespace Domain0.Nancy
 {
@@ -30,7 +31,7 @@ namespace Domain0.Nancy
         {
             container = rootContainer;
             thresholdSettings = rootContainer.Resolve<ThresholdSettings>();
-        } 
+        }
 
         protected override ILifetimeScope GetApplicationContainer() => container;
 
@@ -153,6 +154,31 @@ namespace Domain0.Nancy
 
             base.Configure(environment);
         }
+
+        protected override Func<ITypeCatalog, NancyInternalConfiguration> InternalConfiguration
+        {
+            get
+            {
+                return NancyInternalConfiguration
+                    .WithOverrides(x =>
+                    {
+                        x.ResponseProcessors = AvalibleResponceProcessors;
+                        x.Serializers = AvalibleSerializers;
+                    });
+            }
+        }
+
+        private readonly Type[] AvalibleResponceProcessors = new Type[]
+        {
+            typeof(ProtobufResponseProcessor),
+            typeof(JsonProcessor),
+            typeof(DefaultResponseProcessor)
+        };
+
+        private readonly Type[] AvalibleSerializers = new Type[]
+        {
+            typeof(JsonNetSerializer)
+        };
 
         private readonly IContainer container;
         private readonly ThresholdSettings thresholdSettings;
