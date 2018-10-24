@@ -467,12 +467,12 @@ namespace Domain0.Service
                 return null;
             }
 
-            var hashPassword = passwordGenerator.HashPassword(request.Password);
 
             // confirm sms request
             if (account != null)
             {
                 // change password
+                var hashPassword = passwordGenerator.HashPassword(request.Password);
                 account.Password = hashPassword;
                 account.LastDate = DateTime.UtcNow;
                 await accountRepository.Update(account);
@@ -481,7 +481,18 @@ namespace Domain0.Service
             else
             {
                 // confirm registration
+                var password = passwordGenerator.GeneratePassword();
+                var hashPassword = passwordGenerator.HashPassword(password);
                 var currentDateTime = DateTime.UtcNow;
+
+                var message = string.Format(await messageTemplateRepository.GetTemplate(
+                    MessageTemplateName.WelcomeTemplate,
+                    cultureRequestContext.Culture,
+                    MessageTemplateType.sms),
+                    request.Phone, password);
+
+                await smsClient.Send(request.Phone, message);
+
                 var userId = await accountRepository.Insert(account = new Account
                 {
                     Name = phone.ToString(CultureInfo.InvariantCulture),
@@ -548,8 +559,24 @@ namespace Domain0.Service
             }
             else
             {
-                var currentDateTime = DateTime.UtcNow;
+                var password = passwordGenerator.GeneratePassword();
+                hashPassword = passwordGenerator.HashPassword(password);
 
+                var subject = await messageTemplateRepository.GetTemplate(
+                    MessageTemplateName.WelcomeSubjectTemplate,
+                    cultureRequestContext.Culture,
+                    MessageTemplateType.email);
+
+                var message = string.Format(await messageTemplateRepository.GetTemplate(
+                        MessageTemplateName.WelcomeTemplate,
+                        cultureRequestContext.Culture,
+                        MessageTemplateType.email),
+                    request.Email, password);
+
+                await emailClient.Send(subject, request.Email, message);
+
+                var currentDateTime = DateTime.UtcNow;
+                
                 // confirm registration
                 var userId = await accountRepository.Insert(account = new Account
                 {
