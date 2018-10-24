@@ -256,7 +256,7 @@ namespace Domain0.Service
             var result = mapper.Map<UserProfile>(await accountRepository.FindByLogin(phone.ToString()));
             if (request.BlockSmsSend)
             {
-                logger.Info($"User created. phone: {request.Phone}");
+                logger.Info($"User { result.Id } created. phone: {request.Phone}");
                 return result;
             }
 
@@ -274,7 +274,7 @@ namespace Domain0.Service
 
             await smsClient.Send(request.Phone.Value, message);
 
-            logger.Info($"User created. New user pin has been sent to phone: {request.Phone}");
+            logger.Info($"User { result.Id } created. New user pin has been sent to phone: {request.Phone}");
 
             return result;
         }
@@ -320,7 +320,7 @@ namespace Domain0.Service
             var result = mapper.Map<UserProfile>(await accountRepository.FindByLogin(email));
             if (request.BlockEmailSend)
             {
-                logger.Info($"User created. Email: {request.Email}");
+                logger.Info($"User { result.Id } created. Email: {request.Email}");
                 return result;
             }
 
@@ -350,7 +350,7 @@ namespace Domain0.Service
 
             await emailClient.Send(subject, request.Email, message);
 
-            logger.Info($"User created. New user pin has been sent to email: {request.Email}");
+            logger.Info($"User { result.Id } created. New user pin has been sent to email: {request.Email}");
 
             return result;
         }
@@ -449,7 +449,7 @@ namespace Domain0.Service
 
                 if (passwordGenerator.CheckPassword(request.Password, account.Password))
                 {
-                    logger.Info($"User {request.Phone} logged in");
+                    logger.Info($"User { account.Id } | { request.Phone } logged in");
 
                     var currentDateTime = DateTime.UtcNow;
                     account.FirstDate = account.FirstDate ?? currentDateTime;
@@ -476,7 +476,7 @@ namespace Domain0.Service
                 account.Password = hashPassword;
                 account.LastDate = DateTime.UtcNow;
                 await accountRepository.Update(account);
-                logger.Info($"User {request.Phone} change password successful!");
+                logger.Info($"User { account.Id } | { request.Phone } change password successful!");
             }
             else
             {
@@ -507,7 +507,7 @@ namespace Domain0.Service
                 account.Id = userId;
 
                 await roleRepository.AddUserToDefaultRoles(userId);
-                logger.Info($"User {request.Phone} account created successful!");
+                logger.Info($"User { account.Id } | { request.Phone } account created successful!");
             }
 
             return await GetTokenResponse(account);
@@ -531,7 +531,7 @@ namespace Domain0.Service
 
                 if (passwordGenerator.CheckPassword(request.Password, account.Password))
                 {
-                    logger.Info($"User {request.Email} logged in");
+                    logger.Info($"User { account.Id } | { request.Email } logged in");
                     var currentDateTime = DateTime.UtcNow;
                     account.FirstDate = account.FirstDate ?? currentDateTime;
                     account.LastDate = currentDateTime;
@@ -555,7 +555,7 @@ namespace Domain0.Service
                 account.Password = hashPassword;
                 account.LastDate = DateTime.UtcNow;
                 await accountRepository.Update(account);
-                logger.Info($"User { request.Email } change password successful!");
+                logger.Info($"User { account.Id } | { request.Email } change password successful!");
             }
             else
             {
@@ -592,7 +592,7 @@ namespace Domain0.Service
                 account.Id = userId;
 
                 await roleRepository.AddUserToDefaultRoles(userId);
-                logger.Info($"User { request.Email } account created successful!");
+                logger.Info($"User { account.Id } | { request.Email } account created successful!");
             }
 
             return await GetTokenResponse(account);
@@ -636,7 +636,7 @@ namespace Domain0.Service
 
             if (account.IsLocked)
             {
-                var errorText = $"Attempt to reset password for locked user {phone}!";
+                var errorText = $"Attempt to reset password for locked user { account.Id } | { phone }!";
                 logger.Warn(errorText);
                 throw new UserLockedSecurityException(errorText);
             }
@@ -644,7 +644,7 @@ namespace Domain0.Service
             var existed = await smsRequestRepository.Pick(phone);
             if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.MessagesResendCooldown))
             {
-                logger.Warn($"Attempt to get pasword reset pin multiple times! Phone: {phone}");
+                logger.Warn($"User { account.Id } attempt to get pasword reset pin multiple times! Phone: { phone }");
                 return;
             }
             var password = passwordGenerator.GeneratePassword();
@@ -663,7 +663,7 @@ namespace Domain0.Service
 
             var message = string.Format(template, password, expirationTime.TotalMinutes);
             await smsClient.Send(phone, message);
-            logger.Info($"Attempt to reset password. New user pin has been sent to phone: { phone }");
+            logger.Info($"User { account.Id } attempt to reset password. New user pin has been sent to phone: { phone }");
         }
 
         public async Task RequestResetPassword(string email)
@@ -677,7 +677,7 @@ namespace Domain0.Service
 
             if (account.IsLocked)
             {
-                var errorText = $"Attempt to reset password for locked user { email }!";
+                var errorText = $"Attempt to reset password for locked user { account.Id } | { email }!";
                 logger.Warn(errorText);
                 throw new UserLockedSecurityException(errorText);
             }
@@ -685,7 +685,7 @@ namespace Domain0.Service
             var existed = await emailRequestRepository.Pick(email);
             if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.MessagesResendCooldown))
             {
-                logger.Warn($"Attempt to get pasword reset pin multiple times! Email: { email }");
+                logger.Warn($"User { account.Id } attempt to get pasword reset pin multiple times! Email: { email }");
                 return;
             }
 
@@ -712,7 +712,7 @@ namespace Domain0.Service
             var subject = string.Format(subjectTemplate, "domain0", account.Name);
 
             await emailClient.Send(subject, email, message);
-            logger.Info($"Attempt to reset password. New user pin has been sent to email: { email }");
+            logger.Info($"User { account.Id } attempt to reset password. New user pin has been sent to email: { email }");
         }
 
         public async Task RequestChangePhone(ChangePhoneUserRequest changePhoneRequest)
