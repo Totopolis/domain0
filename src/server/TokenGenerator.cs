@@ -17,6 +17,8 @@ namespace Domain0.Service
 
         public string Audience { get; set; }
 
+        public string RefreshAudience { get; set; }
+
         public TimeSpan Lifetime { get; set; }
 
         public TimeSpan RefreshLifetime { get; set; }
@@ -50,7 +52,7 @@ namespace Domain0.Service
             var claims = BuildClaims(TokenClaims.CLAIM_TOKEN_TYPE_ACCESS, userId, 
                 TokenClaims.CLAIM_PERMISSIONS, JsonConvert.SerializeObject(permissions));
 
-            var tokenDescriptor = BuildSecurityTokenDescriptor(issueAt, issueAt.Add(Settings.Lifetime), claims);
+            var tokenDescriptor = BuildSecurityTokenDescriptor(Settings.Audience, issueAt, issueAt.Add(Settings.Lifetime), claims);
             var token = handler.CreateToken(tokenDescriptor);
             return handler.WriteToken(token);
         }
@@ -60,7 +62,7 @@ namespace Domain0.Service
             var claims = BuildClaims(TokenClaims.CLAIM_TOKEN_TYPE_REFRESH, userId,
                 TokenClaims.CLAIM_TOKEN_ID, tokenId.ToString());
 
-            var tokenDescriptor = BuildSecurityTokenDescriptor(issueAt, issueAt.Add(Settings.RefreshLifetime), claims);
+            var tokenDescriptor = BuildSecurityTokenDescriptor(Settings.RefreshAudience, issueAt, issueAt.Add(Settings.RefreshLifetime), claims);
             var token = handler.CreateToken(tokenDescriptor);
             return handler.WriteToken(token);
         }
@@ -72,7 +74,7 @@ namespace Domain0.Service
         {
             try
             {
-                var parameters = BuildTokenValidationParameters(skipLifetimeCheck);
+                var parameters = BuildTokenValidationParameters(Settings.Audience, skipLifetimeCheck);
                 var principal = handler.ValidateToken(accessToken, parameters, out _);
                 var identity = (ClaimsIdentity)principal.Identity;
                 identity.AddClaim(new Claim("id_token", accessToken));
@@ -100,7 +102,7 @@ namespace Domain0.Service
         {
             try
             {
-                var parameters = BuildTokenValidationParameters();
+                var parameters = BuildTokenValidationParameters(Settings.RefreshAudience);
                 var principal = handler.ValidateToken(refreshToken, parameters, out _);
 
                 // refresh token should have tid field
@@ -117,13 +119,15 @@ namespace Domain0.Service
             }
         }
 
-        protected virtual TokenValidationParameters BuildTokenValidationParameters(bool skipLifetimeCheck = false)
+        protected virtual TokenValidationParameters BuildTokenValidationParameters(
+            string audience,
+            bool skipLifetimeCheck = false)
         {
             var parameters = new TokenValidationParameters
             {
                 NameClaimType = ClaimTypes.Name,
                 ValidateAudience = true,
-                ValidAudience = Settings.Audience,
+                ValidAudience = audience,
                 ValidIssuer = Settings.Issuer,
                 ValidateLifetime = !skipLifetimeCheck
             };
@@ -131,6 +135,7 @@ namespace Domain0.Service
         }
 
         protected virtual SecurityTokenDescriptor BuildSecurityTokenDescriptor(
+            string audience,
             DateTime issueAt, 
             DateTime expireAt, 
             Claim[] claims)
@@ -139,7 +144,7 @@ namespace Domain0.Service
             {
                 IssuedAt = issueAt,
                 Expires = expireAt,
-                Audience = Settings.Audience,
+                Audience = audience,
                 Issuer = Settings.Issuer,
                 Subject = new ClaimsIdentity(claims),
             };
@@ -171,17 +176,20 @@ namespace Domain0.Service
         }
 
         protected override SecurityTokenDescriptor BuildSecurityTokenDescriptor(
+            string audience,
             DateTime issueAt, DateTime expireAt, 
             Claim[] claims)
         {
-            var securityTokenDescriptor = base.BuildSecurityTokenDescriptor(issueAt, expireAt, claims);
+            var securityTokenDescriptor = base.BuildSecurityTokenDescriptor(audience, issueAt, expireAt, claims);
             securityTokenDescriptor.SigningCredentials = new SigningCredentials(signatureKey, SecurityAlgorithms.HmacSha256);
             return securityTokenDescriptor;
         }
 
-        protected override TokenValidationParameters BuildTokenValidationParameters(bool skipLifetimeCheck = false)
+        protected override TokenValidationParameters BuildTokenValidationParameters(
+            string audience,
+            bool skipLifetimeCheck = false)
         {
-            var validationProvider = base.BuildTokenValidationParameters(skipLifetimeCheck);
+            var validationProvider = base.BuildTokenValidationParameters(audience, skipLifetimeCheck);
             validationProvider.IssuerSigningKey = signatureKey;
             return validationProvider;
         }
@@ -210,17 +218,20 @@ namespace Domain0.Service
         }
 
         protected override SecurityTokenDescriptor BuildSecurityTokenDescriptor(
+            string audience,
             DateTime issueAt, DateTime expireAt,
             Claim[] claims)
         {
-            var securityTokenDescriptor = base.BuildSecurityTokenDescriptor(issueAt, expireAt, claims);
+            var securityTokenDescriptor = base.BuildSecurityTokenDescriptor(audience, issueAt, expireAt, claims);
             securityTokenDescriptor.SigningCredentials = new SigningCredentials(privateSecurityKey, SecurityAlgorithms.RsaSha256);
             return securityTokenDescriptor;
         }
 
-        protected override TokenValidationParameters BuildTokenValidationParameters(bool skipLifetimeCheck = false)
+        protected override TokenValidationParameters BuildTokenValidationParameters(
+            string audience,
+            bool skipLifetimeCheck = false)
         {
-            var validationProvider = base.BuildTokenValidationParameters(skipLifetimeCheck);
+            var validationProvider = base.BuildTokenValidationParameters(audience, skipLifetimeCheck);
             validationProvider.IssuerSigningKey = publicSecurityKey;
             return validationProvider;
         }

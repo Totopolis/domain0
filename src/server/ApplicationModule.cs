@@ -93,6 +93,7 @@ namespace Domain0
             var settings = new TokenGeneratorSettings
             {
                 Audience = ConfigurationManager.AppSettings["Token_Audience"] ?? "*",
+                RefreshAudience = ConfigurationManager.AppSettings["Token_RefreshAudience"] ?? "*",
                 Issuer = ConfigurationManager.AppSettings["Token_Issuer"] ?? "issuer",
                 Lifetime = TimeSpan.FromMinutes(double.Parse(ConfigurationManager.AppSettings["Token_LifeTime"] ?? "15")),
                 RefreshLifetime = TimeSpan.FromMinutes(double.Parse(ConfigurationManager.AppSettings["Token_RefreshLifeTime"] ?? "480")),
