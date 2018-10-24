@@ -52,16 +52,12 @@ namespace Domain0.Nancy.Infrastructure
             {
                 var processingTime = CalculateProcessingTime(ctx);
 
-                var proxyRemoteIp = string.Join(", ", ctx.Request.Headers["X-Real-IP"]);
 
                 var logEntry = new AccessLogEntry
                 {
                     Action = Truncate(ctx.Request.Path, 255),
                     Method = Truncate(ctx.Request.Method, 15),
-                    ClientIp = Truncate(
-                            string.IsNullOrWhiteSpace(proxyRemoteIp)
-                                ? ctx.Request.UserHostAddress
-                                : proxyRemoteIp, 255),
+                    ClientIp = Truncate(ctx.GetClientHost(), 255),
                     StatusCode = (int?)(statusCode ?? ctx.Response?.StatusCode),
                     ProcessedAt = DateTime.UtcNow,
                     UserAgent = Truncate(string.Join(", ", ctx.Request.Headers["User-Agent"]), 255),

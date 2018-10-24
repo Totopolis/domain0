@@ -82,5 +82,16 @@ namespace Domain0.Nancy.Infrastructure
                 return result;
             }
         }
+
+        public static string GetClientHost(this NancyContext context)
+        {
+            if (context.Request != null 
+                && context.Request.Headers["X-Real-IP"].Any())
+            {
+                return string.Join(", ", context.Request.Headers["X-Real-IP"]);
+            }
+
+            return context.Request.UserHostAddress;
+        }
     }
 }

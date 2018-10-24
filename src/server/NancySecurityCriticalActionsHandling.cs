@@ -20,7 +20,7 @@ namespace Domain0.Nancy.Infrastructure
                     switch (ex)
                     {
                         case TokenSecurityException _:
-                            logger.Warn($"Wrong token from host: {ctx.Request?.UserHostAddress} to path: {ctx.Request?.Path}");
+                            logger.Warn($"Wrong token from host: {ctx.GetClientHost()} to path: {ctx.Request?.Path}");
                             break;
                     }
                 }

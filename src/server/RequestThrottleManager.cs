@@ -3,6 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using Domain0.Nancy.Infrastructure;
 using Microsoft.Extensions.Caching.Memory;
 using Nancy;
 using Nancy.Bootstrapper;
@@ -132,7 +133,7 @@ namespace Domain0.Service.Throttling
             {
                 logger.Error($"Flood detected ({counterValue} in {period.ToString()} allowed {requestCountLimit})" +
                              $" on path: {context?.Request?.Path}" +
-                             $" ip: {context?.Request?.UserHostAddress}");
+                             $" ip: {context?.GetClientHost()}");
                 return new Response
                 {
                     StatusCode = HttpStatusCode.TooManyRequests
@@ -183,7 +184,7 @@ namespace Domain0.Service.Throttling
             {
                 if (propertiesSet.HasFlag(ThrottlingProperties.RemoteIp))
                 {
-                    sw.Write(context.Request.UserHostAddress);
+                    sw.Write(context.GetClientHost());
                 }
 
                 if (propertiesSet.HasFlag(ThrottlingProperties.Method))
