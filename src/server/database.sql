@@ -233,12 +233,12 @@ values
 create table log.Access(
 	[Id] bigint identity(1,1) not null constraint PK_log_Access_Id primary key,
 	[Action] nvarchar(max) not null,
-	[Method] nvarchar(10) not null,
-	[ClientIp] nvarchar(32) not null,
+	[Method] nvarchar(max) not null,
+	[ClientIp] nvarchar(max) not null,
 	[ProcessedAt] datetime not null,
 	[StatusCode] int null,
-	[UserAgent] nvarchar(128) not null,
-	[UserId] nvarchar(64) null,
+	[UserAgent] nvarchar(max) not null,
+	[UserId] nvarchar(max) null,
     [Referer] nvarchar(max) null,
 	[ProcessingTime] int null
 )

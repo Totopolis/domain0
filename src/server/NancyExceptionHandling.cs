@@ -52,17 +52,22 @@ namespace Domain0.Nancy.Infrastructure
             {
                 var processingTime = CalculateProcessingTime(ctx);
 
+                var proxyRemoteIp = string.Join(", ", ctx.Request.Headers["X-Real-IP"]);
+
                 var logEntry = new AccessLogEntry
                 {
-                    Action = ctx.Request.Path,
-                    Method = ctx.Request.Method,
-                    ClientIp = ctx.Request.UserHostAddress,
+                    Action = Truncate(ctx.Request.Path, 255),
+                    Method = Truncate(ctx.Request.Method, 15),
+                    ClientIp = Truncate(
+                            string.IsNullOrWhiteSpace(proxyRemoteIp)
+                                ? ctx.Request.UserHostAddress
+                                : proxyRemoteIp, 255),
                     StatusCode = (int?)(statusCode ?? ctx.Response?.StatusCode),
                     ProcessedAt = DateTime.UtcNow,
-                    UserAgent = string.Join(", ", ctx.Request.Headers["User-Agent"]),
-                    UserId = ctx.CurrentUser?.Identity?.Name,
+                    UserAgent = Truncate(string.Join(", ", ctx.Request.Headers["User-Agent"]), 255),
+                    UserId = Truncate(ctx.CurrentUser?.Identity?.Name, 128),
                     ProcessingTime = processingTime,
-                    Referer = ctx.Request.Headers.Referrer
+                    Referer = Truncate(ctx.Request.Headers.Referrer, 255)
                 };
 
                 await repository.Insert(logEntry);
@@ -71,6 +76,12 @@ namespace Domain0.Nancy.Infrastructure
             {
                 logger.Error(ex, "LogRequest error");
             }
+        }
+
+        public static string Truncate(string value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value)) return value;
+            return value.Length <= maxLength ? value : value.Substring(0, maxLength);
         }
 
         private static int? CalculateProcessingTime(NancyContext ctx)
