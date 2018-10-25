@@ -256,7 +256,7 @@ namespace Domain0.Service
             var result = mapper.Map<UserProfile>(await accountRepository.FindByLogin(phone.ToString()));
             if (request.BlockSmsSend)
             {
-                logger.Info($"User { result.Id } created. phone: {request.Phone}");
+                logger.Info($"User { result?.Id } created. phone: {request.Phone}");
                 return result;
             }
 
@@ -274,7 +274,7 @@ namespace Domain0.Service
 
             await smsClient.Send(request.Phone.Value, message);
 
-            logger.Info($"User { result.Id } created. New user pin has been sent to phone: {request.Phone}");
+            logger.Info($"User { result?.Id } created. New user pin has been sent to phone: {request.Phone}");
 
             return result;
         }
