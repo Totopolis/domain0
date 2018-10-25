@@ -1119,6 +1119,7 @@ namespace Domain0.Service
         {
             logger.Info($"User { requestContext.UserId } removing profile of user: {id}");
             await accountRepository.Delete(id);
+            await tokenRegistrationRepository.RevokeByUserId(id);
         }
 
         public async Task LockUser(int id)
