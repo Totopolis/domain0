@@ -162,6 +162,7 @@ values
 ('email',	'en',		'RequestResetTemplate',			'Your NEW password is: {0} will valid for {1} min'),
 ('email',	'en',		'RequestResetSubjectTemplate',	'{0}.Change password for {1}'),
 ('email',	'en',		'ForcePasswordResetTemplate',	'Your NEW password is: {0}'),
+('email',	'en',		'ForcePasswordResetSubjectTemplate', '{0}! NEW password for {1}'),
 ('email',	'en',		'RequestEmailChangeTemplate',	'Your email change pin is: {0}'),
 ('email',	'en',		'RequestEmailChangeSubjectTemplate',	'Email change confirmation'),
 
