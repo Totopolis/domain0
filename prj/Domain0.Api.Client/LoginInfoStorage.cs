@@ -15,7 +15,8 @@ namespace Domain0.Api.Client
 
         public void Delete()
         {
-            storage.DeleteFile(FileName);
+            if (storage.FileExists(FileName))
+                storage.DeleteFile(FileName);
         }
 
         public void Save(AccessTokenResponse data)
