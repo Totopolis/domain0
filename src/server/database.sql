@@ -172,6 +172,7 @@ values
 ('email',	'ru',		'RequestResetTemplate',			'Ваш НОВЫЙ пароль: {0} действителен {1} мин'),
 ('email',	'ru',		'RequestResetSubjectTemplate',	'{0}. Изменение пароля для {1}'),
 ('email',	'ru',		'ForcePasswordResetTemplate',	'Ваш НОВЫЙ пароль: {0}'),
+('email',	'ru',		'ForcePasswordResetSubjectTemplate',	'{0}! Новый пароль для {1}'),
 ('email',	'ru',		'RequestEmailChangeTemplate',	'Ваш PIN для смены email: {0}'),
 ('email',	'ru',		'RequestEmailChangeSubjectTemplate',	'Подтверждение смены email')
 go
