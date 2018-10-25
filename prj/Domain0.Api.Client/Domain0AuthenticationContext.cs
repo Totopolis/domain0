@@ -71,7 +71,35 @@ namespace Domain0.Api.Client
 
         public IDomain0Client Client { get { return clientProxyWithTokenRefresh; } }
 
-        public bool ShouldRemember { get; set; }
+        private bool shouldRemember;
+        public bool ShouldRemember
+        {
+            get
+            {
+                try
+                {
+                    tokenChangeLock.EnterReadLock();
+                    return shouldRemember;
+                }
+                finally
+                {
+                    tokenChangeLock.ExitReadLock();
+                }
+            }
+            set
+            {
+                try
+                {
+                    tokenChangeLock.EnterWriteLock();
+                    shouldRemember = value;
+                    loginInfoStorage.Delete();
+                }
+                finally
+                {
+                    tokenChangeLock.ExitWriteLock();
+                }
+            }
+        }
 
         public string HostUrl
         {
@@ -165,7 +193,8 @@ namespace Domain0.Api.Client
                     {
                         ReadExpireDates();
                         SetAuthorizationHeader();
-                        loginInfoStorage.Save(loginInfo);
+                        if (shouldRemember)
+                            loginInfoStorage.Save(loginInfo);
                     }
                     else
                     {
