@@ -809,6 +809,11 @@ namespace Domain0.Api.Client
                             return;
                         }
                         else
+                        if (status_ == "200") 
+                        {
+                            return;
+                        }
+                        else
                         if (status_ == "400") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
