@@ -458,12 +458,17 @@ namespace Domain0.Service
 
                     return await GetTokenResponse(account);
                 }
+                else
+                {
+                    logger.Warn($"User { account.Id } { request.Phone } wrong password!");
+                    return null;
+                }
             }
 
             // remove try confirm registration
             if (!await smsRequestRepository.ConfirmRegister(phone, request.Password))
             {
-                logger.Warn($"User {request.Phone} wrong password!");
+                logger.Warn($"User { request.Phone } wrong pin!");
                 return null;
             }
 
@@ -539,12 +544,17 @@ namespace Domain0.Service
 
                     return await GetTokenResponse(account);
                 }
+                else
+                {
+                    logger.Warn($"User { account.Id } | { request.Email } wrong password!");
+                    return null;
+                }
             }
 
             // remove try confirm registration
             if (!await emailRequestRepository.ConfirmRegister(email, request.Password))
             {
-                logger.Warn($"User { request.Email } wrong password!");
+                logger.Warn($"User { request.Email } wrong pin!");
                 return null;
             }
 
