@@ -4,6 +4,8 @@ namespace Domain0.Repository.Model
 {
     public class SmsRequest
     {
+        public int? Id { get; set; }
+
         public decimal Phone { get; set; }
 
         public string Password { get; set; }
@@ -15,6 +17,8 @@ namespace Domain0.Repository.Model
 
     public class EmailRequest
     {
+        public int? Id { get; set; }
+
         public string Email { get; set; }
 
         public string Password { get; set; }

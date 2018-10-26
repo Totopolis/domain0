@@ -460,16 +460,22 @@ namespace Domain0.Service
                 }
                 else
                 {
-                    logger.Warn($"User { account.Id } { request.Phone } wrong password!");
-                    return null;
+                    // remove try confirm change password
+                    if (!await smsRequestRepository.ConfirmRegister(phone, request.Password))
+                    {
+                        logger.Warn($"User { account.Id } { request.Phone } wrong password!");
+                        return null;
+                    }
                 }
             }
-
-            // remove try confirm registration
-            if (!await smsRequestRepository.ConfirmRegister(phone, request.Password))
+            else
             {
-                logger.Warn($"User { request.Phone } wrong pin!");
-                return null;
+                // remove try confirm registration
+                if (!await smsRequestRepository.ConfirmRegister(phone, request.Password))
+                {
+                    logger.Warn($"User { request.Phone } wrong registration pin!");
+                    return null;
+                }
             }
 
 
@@ -546,16 +552,22 @@ namespace Domain0.Service
                 }
                 else
                 {
-                    logger.Warn($"User { account.Id } | { request.Email } wrong password!");
-                    return null;
+                    // remove try confirm change password
+                    if (!await emailRequestRepository.ConfirmRegister(request.Email, request.Password))
+                    {
+                        logger.Warn($"User { account.Id } { request.Email } wrong password!");
+                        return null;
+                    }
                 }
             }
-
-            // remove try confirm registration
-            if (!await emailRequestRepository.ConfirmRegister(email, request.Password))
+            else
             {
-                logger.Warn($"User { request.Email } wrong pin!");
-                return null;
+                // remove try confirm registration
+                if (!await emailRequestRepository.ConfirmRegister(email, request.Password))
+                {
+                    logger.Warn($"User { request.Email } wrong pin!");
+                    return null;
+                }
             }
 
             // confirm email request

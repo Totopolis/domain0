@@ -11,6 +11,7 @@ namespace Domain0.FastSql
     {
         private readonly Func<DbContext> getContext;
         public const string TableName = "[dom].[SmsRequest]";
+        public const string KeyName = "Id";
 
         public SmsRequestRepository(Func<DbContext> getContextFunc)
         {
@@ -28,12 +29,18 @@ namespace Domain0.FastSql
                 .ExecuteQueryAsync<SmsRequest>()
                 .FirstOrDefault();
 
-        public Task Save(SmsRequest smsRequest) => getContext().InsertAsync(TableName, smsRequest);
+        public Task Save(SmsRequest smsRequest) => getContext().InsertAsync(TableName, smsRequest, KeyName);
 
         public async Task<bool> ConfirmRegister(decimal phone, string password)
         {
             var request = await Pick(phone);
-            return request?.Password == password;
+            if (request?.Password == password)
+            {
+                await getContext().DeleteAsync(TableName, new { request.Id });
+                return true;
+            }
+
+            return false;
         }
 
         public Task<SmsRequest> PickByUserId(int userId)

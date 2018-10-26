@@ -27,12 +27,18 @@ namespace Domain0.FastSql
                 .FirstOrDefault();
 
         public Task Save(EmailRequest emailRequest)
-            => getContext().InsertAsync(TableName, emailRequest);
+            => getContext().InsertAsync(TableName, emailRequest, KeyName);
 
         public async Task<bool> ConfirmRegister(string email, string password)
         {
             var request = await Pick(email);
-            return request?.Password == password;
+            if (request?.Password == password)
+            {
+                await getContext().DeleteAsync(TableName, new { request.Id });
+                return true;
+            }
+
+            return false;
         }
 
         public Task<EmailRequest> PickByUserId(int userId) 
