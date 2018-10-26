@@ -22,7 +22,9 @@ namespace Domain0.Nancy.Infrastructure
 
                 try
                 {
-                    return tokenGenerator.Parse(jwtToken.Replace("Bearer ", ""));
+                    return tokenGenerator.Parse(jwtToken
+                        .Replace("Bearer ", "")
+                        .Replace("bearer ", ""));
                 }
                 catch (Exception)
                 {
