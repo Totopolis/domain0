@@ -136,7 +136,7 @@ namespace Domain0.Service
             }
 
             var existed = await smsRequestRepository.Pick(phone);
-            if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.MessagesResendCooldown))
+            if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.PinExpirationTime))
             {
                 logger.Warn($"Attempt to get pin multiple times! Phone: {phone}");
                 return;
@@ -171,7 +171,7 @@ namespace Domain0.Service
             }
 
             var existed = await emailRequestRepository.Pick(email);
-            if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.MessagesResendCooldown))
+            if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.EmailCodeExpirationTime))
             {
                 logger.Warn($"Attempt to get pin multiple times! Email: {email}");
                 return;
@@ -652,7 +652,7 @@ namespace Domain0.Service
             }
 
             var existed = await smsRequestRepository.Pick(phone);
-            if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.MessagesResendCooldown))
+            if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.PinExpirationTime))
             {
                 logger.Warn($"User { account.Id } attempt to get pasword reset pin multiple times! Phone: { phone }");
                 return;
@@ -693,7 +693,7 @@ namespace Domain0.Service
             }
 
             var existed = await emailRequestRepository.Pick(email);
-            if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.MessagesResendCooldown))
+            if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.EmailCodeExpirationTime))
             {
                 logger.Warn($"User { account.Id } attempt to get pasword reset pin multiple times! Email: { email }");
                 return;
@@ -751,7 +751,7 @@ namespace Domain0.Service
             }
 
             var existed = await smsRequestRepository.Pick(changePhoneRequest.Phone);
-            if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.MessagesResendCooldown))
+            if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.PinExpirationTime))
             {
                 logger.Warn($"Attempt to change phone multiple times! Phone: {changePhoneRequest.Phone}");
                 return;
@@ -847,7 +847,7 @@ namespace Domain0.Service
             }
 
             var existed = await emailRequestRepository.Pick(changeEmailRequest.Email);
-            if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.MessagesResendCooldown))
+            if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.EmailCodeExpirationTime))
             {
                 logger.Warn($"Attempt to change email multiple times! Email: { changeEmailRequest.Email }");
                 return;
@@ -1147,7 +1147,7 @@ namespace Domain0.Service
 
         private bool IsNeedCooldown(DateTime expiredAt, TimeSpan expirationTime)
         {
-            return expiredAt - expirationTime - DateTime.UtcNow < accountServiceSettings.MessagesResendCooldown;
+            return (expiredAt - expirationTime - DateTime.UtcNow).Duration() < accountServiceSettings.MessagesResendCooldown;
         }
 
         private readonly IEmailClient emailClient;
