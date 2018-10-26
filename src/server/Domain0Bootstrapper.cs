@@ -85,6 +85,13 @@ namespace Domain0.Nancy
                 pipelines, 
                 context);
 
+            var requestThrottleManager = requestContainer.Resolve<IRequestThrottleManager>();
+
+            requestThrottleManager.RequiresThrottlingByPathAndIpOnlyUnauthorized(
+                pipelines, ThrottlingPeriod.Minute, requestCountLimit: thresholdSettings.MinuteRequestsLimitByActionByIP);
+            requestThrottleManager.RequiresThrottlingByPathAndIpOnlyUnauthorized(
+                pipelines, ThrottlingPeriod.Hour, requestCountLimit: thresholdSettings.HourlyRequestsLimitByActionByIP);
+
             StatelessAuthentication.Enable(
                 pipelines, 
                 requestContainer
@@ -96,12 +103,6 @@ namespace Domain0.Nancy
                 pipelines);
 
 
-            var requestThrottleManager = requestContainer.Resolve<IRequestThrottleManager>();
-
-            requestThrottleManager.RequiresThrottlingByPathAndIp(
-                pipelines, ThrottlingPeriod.Minute, requestCountLimit: thresholdSettings.MinuteRequestsLimitByActionByIP);
-            requestThrottleManager.RequiresThrottlingByPathAndIp(
-                pipelines, ThrottlingPeriod.Hour, requestCountLimit: thresholdSettings.HourlyRequestsLimitByActionByIP);
 
         }
 

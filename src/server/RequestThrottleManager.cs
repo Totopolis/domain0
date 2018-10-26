@@ -41,6 +41,8 @@ namespace Domain0.Service.Throttling
             ThrottlingProperties propertiesSet,
             ThrottlingPeriod period,
             int requestCountLimit,
+            Func<NancyContext, bool> checkIf = null,
+            Func<NancyContext, bool> skipIf = null,
             params string[] requestKeys);
 
         void RequiresThrottlingByPathAndIp(
@@ -48,11 +50,18 @@ namespace Domain0.Service.Throttling
             ThrottlingPeriod period, 
             int requestCountLimit);
 
+        void RequiresThrottlingByPathAndIpOnlyUnauthorized(
+            IPipelines pipeline,
+            ThrottlingPeriod period,
+            int requestCountLimit);
+
         void RequiresThrottling(
             INancyModule module,
             ThrottlingProperties propertiesSet,
             ThrottlingPeriod period,
             int requestCountLimit,
+            Func<NancyContext, bool> checkIf = null,
+            Func<NancyContext, bool> skipIf = null,
             params string[] requestKeys);
     }
 
@@ -80,15 +89,36 @@ namespace Domain0.Service.Throttling
                 requestCountLimit);
         }
 
+        public void RequiresThrottlingByPathAndIpOnlyUnauthorized(
+            IPipelines pipeline,
+            ThrottlingPeriod period,
+            int requestCountLimit)
+        {
+            RequiresThrottling(
+                pipeline,
+                ThrottlingProperties.RemoteIp
+                | ThrottlingProperties.Method
+                | ThrottlingProperties.Path,
+                period,
+                requestCountLimit,
+                checkIf: (c) => 
+                    string.IsNullOrWhiteSpace(c?.CurrentUser?.Identity?.Name));
+        }
+
         public void RequiresThrottling(
             IPipelines pipelines, 
             ThrottlingProperties propertiesSet, 
             ThrottlingPeriod period,
-            int requestCountLimit, 
+            int requestCountLimit,
+            Func<NancyContext, bool> checkIf = null,
+            Func<NancyContext, bool> skipIf = null,
             params string[] requestKeys)
         {
             pipelines.BeforeRequest.AddItemToStartOfPipeline(
-                ctx => CheckThrottlingLimitHook(ctx, propertiesSet, period, requestCountLimit, requestKeys));
+                ctx => CheckThrottlingLimitHook(ctx, propertiesSet, period, requestCountLimit,
+                    checkIf: checkIf,
+                    skipIf: skipIf,
+                    requestKeys: requestKeys));
         }
 
         public void RequiresThrottlingByPathAndIp(
@@ -110,10 +140,15 @@ namespace Domain0.Service.Throttling
             ThrottlingProperties propertiesSet,
             ThrottlingPeriod period,
             int requestCountLimit,
+            Func<NancyContext, bool> checkIf = null,
+            Func<NancyContext, bool> skipIf = null,
             params string[] requestKeys)
         {
             module.AddBeforeHookOrExecute(
-                ctx => CheckThrottlingLimitHook(ctx, propertiesSet, period, requestCountLimit, requestKeys), 
+                ctx => CheckThrottlingLimitHook(ctx, propertiesSet, period, requestCountLimit,
+                    checkIf: checkIf,
+                    skipIf: skipIf,
+                    requestKeys: requestKeys), 
                 "RequiresThrottling");
         }
 
@@ -122,8 +157,16 @@ namespace Domain0.Service.Throttling
             ThrottlingProperties propertiesSet,
             ThrottlingPeriod period,
             int requestCountLimit,
+            Func<NancyContext, bool> checkIf = null,
+            Func<NancyContext, bool> skipIf = null,
             params string[] requestKeys)
         {
+            if (checkIf != null && !checkIf(context))
+                return null;
+
+            if (skipIf != null && skipIf(context))
+                return null;
+
             var key = BuildRequestKey(propertiesSet, period, context, requestKeys);
             var expirationTime = CalculateExpirationTime(period);
 
