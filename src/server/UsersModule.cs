@@ -42,7 +42,7 @@ namespace Domain0.Nancy
             requestContext = requestContextInstance;
             requestThrottleManager = requestThrottleManagerInstance;
 
-            Get("/", ctx => HttpStatusCode.NoContent);
+            Get("/", ctx => HttpStatusCode.OK);
 
             Get(GetMyProfileUrl, ctx => GetMyProfile(), name: nameof(GetMyProfile));
             Post(ChangeMyPasswordUrl, ctx => ChangeMyPassword(), name: nameof(ChangeMyPassword));
