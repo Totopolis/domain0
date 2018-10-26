@@ -70,6 +70,7 @@ namespace Domain0.Nancy
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
         [RouteParam(ParamIn = ParameterIn.Body, Name = "phone", ParamType = typeof(long), Required = true, Description = "user's phone with single number, started from 7 for Russia, 71231234567 for example")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone format or user with this phone already existed")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
         public async Task<object> Register()
@@ -99,7 +100,7 @@ namespace Domain0.Nancy
                 throw new BadModelException(ModelValidationResult);
             }
 
-            return HttpStatusCode.NoContent;
+            return HttpStatusCode.OK;
         }
 
         [Route(nameof(Login))]
