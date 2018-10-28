@@ -92,9 +92,15 @@
     <Compile Include="..\..\src\client\Domain0Client.cs">
       <Link>Domain0Client.cs</Link>
     </Compile>
-    <Compile Include="Domain0AuthenticationContext.cs" />
-    <Compile Include="IDomain0AuthenticationContext.cs" />
-    <Compile Include="LoginInfoStorage.cs" />
+    <Compile Include="..\..\src\client\Domain0AuthenticationContext.cs">
+      <Link>Domain0AuthenticationContext.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\client\IDomain0AuthenticationContext.cs">
+      <Link>IDomain0AuthenticationContext.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\client\LoginInfoStorage.cs" >
+      <Link>LoginInfoStorage.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
