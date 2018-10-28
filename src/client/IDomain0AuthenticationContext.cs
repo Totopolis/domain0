@@ -12,9 +12,9 @@ namespace Domain0.Api.Client
 
         bool IsLoggedIn { get; }
 
-        Task<bool> LoginByPhone(long phone, string password);
+        Task<UserProfile> LoginByPhone(long phone, string password);
 
-        Task<bool> LoginByEmail(string email, string password);
+        Task<UserProfile> LoginByEmail(string email, string password);
 
         void Logout();
     }

@@ -31,35 +31,39 @@ namespace Domain0.Api.Client
             RestoreLoginInfo();
         }
 
-        public async Task<bool> LoginByPhone(long phone, string password)
+        public async Task<UserProfile> LoginByPhone(long phone, string password)
         {
             try
             {
-                LoginInfo = await domain0Client.LoginAsync(new SmsLoginRequest(password, phone));
-                Trace.TraceInformation($"Login: { LoginInfo.Profile.Id }");
+                var li = await domain0Client.LoginAsync(new SmsLoginRequest(password, phone));
+                
+                LoginInfo = li;
+                Trace.TraceInformation($"Login: { li.Profile.Id }");
 
-                return true;
+                return li.Profile;
             }
             catch (Exception ex)
             {
-                Trace.TraceError($"Login: { phone }  {ex}");
-                return false;
+                Trace.TraceError($"Login by: { phone } error: { ex }");
+                throw new Domain0AuthenticationContextException("Login by phone error", ex);
             }
         }
 
-        public async Task<bool> LoginByEmail(string email, string password)
+        public async Task<UserProfile> LoginByEmail(string email, string password)
         {
             try
             { 
-                LoginInfo = await domain0Client.LoginByEmailAsync(new EmailLoginRequest(email, password));
-                Trace.TraceInformation($"Login: { LoginInfo.Profile.Id }");
+                var li = await domain0Client.LoginByEmailAsync(new EmailLoginRequest(email, password));
 
-                return true;
+                LoginInfo = li;
+                Trace.TraceInformation($"Login: { li.Profile.Id }");
+
+                return li.Profile;
             }
             catch (Exception ex)
             {
-                Trace.TraceError($"Login: { email }  {ex}");
-                return false;
+                Trace.TraceError($"Login by: { email } error: { ex }");
+                throw new Domain0AuthenticationContextException("Login by email error", ex);
             }
         }
 
@@ -149,17 +153,24 @@ namespace Domain0.Api.Client
             }
         }
 
-        private bool NeedAndAbleToRefresh()
+        private AccessTokenResponse GetSuitableToUpdateLoginInfo()
         {
             try
             {
                 tokenChangeLock.EnterReadLock();
 
-                return
-                    // need refresh
-                    accessTokenValidTo < DateTime.UtcNow.AddMinutes(ReserveTimeToUpdateToken)
-                    // and able to refresh
-                    && refreshTokenValidTo?.AddMinutes(ReserveTimeToUpdateToken) > DateTime.UtcNow;
+                if (loginInfo?.RefreshToken == null)
+                    return null;
+                    
+                // no need refresh                
+                if (accessTokenValidTo >= DateTime.UtcNow.AddMinutes(ReserveTimeToUpdateToken))
+                    return null;
+                    
+                // can't refresh
+                if (refreshTokenValidTo?.AddMinutes(ReserveTimeToUpdateToken) <= DateTime.UtcNow)
+                    return null;
+
+                return loginInfo;
             }
             finally
             {
@@ -276,7 +287,7 @@ namespace Domain0.Api.Client
 
         private class RefreshTokenInterceptor : AsyncInterceptorBase
         {
-            private Domain0AuthenticationContext context;
+            private readonly Domain0AuthenticationContext context;
 
             public RefreshTokenInterceptor(Domain0AuthenticationContext domain0AuthenticationContext)
             {
@@ -285,10 +296,18 @@ namespace Domain0.Api.Client
 
             protected override async Task InterceptAsync(IInvocation invocation, Func<IInvocation, Task> proceed)
             {
-                if (context.NeedAndAbleToRefresh())
+                var loginInfo = context.GetSuitableToUpdateLoginInfo();
+                if (loginInfo != null)
                 {
-                    Trace.TraceInformation($"Refreshing token...");
-                    context.LoginInfo = await context.domain0Client.RefreshAsync(context.LoginInfo.RefreshToken);
+                    Trace.TraceInformation($"Refreshing token for { loginInfo.Profile.Id } ...");
+                    try
+                    {
+                        context.LoginInfo = await context.domain0Client.RefreshAsync(loginInfo.RefreshToken);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Domain0AuthenticationContextException("Refresh token error", e);
+                    }
                 }
 
                 using (await context.requestSetupLock.ReaderLockAsync())
@@ -299,10 +318,18 @@ namespace Domain0.Api.Client
 
             protected override async Task<TResult> InterceptAsync<TResult>(IInvocation invocation, Func<IInvocation, Task<TResult>> proceed)
             {
-                if (context.NeedAndAbleToRefresh())
+                var loginInfo = context.GetSuitableToUpdateLoginInfo();
+                if (loginInfo != null)
                 {
-                    Trace.TraceInformation($"Refreshing token...");
-                    context.LoginInfo = await context.domain0Client.RefreshAsync(context.LoginInfo.RefreshToken);
+                    Trace.TraceInformation($"Refreshing token for { loginInfo.Profile.Id } ...");
+                    try
+                    {
+                        context.LoginInfo = await context.domain0Client.RefreshAsync(loginInfo.RefreshToken);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Domain0AuthenticationContextException("Refresh token error", e);
+                    }
                 }
 
                 using (await context.requestSetupLock.ReaderLockAsync())

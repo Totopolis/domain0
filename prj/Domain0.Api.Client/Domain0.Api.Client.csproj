@@ -89,6 +89,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\src\client\Domain0AuthenticationContextException.cs">
+      <Link>Domain0AuthenticationContextException.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\client\Domain0Client.cs">
       <Link>Domain0Client.cs</Link>
     </Compile>
@@ -98,7 +101,7 @@
     <Compile Include="..\..\src\client\IDomain0AuthenticationContext.cs">
       <Link>IDomain0AuthenticationContext.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\client\LoginInfoStorage.cs" >
+    <Compile Include="..\..\src\client\LoginInfoStorage.cs">
       <Link>LoginInfoStorage.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
