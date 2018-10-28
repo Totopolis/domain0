@@ -42,7 +42,7 @@ namespace Domain0.Api.Client
             }
             catch (Exception ex)
             {
-                Trace.TraceError($"Login: { phone }  {ex.ToString()}");
+                Trace.TraceError($"Login: { phone }  {ex}");
                 return false;
             }
         }
@@ -58,7 +58,7 @@ namespace Domain0.Api.Client
             }
             catch (Exception ex)
             {
-                Trace.TraceError($"Login: { email }  {ex.ToString()}");
+                Trace.TraceError($"Login: { email }  {ex}");
                 return false;
             }
         }
@@ -133,10 +133,10 @@ namespace Domain0.Api.Client
                     if (loginInfo == null)
                         return false;
 
-                    if (accessTokenValidTo?.AddMinutes(ReserveTimeToUpdateToken) > DateTime.UtcNow)
+                    if (accessTokenValidTo > DateTime.UtcNow.AddMinutes(ReserveTimeToUpdateToken))
                         return true;
 
-                    if (refreshTokenValidTo?.AddMinutes(ReserveTimeToUpdateToken) > DateTime.UtcNow)
+                    if (refreshTokenValidTo > DateTime.UtcNow.AddMinutes(ReserveTimeToUpdateToken))
                         return true;
 
                     return false;
