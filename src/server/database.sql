@@ -95,7 +95,7 @@ create table dom.Account (
 	[Phone] decimal null,
 	[Login] nvarchar(80) null,
 	[Password] nvarchar(80) null,
-	[Name] nvarchar(256) not null,
+	[Name] nvarchar(256) null,
 	[Description] nvarchar(max) null,
 	[FirstDate] datetime null,
 	[LastDate] datetime null,
