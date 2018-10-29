@@ -233,6 +233,7 @@ namespace Domain0.Service
             var id = await accountRepository.Insert(new Account
             {
                 Phone = phone,
+                Login = phone.ToString(),
                 Password = passwordGenerator.HashPassword(password),
                 Name = request.Name
             });
@@ -506,7 +507,6 @@ namespace Domain0.Service
 
                 var userId = await accountRepository.Insert(account = new Account
                 {
-                    Name = phone.ToString(CultureInfo.InvariantCulture),
                     Phone = phone,
                     Login = phone.ToString(CultureInfo.InvariantCulture),
                     Password = hashPassword,
@@ -602,7 +602,6 @@ namespace Domain0.Service
                 // confirm registration
                 var userId = await accountRepository.Insert(account = new Account
                 {
-                    Name = email,
                     Email = email,
                     Login = email,
                     Password = hashPassword,
