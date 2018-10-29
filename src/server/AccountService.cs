@@ -1120,14 +1120,10 @@ namespace Domain0.Service
                 throw new NotFoundException(nameof(oldAccount), user.Id);
             }
 
-            var account = mapper.Map(
-                user, 
-                oldAccount, 
-                opts => opts
-                    .ConfigureMap()
-                    .ForMember(x => x.Email, o => o.Ignore())
-                    .ForMember(x => x.Phone, o => o.Ignore())
-                    .ForMember(x => x.IsLocked, o => o.Ignore()));
+            var account = oldAccount;
+
+            account.Name = user.Name;
+            account.Description = user.Description;
 
             await accountRepository.Update(account);
 
