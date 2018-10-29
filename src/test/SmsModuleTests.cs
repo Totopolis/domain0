@@ -95,7 +95,7 @@ namespace Domain0.Test
                 with.DataFormatBody(format, phone);
             });
 
-            Assert.Equal(HttpStatusCode.NoContent, registerResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, registerResponse.StatusCode);
 
             var smsRequestMock = Mock.Get(container.Resolve<ISmsRequestRepository>());
             smsRequestMock
