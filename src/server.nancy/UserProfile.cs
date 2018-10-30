@@ -12,7 +12,7 @@ namespace Domain0.Model
             {
                 FieldSetting<UserProfile>.CreateInt32(1, c => c.Id, (c, v) => c.Id = v),
                 FieldSetting<UserProfile>.CreateString(2, c => c.Name, (c, v) => c.Name = v, c => c.Name?.Length > 0),
-                FieldSetting<UserProfile>.CreateInt64(3, c => (long) c.Phone, (c, v) => c.Phone = v, c => c.Phone != null),
+                FieldSetting<UserProfile>.CreateString(3, c => c.Phone, (c, v) => c.Phone = v, c => !string.IsNullOrWhiteSpace(c.Phone)),
                 FieldSetting<UserProfile>.CreateString(4, c => c.Description, (c, v) => c.Description = v, c => c.Description?.Length > 0),
                 FieldSetting<UserProfile>.CreateString(5, c => c.Email, (c, v) => c.Email = v, c => !string.IsNullOrWhiteSpace(c.Email)),
                 FieldSetting<UserProfile>.CreateBool(6, c => c.IsLocked, (c, v) => c.IsLocked= v),
@@ -29,7 +29,7 @@ namespace Domain0.Model
         /// <summary>
         /// User phone number
         /// </summary>
-        public decimal? Phone { get; set; }
+        public string Phone { get; set; }
 
         /// <summary>
         /// User email

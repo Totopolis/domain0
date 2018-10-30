@@ -48,7 +48,7 @@ namespace Domain0.Test
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             var result = response.Body.AsDataFormat<UserProfile>(format);
             Assert.Equal(userId, result.Id);
-            Assert.Equal(phone, result.Phone);
+            Assert.Equal(phone.ToString(), result.Phone);
         }
 
         [Theory]
@@ -78,7 +78,7 @@ namespace Domain0.Test
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             var result = response.Body.AsDataFormat<UserProfile>(format);
             Assert.Equal(userId, result.Id);
-            Assert.Equal(phone, result.Phone);
+            Assert.Equal(phone.ToString(), result.Phone);
         }
 
         [Theory]
@@ -149,7 +149,7 @@ namespace Domain0.Test
                 Id = 343,
                 Description = "newDescription",
                 Email = "email",
-                Phone = 412312,
+                Phone = "412312",
                 Name = "name"
             };
 
@@ -164,7 +164,7 @@ namespace Domain0.Test
                 {
                     Id = userUpdate.Id,
                     Email = userUpdate.Email,
-                    Phone = userUpdate.Phone,
+                    Phone = decimal.Parse(userUpdate.Phone),
                     Name = userUpdate.Name,
                     Description = userUpdate.Description,
                 });
@@ -181,7 +181,7 @@ namespace Domain0.Test
                     && a.Description == userUpdate.Description
                     && a.Email == userUpdate.Email
                     && a.Name == userUpdate.Name
-                    && a.Phone == userUpdate.Phone)), 
+                    && a.Phone.ToString() == userUpdate.Phone)), 
                 Times.Once);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);

@@ -453,7 +453,7 @@ namespace Domain0.Test
 
             var result = response.Body.AsDataFormat<AccessTokenResponse>(format);
             Assert.Equal(1, result.Profile.Id);
-            Assert.Equal(phone, result.Profile.Phone);
+            Assert.Equal(phone.ToString(), result.Profile.Phone);
             Assert.Equal("1test1test2", result.AccessToken);
             Assert.Equal("0_1", result.RefreshToken);
         }

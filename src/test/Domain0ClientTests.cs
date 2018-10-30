@@ -305,7 +305,7 @@ namespace Domain0.Test
                         TestContainerBuilder.BuildToken(container, testId, "user"));
 
                 var profile = await client.GetMyProfileAsync();
-                Assert.Equal(testPhone, profile.Phone);
+                Assert.Equal(testPhone.ToString(), profile.Phone);
                 Assert.Equal(testId, profile.Id);
                 accountRepositoryMock.Verify(ar =>
                         ar.FindByUserId(It.Is<int>(id => id == testId)),
@@ -337,7 +337,7 @@ namespace Domain0.Test
                         TestContainerBuilder.BuildToken(container, testId, TokenClaims.CLAIM_PERMISSIONS_VIEW_USERS));
 
                 var profile = await client.GetUserByPhoneAsync(testPhone);
-                Assert.Equal(testPhone, profile.Phone);
+                Assert.Equal(testPhone.ToString(), profile.Phone);
                 Assert.Equal(testId, profile.Id);
                 accountRepositoryMock.Verify(ar =>
                         ar.FindByPhone(It.Is<decimal>(phone => phone == testPhone)),
@@ -370,7 +370,7 @@ namespace Domain0.Test
                         TestContainerBuilder.BuildToken(container, testId, TokenClaims.CLAIM_PERMISSIONS_VIEW_USERS));
 
                 var profile = await client.GetUserByIdAsync(testId);
-                Assert.Equal(testPhone, profile.Phone);
+                Assert.Equal(testPhone.ToString(), profile.Phone);
                 Assert.Equal(testId, profile.Id);
                 accountRepositoryMock.Verify(ar =>
                         ar.FindByUserId(It.Is<int>(id => id == testId)),

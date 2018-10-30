@@ -250,7 +250,7 @@ namespace Domain0.Nancy
             if (result.Phone == null)
                 throw new NotFoundException(nameof(result.Phone));
 
-            return (long) result.Phone;
+            return long.Parse(result.Phone);
         }
 
         [Route(nameof(Refresh))]

@@ -6191,7 +6191,7 @@ namespace Domain0.Api.Client
     public partial class UserProfile 
     {
         [Newtonsoft.Json.JsonConstructor]
-        public UserProfile(string @description, string @email, int @id, bool @isLocked, string @name, decimal? @phone)
+        public UserProfile(string @description, string @email, int @id, bool @isLocked, string @name, string @phone)
         {
             Description = @description;
             Email = @email;
@@ -6217,7 +6217,7 @@ namespace Domain0.Api.Client
         public string Name { get; }
     
         [Newtonsoft.Json.JsonProperty("phone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public decimal? Phone { get; }
+        public string Phone { get; }
     
         public string ToJson() 
         {
