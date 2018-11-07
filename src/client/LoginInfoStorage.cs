@@ -3,7 +3,14 @@ using System.IO;
 using System.IO.IsolatedStorage;
 namespace Domain0.Api.Client
 {
-    internal class LoginInfoStorage
+    public interface ILoginInfoStorage
+    {
+        void Delete();
+        AccessTokenResponse Load();
+        void Save(AccessTokenResponse data);
+    }
+
+    internal class LoginInfoStorage : ILoginInfoStorage
     {
         private const string FileName = "LoginInfo";
         private readonly IsolatedStorageFile storage;
@@ -49,8 +56,9 @@ namespace Domain0.Api.Client
                 {
                     return IsolatedStorageFile.GetUserStoreForApplication();
                 }
-                catch (Exception)
+                catch
                 {
+                    // ignored, because GetUserStoreForApplication didn't work out of click-once 
                 }
             }
 
