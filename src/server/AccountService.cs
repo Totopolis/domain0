@@ -369,11 +369,19 @@ namespace Domain0.Service
             {
                 try
                 {
-                    // if permission changed we should make new token
-                    var principal = tokenGenerator.Parse(accessToken);
-                    if (principal == null
-                        || IsRightsDifferent(userPermissions, principal.GetPermissions()))
+                    if (registration.ExpiredAt.HasValue
+                        && registration.ExpiredAt < DateTime.UtcNow)
+                    {
                         accessToken = null;
+                    }
+                    else
+                    {
+                        // if permission changed we should make new token
+                        var principal = tokenGenerator.Parse(accessToken);
+                        if (principal == null
+                            || IsRightsDifferent(userPermissions, principal.GetPermissions()))
+                            accessToken = null;
+                    }
                 }
                 catch (TokenSecurityException)
                 {
