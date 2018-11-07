@@ -53,14 +53,6 @@ message SmsLoginRequest
 	string Password = 2;
 }
 
-message UserProfile
-{
-	int32 Id = 1;
-	string Name = 2;
-	int64 Phone = 3;
-	string Description = 4;
-}
-
 message UserProfileFilter
 {
 	repeated int32 UserIds = 1;
