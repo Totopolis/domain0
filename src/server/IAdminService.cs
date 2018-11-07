@@ -38,6 +38,8 @@ namespace Domain0.Nancy.Service
 
         Task<Role[]> GetByFilter(RoleFilter filter);
 
+        Task<UserRole[]> GetByFilter(RoleUserFilter filter);
+
         Task<int> Insert(Role role);
 
         Task Update(Role role);

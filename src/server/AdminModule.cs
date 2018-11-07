@@ -38,6 +38,7 @@ namespace Domain0.Nancy
 
 
         public const string LoadRolesByFilterUrl = "api/admin/Role/ByFilter";
+        public const string LoadRolesByUserFilterUrl = "api/admin/Role/ByUserFilter";
         public const string LoadRoleUrl = "api/admin/Role/{id}";
         public const string CreateRoleUrl = "api/admin/Role";
         public const string UpdateRoleUrl = "api/admin/Role";
@@ -127,6 +128,9 @@ namespace Domain0.Nancy
             Post(LoadRolesByFilterUrl,
                 ctx => LoadRolesByFilter(),
                 name: nameof(LoadRolesByFilter));
+            Post(LoadRolesByUserFilterUrl,
+                ctx => LoadRolesByUserFilter(),
+                name: nameof(LoadRolesByUserFilter));
             Get(LoadRoleUrl,
                 ctx => LoadRole(),
                 name: nameof(LoadRole));
@@ -509,6 +513,24 @@ namespace Domain0.Nancy
         public async Task<object> LoadRolesByFilter()
         {
             var filter = this.BindAndValidateModel<RoleFilter>();
+            return await adminService.GetByFilter(filter);
+        }
+
+        [Route(nameof(LoadRolesByUserFilter))]
+        [Route(HttpMethod.Post, LoadRolesByUserFilterUrl)]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Tags = new[] { "Admin" }, Summary = "Method for receive Roles by user filter")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body,
+            Name = "roleUserFilter",
+            ParamType = typeof(RoleUserFilter),
+            Required = true,
+            Description = "Roles filter by user")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(IEnumerable<UserRole>))]
+        public async Task<object> LoadRolesByUserFilter()
+        {
+            var filter = this.BindAndValidateModel<RoleUserFilter>();
             return await adminService.GetByFilter(filter);
         }
 

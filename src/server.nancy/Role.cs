@@ -27,21 +27,12 @@ namespace Domain0.Model
                     (c, v) => c.IsDefault = v),
             });
 
-        /// <summary>
-        /// Идентификатор
-        /// </summary>
         public int? Id { get; set; }
-        /// <summary>
-        /// Имя
-        /// </summary>
+
         public string Name { get; set; }
-        /// <summary>
-        /// Описание
-        /// </summary>
+
         public string Description { get; set; }
-        /// <summary>
-        /// Роль по умолчанию
-        /// </summary>
+
         public bool IsDefault { get; set; }
     }
 
@@ -73,9 +64,6 @@ namespace Domain0.Model
             RoleIds.AddRange(ids);
         }
 
-        /// <summary>
-        /// Идентификаторы шаблонов.
-        /// </summary>
         public List<int> RoleIds { get; set; } = new List<int>();
     }
 }

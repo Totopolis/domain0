@@ -48,6 +48,7 @@ namespace Domain0.Nancy
             modelCatalog.AddModel<ModelValidationError>();
             modelCatalog.AddModel<RolePermission>();
             modelCatalog.AddModel<UserPermission>();
+            modelCatalog.AddModel<UserRole>();
 
             SwaggerAnnotationsConfig.ShowOnlyAnnotatedRoutes = true;
             applicationContainer.Update(builder =>

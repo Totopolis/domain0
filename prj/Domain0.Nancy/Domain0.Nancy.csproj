@@ -215,6 +215,9 @@
     <Compile Include="..\..\src\server.nancy\UserProfileFilter.cs">
       <Link>Model\UserProfileFilter.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server.nancy\UserRole.cs">
+      <Link>Model\UserRole.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\Account.cs">
       <Link>Service\Repository\Model\Account.cs</Link>
     </Compile>
@@ -412,6 +415,9 @@
     </Compile>
     <Compile Include="..\..\src\server\UserPermission.cs">
       <Link>Service\Repository\Model\UserPermission.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\UserRole.cs">
+      <Link>Service\Repository\Model\UserRole.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\UsersModule.cs">
       <Link>UsersModule.cs</Link>

@@ -1,4 +1,5 @@
 ﻿using Domain0.Repository.Model;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Domain0.Repository
@@ -18,5 +19,7 @@ namespace Domain0.Repository
         Task AddUserRoles(int userId, int[] ids);
 
         Task RemoveUserRole(int userId, int[] ids);
+
+        Task<UserRole[]> FindByUserIds(IEnumerable<int> userIds);
     }
 }

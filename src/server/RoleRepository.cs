@@ -2,6 +2,7 @@
 using Domain0.Repository.Model;
 using Gerakul.FastSql.Common;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -98,5 +99,31 @@ select r.id, @p0 from {TableName} r where {nameof(Role.IsDefault)}=1
                     $"  and RoleId in ({string.Join(", ", ids)})",
                     userId)
                 .ExecuteNonQueryAsync();
+
+        public async Task<UserRole[]> FindByUserIds(IEnumerable<int> userIds)
+        {
+            if (!userIds.Any())
+            {
+                return await getContext()
+                    .CreateSimple(
+                        $"select r.*, ur.UserId from {TableName} r " +
+                        $"join { UserRoleTableName } ur on " +
+                        $"r.Id = ur.RoleId ")
+                    .ExecuteQueryAsync<UserRole>()
+                    .ToArray();
+            }
+
+            var idsStr = string.Join(",", userIds);
+
+            return await getContext()
+                .CreateSimple(
+                    $"select r.*, ur.UserId from {TableName} r " +
+                    $"join { UserRoleTableName } ur on " +
+                    $"r.Id = ur.RoleId " +
+                    $"where ur.UserId in ({idsStr})")
+                .ExecuteQueryAsync<UserRole>()
+                .ToArray();
+        }
+
     }
 }

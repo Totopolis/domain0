@@ -128,6 +128,13 @@ namespace Domain0.Nancy.Service
             return mapper.Map<Role[]>(roles);
         }
 
+        public async Task<UserRole[]> GetByFilter(RoleUserFilter filter)
+        {
+            var roles = await roleRepository.FindByUserIds(filter.UserIds);
+
+            return mapper.Map<UserRole[]>(roles);
+        }
+
         public async Task<int> Insert(Role role)
         {
             var roleEntity = mapper.Map<Repository.Model.Role>(role);
