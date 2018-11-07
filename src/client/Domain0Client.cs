@@ -361,6 +361,17 @@ namespace Domain0.Api.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         System.Threading.Tasks.Task<System.Collections.Generic.List<Role>> LoadRolesByFilterAsync(RoleFilter roleFilter, System.Threading.CancellationToken cancellationToken);
     
+        /// <summary>Method for receive Roles by user filter</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.List<UserRole>> LoadRolesByUserFilterAsync(RoleUserFilter roleUserFilter);
+    
+        /// <summary>Method for receive Roles by user filter</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        System.Threading.Tasks.Task<System.Collections.Generic.List<UserRole>> LoadRolesByUserFilterAsync(RoleUserFilter roleUserFilter, System.Threading.CancellationToken cancellationToken);
+    
         /// <summary>Method for get Role</summary>
         /// <param name="id">Role id</param>
         /// <returns>Success</returns>
@@ -3263,6 +3274,87 @@ namespace Domain0.Api.Client
             }
         }
     
+        /// <summary>Method for receive Roles by user filter</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<UserRole>> LoadRolesByUserFilterAsync(RoleUserFilter roleUserFilter)
+        {
+            return LoadRolesByUserFilterAsync(roleUserFilter, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Method for receive Roles by user filter</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<UserRole>> LoadRolesByUserFilterAsync(RoleUserFilter roleUserFilter, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/admin/Role/ByUserFilter");
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(roleUserFilter, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            var result_ = default(System.Collections.Generic.List<UserRole>); 
+                            try
+                            {
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<System.Collections.Generic.List<UserRole>>(responseData_, _settings.Value);
+                                return result_; 
+                            } 
+                            catch (System.Exception exception_) 
+                            {
+                                throw new Domain0ClientException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
+                            }
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+            
+                        return default(System.Collections.Generic.List<UserRole>);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
         /// <summary>Method for get Role</summary>
         /// <param name="id">Role id</param>
         /// <returns>Success</returns>
@@ -6124,6 +6216,47 @@ namespace Domain0.Api.Client
     
     }
     
+    /// <summary>User role</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.10.73.0 (Newtonsoft.Json v9.0.0.0)")]
+    public partial class UserRole 
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public UserRole(string @description, int? @id, bool @isDefault, string @name, int @userId)
+        {
+            Description = @description;
+            Id = @id;
+            IsDefault = @isDefault;
+            Name = @name;
+            UserId = @userId;
+        }
+    
+        [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Description { get; }
+    
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? Id { get; }
+    
+        [Newtonsoft.Json.JsonProperty("isDefault", Required = Newtonsoft.Json.Required.Always)]
+        public bool IsDefault { get; }
+    
+        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Name { get; }
+    
+        [Newtonsoft.Json.JsonProperty("userId", Required = Newtonsoft.Json.Required.Always)]
+        public int UserId { get; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+        
+        public static UserRole FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<UserRole>(data);
+        }
+    
+    }
+    
     /// <summary>Access token response</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.10.73.0 (Newtonsoft.Json v9.0.0.0)")]
     public partial class AccessTokenResponse 
@@ -6135,7 +6268,7 @@ namespace Domain0.Api.Client
             Profile = @profile;
             RefreshToken = @refreshToken;
         }
-    
+
         [Newtonsoft.Json.JsonProperty("access_token", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string AccessToken { get; }
     
@@ -6591,6 +6724,31 @@ namespace Domain0.Api.Client
         public static RoleFilter FromJson(string data)
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<RoleFilter>(data);
+        }
+    
+    }
+    
+    /// <summary>Role by user filter</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.10.73.0 (Newtonsoft.Json v9.0.0.0)")]
+    public partial class RoleUserFilter 
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public RoleUserFilter(System.Collections.Generic.List<int> @userIds)
+        {
+            UserIds = @userIds;
+        }
+    
+        [Newtonsoft.Json.JsonProperty("userIds", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.List<int> UserIds { get; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+        
+        public static RoleUserFilter FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<RoleUserFilter>(data);
         }
     
     }
