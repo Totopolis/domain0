@@ -174,9 +174,12 @@ namespace Domain0.Service.Throttling
 
             if (IsLimitExceeded(requestCountLimit, counterValue))
             {
-                logger.Error($"Flood detected ({counterValue} in {period.ToString()} allowed {requestCountLimit})" +
-                             $" on path: {context?.Request?.Path}" +
-                             $" ip: {context?.GetClientHost()}");
+                if (IsNeedToLog(requestCountLimit, counterValue))
+                {
+                    logger.Error($"Flood detected ({counterValue} in {period.ToString()} allowed {requestCountLimit})" +
+                                 $" on path: {context?.Request?.Path}" +
+                                 $" ip: {context?.GetClientHost()}");
+                }
                 return new Response
                 {
                     StatusCode = HttpStatusCode.TooManyRequests
@@ -184,6 +187,20 @@ namespace Domain0.Service.Throttling
             }
 
             return null;
+        }
+
+        private bool IsNeedToLog(int requestCountLimit, long counterValue)
+        {
+            if (requestCountLimit + 1 == counterValue)
+                return true;
+
+            // count power of flood in dB, 
+            // need to log when counterValue 10, 100, 1000... times more than limit
+            var dB = 10 * Math.Log10(counterValue / requestCountLimit);
+            if (Math.Abs(dB % 10) < double.Epsilon)
+                return true;
+
+            return false;
         }
 
         private class RequestCounter
