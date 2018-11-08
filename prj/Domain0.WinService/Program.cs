@@ -9,6 +9,7 @@ using Topshelf;
 using NLog.Common;
 using Domain0.FastSql;
 using Nancy.Bootstrapper;
+using System.Reflection;
 
 namespace Domain0.WinService
 {
@@ -25,6 +26,7 @@ namespace Domain0.WinService
 
         private static void Main()
         {
+            Logger.Info($"Starting version: {Assembly.GetExecutingAssembly().GetName().Version}");
             Logger.Info($"Use BasePath: {AppContext.BaseDirectory}");
             try
             {
