@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
 using Domain0.Exceptions;
@@ -20,6 +21,7 @@ namespace Domain0.Nancy
         public const string GetMyProfileUrl = "/api/profile";
         public const string ChangeMyPasswordUrl = "/api/profile/ChangePassword";
         public const string GetUsersByFilterUrl = "/api/profile/filter";
+        public const string GetAllUsersUrl = "/api/profile/all";
 
         public const string GetUserByPhoneUrl = "/api/users/sms/{phone}";
         public const string GetUserByIdUrl = "/api/users/{id}";
@@ -47,6 +49,7 @@ namespace Domain0.Nancy
             Get(GetMyProfileUrl, ctx => GetMyProfile(), name: nameof(GetMyProfile));
             Post(ChangeMyPasswordUrl, ctx => ChangeMyPassword(), name: nameof(ChangeMyPassword));
             Post(GetUsersByFilterUrl, ctx => GetUserByFilter(), name: nameof(GetUserByFilter));
+            Post(GetAllUsersUrl, ctx => GetAllUsers(), name: nameof(GetAllUsers));
             Get(GetUserByPhoneUrl, ctx => GetUserByPhone(), name: nameof(GetUserByPhone));
             Get(GetUserByIdUrl, ctx => GetUserById(), name: nameof(GetUserById));
             Post(PostUserUrl, ctx => UpdateUser(), name: nameof(UpdateUser));
@@ -359,9 +362,35 @@ namespace Domain0.Nancy
                 && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_VIEW_PROFILE));
 
             var filter = this.BindAndValidateModel<UserProfileFilter>();
-            return await accountService.GetProfilesByFilter(filter);
+
+            if (filter.UserIds.Any())
+            {
+                return await accountService.GetProfilesByFilter(filter);
+            }
+            else
+            {
+                return new UserProfile[0];
+            }
         }
 
+        [Route(nameof(GetAllUsers))]
+        [Route(HttpMethod.Post, GetAllUsersUrl)]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Tags = new[] { "UserProfile" }, Summary = "Method for receive all profiles")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(IEnumerable<UserProfile>))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "incorrect ids format or unsupported auth type")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "Provide domain0 auth token")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "you need 'domain0.viewProfile' permission")]
+        public async Task<object> GetAllUsers()
+        {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_VIEW_PROFILE));
+
+            return await accountService.GetProfilesByFilter(new UserProfileFilter());
+        }
 
         private readonly IAccountService accountService;
 
