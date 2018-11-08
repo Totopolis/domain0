@@ -1,25 +1,3 @@
-#### Domain0 user authentication service
-
-# Installation
-
-1. prepare a database
-
-2. deploy database
-```
-run deploy script: Scripts\database.sql
-```
-3. fill .config params
-
-4. add full path to ssl certificate and password to config
-
-5. configure logs
-
-6. make a test run
-
-5. install domain0 as service
-```
-Domain0.WinService.exe install -username:user -password:pas
-```
 
 # Domain0 user authentication service
 
