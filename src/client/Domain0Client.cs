@@ -22,6 +22,19 @@ namespace Domain0.Api.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         System.Threading.Tasks.Task RegisterAsync(long phone, System.Threading.CancellationToken cancellationToken);
     
+        /// <summary>Method for registration by phone with environment scope</summary>
+        /// <param name="environmentToken">user's environment token</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task RegisterWithEnvironmentAsync(long phone, string environmentToken);
+    
+        /// <summary>Method for registration by phone with environment scope</summary>
+        /// <param name="environmentToken">user's environment token</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        System.Threading.Tasks.Task RegisterWithEnvironmentAsync(long phone, string environmentToken, System.Threading.CancellationToken cancellationToken);
+    
         /// <summary>Method for registration by phone</summary>
         /// <returns>Success</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
@@ -522,6 +535,19 @@ namespace Domain0.Api.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         System.Threading.Tasks.Task RegisterByEmailAsync(RegisterRequest email, System.Threading.CancellationToken cancellationToken);
     
+        /// <summary>Method for registration by email with environment scope</summary>
+        /// <param name="environmentToken">user's environment token</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task RegisterByEmailWithEnvironmentAsync(RegisterRequest email, string environmentToken);
+    
+        /// <summary>Method for registration by email with environment scope</summary>
+        /// <param name="environmentToken">user's environment token</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        System.Threading.Tasks.Task RegisterByEmailWithEnvironmentAsync(RegisterRequest email, string environmentToken, System.Threading.CancellationToken cancellationToken);
+    
         /// <summary>Method for login by email</summary>
         /// <returns>Success</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
@@ -797,6 +823,97 @@ namespace Domain0.Api.Client
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/sms/Register");
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(phone, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "204") 
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == "200") 
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong phone format or user with this phone already existed", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Method for registration by phone with environment scope</summary>
+        /// <param name="environmentToken">user's environment token</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task RegisterWithEnvironmentAsync(long phone, string environmentToken)
+        {
+            return RegisterWithEnvironmentAsync(phone, environmentToken, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Method for registration by phone with environment scope</summary>
+        /// <param name="environmentToken">user's environment token</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public async System.Threading.Tasks.Task RegisterWithEnvironmentAsync(long phone, string environmentToken, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/sms/Register/{EnvironmentToken}");
+            if (environmentToken != null)
+                urlBuilder_.Replace("{environmentToken}", System.Uri.EscapeDataString(ConvertToString(environmentToken, System.Globalization.CultureInfo.InvariantCulture)));
+            else
+                urlBuilder_.Replace("/{environmentToken}", string.Empty);
     
             var client_ = _httpClient;
             try
@@ -4279,6 +4396,92 @@ namespace Domain0.Api.Client
             }
         }
     
+        /// <summary>Method for registration by email with environment scope</summary>
+        /// <param name="environmentToken">user's environment token</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task RegisterByEmailWithEnvironmentAsync(RegisterRequest email, string environmentToken)
+        {
+            return RegisterByEmailWithEnvironmentAsync(email, environmentToken, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Method for registration by email with environment scope</summary>
+        /// <param name="environmentToken">user's environment token</param>
+        /// <returns>Success</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public async System.Threading.Tasks.Task RegisterByEmailWithEnvironmentAsync(RegisterRequest email, string environmentToken, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/email/Register/{EnvironmentToken}");
+            if (environmentToken != null)
+                urlBuilder_.Replace("{environmentToken}", System.Uri.EscapeDataString(ConvertToString(environmentToken, System.Globalization.CultureInfo.InvariantCulture)));
+            else
+                urlBuilder_.Replace("/{environmentToken}", string.Empty);
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(email, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "204") 
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong email format or user with this email already existed", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
         /// <summary>Method for login by email</summary>
         /// <returns>Success</returns>
         /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
@@ -6477,10 +6680,11 @@ namespace Domain0.Api.Client
     public partial class ForceCreateUserRequest 
     {
         [Newtonsoft.Json.JsonConstructor]
-        public ForceCreateUserRequest(bool @blockSmsSend, string @customSmsTemplate, string @name, long? @phone, System.Collections.Generic.List<string> @roles)
+        public ForceCreateUserRequest(bool @blockSmsSend, string @customSmsTemplate, string @environmentToken, string @name, long? @phone, System.Collections.Generic.List<string> @roles)
         {
             BlockSmsSend = @blockSmsSend;
             CustomSmsTemplate = @customSmsTemplate;
+            EnvironmentToken = @environmentToken;
             Name = @name;
             Phone = @phone;
             Roles = @roles;
@@ -6491,6 +6695,9 @@ namespace Domain0.Api.Client
     
         [Newtonsoft.Json.JsonProperty("customSmsTemplate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string CustomSmsTemplate { get; }
+    
+        [Newtonsoft.Json.JsonProperty("environmentToken", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EnvironmentToken { get; }
     
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Name { get; }
@@ -7011,12 +7218,13 @@ namespace Domain0.Api.Client
     public partial class ForceCreateEmailUserRequest 
     {
         [Newtonsoft.Json.JsonConstructor]
-        public ForceCreateEmailUserRequest(bool @blockEmailSend, string @customEmailSubjectTemplate, string @customEmailTemplate, string @email, string @name, System.Collections.Generic.List<string> @roles)
+        public ForceCreateEmailUserRequest(bool @blockEmailSend, string @customEmailSubjectTemplate, string @customEmailTemplate, string @email, string @environmentToken, string @name, System.Collections.Generic.List<string> @roles)
         {
             BlockEmailSend = @blockEmailSend;
             CustomEmailSubjectTemplate = @customEmailSubjectTemplate;
             CustomEmailTemplate = @customEmailTemplate;
             Email = @email;
+            EnvironmentToken = @environmentToken;
             Name = @name;
             Roles = @roles;
         }
@@ -7032,6 +7240,9 @@ namespace Domain0.Api.Client
     
         [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Email { get; }
+    
+        [Newtonsoft.Json.JsonProperty("environmentToken", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EnvironmentToken { get; }
     
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Name { get; }
