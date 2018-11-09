@@ -34,6 +34,11 @@ namespace Domain0.Model
                     c => c.EnvironmentToken,
                     (c, v) => c.EnvironmentToken= v,
                     c => !string.IsNullOrWhiteSpace(c.EnvironmentToken)),
+                FieldSetting<ForceCreateEmailUserRequest>.CreateString(
+                    8,
+                    c => c.Locale,
+                    (c, v) => c.Locale = v,
+                    c => !string.IsNullOrWhiteSpace(c.Locale)),
             });
 
         /// <summary>
@@ -65,5 +70,9 @@ namespace Domain0.Model
         /// User application environment token, determinates scope of user applications and services
         /// </summary>
         public string EnvironmentToken { get; set; }
+        /// <summary>
+        /// Users locale
+        /// </summary>
+        public string Locale { get; set; }
     }
 }

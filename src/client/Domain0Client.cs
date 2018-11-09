@@ -6680,11 +6680,12 @@ namespace Domain0.Api.Client
     public partial class ForceCreateUserRequest 
     {
         [Newtonsoft.Json.JsonConstructor]
-        public ForceCreateUserRequest(bool @blockSmsSend, string @customSmsTemplate, string @environmentToken, string @name, long? @phone, System.Collections.Generic.List<string> @roles)
+        public ForceCreateUserRequest(bool @blockSmsSend, string @customSmsTemplate, string @environmentToken, string @locale, string @name, long? @phone, System.Collections.Generic.List<string> @roles)
         {
             BlockSmsSend = @blockSmsSend;
             CustomSmsTemplate = @customSmsTemplate;
             EnvironmentToken = @environmentToken;
+            Locale = @locale;
             Name = @name;
             Phone = @phone;
             Roles = @roles;
@@ -6698,6 +6699,9 @@ namespace Domain0.Api.Client
     
         [Newtonsoft.Json.JsonProperty("environmentToken", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string EnvironmentToken { get; }
+    
+        [Newtonsoft.Json.JsonProperty("locale", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Locale { get; }
     
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Name { get; }
@@ -7218,13 +7222,14 @@ namespace Domain0.Api.Client
     public partial class ForceCreateEmailUserRequest 
     {
         [Newtonsoft.Json.JsonConstructor]
-        public ForceCreateEmailUserRequest(bool @blockEmailSend, string @customEmailSubjectTemplate, string @customEmailTemplate, string @email, string @environmentToken, string @name, System.Collections.Generic.List<string> @roles)
+        public ForceCreateEmailUserRequest(bool @blockEmailSend, string @customEmailSubjectTemplate, string @customEmailTemplate, string @email, string @environmentToken, string @locale, string @name, System.Collections.Generic.List<string> @roles)
         {
             BlockEmailSend = @blockEmailSend;
             CustomEmailSubjectTemplate = @customEmailSubjectTemplate;
             CustomEmailTemplate = @customEmailTemplate;
             Email = @email;
             EnvironmentToken = @environmentToken;
+            Locale = @locale;
             Name = @name;
             Roles = @roles;
         }
@@ -7243,6 +7248,9 @@ namespace Domain0.Api.Client
     
         [Newtonsoft.Json.JsonProperty("environmentToken", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string EnvironmentToken { get; }
+    
+        [Newtonsoft.Json.JsonProperty("locale", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Locale { get; }
     
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Name { get; }

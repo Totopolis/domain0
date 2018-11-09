@@ -21,6 +21,11 @@ namespace Domain0.Model
                 FieldSetting<ForceCreateUserRequest>.CreateStringArray(4, c => c.Roles, (c, v) => c.Roles.Add(v), c => c.Roles?.Count > 0),
                 FieldSetting<ForceCreateUserRequest>.CreateString(5, c => c.CustomSmsTemplate, (c, v) => c.CustomSmsTemplate = v, c => c.CustomSmsTemplate?.Length > 0),
                 FieldSetting<ForceCreateUserRequest>.CreateString(6, c => c.EnvironmentToken, (c, v) => c.EnvironmentToken = v, c => !string.IsNullOrWhiteSpace(c.EnvironmentToken)),
+                FieldSetting<ForceCreateUserRequest>.CreateString(
+                    7,
+                    c => c.Locale,
+                    (c, v) => c.Locale = v,
+                    c => !string.IsNullOrWhiteSpace(c.Locale)),
             });
 
         /// <summary>
@@ -49,5 +54,9 @@ namespace Domain0.Model
         /// User application environment token, determinates scope of user applications and services
         /// </summary>
         public string EnvironmentToken { get; set; }
+        /// <summary>
+        /// Users locale
+        /// </summary>
+        public string Locale { get; set; }
     }
 }
