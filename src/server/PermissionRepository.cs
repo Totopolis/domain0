@@ -19,8 +19,12 @@ namespace Domain0.FastSql
             TableName = PermissionTableName;
         }
 
-        public Task AddUserPermission(int userId, int[] ids)
-            => getContext()
+        public async Task AddUserPermission(int userId, int[] ids)
+        {
+            if (!ids.Any())
+                return;
+
+            await getContext()
                 .CreateSimple(
                     $"insert into { PermissionUserTableName } " +
                     $"(PermissionId, UserId) " +
@@ -29,6 +33,7 @@ namespace Domain0.FastSql
                     $"where p.Id in ({string.Join(", ", ids)})",
                     userId)
                 .ExecuteNonQueryAsync();
+        }
 
         public async Task<Permission[]> FindByFilter(Model.PermissionFilter filter)
         {
@@ -37,6 +42,9 @@ namespace Domain0.FastSql
 
         public async Task<RolePermission[]> FindByFilter(Model.RolePermissionFilter filter)
         {
+            if (!filter.RoleIds.Any())
+                return new RolePermission[0];
+
             var roleIds = string.Join(",", filter.RoleIds);
 
             var rolePermissions = await getContext()
@@ -53,6 +61,9 @@ namespace Domain0.FastSql
 
         public async Task<UserPermission[]> FindByFilter(Model.UserPermissionFilter filter)
         {
+            if (!filter.UserIds.Any())
+                return new UserPermission[0];
+
             var userIds = string.Join(",", filter.UserIds);
 
             var rolePermissions = await getContext()
@@ -106,14 +117,19 @@ namespace Domain0.FastSql
                 .ExecuteQueryAsync<Permission>()
                 .ToArray();
 
-        public Task RemoveUserPermissions(int userId, int[] ids)
-            => getContext()
+        public async Task RemoveUserPermissions(int userId, int[] ids)
+        {
+            if (!ids.Any())
+                return;
+
+            await getContext()
                 .CreateSimple(
                     $"delete from { PermissionUserTableName } " +
                     $"where " +
                     $"  UserId = @p0 " +
-                    $"  and PermissionId in ({string.Join(", ", ids)})", 
+                    $"  and PermissionId in ({string.Join(", ", ids)})",
                     userId)
                 .ExecuteNonQueryAsync();
+        }
     }
 }
