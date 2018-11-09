@@ -28,6 +28,9 @@ go
 if object_id('dom.Application') is not null
 	drop table dom.Application
 go
+if object_id('dom.Environment') is not null
+	drop table dom.Environment
+go
 if object_id('dom.Account') is not null
 	drop table dom.Account
 go
@@ -66,6 +69,15 @@ create table dom.Application (
 )
 go
 
+create table dom.Environment (
+	Id int not null identity(1,1) constraint PK_dom_Environment primary key,
+	Name nvarchar(64) not null,
+	Description nvarchar(128) null,
+	Token nvarchar(128) not null,
+	IsDefault bit not null default(0),
+)
+go
+create index IX_Environment_Token ON dom.Environment ([Token])
 
 create table dom.Permission (
 	Id int not null identity(1,1) constraint PK_dom_Permission primary key,
@@ -290,6 +302,10 @@ if object_id(' [hst_dom].[Application]') is not null
 	DROP TABLE [hst_dom].[Application]
 GO
 
+if object_id(' [hst_dom].[Environment]') is not null
+	DROP TABLE [hst_dom].[Environment]
+GO
+
 if object_id('[hst_dom].[Account]') is not null
 	DROP TABLE [hst_dom].[Account]
 GO
@@ -341,6 +357,27 @@ CREATE TABLE [hst_dom].[Application](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
+
+CREATE TABLE [hst_dom].[Environment](
+	[H_ID] [bigint] IDENTITY(1,1) NOT NULL,
+	[H_ConnectionID] [uniqueidentifier] NOT NULL,
+	[H_TransactionID] [bigint] NOT NULL,
+	[H_SessionID] [int] NOT NULL,
+	[H_Login] [nvarchar](128) NOT NULL,
+	[H_Time] [datetime2](7) NOT NULL,
+	[H_OperationType] [int] NOT NULL,
+	[H_IsNew] [bit] NOT NULL,
+	[Id] [int] NULL,
+	[Name] [nvarchar](64) NULL,
+	[Description] [nvarchar](128) NULL,
+	[Token] [nvarchar](128) NULL,
+	[IsDefault] [bit] NULL,
+ CONSTRAINT [PK_Environment_History] PRIMARY KEY CLUSTERED 
+(
+	[H_ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
 
 CREATE TABLE [hst_dom].[EmailRequest](
 	[H_ID] [bigint] IDENTITY(1,1) NOT NULL,
@@ -674,6 +711,82 @@ END;
 ALTER TABLE [dom].[Application] ENABLE TRIGGER [ApplicationHistory];
 GO
 ALTER TABLE [dom].[Application] ENABLE TRIGGER [ApplicationHistory]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE TRIGGER [dom].[EnvironmentHistory]
+   ON  [dom].[Environment]
+   AFTER INSERT, UPDATE, DELETE
+AS 
+BEGIN
+
+	SET NOCOUNT ON;
+
+declare @delExists bit;
+declare @insExists bit;
+
+if exists(select top 1 1 from deleted) set @delExists = 1
+if exists(select top 1 1 from inserted) set @insExists = 1
+
+declare @opType int;
+
+if (@delExists = 1)
+	if (@insExists = 1)
+		set @opType = 2
+	else 
+		set @opType = 3
+else
+	if (@insExists = 1)
+		set @opType = 1
+	else 
+		set @opType = 0
+		
+if (@opType = 0)
+	return;	
+
+declare @time datetime2(7) = SYSUTCDATETIME()
+declare @connection_id uniqueidentifier = (select connection_id from sys.dm_exec_connections where session_id = @@SPID and parent_connection_id is null)
+--declare @transaction_id bigint = (select transaction_id from sys.dm_tran_current_transaction)
+declare @transaction_id bigint = (select transaction_id from sys.dm_tran_session_transactions where session_id = @@SPID)
+declare @login nvarchar(128) = ORIGINAL_LOGIN()
+
+
+insert into [hst_dom].[Environment] ([H_ConnectionID], [H_TransactionID], [H_SessionID], [H_Login], [H_Time], [H_OperationType], [H_IsNew]
+-- data columns
+	,[Id]
+	,[Name]
+	,[Description]
+	,[Token]
+	,[IsDefault])
+select @connection_id, @transaction_id, @@SPID, @login, @time, @opType, h.H_IsNew
+-- data columns
+	,h.[Id]
+	,h.[Name]
+	,h.[Description]
+	,h.[Token]
+	,h.[IsDefault]
+from 
+(
+	select 0 as H_IsNew, t.* 
+	from deleted t
+	union all
+	select 1 as H_IsNew, t.* 
+	from inserted t
+) h
+order by h.Id, h.H_IsNew
+
+
+END;
+
+ALTER TABLE [dom].[Environment] ENABLE TRIGGER [EnvironmentHistory];
+GO
+ALTER TABLE [dom].[Environment] ENABLE TRIGGER [EnvironmentHistory]
+GO
+
 GO
 SET ANSI_NULLS ON
 GO
