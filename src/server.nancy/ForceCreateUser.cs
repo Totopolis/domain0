@@ -20,6 +20,7 @@ namespace Domain0.Model
                 FieldSetting<ForceCreateUserRequest>.CreateBool(3, c => c.BlockSmsSend, (c, v) => c.BlockSmsSend = v),
                 FieldSetting<ForceCreateUserRequest>.CreateStringArray(4, c => c.Roles, (c, v) => c.Roles.Add(v), c => c.Roles?.Count > 0),
                 FieldSetting<ForceCreateUserRequest>.CreateString(5, c => c.CustomSmsTemplate, (c, v) => c.CustomSmsTemplate = v, c => c.CustomSmsTemplate?.Length > 0),
+                FieldSetting<ForceCreateUserRequest>.CreateString(6, c => c.EnvironmentToken, (c, v) => c.EnvironmentToken = v, c => !string.IsNullOrWhiteSpace(c.EnvironmentToken)),
             });
 
         /// <summary>
@@ -44,5 +45,9 @@ namespace Domain0.Model
         /// Template for sms sending
         /// </summary>
         public string CustomSmsTemplate { get; set; }
+        /// <summary>
+        /// User application environment token, determinates scope of user applications and services
+        /// </summary>
+        public string EnvironmentToken { get; set; }
     }
 }

@@ -18,6 +18,7 @@ namespace Domain0.Nancy
     public sealed class EmailModule : NancyModule
     {
         public const string RegisterByEmailUrl = "/api/email/Register";
+        public const string RegisterByEmailWithEnvironmentUrl = "/api/email/Register/{EnvironmentToken}";
         public const string LoginByEmailUrl = "/api/email/Login";
         public const string RequestResetPasswordByEmailUrl = "/api/email/RequestResetPassword";
         public const string DoesUserExistByEmailUrl = "/api/email/DoesUserExist";
@@ -42,6 +43,8 @@ namespace Domain0.Nancy
             logger = loggerInstance;
 
             Put(RegisterByEmailUrl, ctx => RegisterByEmail(), name: nameof(RegisterByEmail));
+            Put(RegisterByEmailWithEnvironmentUrl, ctx => RegisterByEmailWithEnvironment(), name: nameof(RegisterByEmailWithEnvironment));
+
             Post(LoginByEmailUrl, ctx => LoginByEmail(), name: nameof(LoginByEmail));
             Post(DoesUserExistByEmailUrl, ctx => DoesUserExistByEmail(), name: nameof(DoesUserExistByEmail));
             Post(RequestResetPasswordByEmailUrl, ctx => RequestResetPasswordByEmail(), name: nameof(RequestResetPasswordByEmail));
@@ -69,6 +72,36 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.BadRequest, "wrong email format or user with this email already existed")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
         public async Task<object> RegisterByEmail()
+        {
+            return await RegisterInternal();
+        }
+
+        [Route(nameof(RegisterByEmailWithEnvironment))]
+        [Route(HttpMethod.Put, RegisterByEmailWithEnvironmentUrl)]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Tags = new[] { "Email" }, Summary = "Method for registration by email with environment scope")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body,
+            Name = "email",
+            ParamType = typeof(RegisterRequest),
+            Required = true,
+            Description = "user's email")]
+        [RouteParam(
+            ParamIn = ParameterIn.Path,
+            Name = "environmentToken",
+            ParamType = typeof(string),
+            Required = false,
+            Description = "user's environment token")]
+        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong email format or user with this email already existed")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        public async Task<object> RegisterByEmailWithEnvironment()
+        {
+            return await RegisterInternal();
+        }
+
+        private async Task<object> RegisterInternal()
         {
             requestThrottleManager.RequiresThrottling(
                 this, ThrottlingProperties.Path | ThrottlingProperties.RemoteIp,
@@ -98,7 +131,6 @@ namespace Domain0.Nancy
 
             return HttpStatusCode.NoContent;
         }
-
         [Route(nameof(LoginByEmail))]
         [Route(HttpMethod.Post, LoginByEmailUrl)]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]

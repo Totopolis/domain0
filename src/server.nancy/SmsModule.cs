@@ -17,6 +17,7 @@ namespace Domain0.Nancy
     public sealed class SmsModule : NancyModule
     {
         public const string RegisterUrl = "/api/sms/Register";
+        public const string RegisterWithEnvironmentUrl = "/api/sms/Register/{EnvironmentToken}";
         public const string LoginUrl = "/api/sms/Login";
         public const string ChangePasswordUrl = "/api/sms/ChangePassword";
         public const string DoesUserExistUrl = "/api/sms/DoesUserExist";
@@ -46,6 +47,7 @@ namespace Domain0.Nancy
             requestThrottleManager = requestThrottleManagerInstance;
 
             Put(RegisterUrl, ctx => Register(), name: nameof(Register));
+            Put(RegisterWithEnvironmentUrl, ctx => RegisterWithEnvironment(), name: nameof(RegisterWithEnvironment));
             Post(LoginUrl, ctx => Login(), name: nameof(Login));
 
             Get(DoesUserExistUrl, ctx => DoesUserExist(), name: nameof(DoesUserExist));
@@ -74,6 +76,37 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone format or user with this phone already existed")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
         public async Task<object> Register()
+        {
+            return await RegisterInternal();
+        }
+
+        [Route(nameof(RegisterWithEnvironment))]
+        [Route(HttpMethod.Put, RegisterWithEnvironmentUrl)]
+        [Route(Consumes = new[] { "application/json" })]
+        [Route(Produces = new string[] { })]
+        [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone with environment scope")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body, 
+            Name = "phone", 
+            ParamType = typeof(long), 
+            Required = true, 
+            Description = "user's phone with single number, started from 7 for Russia, 71231234567 for example")]
+        [RouteParam(
+            ParamIn = ParameterIn.Path,
+            Name = "environmentToken",
+            ParamType = typeof(string),
+            Required = false,
+            Description = "user's environment token")]
+        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone format or user with this phone already existed")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        public async Task<object> RegisterWithEnvironment()
+        {
+            return await RegisterInternal();
+        }
+
+        private async Task<object> RegisterInternal()
         {
             var phone = this.Bind<long>();
 

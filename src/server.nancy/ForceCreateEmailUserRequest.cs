@@ -29,6 +29,11 @@ namespace Domain0.Model
                     c => c.CustomEmailSubjectTemplate, 
                     (c, v) => c.CustomEmailTemplate = v, 
                     c => c.CustomEmailTemplate?.Length > 0),
+                FieldSetting<ForceCreateEmailUserRequest>.CreateString(
+                    7,
+                    c => c.EnvironmentToken,
+                    (c, v) => c.EnvironmentToken= v,
+                    c => !string.IsNullOrWhiteSpace(c.EnvironmentToken)),
             });
 
         /// <summary>
@@ -56,5 +61,9 @@ namespace Domain0.Model
         /// Template for email sending
         /// </summary>
         public string CustomEmailSubjectTemplate { get; set; }
+        /// <summary>
+        /// User application environment token, determinates scope of user applications and services
+        /// </summary>
+        public string EnvironmentToken { get; set; }
     }
 }
