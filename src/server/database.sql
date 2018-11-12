@@ -198,7 +198,8 @@ create table dom.SmsRequest (
 	[Phone] decimal not null,
 	[Password] nvarchar(80) not null,
 	[ExpiredAt] datetime2 not null,
-	[UserId] int null
+	[UserId] int null,
+	[EnvironmentId] int null
 )
 go
 create index IX_SmsRequest_Phone_ExpiredAt ON dom.SmsRequest ([Phone] ASC, [ExpiredAt] DESC)
@@ -212,7 +213,8 @@ create table dom.EmailRequest (
 	[Email] nvarchar(128) not null,
 	[Password] nvarchar(80) not null,
 	[ExpiredAt] datetime2 not null,
-	[UserId] int null
+	[UserId] int null,
+	[EnvironmentId] int null
 )
 go
 create index IX_EmailRequest_Email_ExpiredAt ON dom.EmailRequest ([Email] ASC, [ExpiredAt] DESC)
@@ -393,6 +395,7 @@ CREATE TABLE [hst_dom].[EmailRequest](
 	[Password] [nvarchar](80) NULL,
 	[ExpiredAt] [datetime2](7) NULL,
 	[UserId] [int] NULL,
+	[EnvironmentId] int NULL
  CONSTRAINT [PK_EmailRequest_History] PRIMARY KEY CLUSTERED 
 (
 	[H_ID] ASC
@@ -536,6 +539,7 @@ CREATE TABLE [hst_dom].[SmsRequest](
 	[Password] [nvarchar](80) NULL,
 	[ExpiredAt] [datetime2](7) NULL,
 	[UserId] [int] NULL,
+	[EnvironmentId] int NULL
  CONSTRAINT [PK_SmsRequest_History] PRIMARY KEY CLUSTERED 
 (
 	[H_ID] ASC
@@ -836,7 +840,8 @@ insert into [hst_dom].[EmailRequest] ([H_ConnectionID], [H_TransactionID], [H_Se
 	,[Email]
 	,[Password]
 	,[ExpiredAt]
-	,[UserId])
+	,[UserId]
+	,[EnvironmentId])
 select @connection_id, @transaction_id, @@SPID, @login, @time, @opType, h.H_IsNew
 -- data columns
 	,h.[Id]
@@ -844,6 +849,7 @@ select @connection_id, @transaction_id, @@SPID, @login, @time, @opType, h.H_IsNe
 	,h.[Password]
 	,h.[ExpiredAt]
 	,h.[UserId]
+	,h.[EnvironmentId]
 from 
 (
 	select 0 as H_IsNew, t.* 
@@ -1331,7 +1337,8 @@ insert into [hst_dom].[SmsRequest] ([H_ConnectionID], [H_TransactionID], [H_Sess
 	,[Phone]
 	,[Password]
 	,[ExpiredAt]
-	,[UserId])
+	,[UserId]
+	,[EnvironmentId])
 select @connection_id, @transaction_id, @@SPID, @login, @time, @opType, h.H_IsNew
 -- data columns
 	,h.[Id]
@@ -1339,6 +1346,7 @@ select @connection_id, @transaction_id, @@SPID, @login, @time, @opType, h.H_IsNe
 	,h.[Password]
 	,h.[ExpiredAt]
 	,h.[UserId]
+	,h.[EnvironmentId]
 from 
 (
 	select 0 as H_IsNew, t.* 
