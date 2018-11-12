@@ -112,7 +112,10 @@ namespace Domain0.Test
             var smsRequestMock = Mock.Get(container.Resolve<ISmsRequestRepository>());
             smsRequestMock
                 .Setup(x => x.ConfirmRegister(It.IsAny<decimal>(), It.IsAny<string>()))
-                .ReturnsAsync(new SmsRequest());
+                .ReturnsAsync(new SmsRequest
+                {
+                    EnvironmentId = env.Id
+                });
 
             smsRequestMock.Verify(a => a.Save(It.IsAny<SmsRequest>()), Times.Once());
 
@@ -129,6 +132,11 @@ namespace Domain0.Test
                 });
 
             Assert.Equal(HttpStatusCode.OK, firstLoginResponse.StatusCode);
+
+            environmentRepositoryMock
+                .Verify(
+                    callTo => callTo.SetUserEnvironment(It.IsAny<int>(), 123),
+                    Times.Once);
         }
 
         [Theory]
@@ -176,18 +184,24 @@ namespace Domain0.Test
             var passwordMock = Mock.Get(passwordGenerator);
             passwordMock.Setup(p => p.GeneratePassword()).Returns("password");
 
-            var smsRequestMock = Mock.Get(container.Resolve<ISmsRequestRepository>());
-
             var environmentRepositoryMock = Mock.Get(container.Resolve<IEnvironmentRepository>());
             var env = new Repository.Model.Environment
             {
                 Name = "test envToken",
-                Id = 123,
+                Id = 765,
                 Token = envToken
             };
             environmentRepositoryMock
                 .Setup(callTo => callTo.GetByToken(It.Is<string>(s => s.Equals(envToken))))
                 .ReturnsAsync(env);
+
+            var smsRequestMock = Mock.Get(container.Resolve<ISmsRequestRepository>());
+            smsRequestMock
+                .Setup(callTo => callTo.ConfirmRegister(It.IsAny<decimal>(), It.IsAny<string>()))
+                .ReturnsAsync(new SmsRequest
+                {
+                    EnvironmentId = env.Id
+                });
 
             var registerResponse = await browser.Put(
                 SmsModule.RegisterWithEnvironmentUrl.Replace("{EnvironmentToken}", envToken), 
@@ -202,11 +216,14 @@ namespace Domain0.Test
                 .Verify(callTo =>
                     callTo.GetByToken(It.Is<string>(t => t.Equals(envToken))),
                     Times.Once);
-            smsRequestMock.Verify(a => a.Save(It.Is<SmsRequest>(r => r.EnvironmentId == 123)), Times.Once());
+            smsRequestMock.Verify(a => a.Save(It.Is<SmsRequest>(r => r.EnvironmentId == env.Id)), Times.Once());
 
             smsRequestMock
                 .Setup(x => x.ConfirmRegister(It.IsAny<decimal>(), It.IsAny<string>()))
-                .ReturnsAsync(new SmsRequest());
+                .ReturnsAsync(new SmsRequest
+                {
+                    EnvironmentId = env.Id
+                });
 
 
             var smsClient = container.Resolve<ISmsClient>();
@@ -222,6 +239,10 @@ namespace Domain0.Test
                 });
 
             Assert.Equal(HttpStatusCode.OK, firstLoginResponse.StatusCode);
+            environmentRepositoryMock
+                .Verify(
+                    callTo => callTo.SetUserEnvironment(It.IsAny<int>(), env.Id.Value),
+                    Times.Once);
         }
 
         [Theory]
@@ -268,6 +289,12 @@ namespace Domain0.Test
             });
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var environmentRepositoryMock = Mock.Get(container.Resolve<IEnvironmentRepository>());
+            environmentRepositoryMock
+                .Verify(
+                    callTo => callTo.SetUserEnvironment(It.IsAny<int>(), 123),
+                    Times.Once);
 
             var smsClient = container.Resolve<ISmsClient>();
             var smsMock = Mock.Get(smsClient);
@@ -327,6 +354,12 @@ namespace Domain0.Test
             });
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var environmentRepositoryMock = Mock.Get(container.Resolve<IEnvironmentRepository>());
+            environmentRepositoryMock
+                .Verify(
+                    callTo => callTo.SetUserEnvironment(It.IsAny<int>(), 123),
+                    Times.Once);
 
             var smsClient = container.Resolve<ISmsClient>();
             var smsMock = Mock.Get(smsClient);
@@ -444,6 +477,12 @@ namespace Domain0.Test
             });
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var environmentRepositoryMock = Mock.Get(container.Resolve<IEnvironmentRepository>());
+            environmentRepositoryMock
+                .Verify(
+                    callTo => callTo.SetUserEnvironment(It.IsAny<int>(), 123),
+                    Times.Once);
 
             var smsClient = container.Resolve<ISmsClient>();
             var smsMock = Mock.Get(smsClient);

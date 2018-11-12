@@ -294,6 +294,12 @@ namespace Domain0.Test
             var emailClient = container.Resolve<IEmailClient>();
             var emailMock = Mock.Get(emailClient);
             emailMock.Verify(s => s.Send("Subject!", email, "hello password " + email + "!"));
+
+            var environmentRepositoryMock = Mock.Get(container.Resolve<IEnvironmentRepository>());
+            environmentRepositoryMock
+                .Verify(
+                    callTo => callTo.SetUserEnvironment(It.IsAny<int>(), 123),
+                    Times.Once);
         }
 
         [Theory]
@@ -353,7 +359,7 @@ namespace Domain0.Test
             var env = new Repository.Model.Environment
             {
                 Name = "test envToken",
-                Id = 123,
+                Id = 765,
                 Token = envToken
             };
             environmentRepositoryMock
@@ -376,11 +382,14 @@ namespace Domain0.Test
                 .Verify(callTo => 
                     callTo.GetByToken(It.Is<string>(t => t.Equals(envToken))), 
                     Times.Once);
-            emailRequestMock.Verify(a => a.Save(It.Is<EmailRequest>(r => r.EnvironmentId == 123)), Times.Once());
+            emailRequestMock.Verify(a => a.Save(It.Is<EmailRequest>(r => r.EnvironmentId == env.Id)), Times.Once());
 
             emailRequestMock
                 .Setup(x => x.ConfirmRegister(It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(new EmailRequest());
+                .ReturnsAsync(new EmailRequest
+                {
+                    EnvironmentId = env.Id
+                });
             var smsClient = container.Resolve<IEmailClient>();
             var emailMock = Mock.Get(smsClient);
             emailMock.Verify(s => s.Send("subject", email, "Your password is: password will valid for 120 min"));
@@ -394,6 +403,11 @@ namespace Domain0.Test
                 });
 
             Assert.Equal(HttpStatusCode.OK, firstLoginResponse.StatusCode);
+
+            environmentRepositoryMock
+                .Verify(
+                    callTo => callTo.SetUserEnvironment(It.IsAny<int>(), env.Id.Value), 
+                    Times.Once);
         }
     }
 }

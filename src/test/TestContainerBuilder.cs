@@ -39,10 +39,28 @@ namespace Domain0.Test
             builder.RegisterInstance(new Mock<ISmsClient>().Object).As<ISmsClient>().SingleInstance();
             builder.RegisterInstance(new Mock<IEmailClient>().Object).As<IEmailClient>().SingleInstance();
 
+            setUpEnvironmentRepository(builder);
+
             upgrade?.Invoke(builder);
             return builder.Build();
         }
 
+        private static void setUpEnvironmentRepository(ContainerBuilder builder)
+        {
+            var environmentMock = new Mock<IEnvironmentRepository>();
+            environmentMock
+                .Setup(callTo => callTo.GetDefault())
+                .ReturnsAsync(new Repository.Model.Environment
+                {
+                    Id = 123,
+                    IsDefault = true,
+                    Token = "DefaultToken",
+                    Name = "DefaultToken"
+                });
+            builder.RegisterInstance(environmentMock.Object)
+                .As<IEnvironmentRepository>()
+                .SingleInstance();
+        }
 
         public static string BuildToken(
             IContainer container,
