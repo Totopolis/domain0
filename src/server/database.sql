@@ -119,6 +119,13 @@ create index IX_Account_Email ON dom.Account ([Email])
 create index IX_Account_Login ON dom.Account ([Login])
 go
 
+create table dom.AccountEnvironment (
+	EnvironmentId int not null constraint FK_dom_AccountEnvironment_Id foreign key references dom.Environment(Id),
+	UserId int not null constraint FK_dom_AccountEnvironment_UserId foreign key references dom.Account(Id) on delete cascade
+
+	constraint PK_dom_AccountEnvironment primary key(EnvironmentId, UserId)
+)
+go
 
 create table dom.RoleUser (
 	RoleId int not null constraint FK_dom_RoleUser_RoleId foreign key references dom.Role(Id),
