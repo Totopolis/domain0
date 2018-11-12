@@ -30,9 +30,9 @@ namespace Domain0.Service
 
     public interface IAccountService
     {
-        Task Register(decimal phone);
+        Task Register(decimal phone, string environmentToken = null);
 
-        Task Register(string email);
+        Task Register(string email, string environmentToken = null);
 
         Task<bool> DoesUserExists(decimal phone);
 
@@ -94,6 +94,7 @@ namespace Domain0.Service
             ICultureRequestContext cultureRequestContextInstance,
             IEmailClient emailClientInstance,
             IEmailRequestRepository emailRequestRepositoryInstance,
+            IEnvironmentRepository environmentRepositoryInstance,
             ILogger loggerInstance,
             IMapper mapperInstance,
             IMessageTemplateRepository messageTemplateRepositoryInstance,
@@ -112,6 +113,7 @@ namespace Domain0.Service
             cultureRequestContext = cultureRequestContextInstance;
             emailClient = emailClientInstance;
             emailRequestRepository = emailRequestRepositoryInstance;
+            environmentRepository = environmentRepositoryInstance;
             logger = loggerInstance;
             mapper = mapperInstance;
             messageTemplateRepository = messageTemplateRepositoryInstance;
@@ -127,7 +129,7 @@ namespace Domain0.Service
             accountServiceSettings = accountServiceSettingsInstance;
         }
 
-        public async Task Register(decimal phone)
+        public async Task Register(decimal phone, string environmentToken = null)
         {
             if (await DoesUserExists(phone))
             {
@@ -142,13 +144,16 @@ namespace Domain0.Service
                 return;
             }
 
+            var environment = await GetEnvironment(environmentToken);
+
             var expirationTime = accountServiceSettings.PinExpirationTime;
             var password = passwordGenerator.GeneratePassword();
             await smsRequestRepository.Save(new SmsRequest
             {
                 Phone = phone,
                 Password = password,
-                ExpiredAt = DateTime.UtcNow.Add(expirationTime)
+                ExpiredAt = DateTime.UtcNow.Add(expirationTime),
+                EnvironmentId = environment?.Id
             });
             logger.Info($"New user registration request. Phone: {phone}");
 
@@ -162,7 +167,7 @@ namespace Domain0.Service
             logger.Info($"New user pin has been sent to phone: {phone}");
         }
 
-        public async Task Register(string email)
+        public async Task Register(string email, string environmentToken = null)
         {
             if (await DoesUserExists(email))
             {
@@ -177,23 +182,26 @@ namespace Domain0.Service
                 return;
             }
 
+            var environment = await GetEnvironment(environmentToken);
+
             var password = passwordGenerator.GeneratePassword();
             var expirationTime = accountServiceSettings.EmailCodeExpirationTime;
             await emailRequestRepository.Save(new EmailRequest
             {
                 Email = email,
                 Password = password,
-                ExpiredAt = DateTime.UtcNow.Add(expirationTime)
+                ExpiredAt = DateTime.UtcNow.Add(expirationTime),
+                EnvironmentId = environment?.Id
             });
             logger.Info($"New user registration request. Email: {email}");
 
             var subjectTemplate = await messageTemplateRepository.GetTemplate(
                 MessageTemplateName.RegisterSubjectTemplate,
-                cultureRequestContext.Culture, 
+                cultureRequestContext.Culture,
                 MessageTemplateType.email);
             var template = await messageTemplateRepository.GetTemplate(
                 MessageTemplateName.RegisterTemplate,
-                cultureRequestContext.Culture, 
+                cultureRequestContext.Culture,
                 MessageTemplateType.email);
 
             var message = string.Format(template, password, expirationTime.TotalMinutes);
@@ -1165,9 +1173,26 @@ namespace Domain0.Service
             return (expiredAt - expirationTime - DateTime.UtcNow).Duration() < accountServiceSettings.MessagesResendCooldown;
         }
 
+        private async Task<Repository.Model.Environment> GetEnvironment(string environmentToken)
+        {
+            Repository.Model.Environment environment = null;
+            if (!string.IsNullOrWhiteSpace(environmentToken))
+            {
+                environment = await environmentRepository.GetByToken(environmentToken);
+            }
+            else
+            {
+                environment = await environmentRepository.GetDefault();
+            }
+
+            return environment;
+        }
+
         private readonly IEmailClient emailClient;
 
         private readonly IEmailRequestRepository emailRequestRepository;
+
+        private readonly IEnvironmentRepository environmentRepository;
 
         private readonly ILogger logger;
 

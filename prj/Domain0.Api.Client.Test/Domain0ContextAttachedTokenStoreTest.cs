@@ -1,5 +1,4 @@
 ﻿using Moq;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Domain0.Api.Client.Test

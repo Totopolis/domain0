@@ -139,6 +139,9 @@
     <Compile Include="..\..\src\server\DbManager.cs">
       <Link>FastSql\DbManager.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\EnvironmentRepository.cs">
+      <Link>FastSql\EnvironmentRepository.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\IX509CertificateProvider.cs">
       <Link>Certificate\IX509CertificateProvider.cs</Link>
     </Compile>

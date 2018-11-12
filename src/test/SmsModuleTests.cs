@@ -89,6 +89,18 @@ namespace Domain0.Test
             var passwordMock = Mock.Get(passwordGenerator);
             passwordMock.Setup(p => p.GeneratePassword()).Returns("password");
 
+            var environmentRepositoryMock = Mock.Get(container.Resolve<IEnvironmentRepository>());
+            var env = new Repository.Model.Environment
+            {
+                Name = "default envToken",
+                Id = 123,
+                Token = "default token",
+                IsDefault = true
+            };
+            environmentRepositoryMock
+                .Setup(callTo => callTo.GetDefault())
+                .ReturnsAsync(env);
+
             var registerResponse = await browser.Put(SmsModule.RegisterUrl, with =>
             {
                 with.Accept(format);
@@ -109,6 +121,99 @@ namespace Domain0.Test
             smsMock.Verify(s => s.Send(phone, "Your password is: password will valid for 15 min"));
 
             var firstLoginResponse = await browser.Post(SmsModule.LoginUrl, 
+                with =>
+                {
+                    with.Accept(format);
+                    with.DataFormatBody(format,
+                        new SmsLoginRequest { Phone = phone, Password = "password" });
+                });
+
+            Assert.Equal(HttpStatusCode.OK, firstLoginResponse.StatusCode);
+        }
+
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task Registration_With_Environment_Success(DataFormat format)
+        {
+            var container = TestContainerBuilder.GetContainer();
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var phone = 79000000000;
+            var envToken = "EnvironmentToken";
+
+            var accountRepository = container.Resolve<IAccountRepository>();
+            var accountMock = Mock.Get(accountRepository);
+            accountMock.Setup(a => a.FindByPhone(phone)).ReturnsAsync((Account)null);
+
+            var permissionRepository = container.Resolve<IPermissionRepository>();
+            var permissionRepositoryMock = Mock.Get(permissionRepository);
+
+            permissionRepositoryMock
+                .Setup(p => p.GetByUserId(It.IsAny<int>()))
+                .ReturnsAsync(new[] { new Repository.Model.Permission() });
+
+            var messageTemplateRepository = container.Resolve<IMessageTemplateRepository>();
+            var messageTemplate = Mock.Get(messageTemplateRepository);
+            messageTemplate
+                .Setup(r => r.GetTemplate(
+                    It.IsAny<MessageTemplateName>(),
+                    It.IsAny<CultureInfo>(),
+                    It.IsAny<MessageTemplateType>()))
+                .Returns<MessageTemplateName, CultureInfo, MessageTemplateType>((n, l, t) =>
+                {
+                    if (n == MessageTemplateName.RegisterTemplate)
+                        return Task.FromResult("Your password is: {0} will valid for {1} min");
+
+                    if (n == MessageTemplateName.WelcomeTemplate)
+                        return Task.FromResult("Hello {0}!");
+
+                    throw new NotImplementedException();
+                });
+
+            var passwordGenerator = container.Resolve<IPasswordGenerator>();
+            var passwordMock = Mock.Get(passwordGenerator);
+            passwordMock.Setup(p => p.GeneratePassword()).Returns("password");
+
+            var smsRequestMock = Mock.Get(container.Resolve<ISmsRequestRepository>());
+
+            var environmentRepositoryMock = Mock.Get(container.Resolve<IEnvironmentRepository>());
+            var env = new Repository.Model.Environment
+            {
+                Name = "test envToken",
+                Id = 123,
+                Token = envToken
+            };
+            environmentRepositoryMock
+                .Setup(callTo => callTo.GetByToken(It.Is<string>(s => s.Equals(envToken))))
+                .ReturnsAsync(env);
+
+            var registerResponse = await browser.Put(
+                SmsModule.RegisterWithEnvironmentUrl.Replace("{EnvironmentToken}", envToken), 
+                with =>
+                {
+                    with.Accept(format);
+                    with.DataFormatBody(format, phone);
+                });
+
+            Assert.Equal(HttpStatusCode.OK, registerResponse.StatusCode);
+            environmentRepositoryMock
+                .Verify(callTo =>
+                    callTo.GetByToken(It.Is<string>(t => t.Equals(envToken))),
+                    Times.Once);
+            smsRequestMock.Verify(a => a.Save(It.Is<SmsRequest>(r => r.EnvironmentId == 123)), Times.Once());
+
+            smsRequestMock
+                .Setup(x => x.ConfirmRegister(It.IsAny<decimal>(), It.IsAny<string>()))
+                .ReturnsAsync(true);
+
+
+            var smsClient = container.Resolve<ISmsClient>();
+            var smsMock = Mock.Get(smsClient);
+            smsMock.Verify(s => s.Send(phone, "Your password is: password will valid for 15 min"));
+
+            var firstLoginResponse = await browser.Post(SmsModule.LoginUrl,
                 with =>
                 {
                     with.Accept(format);

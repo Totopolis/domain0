@@ -13,6 +13,8 @@ namespace Domain0.Repository.Model
         public DateTime ExpiredAt { get; set; }
 
         public int? UserId { get; set; }
+
+        public int? EnvironmentId { get; set; }
     }
 
     public class EmailRequest
@@ -26,5 +28,7 @@ namespace Domain0.Repository.Model
         public DateTime ExpiredAt { get; set; }
 
         public int? UserId { get; set; }
+
+        public int? EnvironmentId { get; set; }
     }
 }

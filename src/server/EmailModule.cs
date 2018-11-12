@@ -121,7 +121,8 @@ namespace Domain0.Nancy
 
             try
             {
-                await accountService.Register(request.Email);
+                var environmentToken = (string)Context.Parameters.EnvironmentToken;
+                await accountService.Register(request.Email, environmentToken);
             }
             catch (SecurityException ex)
             {

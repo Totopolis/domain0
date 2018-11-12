@@ -295,5 +295,105 @@ namespace Domain0.Test
             var emailMock = Mock.Get(emailClient);
             emailMock.Verify(s => s.Send("Subject!", email, "hello password " + email + "!"));
         }
+
+        [Theory]
+        [InlineData(DataFormat.Json)]
+        [InlineData(DataFormat.Proto)]
+        public async Task Registration_With_Environment_Success(DataFormat format)
+        {
+            var container = TestContainerBuilder.GetContainer();
+            var bootstrapper = new Domain0Bootstrapper(container);
+            var browser = new Browser(bootstrapper);
+
+            var email = "test@email.com";
+            var envToken = "EnvironmentToken";
+
+            var accountRepository = container.Resolve<IAccountRepository>();
+            var accountMock = Mock.Get(accountRepository);
+            accountMock.Setup(a => a.FindByLogin(email)).ReturnsAsync((Account)null);
+
+            var permissionRepository = container.Resolve<IPermissionRepository>();
+            var permissionRepositoryMock = Mock.Get(permissionRepository);
+
+            permissionRepositoryMock
+                .Setup(p => p.GetByUserId(It.IsAny<int>()))
+                .ReturnsAsync(new[] { new Repository.Model.Permission() });
+
+            var messageTemplateRepository = container.Resolve<IMessageTemplateRepository>();
+            var messageTemplate = Mock.Get(messageTemplateRepository);
+            messageTemplate
+                .Setup(r => r.GetTemplate(
+                    It.IsAny<MessageTemplateName>(),
+                    It.IsAny<CultureInfo>(),
+                    It.IsAny<MessageTemplateType>()))
+                .Returns<MessageTemplateName, CultureInfo, MessageTemplateType>((n, l, t) =>
+                {
+                    if (n == MessageTemplateName.RegisterTemplate)
+                        return Task.FromResult("Your password is: {0} will valid for {1} min");
+
+                    if (n == MessageTemplateName.RegisterSubjectTemplate)
+                        return Task.FromResult("subject");
+
+                    if (n == MessageTemplateName.WelcomeSubjectTemplate)
+                        return Task.FromResult("subject");
+
+                    if (n == MessageTemplateName.WelcomeTemplate)
+                        return Task.FromResult("Hello {0}!");
+
+                    throw new NotImplementedException();
+                });
+
+            var passwordGenerator = container.Resolve<IPasswordGenerator>();
+            var passwordMock = Mock.Get(passwordGenerator);
+            passwordMock.Setup(p => p.GeneratePassword()).Returns("password");
+
+            var emailRequestMock = Mock.Get(container.Resolve<IEmailRequestRepository>());
+
+            var environmentRepositoryMock = Mock.Get(container.Resolve<IEnvironmentRepository>());
+            var env = new Repository.Model.Environment
+            {
+                Name = "test envToken",
+                Id = 123,
+                Token = envToken
+            };
+            environmentRepositoryMock
+                .Setup(callTo => callTo.GetByToken(It.Is<string>(s => s.Equals(envToken))))
+                .ReturnsAsync(env);
+
+            var registerResponse = await browser.Put(
+                EmailModule.RegisterByEmailWithEnvironmentUrl.Replace("{EnvironmentToken}", envToken),
+                with =>
+                {
+                    with.Accept(format);
+                    with.DataFormatBody(format, new RegisterRequest
+                    {
+                        Email = email
+                    });
+                });
+
+            Assert.Equal(HttpStatusCode.NoContent, registerResponse.StatusCode);
+            environmentRepositoryMock
+                .Verify(callTo => 
+                    callTo.GetByToken(It.Is<string>(t => t.Equals(envToken))), 
+                    Times.Once);
+            emailRequestMock.Verify(a => a.Save(It.Is<EmailRequest>(r => r.EnvironmentId == 123)), Times.Once());
+
+            emailRequestMock
+                .Setup(x => x.ConfirmRegister(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(true);
+            var smsClient = container.Resolve<IEmailClient>();
+            var emailMock = Mock.Get(smsClient);
+            emailMock.Verify(s => s.Send("subject", email, "Your password is: password will valid for 120 min"));
+
+            var firstLoginResponse = await browser.Post(EmailModule.LoginByEmailUrl,
+                with =>
+                {
+                    with.Accept(format);
+                    with.DataFormatBody(format,
+                        new EmailLoginRequest { Email = email, Password = "password" });
+                });
+
+            Assert.Equal(HttpStatusCode.OK, firstLoginResponse.StatusCode);
+        }
     }
 }
