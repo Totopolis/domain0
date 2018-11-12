@@ -11,6 +11,7 @@ using Domain0.Nancy.Infrastructure;
 using Domain0.Service.Throttling;
 using Nancy.Security;
 using Domain0.Service.Tokens;
+using System;
 
 namespace Domain0.Nancy
 {
@@ -326,6 +327,11 @@ namespace Domain0.Nancy
             catch (SecurityException)
             {
                 ModelValidationResult.Errors.Add(nameof(request.Phone), "user exists");
+                throw new BadModelException(ModelValidationResult);
+            }
+            catch (ArgumentException ex)
+            {
+                ModelValidationResult.Errors.Add("wrong data: ", ex.Message);
                 throw new BadModelException(ModelValidationResult);
             }
         }

@@ -29,16 +29,16 @@ namespace Domain0.FastSql
         public Task Save(EmailRequest emailRequest)
             => getContext().InsertAsync(TableName, emailRequest, KeyName);
 
-        public async Task<bool> ConfirmRegister(string email, string password)
+        public async Task<EmailRequest> ConfirmRegister(string email, string password)
         {
             var request = await Pick(email);
             if (request?.Password == password)
             {
                 await getContext().DeleteAsync(TableName, new { request.Id });
-                return true;
+                return request;
             }
 
-            return false;
+            return null;
         }
 
         public Task<EmailRequest> PickByUserId(int userId) 

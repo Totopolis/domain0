@@ -7,5 +7,7 @@ namespace Domain0.Repository
     {
         Task<Environment> GetByToken(string environmentToken);
         Task<Environment> GetDefault();
+        Task<Environment> GetByUser(int userId);
+        Task SetUserEnvironment(int userId, int environmentId);
     }
 }

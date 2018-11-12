@@ -29,7 +29,7 @@ namespace Domain0.Repository
         /// <param name="phone">phone number</param>
         /// <param name="password">sms password (pin)</param>
         /// <returns></returns>
-        Task<bool> ConfirmRegister(decimal phone, string password);
+        Task<SmsRequest> ConfirmRegister(decimal phone, string password);
 
         /// <summary>
         /// Get actual request by userId

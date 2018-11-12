@@ -9,7 +9,7 @@ namespace Domain0.Repository
 
         Task<EmailRequest> Pick(string email);
 
-        Task<bool> ConfirmRegister(string email, string password);
+        Task<EmailRequest> ConfirmRegister(string email, string password);
 
         Task<EmailRequest> PickByUserId(int userId);
     }

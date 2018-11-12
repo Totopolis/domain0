@@ -380,7 +380,7 @@ namespace Domain0.Test
 
             emailRequestMock
                 .Setup(x => x.ConfirmRegister(It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(true);
+                .ReturnsAsync(new EmailRequest());
             var smsClient = container.Resolve<IEmailClient>();
             var emailMock = Mock.Get(smsClient);
             emailMock.Verify(s => s.Send("subject", email, "Your password is: password will valid for 120 min"));

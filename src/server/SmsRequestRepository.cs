@@ -31,16 +31,16 @@ namespace Domain0.FastSql
 
         public Task Save(SmsRequest smsRequest) => getContext().InsertAsync(TableName, smsRequest, KeyName);
 
-        public async Task<bool> ConfirmRegister(decimal phone, string password)
+        public async Task<SmsRequest> ConfirmRegister(decimal phone, string password)
         {
             var request = await Pick(phone);
             if (request?.Password == password)
             {
                 await getContext().DeleteAsync(TableName, new { request.Id });
-                return true;
+                return request;
             }
 
-            return false;
+            return null;
         }
 
         public Task<SmsRequest> PickByUserId(int userId)

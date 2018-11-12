@@ -1,4 +1,4 @@
-﻿using System.IO;
+﻿using System;
 using System.Security;
 using System.Threading.Tasks;
 using Domain0.Exceptions;
@@ -296,6 +296,11 @@ namespace Domain0.Nancy
             catch (SecurityException)
             {
                 ModelValidationResult.Errors.Add(nameof(request.Email), "user exists");
+                throw new BadModelException(ModelValidationResult);
+            }
+            catch (ArgumentException ex)
+            {
+                ModelValidationResult.Errors.Add("wrong data: ", ex.Message);
                 throw new BadModelException(ModelValidationResult);
             }
         }

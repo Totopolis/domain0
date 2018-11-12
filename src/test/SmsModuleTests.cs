@@ -112,7 +112,7 @@ namespace Domain0.Test
             var smsRequestMock = Mock.Get(container.Resolve<ISmsRequestRepository>());
             smsRequestMock
                 .Setup(x => x.ConfirmRegister(It.IsAny<decimal>(), It.IsAny<string>()))
-                .ReturnsAsync(true);
+                .ReturnsAsync(new SmsRequest());
 
             smsRequestMock.Verify(a => a.Save(It.IsAny<SmsRequest>()), Times.Once());
 
@@ -206,7 +206,7 @@ namespace Domain0.Test
 
             smsRequestMock
                 .Setup(x => x.ConfirmRegister(It.IsAny<decimal>(), It.IsAny<string>()))
-                .ReturnsAsync(true);
+                .ReturnsAsync(new SmsRequest());
 
 
             var smsClient = container.Resolve<ISmsClient>();

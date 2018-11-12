@@ -228,13 +228,20 @@ namespace Domain0.Service
         {
             logger.Info($"User width id: { requestContext.UserId } execute force create user with phone: {request.Phone}");
             if (!request.Phone.HasValue)
-                throw new ArgumentException(nameof(ForceCreateUserRequest.Phone));
+                throw new ArgumentException("can't be null", nameof(ForceCreateUserRequest.Phone));
 
             var phone = request.Phone.Value;
             if (await DoesUserExists(phone))
             {
                 logger.Warn($"Attempt to register an existing user! phone: {request.Phone}");
                 throw new SecurityException("user exists");
+            }
+
+            var environment = await GetEnvironment(request.EnvironmentToken);
+            if (environment?.Id == null && !string.IsNullOrWhiteSpace(request.EnvironmentToken))
+            {
+                logger.Warn($"Attempt to register user with unknown environment token: {request.EnvironmentToken}");
+                throw new ArgumentException("unknown environment token", nameof(ForceCreateUserRequest.EnvironmentToken));
             }
 
             var password = passwordGenerator.GeneratePassword();
@@ -260,6 +267,11 @@ namespace Domain0.Service
             else
             {
                 await roleRepository.AddUserToDefaultRoles(id);
+            }
+
+            if (environment?.Id != null)
+            {
+                await environmentRepository.SetUserEnvironment(id, environment.Id.Value);
             }
 
             var result = mapper.Map<UserProfile>(await accountRepository.FindByLogin(phone.ToString()));
@@ -302,6 +314,13 @@ namespace Domain0.Service
                 throw new SecurityException("user exists");
             }
 
+            var environment = await GetEnvironment(request.EnvironmentToken);
+            if (environment?.Id == null && !string.IsNullOrWhiteSpace(request.EnvironmentToken))
+            {
+                logger.Warn($"Attempt to register user with unknown environment token: {request.EnvironmentToken}");
+                throw new ArgumentException(nameof(ForceCreateUserRequest.EnvironmentToken));
+            }
+
             var password = passwordGenerator.GeneratePassword();
             var id = await accountRepository.Insert(new Account
             {
@@ -324,6 +343,11 @@ namespace Domain0.Service
             else
             {
                 await roleRepository.AddUserToDefaultRoles(id);
+            }
+
+            if (environment?.Id != null)
+            {
+                await environmentRepository.SetUserEnvironment(id, environment.Id.Value);
             }
 
             var result = mapper.Map<UserProfile>(await accountRepository.FindByLogin(email));
@@ -455,6 +479,9 @@ namespace Domain0.Service
 
             // login account
             var account = await accountRepository.FindByLogin(phone.ToString());
+
+            SmsRequest smsRequest = null;
+
             if (account != null)
             {
                 if (account.IsLocked)
@@ -478,7 +505,8 @@ namespace Domain0.Service
                 else
                 {
                     // remove try confirm change password
-                    if (!await smsRequestRepository.ConfirmRegister(phone, request.Password))
+                    smsRequest = await smsRequestRepository.ConfirmRegister(phone, request.Password);
+                    if (smsRequest == null)
                     {
                         logger.Warn($"User { account.Id } { request.Phone } wrong password!");
                         return null;
@@ -488,13 +516,13 @@ namespace Domain0.Service
             else
             {
                 // remove try confirm registration
-                if (!await smsRequestRepository.ConfirmRegister(phone, request.Password))
+                smsRequest = await smsRequestRepository.ConfirmRegister(phone, request.Password);
+                if (smsRequest == null)
                 {
                     logger.Warn($"User { request.Phone } wrong registration pin!");
                     return null;
                 }
             }
-
 
             // confirm sms request
             if (account != null)
@@ -534,6 +562,12 @@ namespace Domain0.Service
                 account.Id = userId;
 
                 await roleRepository.AddUserToDefaultRoles(userId);
+
+                if (smsRequest.EnvironmentId.HasValue)
+                {
+                    await environmentRepository.SetUserEnvironment(userId, smsRequest.EnvironmentId.Value);
+                }
+
                 logger.Info($"User { account.Id } | { request.Phone } account created successful!");
             }
 
@@ -547,6 +581,9 @@ namespace Domain0.Service
 
             // login account
             var account = await accountRepository.FindByLogin(email);
+
+            EmailRequest emailRequest = null;
+
             if (account != null)
             {
                 if (account.IsLocked)
@@ -569,7 +606,8 @@ namespace Domain0.Service
                 else
                 {
                     // remove try confirm change password
-                    if (!await emailRequestRepository.ConfirmRegister(request.Email, request.Password))
+                    emailRequest = await emailRequestRepository.ConfirmRegister(request.Email, request.Password);
+                    if (emailRequest == null)
                     {
                         logger.Warn($"User { account.Id } { request.Email } wrong password!");
                         return null;
@@ -579,7 +617,8 @@ namespace Domain0.Service
             else
             {
                 // remove try confirm registration
-                if (!await emailRequestRepository.ConfirmRegister(email, request.Password))
+                emailRequest = await emailRequestRepository.ConfirmRegister(email, request.Password);
+                if (emailRequest == null)
                 {
                     logger.Warn($"User { request.Email } wrong pin!");
                     return null;
@@ -629,6 +668,12 @@ namespace Domain0.Service
                 account.Id = userId;
 
                 await roleRepository.AddUserToDefaultRoles(userId);
+
+                if (emailRequest.EnvironmentId.HasValue)
+                {
+                    await environmentRepository.SetUserEnvironment(userId, emailRequest.EnvironmentId.Value);
+                }
+
                 logger.Info($"User { account.Id } | { request.Email } account created successful!");
             }
 
