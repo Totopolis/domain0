@@ -1,26 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using Autofac;
 using Autofac.Core;
+using Domain0.Model;
 using Domain0.Nancy.Infrastructure;
 using Domain0.Service;
+using Domain0.Service.Throttling;
+using Microsoft.Extensions.Caching.Memory;
 using Nancy;
 using Nancy.Authentication.Stateless;
 using Nancy.Bootstrapper;
 using Nancy.Bootstrappers.Autofac;
 using Nancy.Configuration;
 using Nancy.Conventions;
+using Nancy.Responses.Negotiation;
 using Nancy.Swagger;
 using Nancy.Swagger.Annotations;
 using Nancy.Swagger.Services;
 using Nancy.Validation;
 using Swagger.ObjectModel;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using Domain0.Model;
-using Domain0.Service.Throttling;
-using Microsoft.Extensions.Caching.Memory;
-using Nancy.Responses.Negotiation;
 
 namespace Domain0.Nancy
 {
@@ -187,21 +187,19 @@ namespace Domain0.Nancy
                 return NancyInternalConfiguration
                     .WithOverrides(x =>
                     {
-                        x.ResponseProcessors = AvalibleResponceProcessors;
-                        x.Serializers = AvalibleSerializers;
+                        x.ResponseProcessors = avalibleResponceProcessors;
+                        x.Serializers = avalibleSerializers;
                     });
             }
         }
 
-        private readonly Type[] AvalibleResponceProcessors = new Type[]
-        {
+        private readonly Type[] avalibleResponceProcessors = {
             typeof(ProtobufResponseProcessor),
             typeof(JsonProcessor),
             typeof(DefaultResponseProcessor)
         };
 
-        private readonly Type[] AvalibleSerializers = new Type[]
-        {
+        private readonly Type[] avalibleSerializers = {
             typeof(JsonNetSerializer)
         };
 
