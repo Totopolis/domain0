@@ -6870,9 +6870,10 @@ namespace Domain0.Api.Client
     public partial class MessageTemplate 
     {
         [Newtonsoft.Json.JsonConstructor]
-        public MessageTemplate(string @description, int? @id, string @locale, string @name, string @template, string @type)
+        public MessageTemplate(string @description, int @environmentId, int? @id, string @locale, string @name, string @template, string @type)
         {
             Description = @description;
+            EnvironmentId = @environmentId;
             Id = @id;
             Locale = @locale;
             Name = @name;
@@ -6882,6 +6883,9 @@ namespace Domain0.Api.Client
     
         [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Description { get; }
+    
+        [Newtonsoft.Json.JsonProperty("environmentId", Required = Newtonsoft.Json.Required.Always)]
+        public int EnvironmentId { get; }
     
         [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? Id { get; }

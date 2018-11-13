@@ -766,6 +766,7 @@ namespace Domain0.Test
         {
             var testMessageTemplate = new Api.Client.MessageTemplate(
                 "description",
+                123,
                 321,
                 "en",
                 "template",
@@ -847,6 +848,7 @@ namespace Domain0.Test
 
                 var changedMessageTemplate = new Api.Client.MessageTemplate(
                     "changed",
+                    123,
                     321,
                     "en",
                     "template",
