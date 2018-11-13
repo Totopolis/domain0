@@ -10,9 +10,10 @@ namespace Domain0.Nancy.Infrastructure
             NancyContext nancyContextInstance)
         {
             nancyContext = nancyContextInstance;
+            Culture = nancyContext.Culture; 
         }
 
-        public CultureInfo Culture => nancyContext.Culture;
+        public CultureInfo Culture { get; set; }
 
         private readonly NancyContext nancyContext;
     }

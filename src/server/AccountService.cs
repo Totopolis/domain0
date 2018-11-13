@@ -91,6 +91,7 @@ namespace Domain0.Service
     {
         public AccountService(
             IAccountRepository accountRepositoryInstance,
+            ICultureRequestContext cultureRequestContextInstance,
             IEmailClient emailClientInstance,
             IEmailRequestRepository emailRequestRepositoryInstance,
             IEnvironmentRequestContext environmentRequestContextInstance,
@@ -109,6 +110,7 @@ namespace Domain0.Service
             AccountServiceSettings accountServiceSettingsInstance)
         {
             accountRepository = accountRepositoryInstance;
+            cultureRequestContext = cultureRequestContextInstance;
             emailClient = emailClientInstance;
             emailRequestRepository = emailRequestRepositoryInstance;
             environmentRequestContext = environmentRequestContextInstance;
@@ -234,6 +236,11 @@ namespace Domain0.Service
                 throw new SecurityException("user exists");
             }
 
+            if (!string.IsNullOrWhiteSpace(request.Locale))
+            {
+                cultureRequestContext.Culture = CultureInfo.GetCultureInfo(request.Locale);
+            }
+
             var environment = await environmentRequestContext.LoadEnvironment(request.EnvironmentToken);
             if (environment?.Id == null && !string.IsNullOrWhiteSpace(request.EnvironmentToken))
             {
@@ -310,6 +317,11 @@ namespace Domain0.Service
             {
                 logger.Warn($"Attempt to register an existing user! email: {request.Email}");
                 throw new SecurityException("user exists");
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Locale))
+            {
+                cultureRequestContext.Culture = CultureInfo.GetCultureInfo(request.Locale);
             }
 
             var environment = await environmentRequestContext.LoadEnvironment(request.EnvironmentToken);
@@ -1235,6 +1247,8 @@ namespace Domain0.Service
         private readonly IRequestContext requestContext;
 
         private readonly IAccountRepository accountRepository;
+
+        private readonly ICultureRequestContext cultureRequestContext;
 
         private readonly IRoleRepository roleRepository;
 

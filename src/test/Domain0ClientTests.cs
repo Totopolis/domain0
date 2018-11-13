@@ -182,7 +182,7 @@ namespace Domain0.Test
         public async Task Sms_ClientForceCreateUserTest()
         {
             var testRequest = new ForceCreateUserRequest(
-                true, "customTemplate", "", "locale", "userName", 123456, new List<string> { "1", "2", "3" });
+                true, "customTemplate", "", "ru-RU", "userName", 123456, new List<string> { "1", "2", "3" });
 
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountRepositoryMock = Mock.Get(accountRepository);

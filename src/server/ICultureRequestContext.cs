@@ -4,6 +4,6 @@ namespace Domain0.Service
 {
     public interface ICultureRequestContext
     {
-        CultureInfo Culture { get; }
+        CultureInfo Culture { get; set; }
     }
 }
