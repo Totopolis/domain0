@@ -245,6 +245,9 @@
     <Compile Include="..\..\src\server\EmbeddedContentConventionBuilder.cs">
       <Link>Infrastructure\EmbeddedContentConventionBuilder.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\EnvironmentRequestContext.cs">
+      <Link>Infrastructure\EnvironmentRequestContext.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\IAccessLogRepository.cs">
       <Link>Service\Repository\IAccessLogRepository.cs</Link>
     </Compile>
@@ -256,6 +259,9 @@
     </Compile>
     <Compile Include="..\..\src\server\IEnvironmentRepository.cs">
       <Link>Service\Repository\IEnvironmentRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\IEnvironmentRequestContext.cs">
+      <Link>Service\IEnvironmentRequestContext.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\IMessageTemplateRepository.cs">
       <Link>Service\Repository\IMessageTemplateRepository.cs</Link>

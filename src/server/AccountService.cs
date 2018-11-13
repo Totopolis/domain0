@@ -94,7 +94,7 @@ namespace Domain0.Service
             ICultureRequestContext cultureRequestContextInstance,
             IEmailClient emailClientInstance,
             IEmailRequestRepository emailRequestRepositoryInstance,
-            IEnvironmentRepository environmentRepositoryInstance,
+            IEnvironmentRequestContext environmentRequestContextInstance,
             ILogger loggerInstance,
             IMapper mapperInstance,
             IMessageTemplateRepository messageTemplateRepositoryInstance,
@@ -113,7 +113,7 @@ namespace Domain0.Service
             cultureRequestContext = cultureRequestContextInstance;
             emailClient = emailClientInstance;
             emailRequestRepository = emailRequestRepositoryInstance;
-            environmentRepository = environmentRepositoryInstance;
+            environmentRequestContext = environmentRequestContextInstance;
             logger = loggerInstance;
             mapper = mapperInstance;
             messageTemplateRepository = messageTemplateRepositoryInstance;
@@ -144,7 +144,7 @@ namespace Domain0.Service
                 return;
             }
 
-            var environment = await GetEnvironment(environmentToken);
+            var environment = await environmentRequestContext.LoadEnvironment(environmentToken);
 
             var expirationTime = accountServiceSettings.PinExpirationTime;
             var password = passwordGenerator.GeneratePassword();
@@ -182,7 +182,7 @@ namespace Domain0.Service
                 return;
             }
 
-            var environment = await GetEnvironment(environmentToken);
+            var environment = await environmentRequestContext.LoadEnvironment(environmentToken);
 
             var password = passwordGenerator.GeneratePassword();
             var expirationTime = accountServiceSettings.EmailCodeExpirationTime;
@@ -237,7 +237,7 @@ namespace Domain0.Service
                 throw new SecurityException("user exists");
             }
 
-            var environment = await GetEnvironment(request.EnvironmentToken);
+            var environment = await environmentRequestContext.LoadEnvironment(request.EnvironmentToken);
             if (environment?.Id == null && !string.IsNullOrWhiteSpace(request.EnvironmentToken))
             {
                 logger.Warn($"Attempt to register user with unknown environment token: {request.EnvironmentToken}");
@@ -271,7 +271,7 @@ namespace Domain0.Service
 
             if (environment?.Id != null)
             {
-                await environmentRepository.SetUserEnvironment(id, environment.Id.Value);
+                await environmentRequestContext.SetUserEnvironment(id, environment);
             }
 
             var result = mapper.Map<UserProfile>(await accountRepository.FindByLogin(phone.ToString()));
@@ -314,7 +314,7 @@ namespace Domain0.Service
                 throw new SecurityException("user exists");
             }
 
-            var environment = await GetEnvironment(request.EnvironmentToken);
+            var environment = await environmentRequestContext.LoadEnvironment(request.EnvironmentToken);
             if (environment?.Id == null && !string.IsNullOrWhiteSpace(request.EnvironmentToken))
             {
                 logger.Warn($"Attempt to register user with unknown environment token: {request.EnvironmentToken}");
@@ -347,7 +347,7 @@ namespace Domain0.Service
 
             if (environment?.Id != null)
             {
-                await environmentRepository.SetUserEnvironment(id, environment.Id.Value);
+                await environmentRequestContext.SetUserEnvironment(id, environment);
             }
 
             var result = mapper.Map<UserProfile>(await accountRepository.FindByLogin(email));
@@ -524,6 +524,8 @@ namespace Domain0.Service
                 }
             }
 
+            await environmentRequestContext.SetEnvironment(smsRequest.EnvironmentId.Value);
+
             // confirm sms request
             if (account != null)
             {
@@ -565,7 +567,7 @@ namespace Domain0.Service
 
                 if (smsRequest.EnvironmentId.HasValue)
                 {
-                    await environmentRepository.SetUserEnvironment(userId, smsRequest.EnvironmentId.Value);
+                    await environmentRequestContext.SetUserEnvironment(userId, smsRequest.EnvironmentId.Value);
                 }
 
                 logger.Info($"User { account.Id } | { request.Phone } account created successful!");
@@ -625,6 +627,8 @@ namespace Domain0.Service
                 }
             }
 
+            await environmentRequestContext.SetEnvironment(emailRequest.EnvironmentId.Value);
+
             // confirm email request
             if (account != null)
             {
@@ -671,7 +675,7 @@ namespace Domain0.Service
 
                 if (emailRequest.EnvironmentId.HasValue)
                 {
-                    await environmentRepository.SetUserEnvironment(userId, emailRequest.EnvironmentId.Value);
+                    await environmentRequestContext.SetUserEnvironment(userId, emailRequest.EnvironmentId.Value);
                 }
 
                 logger.Info($"User { account.Id } | { request.Email } account created successful!");
@@ -1217,27 +1221,12 @@ namespace Domain0.Service
         {
             return (expiredAt - expirationTime - DateTime.UtcNow).Duration() < accountServiceSettings.MessagesResendCooldown;
         }
-
-        private async Task<Repository.Model.Environment> GetEnvironment(string environmentToken)
-        {
-            Repository.Model.Environment environment = null;
-            if (!string.IsNullOrWhiteSpace(environmentToken))
-            {
-                environment = await environmentRepository.GetByToken(environmentToken);
-            }
-            else
-            {
-                environment = await environmentRepository.GetDefault();
-            }
-
-            return environment;
-        }
-
+        
         private readonly IEmailClient emailClient;
 
         private readonly IEmailRequestRepository emailRequestRepository;
 
-        private readonly IEnvironmentRepository environmentRepository;
+        private readonly IEnvironmentRequestContext environmentRequestContext;
 
         private readonly ILogger logger;
 

@@ -36,6 +36,16 @@ namespace Domain0.Repository
                 .ToArray();
         }
 
+        public Task<TEntity> FindById(TKey id)
+        {
+            return getContext()
+                .CreateSimple(
+                    $"select top 1 * from {TableName} " +
+                    $"where { KeyName } = {id}")
+                .ExecuteQueryAsync<TEntity>()
+                .First();
+        }
+
         public virtual async Task<decimal> Insert(TEntity entity)
         {
             // TODO use crosbase CreateInsertWithOutput

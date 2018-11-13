@@ -366,6 +366,10 @@ namespace Domain0.Test
                 .Setup(callTo => callTo.GetByToken(It.Is<string>(s => s.Equals(envToken))))
                 .ReturnsAsync(env);
 
+            environmentRepositoryMock
+                .Setup(callTo => callTo.FindById(It.Is<int>(id => id == env.Id)))
+                .ReturnsAsync(env);
+
             var registerResponse = await browser.Put(
                 EmailModule.RegisterByEmailWithEnvironmentUrl.Replace("{EnvironmentToken}", envToken),
                 with =>

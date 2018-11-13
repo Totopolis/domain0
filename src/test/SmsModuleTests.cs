@@ -101,6 +101,10 @@ namespace Domain0.Test
                 .Setup(callTo => callTo.GetDefault())
                 .ReturnsAsync(env);
 
+            environmentRepositoryMock
+                .Setup(callTo => callTo.FindById(It.IsAny<int>()))
+                .ReturnsAsync(env);
+
             var registerResponse = await browser.Put(SmsModule.RegisterUrl, with =>
             {
                 with.Accept(format);
@@ -194,6 +198,11 @@ namespace Domain0.Test
             environmentRepositoryMock
                 .Setup(callTo => callTo.GetByToken(It.Is<string>(s => s.Equals(envToken))))
                 .ReturnsAsync(env);
+
+            environmentRepositoryMock
+                .Setup(callTo => callTo.FindById(It.Is<int>(id => id == env.Id)))
+                .ReturnsAsync(env);
+
 
             var smsRequestMock = Mock.Get(container.Resolve<ISmsRequestRepository>());
             smsRequestMock

@@ -123,7 +123,7 @@ namespace Domain0.Nancy
             {
                 builder.RegisterInstance(tokenGenerator)
                     .As<ITokenGenerator>();
-
+                
                 builder
                     .RegisterType<JwtAuthenticationRequestContext>()
                     .As<IRequestContext>()
@@ -136,6 +136,24 @@ namespace Domain0.Nancy
                 builder
                     .RegisterType<CultureRequestContext>()
                     .As<ICultureRequestContext>()
+                    .WithParameter(
+                        new ResolvedParameter(
+                            (pi, ctx) => pi.ParameterType == typeof(NancyContext),
+                            (pi, ctx) => context))
+                    .InstancePerLifetimeScope();
+
+                builder
+                    .RegisterType<CultureRequestContext>()
+                    .As<ICultureRequestContext>()
+                    .WithParameter(
+                        new ResolvedParameter(
+                            (pi, ctx) => pi.ParameterType == typeof(NancyContext),
+                            (pi, ctx) => context))
+                    .InstancePerLifetimeScope();
+
+                builder
+                    .RegisterType<EnvironmentRequestContext>()
+                    .As<IEnvironmentRequestContext>()
                     .WithParameter(
                         new ResolvedParameter(
                             (pi, ctx) => pi.ParameterType == typeof(NancyContext),

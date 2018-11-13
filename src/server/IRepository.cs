@@ -12,6 +12,8 @@ namespace Domain0.Repository
 
         Task Delete(TKey id);
 
+        Task<TEntity> FindById(TKey id);
+
         Task<TEntity[]> FindByIds(IEnumerable<TKey> ids);
     }
 }
