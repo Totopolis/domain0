@@ -91,13 +91,12 @@ namespace Domain0.Service
     {
         public AccountService(
             IAccountRepository accountRepositoryInstance,
-            ICultureRequestContext cultureRequestContextInstance,
             IEmailClient emailClientInstance,
             IEmailRequestRepository emailRequestRepositoryInstance,
             IEnvironmentRequestContext environmentRequestContextInstance,
             ILogger loggerInstance,
             IMapper mapperInstance,
-            IMessageTemplateRepository messageTemplateRepositoryInstance,
+            IMessageBuilder messageBuilderInstance,
             IPasswordGenerator passwordGeneratorInstance,
             IPermissionRepository permissionRepositoryInstance,
             IRequestContext requestContextInstance,
@@ -110,13 +109,12 @@ namespace Domain0.Service
             AccountServiceSettings accountServiceSettingsInstance)
         {
             accountRepository = accountRepositoryInstance;
-            cultureRequestContext = cultureRequestContextInstance;
             emailClient = emailClientInstance;
             emailRequestRepository = emailRequestRepositoryInstance;
             environmentRequestContext = environmentRequestContextInstance;
             logger = loggerInstance;
             mapper = mapperInstance;
-            messageTemplateRepository = messageTemplateRepositoryInstance;
+            messageBuilder = messageBuilderInstance;
             passwordGenerator = passwordGeneratorInstance;
             permissionRepository = permissionRepositoryInstance;
             requestContext = requestContextInstance;
@@ -157,12 +155,12 @@ namespace Domain0.Service
             });
             logger.Info($"New user registration request. Phone: {phone}");
 
-            var template = await messageTemplateRepository.GetTemplate(
-                MessageTemplateName.RegisterTemplate,
-                cultureRequestContext.Culture, 
-                MessageTemplateType.sms);
-            var message = string.Format(template, password, expirationTime.TotalMinutes);
 
+            var message = await messageBuilder.Build(
+                MessageTemplateName.RegisterTemplate,
+                MessageTemplateType.sms,
+                password, expirationTime.TotalMinutes);
+            
             await smsClient.Send(phone, message);
             logger.Info($"New user pin has been sent to phone: {phone}");
         }
@@ -195,17 +193,16 @@ namespace Domain0.Service
             });
             logger.Info($"New user registration request. Email: {email}");
 
-            var subjectTemplate = await messageTemplateRepository.GetTemplate(
-                MessageTemplateName.RegisterSubjectTemplate,
-                cultureRequestContext.Culture,
-                MessageTemplateType.email);
-            var template = await messageTemplateRepository.GetTemplate(
-                MessageTemplateName.RegisterTemplate,
-                cultureRequestContext.Culture,
-                MessageTemplateType.email);
 
-            var message = string.Format(template, password, expirationTime.TotalMinutes);
-            var subject = string.Format(subjectTemplate, email, "domain0");
+            var message = await messageBuilder.Build( 
+                MessageTemplateName.RegisterTemplate,
+                MessageTemplateType.email,
+                password, expirationTime.TotalMinutes);
+                
+            var subject = await messageBuilder.Build( 
+                MessageTemplateName.RegisterSubjectTemplate,                
+                MessageTemplateType.email,
+                email, "domain0");
 
             await emailClient.Send(subject, email, message);
             logger.Info($"New user pin has been sent to Email: {email}");
@@ -283,11 +280,12 @@ namespace Domain0.Service
 
             string message;
             if (string.IsNullOrEmpty(request.CustomSmsTemplate))
-                message = string.Format(await messageTemplateRepository.GetTemplate(
+            {
+                message = await messageBuilder.Build(
                     MessageTemplateName.WelcomeTemplate,
-                    cultureRequestContext.Culture, 
-                    MessageTemplateType.sms),
-                    request.Phone, password);
+                    MessageTemplateType.sms,
+                    request.Phone, password);                   
+            }
             else
                 message = request.CustomSmsTemplate
                     .Replace("{phone}", request.Phone.ToString())
@@ -362,15 +360,13 @@ namespace Domain0.Service
             if (string.IsNullOrEmpty(request.CustomEmailTemplate)
                 || string.IsNullOrEmpty(request.CustomEmailSubjectTemplate))
             {
-                subject = await messageTemplateRepository.GetTemplate(
+                subject = await messageBuilder.Build(
                     MessageTemplateName.WelcomeSubjectTemplate,
-                    cultureRequestContext.Culture,
                     MessageTemplateType.email);
 
-                message = string.Format(await messageTemplateRepository.GetTemplate(
-                        MessageTemplateName.WelcomeTemplate,
-                        cultureRequestContext.Culture,
-                        MessageTemplateType.email),
+                message = await messageBuilder.Build(
+                    MessageTemplateName.WelcomeTemplate,
+                    MessageTemplateType.email, 
                     request.Email, password);
             }
             else
@@ -478,9 +474,9 @@ namespace Domain0.Service
             var phone = (decimal)request.Phone;
 
             // login account
-            var account = await accountRepository.FindByLogin(phone.ToString());
+            var account = await accountRepository.FindByLogin(phone.ToString(CultureInfo.InvariantCulture));
 
-            SmsRequest smsRequest = null;
+            SmsRequest smsRequest;
 
             if (account != null)
             {
@@ -524,7 +520,10 @@ namespace Domain0.Service
                 }
             }
 
-            await environmentRequestContext.SetEnvironment(smsRequest.EnvironmentId.Value);
+            if (smsRequest.EnvironmentId.HasValue)
+            {
+                await environmentRequestContext.SetEnvironment(smsRequest.EnvironmentId.Value);
+            }
 
             // confirm sms request
             if (account != null)
@@ -543,12 +542,11 @@ namespace Domain0.Service
                 var hashPassword = passwordGenerator.HashPassword(password);
                 var currentDateTime = DateTime.UtcNow;
 
-                var message = string.Format(await messageTemplateRepository.GetTemplate(
+                var message = await messageBuilder.Build(
                     MessageTemplateName.WelcomeTemplate,
-                    cultureRequestContext.Culture,
-                    MessageTemplateType.sms),
+                    MessageTemplateType.sms,
                     request.Phone, password);
-
+                    
                 await smsClient.Send(request.Phone, message);
 
                 var userId = await accountRepository.Insert(account = new Account
@@ -565,7 +563,7 @@ namespace Domain0.Service
 
                 await roleRepository.AddUserToDefaultRoles(userId);
 
-                if (smsRequest.EnvironmentId.HasValue)
+                if (smsRequest.EnvironmentId != null)
                 {
                     await environmentRequestContext.SetUserEnvironment(userId, smsRequest.EnvironmentId.Value);
                 }
@@ -584,7 +582,7 @@ namespace Domain0.Service
             // login account
             var account = await accountRepository.FindByLogin(email);
 
-            EmailRequest emailRequest = null;
+            EmailRequest emailRequest;
 
             if (account != null)
             {
@@ -627,7 +625,10 @@ namespace Domain0.Service
                 }
             }
 
-            await environmentRequestContext.SetEnvironment(emailRequest.EnvironmentId.Value);
+            if (emailRequest.EnvironmentId.HasValue)
+            {
+                await environmentRequestContext.SetEnvironment(emailRequest.EnvironmentId.Value);
+            }
 
             // confirm email request
             if (account != null)
@@ -643,15 +644,14 @@ namespace Domain0.Service
                 var password = passwordGenerator.GeneratePassword();
                 hashPassword = passwordGenerator.HashPassword(password);
 
-                var subject = await messageTemplateRepository.GetTemplate(
+                var subject = await messageBuilder.Build(
                     MessageTemplateName.WelcomeSubjectTemplate,
-                    cultureRequestContext.Culture,
                     MessageTemplateType.email);
 
-                var message = string.Format(await messageTemplateRepository.GetTemplate(
-                        MessageTemplateName.WelcomeTemplate,
-                        cultureRequestContext.Culture,
-                        MessageTemplateType.email),
+
+                var message = await messageBuilder.Build(
+                    MessageTemplateName.WelcomeTemplate,
+                    MessageTemplateType.email,
                     request.Email, password);
 
                 await emailClient.Send(subject, request.Email, message);
@@ -742,12 +742,11 @@ namespace Domain0.Service
                 ExpiredAt = DateTime.UtcNow.Add(expirationTime)
             });
 
-            var template = await messageTemplateRepository.GetTemplate(
+            var message = await messageBuilder.Build(
                 MessageTemplateName.RequestResetTemplate,
-                cultureRequestContext.Culture,
-                MessageTemplateType.sms);
+                MessageTemplateType.sms,
+                password, expirationTime.TotalMinutes);
 
-            var message = string.Format(template, password, expirationTime.TotalMinutes);
             await smsClient.Send(phone, message);
             logger.Info($"User { account.Id } attempt to reset password. New user pin has been sent to phone: { phone }");
         }
@@ -784,18 +783,15 @@ namespace Domain0.Service
                 ExpiredAt = DateTime.UtcNow.Add(expirationTime)
             });
 
-            var subjectTemplate = await messageTemplateRepository.GetTemplate(
+            var subject = await messageBuilder.Build(
                 MessageTemplateName.RequestResetSubjectTemplate,
-                cultureRequestContext.Culture, 
-                MessageTemplateType.email);
-
-            var template = await messageTemplateRepository.GetTemplate(
+                MessageTemplateType.email,
+                "domain0", account.Name); 
+                
+            var message = await messageBuilder.Build(
                 MessageTemplateName.RequestResetTemplate,
-                cultureRequestContext.Culture, 
-                MessageTemplateType.email);
-
-            var message = string.Format(template, password, expirationTime.TotalMinutes);
-            var subject = string.Format(subjectTemplate, "domain0", account.Name);
+                MessageTemplateType.email,
+                password, expirationTime.TotalMinutes);
 
             await emailClient.Send(subject, email, message);
             logger.Info($"User { account.Id } attempt to reset password. New user pin has been sent to email: { email }");
@@ -849,12 +845,11 @@ namespace Domain0.Service
                 ExpiredAt = DateTime.UtcNow.Add(expirationTime)
             });
 
-            var template = await messageTemplateRepository.GetTemplate(
+            var message = await messageBuilder.Build(
                 MessageTemplateName.RequestPhoneChangeTemplate,
-                cultureRequestContext.Culture,
-                MessageTemplateType.sms);
+                MessageTemplateType.sms,
+                pin, expirationTime.TotalMinutes);
 
-            var message = string.Format(template, pin, expirationTime.TotalMinutes);
             await smsClient.Send(changePhoneRequest.Phone, message);
             logger.Info($"Attempt to change phone for user { userId }. New user pin has been sent to phone: { changePhoneRequest.Phone }");
         }
@@ -939,17 +934,15 @@ namespace Domain0.Service
                 ExpiredAt = DateTime.UtcNow.Add(expirationTime)
             });
 
-            var template = await messageTemplateRepository.GetTemplate(
+            var message = await messageBuilder.Build(
                 MessageTemplateName.RequestEmailChangeTemplate,
-                cultureRequestContext.Culture,
-                MessageTemplateType.email);
+                MessageTemplateType.email,
+                pin, expirationTime.TotalMinutes);
 
-            var subject = await messageTemplateRepository.GetTemplate(
+            var subject = await messageBuilder.Build(
                 MessageTemplateName.RequestEmailChangeSubjectTemplate,
-                cultureRequestContext.Culture,
                 MessageTemplateType.email);
 
-            var message = string.Format(template, pin, expirationTime.TotalMinutes);
             await emailClient.Send(subject, changeEmailRequest.Email, message);
             logger.Info($"Attempt to change phone for user { userId }. New user pin has been sent to phone: { changeEmailRequest.Email }");
         }
@@ -1055,12 +1048,11 @@ namespace Domain0.Service
             await accountRepository.Update(account);
             logger.Info($"User { requestContext.UserId } reset password for user { account.Id }");
 
-            var template = await messageTemplateRepository.GetTemplate(
+            var message = await messageBuilder.Build(
                 MessageTemplateName.ForcePasswordResetTemplate,
-                cultureRequestContext.Culture,
-                MessageTemplateType.sms);
+                MessageTemplateType.sms,
+                newPassword);
 
-            var message = string.Format(template, newPassword);
             await smsClient.Send(phone, message);
             logger.Info($"New password sent to user { account.Id }");
         }
@@ -1083,18 +1075,16 @@ namespace Domain0.Service
             logger.Info($"User { requestContext.UserId } reset password for user { account.Id }");
 
 
-            var template = await messageTemplateRepository.GetTemplate(
+            var message = await messageBuilder.Build( 
                 MessageTemplateName.ForcePasswordResetTemplate,
-                cultureRequestContext.Culture,
-                MessageTemplateType.email);
+                MessageTemplateType.email,
+                newPassword);
 
-            var subjectTemplate = await messageTemplateRepository.GetTemplate(
+            var subject = await messageBuilder.Build(
                 MessageTemplateName.ForcePasswordResetSubjectTemplate,
-                cultureRequestContext.Culture,
-                MessageTemplateType.email);
+                MessageTemplateType.email,
+                email, "domain0");
 
-            var subject = string.Format(subjectTemplate, email, "domain0");
-            var message = string.Format(template, newPassword);
             await emailClient.Send(subject, email, message);
             logger.Info($"New password sent to user { account.Id }");
         }
@@ -1231,6 +1221,8 @@ namespace Domain0.Service
         private readonly ILogger logger;
 
         private readonly IMapper mapper;
+        
+        private readonly IMessageBuilder messageBuilder;
 
         private readonly ISmsClient smsClient;
 
@@ -1242,13 +1234,9 @@ namespace Domain0.Service
 
         private readonly IAccountRepository accountRepository;
 
-        private readonly ICultureRequestContext cultureRequestContext;
-
         private readonly IRoleRepository roleRepository;
 
         private readonly ISmsRequestRepository smsRequestRepository;
-
-        private readonly IMessageTemplateRepository messageTemplateRepository;
 
         private readonly IPermissionRepository permissionRepository;
 

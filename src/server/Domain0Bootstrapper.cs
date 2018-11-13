@@ -159,6 +159,11 @@ namespace Domain0.Nancy
                             (pi, ctx) => pi.ParameterType == typeof(NancyContext),
                             (pi, ctx) => context))
                     .InstancePerLifetimeScope();
+
+                builder
+                    .RegisterType<MessageBuilder>()
+                    .As<IMessageBuilder>()
+                    .InstancePerLifetimeScope();
             });
 
             base.ConfigureRequestContainer(requestContainer, context);

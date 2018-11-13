@@ -263,6 +263,9 @@
     <Compile Include="..\..\src\server\IEnvironmentRequestContext.cs">
       <Link>Service\IEnvironmentRequestContext.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server\IMessageBuilder.cs">
+      <Link>Service\Messages\IMessageBuilder.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server\IMessageTemplateRepository.cs">
       <Link>Service\Repository\IMessageTemplateRepository.cs</Link>
     </Compile>
@@ -292,6 +295,9 @@
     </Compile>
     <Compile Include="..\..\src\server\MapperProfile.cs">
       <Link>Infrastructure\MapperProfile.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\MessageBuilder.cs">
+      <Link>Service\Messages\MessageBuilder.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\MessageTemplate.cs">
       <Link>Service\Repository\Model\MessageTemplate.cs</Link>
@@ -482,6 +488,5 @@
       <Link>Swagger-UI\swagger-ui.js</Link>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
