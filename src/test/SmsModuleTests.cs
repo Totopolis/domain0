@@ -73,8 +73,9 @@ namespace Domain0.Test
                 .Setup(r => r.GetTemplate(
                     It.IsAny<MessageTemplateName>(),
                     It.IsAny<CultureInfo>(),
-                    It.IsAny<MessageTemplateType>()))
-                .Returns<MessageTemplateName, CultureInfo, MessageTemplateType>((n, l, t) =>
+                    It.IsAny<MessageTemplateType>(),
+                    It.IsAny<int>()))
+                .Returns<MessageTemplateName, CultureInfo, MessageTemplateType, int>((n, l, t, e) =>
                 {
                     if (n == MessageTemplateName.RegisterTemplate)
                         return Task.FromResult("Your password is: {0} will valid for {1} min");
@@ -172,8 +173,9 @@ namespace Domain0.Test
                 .Setup(r => r.GetTemplate(
                     It.IsAny<MessageTemplateName>(),
                     It.IsAny<CultureInfo>(),
-                    It.IsAny<MessageTemplateType>()))
-                .Returns<MessageTemplateName, CultureInfo, MessageTemplateType>((n, l, t) =>
+                    It.IsAny<MessageTemplateType>(),
+                    It.IsAny<int>()))
+                .Returns<MessageTemplateName, CultureInfo, MessageTemplateType, int>((n, l, t, e) =>
                 {
                     if (n == MessageTemplateName.RegisterTemplate)
                         return Task.FromResult("Your password is: {0} will valid for {1} min");
@@ -345,7 +347,8 @@ namespace Domain0.Test
                 r.GetTemplate(
                     It.IsAny<MessageTemplateName>(),
                     It.IsAny<CultureInfo>(),
-                    It.IsAny<MessageTemplateType>())
+                    It.IsAny<MessageTemplateType>(),
+                    It.IsAny<int>())
                 )
                 .ReturnsAsync("hello {1} {0}!");
 
@@ -413,7 +416,8 @@ namespace Domain0.Test
                 r.GetTemplate(
                     It.IsAny<MessageTemplateName>(),
                     It.IsAny<CultureInfo>(),
-                    It.IsAny<MessageTemplateType>())
+                    It.IsAny<MessageTemplateType>(),
+                    It.IsAny<int>())
                 )
                 .ReturnsAsync("hello, your new password is {0}!");
 
@@ -434,7 +438,8 @@ namespace Domain0.Test
             messageTemplate.Verify(mt => mt.GetTemplate(
                 MessageTemplateName.ForcePasswordResetTemplate,
                 It.IsAny<CultureInfo>(),
-                MessageTemplateType.sms));
+                MessageTemplateType.sms,
+                It.IsAny<int>()));
 
             var smsClient = container.Resolve<ISmsClient>();
             var smsMock = Mock.Get(smsClient);
@@ -728,7 +733,8 @@ namespace Domain0.Test
                 .Setup(a => a.GetTemplate(
                     It.IsAny<MessageTemplateName>(),
                     It.IsAny<CultureInfo>(),
-                    It.IsAny<MessageTemplateType>()))
+                    It.IsAny<MessageTemplateType>(),
+                    It.IsAny<int>()))
                 .ReturnsAsync("{0}_test");
 
             var authGenerator = Mock.Get(container.Resolve<IPasswordGenerator>());
@@ -879,8 +885,9 @@ namespace Domain0.Test
                 .Setup(r => r.GetTemplate(
                     It.IsAny<MessageTemplateName>(),
                     It.IsAny<CultureInfo>(),
-                    It.IsAny<MessageTemplateType>()))
-                .Returns<MessageTemplateName, CultureInfo, MessageTemplateType>((n, l, t) =>
+                    It.IsAny<MessageTemplateType>(),
+                    It.IsAny<int>()))
+                .Returns<MessageTemplateName, CultureInfo, MessageTemplateType, int>((n, l, t, e) =>
                 {
                     if (n == MessageTemplateName.RequestPhoneChangeTemplate)
                         return Task.FromResult("Your password is: {0} will valid for {1} min");
@@ -923,7 +930,8 @@ namespace Domain0.Test
                 mtr.GetTemplate(
                     It.Is<MessageTemplateName>(mt => mt == MessageTemplateName.RequestPhoneChangeTemplate),
                     It.IsAny<CultureInfo>(),
-                    It.Is<MessageTemplateType>(mtt => mtt == MessageTemplateType.sms)),
+                    It.Is<MessageTemplateType>(mtt => mtt == MessageTemplateType.sms),
+                    It.IsAny<int>()),
                 Times.Once);
 
             smsClient.Verify(sc => 

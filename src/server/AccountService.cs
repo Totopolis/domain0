@@ -742,6 +742,8 @@ namespace Domain0.Service
                 ExpiredAt = DateTime.UtcNow.Add(expirationTime)
             });
 
+            await environmentRequestContext.LoadEnvironment(account.Id);
+                
             var message = await messageBuilder.Build(
                 MessageTemplateName.RequestResetTemplate,
                 MessageTemplateType.sms,

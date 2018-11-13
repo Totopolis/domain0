@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Domain0.Nancy;
 using Xunit;
@@ -24,7 +23,7 @@ namespace Domain0.Test
     {
         private readonly NancyHost host;
         private readonly IContainer container;
-        private const string TestUrl =  "http://localhost:51234";
+        private const string TEST_URL =  "http://localhost:51234";
 
         public Domain0ClientTests()
         {
@@ -58,12 +57,13 @@ namespace Domain0.Test
                 .Setup(r => r.GetTemplate(
                     It.IsAny<MessageTemplateName>(),
                     It.IsAny<CultureInfo>(),
-                    It.IsAny<MessageTemplateType>()))
+                    It.IsAny<MessageTemplateType>(),
+                    It.IsAny<int>()))
                 .ReturnsAsync("Your password is: {0} will valid for {1} min");
 
             using (var http = new HttpClient())
             {
-                var client = new Domain0Client(TestUrl, http);
+                var client = new Domain0Client(TEST_URL, http);
                 await client.RegisterAsync(phone);
             }
 
@@ -88,12 +88,13 @@ namespace Domain0.Test
                 .Setup(r => r.GetTemplate(
                     It.IsAny<MessageTemplateName>(),
                     It.IsAny<CultureInfo>(),
-                    It.IsAny<MessageTemplateType>()))
+                    It.IsAny<MessageTemplateType>(),
+                    It.IsAny<int>()))
                 .ReturnsAsync("Your password is: {0} will valid for {1} min");
 
             using (var http = new HttpClient())
             {
-                var client = new Domain0Client(TestUrl, http);
+                var client = new Domain0Client(TEST_URL, http);
                 await client.RegisterByEmailAsync(new RegisterRequest(testEmail));
             }
 
@@ -129,8 +130,8 @@ namespace Domain0.Test
 
             using (var http = new HttpClient())
             {
-                var client = new Domain0Client(TestUrl, http);
-                var response = await client.LoginByEmailAsync(new Api.Client.EmailLoginRequest(testEmail, testPassword));
+                var client = new Domain0Client(TEST_URL, http);
+                var response = await client.LoginByEmailAsync(new EmailLoginRequest(testEmail, testPassword));
                 Assert.NotNull(response.AccessToken);
             }
 
@@ -167,7 +168,7 @@ namespace Domain0.Test
 
             using (var http = new HttpClient())
             {
-                var client = new Domain0Client(TestUrl, http);
+                var client = new Domain0Client(TEST_URL, http);
                 var response = await client.LoginAsync(new SmsLoginRequest(testPassword, testPhone));
                 Assert.NotNull(response.AccessToken);
             }
@@ -199,7 +200,7 @@ namespace Domain0.Test
 
             using (var http = new HttpClient())
             {
-                var client = new Domain0Client(TestUrl, http);
+                var client = new Domain0Client(TEST_URL, http);
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
                         TestContainerBuilder.BuildToken(container, 1, TokenClaims.CLAIM_PERMISSIONS_FORCE_CREATE_USER));
@@ -234,7 +235,7 @@ namespace Domain0.Test
 
             using (var http = new HttpClient())
             {
-                var client = new Domain0Client(TestUrl, http);
+                var client = new Domain0Client(TEST_URL, http);
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
                         TestContainerBuilder.BuildToken(container, 1, TokenClaims.CLAIM_PERMISSIONS_FORCE_CHANGE_PHONE));
@@ -268,7 +269,7 @@ namespace Domain0.Test
 
             using (var http = new HttpClient())
             {
-                var client = new Domain0Client(TestUrl, http);
+                var client = new Domain0Client(TEST_URL, http);
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
                         TestContainerBuilder.BuildToken(container, 1, TokenClaims.CLAIM_PERMISSIONS_VIEW_USERS));
@@ -299,7 +300,7 @@ namespace Domain0.Test
 
             using (var http = new HttpClient())
             {
-                var client = new Domain0Client(TestUrl, http);
+                var client = new Domain0Client(TEST_URL, http);
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
                         TestContainerBuilder.BuildToken(container, testId, "user"));
@@ -331,7 +332,7 @@ namespace Domain0.Test
 
             using (var http = new HttpClient())
             {
-                var client = new Domain0Client(TestUrl, http);
+                var client = new Domain0Client(TEST_URL, http);
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
                         TestContainerBuilder.BuildToken(container, testId, TokenClaims.CLAIM_PERMISSIONS_VIEW_USERS));
@@ -364,7 +365,7 @@ namespace Domain0.Test
 
             using (var http = new HttpClient())
             {
-                var client = new Domain0Client(TestUrl, http);
+                var client = new Domain0Client(TEST_URL, http);
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
                         TestContainerBuilder.BuildToken(container, testId, TokenClaims.CLAIM_PERMISSIONS_VIEW_USERS));
@@ -398,7 +399,7 @@ namespace Domain0.Test
 
             using (var http = new HttpClient())
             {
-                var client = new Domain0Client(TestUrl, http);
+                var client = new Domain0Client(TEST_URL, http);
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
                         TestContainerBuilder.BuildToken(container, 1, TokenClaims.CLAIM_PERMISSIONS_VIEW_PROFILE));
@@ -436,7 +437,7 @@ namespace Domain0.Test
 
             using (var http = new HttpClient())
             {
-                var client = new Domain0Client(TestUrl, http);
+                var client = new Domain0Client(TEST_URL, http);
 
                 var newToken = await client.RefreshAsync(refreshToken);
 
@@ -465,7 +466,7 @@ namespace Domain0.Test
 
             using (var http = new HttpClient())
             {
-                var client = new Domain0Client(TestUrl, http);
+                var client = new Domain0Client(TEST_URL, http);
 
                 var isExists = await client.DoesUserExistAsync(testPhone);
                 Assert.True(isExists);
@@ -497,7 +498,7 @@ namespace Domain0.Test
 
             using (var http = new HttpClient())
             {
-                var client = new Domain0Client(TestUrl, http);
+                var client = new Domain0Client(TEST_URL, http);
 
                 var isExists = await client.DoesUserExistByEmailAsync(testEmail);
                 Assert.True(isExists);
@@ -530,7 +531,7 @@ namespace Domain0.Test
 
             using (var http = new HttpClient())
             {
-                var client = new Domain0Client(TestUrl, http);
+                var client = new Domain0Client(TEST_URL, http);
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
                         TestContainerBuilder.BuildToken(container, 1, TokenClaims.CLAIM_PERMISSIONS_FORCE_CHANGE_EMAIL));
@@ -573,7 +574,7 @@ namespace Domain0.Test
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
                         TestContainerBuilder.BuildToken(container, 1, TokenClaims.CLAIM_PERMISSIONS_ADMIN));
-                var client = new Domain0Client(TestUrl, http);
+                var client = new Domain0Client(TEST_URL, http);
 
                 await client.AddRolePermissionsAsync(roleId, ids);
                 roleRepositoryMock.Verify(t => 
@@ -616,7 +617,7 @@ namespace Domain0.Test
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
                         TestContainerBuilder.BuildToken(container, 1, TokenClaims.CLAIM_PERMISSIONS_ADMIN));
-                var client = new Domain0Client(TestUrl, http);
+                var client = new Domain0Client(TEST_URL, http);
 
                 await client.AddUserPermissionsAsync(userId, ids);
                 permissionRepositoryMock.Verify(t => t.AddUserPermission(userId, It.IsAny<int[]>()), Times.Once);
@@ -655,7 +656,7 @@ namespace Domain0.Test
                     new AuthenticationHeaderValue("Bearer",
                         TestContainerBuilder.BuildToken(container, 1, TokenClaims.CLAIM_PERMISSIONS_ADMIN));
 
-                var client = new Domain0Client(TestUrl, http);
+                var client = new Domain0Client(TEST_URL, http);
 
                 var id = await client.CreateApplicationAsync(testApplication);
                 Assert.Equal(id, applicationId);
@@ -708,8 +709,9 @@ namespace Domain0.Test
                 .Setup(r => r.GetTemplate(
                     It.IsAny<MessageTemplateName>(),
                     It.IsAny<CultureInfo>(),
-                    It.IsAny<MessageTemplateType>()))
-                .Returns<MessageTemplateName, CultureInfo, MessageTemplateType>((n, l, t) => Task.FromResult("{0} {1}"));
+                    It.IsAny<MessageTemplateType>(),
+                    It.IsAny<int>()))
+                .Returns<MessageTemplateName, CultureInfo, MessageTemplateType, int>((n, l, t, e) => Task.FromResult("{0} {1}"));
 
 
             accountRepositoryMock
@@ -733,7 +735,7 @@ namespace Domain0.Test
                     new AuthenticationHeaderValue("Bearer",
                         TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_BASIC ));
 
-                var client = new Domain0Client(TestUrl, http);
+                var client = new Domain0Client(TEST_URL, http);
 
                 await client.ChangePasswordAsync(new ChangePasswordRequest("new", "old"));
                 accountRepositoryMock
@@ -798,7 +800,7 @@ namespace Domain0.Test
                 http.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
                         TestContainerBuilder.BuildToken(container, 1, TokenClaims.CLAIM_PERMISSIONS_ADMIN));
-                var client = new Domain0Client(TestUrl, http);
+                var client = new Domain0Client(TEST_URL, http);
 
                 var id = await client.CreateMessageTemplateAsync(testMessageTemplate);
                 Assert.Equal(testMessageTemplate.Id, id);
@@ -876,7 +878,7 @@ namespace Domain0.Test
                         CreateAutomatically = true
                     }
                 },
-                new Uri(TestUrl));
+                new Uri(TEST_URL));
             return host;
         }
 

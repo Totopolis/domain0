@@ -17,6 +17,7 @@ namespace Domain0.Model
                 FieldSetting<MessageTemplate>.CreateString(4, c => c.Type,          (c, v) => c.Type = v),
                 FieldSetting<MessageTemplate>.CreateString(5, c => c.Locale,        (c, v) => c.Locale = v),
                 FieldSetting<MessageTemplate>.CreateString(6, c => c.Template,      (c, v) => c.Template = v,   c => c.Template?.Length > 0),
+                FieldSetting<MessageTemplate>.CreateInt32(7,  c => c.EnvironmentId,      (c, v) => c.EnvironmentId= v)
             });
 
         /// <summary>
@@ -43,6 +44,8 @@ namespace Domain0.Model
         /// Щаблона сообщения
         /// </summary>
         public string Template { get; set; }
+
+        public int EnvironmentId { get; set; }
     }
 
     [Model("Message template filter")]

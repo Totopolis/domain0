@@ -21,10 +21,13 @@ namespace Domain0.Service
             MessageTemplateType templateType, 
             params object[] args)
         {
+            var currentEnvironment = await environment.LoadEnvironment();
+            
             var messageTemplate = await templateRepository.GetTemplate(
                 templateName,
                 cultureContext.Culture, 
-                templateType);
+                templateType,
+                currentEnvironment.Id.Value);
             
             var message = string.Format(messageTemplate, args);
 

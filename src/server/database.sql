@@ -28,6 +28,9 @@ go
 if object_id('dom.Application') is not null
 	drop table dom.Application
 go
+if object_id('dom.AccountEnvironment') is not null
+	drop table dom.AccountEnvironment
+go
 if object_id('dom.Environment') is not null
 	drop table dom.Environment
 go
@@ -78,6 +81,12 @@ create table dom.Environment (
 )
 go
 create index IX_Environment_Token ON dom.Environment ([Token])
+
+insert into dom.Environment
+([Name], [Description], [Token], [IsDefault])
+values
+('DefaultEnvironment','', 'kNOzmFJxIgqkvHU9S4jIq6zU39M9r+v2pcFRgi1SPsE=', 1)
+
 
 create table dom.Permission (
 	Id int not null identity(1,1) constraint PK_dom_Permission primary key,
@@ -155,46 +164,51 @@ create table dom.Message (
 	Type nvarchar(10) null,
 	Locale nvarchar(20) null,
 	Name nvarchar(256) not null,
-	Template nvarchar(max) not null
+	Template nvarchar(max) not null,
+	EnvironmentId int not null
 )
 go
 
+declare @defaultEnvironment int;
+
+set @defaultEnvironment = (select top 1 Id from dom.Environment where IsDefault = 1)
+
 insert into dom.Message 
-([Type], [Locale], [Name], [Template])
+([Type], [Locale], [Name], [Template], [EnvironmentId])
 values
-('sms',		'en',		'WelcomeTemplate',				'Hello {0}!'),
-('sms',		'en',		'RegisterTemplate',				'Your password is: {0} will valid for {1} min'),
-('sms',		'en',		'RequestResetTemplate',			'Your NEW password is: {0} will valid for {1} min'),
-('sms',		'en',		'ForcePasswordResetTemplate',	'Your NEW password is: {0}'),
-('sms',		'en',		'RequestPhoneChangeTemplate',	'Your phone change pin is: {0}'),
+('sms',		'en',		'WelcomeTemplate',				'Hello {0}!', @defaultEnvironment),
+('sms',		'en',		'RegisterTemplate',				'Your password is: {0} will valid for {1} min', @defaultEnvironment),
+('sms',		'en',		'RequestResetTemplate',			'Your NEW password is: {0} will valid for {1} min', @defaultEnvironment),
+('sms',		'en',		'ForcePasswordResetTemplate',	'Your NEW password is: {0}', @defaultEnvironment),
+('sms',		'en',		'RequestPhoneChangeTemplate',	'Your phone change pin is: {0}', @defaultEnvironment),
 
-('sms',		'ru',		'WelcomeTemplate',				'Добро пожаловать {0}!'),
-('sms',		'ru',		'RegisterTemplate',				'Ваш пароль: {0} действителен {1} мин'),
-('sms',		'ru',		'RequestResetTemplate',			'Ваш НОВЫЙ пароль: {0} действителен {1} мин'),
-('sms',		'ru',		'ForcePasswordResetTemplate',	'Ваш НОВЫЙ пароль: {0}'),
-('sms',		'ru',		'RequestPhoneChangeTemplate',	'Ваш PIN для смены пароля: {0}'),
+('sms',		'ru',		'WelcomeTemplate',				'Добро пожаловать {0}!', @defaultEnvironment),
+('sms',		'ru',		'RegisterTemplate',				'Ваш пароль: {0} действителен {1} мин', @defaultEnvironment),
+('sms',		'ru',		'RequestResetTemplate',			'Ваш НОВЫЙ пароль: {0} действителен {1} мин', @defaultEnvironment),
+('sms',		'ru',		'ForcePasswordResetTemplate',	'Ваш НОВЫЙ пароль: {0}', @defaultEnvironment),
+('sms',		'ru',		'RequestPhoneChangeTemplate',	'Ваш PIN для смены пароля: {0}', @defaultEnvironment),
 
-('email',	'en',		'WelcomeTemplate',				'Hello {0}!'),
-('email',	'en',		'WelcomeSubjectTemplate',		'Hello {0}!'),
-('email',	'en',		'RegisterTemplate',				'Your password is: {0} will valid for {1} min'),
-('email',	'en',		'RegisterSubjectTemplate',		'Dear {0}! Welcome to {1}'),
-('email',	'en',		'RequestResetTemplate',			'Your NEW password is: {0} will valid for {1} min'),
-('email',	'en',		'RequestResetSubjectTemplate',	'{0}.Change password for {1}'),
-('email',	'en',		'ForcePasswordResetTemplate',	'Your NEW password is: {0}'),
-('email',	'en',		'ForcePasswordResetSubjectTemplate', '{0}! NEW password for {1}'),
-('email',	'en',		'RequestEmailChangeTemplate',	'Your email change pin is: {0}'),
-('email',	'en',		'RequestEmailChangeSubjectTemplate',	'Email change confirmation'),
+('email',	'en',		'WelcomeTemplate',				'Hello {0}!', @defaultEnvironment),
+('email',	'en',		'WelcomeSubjectTemplate',		'Hello {0}!', @defaultEnvironment),
+('email',	'en',		'RegisterTemplate',				'Your password is: {0} will valid for {1} min', @defaultEnvironment),
+('email',	'en',		'RegisterSubjectTemplate',		'Dear {0}! Welcome to {1}', @defaultEnvironment),
+('email',	'en',		'RequestResetTemplate',			'Your NEW password is: {0} will valid for {1} min', @defaultEnvironment),
+('email',	'en',		'RequestResetSubjectTemplate',	'{0}.Change password for {1}', @defaultEnvironment),
+('email',	'en',		'ForcePasswordResetTemplate',	'Your NEW password is: {0}', @defaultEnvironment),
+('email',	'en',		'ForcePasswordResetSubjectTemplate', '{0}! NEW password for {1}', @defaultEnvironment),
+('email',	'en',		'RequestEmailChangeTemplate',	'Your email change pin is: {0}', @defaultEnvironment),
+('email',	'en',		'RequestEmailChangeSubjectTemplate',	'Email change confirmation', @defaultEnvironment),
 
-('email',	'ru',		'WelcomeTemplate',				'Добро пожаловать {0}!'),
-('email',	'ru',		'WelcomeSubjectTemplate',		'Добро пожаловать {0}!'),
-('email',	'ru',		'RegisterTemplate',				'Ваш пароль: {0} действителен {1} мин'),
-('email',	'ru',		'RegisterSubjectTemplate',		'{0}! Добро пожаловать в {1}'),
-('email',	'ru',		'RequestResetTemplate',			'Ваш НОВЫЙ пароль: {0} действителен {1} мин'),
-('email',	'ru',		'RequestResetSubjectTemplate',	'{0}. Изменение пароля для {1}'),
-('email',	'ru',		'ForcePasswordResetTemplate',	'Ваш НОВЫЙ пароль: {0}'),
-('email',	'ru',		'ForcePasswordResetSubjectTemplate',	'{0}! Новый пароль для {1}'),
-('email',	'ru',		'RequestEmailChangeTemplate',	'Ваш PIN для смены email: {0}'),
-('email',	'ru',		'RequestEmailChangeSubjectTemplate',	'Подтверждение смены email')
+('email',	'ru',		'WelcomeTemplate',				'Добро пожаловать {0}!', @defaultEnvironment),
+('email',	'ru',		'WelcomeSubjectTemplate',		'Добро пожаловать {0}!', @defaultEnvironment),
+('email',	'ru',		'RegisterTemplate',				'Ваш пароль: {0} действителен {1} мин', @defaultEnvironment),
+('email',	'ru',		'RegisterSubjectTemplate',		'{0}! Добро пожаловать в {1}', @defaultEnvironment),
+('email',	'ru',		'RequestResetTemplate',			'Ваш НОВЫЙ пароль: {0} действителен {1} мин', @defaultEnvironment),
+('email',	'ru',		'RequestResetSubjectTemplate',	'{0}. Изменение пароля для {1}', @defaultEnvironment),
+('email',	'ru',		'ForcePasswordResetTemplate',	'Ваш НОВЫЙ пароль: {0}', @defaultEnvironment),
+('email',	'ru',		'ForcePasswordResetSubjectTemplate',	'{0}! Новый пароль для {1}', @defaultEnvironment),
+('email',	'ru',		'RequestEmailChangeTemplate',	'Ваш PIN для смены email: {0}', @defaultEnvironment),
+('email',	'ru',		'RequestEmailChangeSubjectTemplate',	'Подтверждение смены email', @defaultEnvironment)
 go
 create index IX_Message_Name_Type_Locale ON dom.Message ([Name] asc, [Type] asc, [Locale] asc)
 go
@@ -307,11 +321,11 @@ if object_id('[hst_dom].[EmailRequest]') is not null
 	DROP TABLE [hst_dom].[EmailRequest]
 GO
 
-if object_id(' [hst_dom].[Application]') is not null
+if object_id('[hst_dom].[Application]') is not null
 	DROP TABLE [hst_dom].[Application]
 GO
 
-if object_id(' [hst_dom].[Environment]') is not null
+if object_id('[hst_dom].[Environment]') is not null
 	DROP TABLE [hst_dom].[Environment]
 GO
 
@@ -426,6 +440,7 @@ CREATE TABLE [hst_dom].[Message](
 	[Locale] [nvarchar](20) NULL,
 	[Name] [nvarchar](256) NULL,
 	[Template] [nvarchar](max) NULL,
+	[EnvironmentId] int null,
  CONSTRAINT [PK_Message_History] PRIMARY KEY CLUSTERED 
 (
 	[H_ID] ASC
@@ -923,7 +938,8 @@ insert into [hst_dom].[Message] ([H_ConnectionID], [H_TransactionID], [H_Session
 	,[Type]
 	,[Locale]
 	,[Name]
-	,[Template])
+	,[Template]
+	,[EnvironmentId])
 select @connection_id, @transaction_id, @@SPID, @login, @time, @opType, h.H_IsNew
 -- data columns
 	,h.[Id]
@@ -932,6 +948,8 @@ select @connection_id, @transaction_id, @@SPID, @login, @time, @opType, h.H_IsNe
 	,h.[Locale]
 	,h.[Name]
 	,h.[Template]
+	,h.[EnvironmentId]
+
 from 
 (
 	select 0 as H_IsNew, t.* 

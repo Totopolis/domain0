@@ -17,7 +17,13 @@ namespace Domain0.Nancy.Infrastructure
         }
 
 
-        public async Task<Repository.Model.Environment> LoadEnvironment(string environmentToken)
+        public async Task<Environment> LoadEnvironment(int userId)
+        {
+            environment = await environmentRepository.GetByUser(userId);
+            return environment;
+        }
+
+        public async Task<Environment> LoadEnvironment(string environmentToken)
         {
             environment = null;
 
@@ -33,28 +39,33 @@ namespace Domain0.Nancy.Infrastructure
             return environment;
         }
 
-        public async Task<Repository.Model.Environment> LoadEnvironment()
+        public async Task<Environment> LoadEnvironment()
         {
             if (environment != null)
                 return environment;
 
-            if (int.TryParse(nancyContext.CurrentUser.Identity.Name, out int userId))
-            {
-                var environment = await environmentRepository.GetByUser(userId);
-            }
+            if (!int.TryParse(nancyContext?.CurrentUser?.Identity?.Name, out var userId))
+                return null;
 
-            return null;
+            environment = await environmentRepository.GetByUser(userId);
+            return environment;
         }
 
         public async Task SetUserEnvironment(int userId, Environment newEnvironment)
         {
             environment = newEnvironment;
+            if (environment?.Id == null)
+                return;
+            
             await environmentRepository.SetUserEnvironment(userId, environment.Id.Value);
         }
 
         public async Task SetUserEnvironment(int userId, int environmentId)
         {
             environment = await environmentRepository.FindById(environmentId);
+            if (environment?.Id == null)
+                return;
+
             await environmentRepository.SetUserEnvironment(userId, environment.Id.Value);
         }
 
@@ -63,7 +74,7 @@ namespace Domain0.Nancy.Infrastructure
             environment = await environmentRepository.FindById(environmentId);
         }
 
-        private Repository.Model.Environment environment;
+        private Environment environment;
 
         private readonly IEnvironmentRepository environmentRepository;
 

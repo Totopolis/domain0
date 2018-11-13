@@ -9,6 +9,7 @@ namespace Domain0.Repository
         Task<string> GetTemplate(
             MessageTemplateName name,
             CultureInfo culture,
-            MessageTemplateType type);
+            MessageTemplateType type,
+            int environmentId);
     }
 }

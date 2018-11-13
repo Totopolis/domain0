@@ -14,6 +14,8 @@ namespace Domain0.Repository.Model
         public string Name { get; set; }
 
         public string Description { get; set; }
+
+        public int EnvironmentId { get; set; }
     }
 
     public enum MessageTemplateName

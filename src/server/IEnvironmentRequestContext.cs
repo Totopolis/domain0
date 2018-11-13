@@ -5,14 +5,16 @@ namespace Domain0.Service
 {
     public interface IEnvironmentRequestContext
     {
-        Task<Repository.Model.Environment> LoadEnvironment(string environmentToken);
+        Task<Environment> LoadEnvironment(int userId);
 
-        Task<Repository.Model.Environment> LoadEnvironment();
+        Task<Environment> LoadEnvironment(string environmentToken);
+
+        Task<Environment> LoadEnvironment();
 
         Task SetUserEnvironment(int userId, Environment environment);
 
         Task SetUserEnvironment(int userId, int environmentId);
 
-        Task SetEnvironment(int value);
+        Task SetEnvironment(int environmentId);
     }
 }

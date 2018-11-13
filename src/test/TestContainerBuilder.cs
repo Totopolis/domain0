@@ -57,6 +57,17 @@ namespace Domain0.Test
                     Token = "DefaultToken",
                     Name = "DefaultToken"
                 });
+            
+            environmentMock
+                .Setup(callTo => callTo.GetByUser(It.IsAny<int>()))
+                .ReturnsAsync(new Repository.Model.Environment
+                {
+                    Id = 123,
+                    IsDefault = true,
+                    Token = "DefaultToken",
+                    Name = "DefaultToken"
+                });
+
             builder.RegisterInstance(environmentMock.Object)
                 .As<IEnvironmentRepository>()
                 .SingleInstance();

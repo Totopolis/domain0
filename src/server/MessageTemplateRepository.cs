@@ -20,25 +20,31 @@ namespace Domain0.FastSql
         public async Task<string> GetTemplate(
             MessageTemplateName name,
             CultureInfo culture,
-            MessageTemplateType type)
+            MessageTemplateType type,
+            int environmentId)
         {
-            return await GetTemplateInternal(name, culture, type);
+            return await GetTemplateInternal(name, culture, type, environmentId);
         }
 
-        private async Task<string> GetTemplateInternal(MessageTemplateName name, CultureInfo culture, MessageTemplateType type)
+        private async Task<string> GetTemplateInternal(
+            MessageTemplateName name, 
+            CultureInfo culture, 
+            MessageTemplateType type,
+            int environmentId)
         {
-            var templates = await 
-                getContext()
-                    .CreateSimple(
-                        $"select * " +
-                        $"from {TableName} " +
-                        $"where {nameof(MessageTemplate.Name)}      =@p0 " +
-                        $"  and {nameof(MessageTemplate.Type)}      =@p1 " +
-                        $"order by {nameof(MessageTemplate.Locale)} ",
-                        name.ToString(),
-                        type.ToString())
-                    .ExecuteQueryAsync<MessageTemplate>()
-                    .ToArray();
+            var templates = await getContext()
+                .CreateSimple(
+                    $"select * " +
+                    $"from {TableName} " +
+                    $"where {nameof(MessageTemplate.Name)}          =@p0 " +
+                    $"  and {nameof(MessageTemplate.Type)}          =@p1 " +
+                    $"  and {nameof(MessageTemplate.EnvironmentId)} =@p2 " +
+                    $"order by {nameof(MessageTemplate.Locale)} ",
+                    name.ToString(),
+                    type.ToString(),
+                    environmentId)
+                .ExecuteQueryAsync<MessageTemplate>()
+                .ToArray();
 
             return GetTemplateMatch(culture, templates) ??
                    // fall back to default culture

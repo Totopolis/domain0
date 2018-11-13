@@ -187,19 +187,19 @@ namespace Domain0.Nancy
                 return NancyInternalConfiguration
                     .WithOverrides(x =>
                     {
-                        x.ResponseProcessors = avalibleResponceProcessors;
-                        x.Serializers = avalibleSerializers;
+                        x.ResponseProcessors = availableResponseProcessors;
+                        x.Serializers = availableSerializers;
                     });
             }
         }
 
-        private readonly Type[] avalibleResponceProcessors = {
+        private readonly Type[] availableResponseProcessors = {
             typeof(ProtobufResponseProcessor),
             typeof(JsonProcessor),
             typeof(DefaultResponseProcessor)
         };
 
-        private readonly Type[] avalibleSerializers = {
+        private readonly Type[] availableSerializers = {
             typeof(JsonNetSerializer)
         };
 
