@@ -61,11 +61,11 @@ namespace Domain0.FastSql
         public async Task SetUserEnvironment(int userId, int environmentId)
         {
             await getContext()
-                .MergeAsync(TableAccountEnvironmentName, new
+                .InsertAsync(TableAccountEnvironmentName, new
                 {
-                    userId,
-                    environmentId
-                }, "UserId", "EnvironmentId");
+                    UserId = userId,
+                    EnvironmentId = environmentId
+                });
         }
 
         protected string TableAccountEnvironmentName;
