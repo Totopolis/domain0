@@ -13,6 +13,13 @@ namespace Domain0.Nancy.Service
 
         Task DeleteApplication(int id);
 
+        Task<Environment[]> GetByFilter(EnvironmentFilter filter);
+
+        Task<int> Insert(Environment application);
+
+        Task Update(Environment application);
+
+        Task DeleteEnvironment(int id);
 
         Task<MessageTemplate[]> GetByFilter(MessageTemplateFilter filter);
         

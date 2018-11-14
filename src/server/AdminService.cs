@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using Domain0.Model;
 using Domain0.Repository;
@@ -9,12 +10,14 @@ namespace Domain0.Nancy.Service
     {
         public AdminService(
             IApplicationRepository applicationRepositoryInstance,
+            IEnvironmentRepository environmentRepositoryInstance,
             IMapper mapperInstance,
             IMessageTemplateRepository messageTemplateRepositoryInstance,
             IPermissionRepository permissionRepositoryInstance,
             IRoleRepository roleRepositoryInstance)
         {
             applicationRepository = applicationRepositoryInstance;
+            environmentRepository = environmentRepositoryInstance;
             mapper = mapperInstance;
             messageTemplateRepository = messageTemplateRepositoryInstance;
             permissionRepository = permissionRepositoryInstance;
@@ -188,7 +191,40 @@ namespace Domain0.Nancy.Service
         }
         #endregion
 
+        #region Environment
+        public async Task<Environment[]> GetByFilter(EnvironmentFilter filter)
+        {
+            if (filter.LoadAll.GetValueOrDefault())
+                await environmentRepository.FindByIds(Enumerable.Empty<int>());
+
+            if (filter.Ids.Any())
+                await environmentRepository.FindByIds(filter.Ids);
+
+            return new Environment[0];
+        }
+
+        public async Task<int> Insert(Environment environment)
+        {
+            var environmentEntity = mapper.Map<Repository.Model.Environment>(environment);
+
+            return (int)await environmentRepository.Insert(environmentEntity);
+        }
+
+        public async Task Update(Environment environment)
+        {
+            var environmentEntity = mapper.Map<Repository.Model.Environment>(environment);
+
+            await environmentRepository.Update(environmentEntity);
+        }
+
+        public async Task DeleteEnvironment(int id)
+        {
+            await environmentRepository.Delete(id);
+        }
+        #endregion
+
         private readonly IApplicationRepository applicationRepository;
+        private readonly IEnvironmentRepository environmentRepository;
         private readonly IMapper mapper;
         private readonly IMessageTemplateRepository messageTemplateRepository;
         private readonly IPermissionRepository permissionRepository;

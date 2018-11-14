@@ -183,7 +183,7 @@
       <Link>Model\ChangePhoneUserRequest.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server.nancy\Environment.cs">
-      <Link>Service\Repository\Model\Environment.cs</Link>
+      <Link>Model\Environment.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server.nancy\ForceChangePhone.cs">
       <Link>Model\ForceChangePhone.cs</Link>
@@ -427,6 +427,9 @@
     </Compile>
     <Compile Include="..\..\src\server\Permission.cs">
       <Link>Service\Repository\Model\Permission.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\Environment.cs">
+      <Link>Service\Repository\Model\Environment.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\TokenClaims.cs">
       <Link>Service\Tokens\TokenClaims.cs</Link>

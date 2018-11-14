@@ -23,6 +23,7 @@ namespace Domain0.Service
             CreateMap<Repository.Model.RolePermission,  Model.RolePermission>();
             CreateMap<Repository.Model.Role,            Model.Role>();
             CreateMap<Repository.Model.UserRole,        Model.UserRole>();
+            CreateMap<Repository.Model.Environment,     Model.Environment>();
         }
     }
 }

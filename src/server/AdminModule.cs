@@ -21,6 +21,12 @@ namespace Domain0.Nancy
         public const string UpdateApplicationUrl = "api/admin/Application";
         public const string RemoveApplicationUrl = "api/admin/Application/{id}";
 
+        public const string LoadEnvironmentsByFilterUrl = "api/admin/Environment/ByFilter";
+        public const string LoadEnvironmentUrl = "api/admin/Environment/{id}";
+        public const string CreateEnvironmentUrl = "api/admin/Environment";
+        public const string UpdateEnvironmentUrl = "api/admin/Environment";
+        public const string RemoveEnvironmentUrl = "api/admin/Environment/{id}";
+
         public const string LoadMessageTemplatesByFilterUrl = "api/admin/MessageTemplate/ByFilter";
         public const string LoadMessageTemplateUrl = "api/admin/MessageTemplate/{id}";
         public const string CreateMessageTemplateUrl = "api/admin/MessageTemplate";
@@ -82,6 +88,23 @@ namespace Domain0.Nancy
             Delete(RemoveApplicationUrl,
                 ctx => RemoveApplication(),
                 name: nameof(RemoveApplication));
+
+
+            Post(LoadEnvironmentUrl,
+                ctx => LoadEnvironmentsByFilter(),
+                name: nameof(LoadEnvironmentsByFilter));
+            Get(LoadEnvironmentUrl,
+                ctx => LoadEnvironment(),
+                name: nameof(LoadEnvironment));
+            Post(CreateEnvironmentUrl,
+                ctx => CreateEnvironment(),
+                name: nameof(CreateEnvironment));
+            Put(UpdateEnvironmentUrl,
+                ctx => UpdateEnvironment(),
+                name: nameof(UpdateEnvironment));
+            Delete(RemoveEnvironmentUrl,
+                ctx => RemoveEnvironment(),
+                name: nameof(RemoveEnvironment));
 
 
             Post(
@@ -261,6 +284,104 @@ namespace Domain0.Nancy
         {
             var id = Context.Parameters.id;
             await adminService.DeleteApplication(id);
+            return HttpStatusCode.NoContent;
+
+        }
+
+        #endregion
+
+
+        #region Environment
+        [Route(nameof(LoadEnvironmentsByFilter))]
+        [Route(HttpMethod.Post, LoadEnvironmentsByFilterUrl)]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Tags = new[] { "Admin" }, Summary = "Method for receive Environments by filter")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body,
+            Name = "EnvironmentFilter",
+            ParamType = typeof(EnvironmentFilter),
+            Required = true,
+            Description = "Environments filter")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(IEnumerable<Environment>))]
+        public async Task<object> LoadEnvironmentsByFilter()
+        {
+            var filter = this.BindAndValidateModel<EnvironmentFilter>();
+            return await adminService.GetByFilter(filter);
+        }
+
+        [Route(nameof(LoadEnvironment))]
+        [Route(HttpMethod.Get, LoadEnvironmentUrl)]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Tags = new[] { "Admin" }, Summary = "Method for get Environment")]
+        [RouteParam(
+            ParamIn = ParameterIn.Path,
+            Name = "id",
+            ParamType = typeof(int),
+            Required = true,
+            Description = "Environment id")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(IEnumerable<Environment>))]
+        public async Task<object> LoadEnvironment()
+        {
+            var id = Context.Parameters.id;
+            return await adminService.GetByFilter(new EnvironmentFilter(id));
+        }
+
+        [Route(nameof(CreateEnvironment))]
+        [Route(HttpMethod.Post, CreateEnvironmentUrl)]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Tags = new[] { "Admin" }, Summary = "Method for create Environment")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body,
+            Name = "Environment",
+            ParamType = typeof(Environment),
+            Required = true,
+            Description = "Create Environment")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(int))]
+        public async Task<object> CreateEnvironment()
+        {
+            var environment = this.BindAndValidateModel<Environment>();
+            var id = await adminService.Insert(environment);
+            return Response.AsJson(id, HttpStatusCode.OK);
+        }
+
+        [Route(nameof(UpdateEnvironment))]
+        [Route(HttpMethod.Put, UpdateEnvironmentUrl)]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Tags = new[] { "Admin" }, Summary = "Method for update Environment")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body,
+            Name = "Environment",
+            ParamType = typeof(Environment),
+            Required = true,
+            Description = "Update Environment")]
+        [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
+        public async Task<object> UpdateEnvironment()
+        {
+            var environment = this.BindAndValidateModel<Environment>();
+            await adminService.Update(environment);
+            return HttpStatusCode.NoContent;
+        }
+
+        [Route(nameof(RemoveEnvironment))]
+        [Route(HttpMethod.Delete, RemoveEnvironmentUrl)]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Tags = new[] { "Admin" }, Summary = "Method for delete Environment by id")]
+        [RouteParam(
+            ParamIn = ParameterIn.Path,
+            Name = "id",
+            ParamType = typeof(int),
+            Required = true,
+            Description = "Delete Environment")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success")]
+        public async Task<object> RemoveEnvironment()
+        {
+            var id = Context.Parameters.id;
+            await adminService.DeleteEnvironment(id);
             return HttpStatusCode.NoContent;
 
         }
