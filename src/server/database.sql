@@ -80,7 +80,7 @@ create table dom.Environment (
 	IsDefault bit not null default(0),
 )
 go
-create index IX_Environment_Token ON dom.Environment ([Token])
+create unique index IX_Environment_Token ON dom.Environment ([Token])
 
 insert into dom.Environment
 ([Name], [Description], [Token], [IsDefault])
