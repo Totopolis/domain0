@@ -11,7 +11,7 @@ namespace Domain0.Api.Client
 {
     internal class TokenChangeManager : IDisposable
     {
-        public TokenChangeManager(Domain0AuthenticationContext authContext, ILoginInfoStorage storage)
+        public TokenChangeManager(AuthenticationContext authContext, ILoginInfoStorage storage)
         {
             domain0AuthenticationContext = authContext;
             loginInfoStorage = storage;
@@ -120,7 +120,7 @@ namespace Domain0.Api.Client
             {
                 if (!CheckIsLoggedIsLoggedIn())
                 {
-                    throw new Domain0AuthenticationContextException("not logged in");
+                    throw new AuthenticationContextException("not logged in");
                 }
 
                 return permissionsToCheck.All(p => permissions?.Contains(p) == true);
@@ -133,7 +133,7 @@ namespace Domain0.Api.Client
             {
                 if (!CheckIsLoggedIsLoggedIn())
                 {
-                    throw new Domain0AuthenticationContextException("not logged in");
+                    throw new AuthenticationContextException("not logged in");
                 }
 
                 return permissions?.Contains(permissionToCheck) == true;
@@ -338,7 +338,7 @@ namespace Domain0.Api.Client
         }
 
         private readonly List<WeakReference<ITokenStore>> attachedClients = new List<WeakReference<ITokenStore>>();
-        private readonly Domain0AuthenticationContext domain0AuthenticationContext;
+        private readonly AuthenticationContext domain0AuthenticationContext;
         private readonly ILoginInfoStorage loginInfoStorage;
         private readonly RefreshTokenTimer refreshTokenTimer;
         private readonly AsyncReaderWriterLock tokenChangeLock = new AsyncReaderWriterLock();

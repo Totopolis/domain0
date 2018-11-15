@@ -12,7 +12,7 @@ namespace Domain0.Api.Client.Test
         {
             var testContext = TestContext.MockUp(accessValidTime: 0.1);
 
-            var domain0Context = new Domain0AuthenticationContext(
+            var domain0Context = new AuthenticationContext(
                 domain0ClientEnvironment: testContext.ClientScopeMock.Object,
                 externalStorage: testContext.LoginInfoStorageMock.Object,
                 enableAutoRefreshTimer: true,
@@ -40,7 +40,7 @@ namespace Domain0.Api.Client.Test
         {
             var testContext = TestContext.MockUp(accessValidTime: 0.1);
 
-            var domain0Context = new Domain0AuthenticationContext(
+            var domain0Context = new AuthenticationContext(
                 domain0ClientEnvironment: testContext.ClientScopeMock.Object,
                 externalStorage: testContext.LoginInfoStorageMock.Object,
                 enableAutoRefreshTimer: true,

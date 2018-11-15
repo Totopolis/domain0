@@ -40,17 +40,17 @@
     <Compile Include="..\..\src\client\ClientLockScope.cs">
       <Link>ClientLockScope.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\client\Domain0AuthenticationContext.cs">
-      <Link>Domain0AuthenticationContext.cs</Link>
+    <Compile Include="..\..\src\client\AuthenticationContext.cs">
+      <Link>AuthenticationContext.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\client\Domain0AuthenticationContextException.cs">
-      <Link>Domain0AuthenticationContextException.cs</Link>
+    <Compile Include="..\..\src\client\AuthenticationContextException.cs">
+      <Link>AuthenticationContextException.cs</Link>
     </Compile>
     <Compile Include="..\..\src\client\Domain0ClientScope.cs">
       <Link>Domain0ClientScope.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\client\IDomain0AuthenticationContext.cs">
-      <Link>IDomain0AuthenticationContext.cs</Link>
+    <Compile Include="..\..\src\client\IAuthenticationContext.cs">
+      <Link>IAuthenticationContext.cs</Link>
     </Compile>
     <Compile Include="..\..\src\client\LoginInfoStorage.cs">
       <Link>LoginInfoStorage.cs</Link>

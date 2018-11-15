@@ -11,7 +11,7 @@ namespace Domain0.Api.Client
         private const int DEFAULT_MIN_AWAIT_TIME = 50;
         private const int EXCEPTION_MIN_AWAIT_TIME = 15000;
 
-        public RefreshTokenTimer(Domain0AuthenticationContext domain0AuthenticationContext)
+        public RefreshTokenTimer(AuthenticationContext domain0AuthenticationContext)
         {
             authContext = domain0AuthenticationContext;
             Task.Run(RefreshLoop, cts.Token);
@@ -101,7 +101,7 @@ namespace Domain0.Api.Client
             return Timeout.Infinite;
         }
 
-        private readonly Domain0AuthenticationContext authContext;
+        private readonly AuthenticationContext authContext;
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
         private int currentMinimumAwaitTime;
         private readonly AsyncReaderWriterLock nextRefreshTimeLock = new AsyncReaderWriterLock();

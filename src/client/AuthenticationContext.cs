@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Domain0.Api.Client
 {
-    public class Domain0AuthenticationContext : IDomain0AuthenticationContext, IDisposable
+    public class AuthenticationContext : IAuthenticationContext, IDisposable
     {
-        public Domain0AuthenticationContext(
+        public AuthenticationContext(
             IDomain0ClientScope domain0ClientEnvironment = null,
             ILoginInfoStorage externalStorage = null,
             uint reserveTimeToUpdateToken = 120,
@@ -67,7 +67,7 @@ namespace Domain0.Api.Client
             catch (Exception ex)
             {
                 Trace.TraceError($"Login by: { phone } error: { ex }");
-                throw new Domain0AuthenticationContextException("Login by phone error", ex);
+                throw new AuthenticationContextException("Login by phone error", ex);
             }
         }
 
@@ -85,7 +85,7 @@ namespace Domain0.Api.Client
             catch (Exception ex)
             {
                 Trace.TraceError($"Login by: { email } error: { ex }");
-                throw new Domain0AuthenticationContextException("Login by email error", ex);
+                throw new AuthenticationContextException("Login by email error", ex);
             }
         }
 
@@ -142,7 +142,7 @@ namespace Domain0.Api.Client
                 }
                 catch (Exception e)
                 {
-                    throw new Domain0AuthenticationContextException("Refresh token error", e);
+                    throw new AuthenticationContextException("Refresh token error", e);
                 }
             }
         }

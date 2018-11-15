@@ -6,11 +6,11 @@ namespace Domain0.Api.Client
 {
     internal class RefreshTokenInterceptor : AsyncInterceptorBase
     {
-        private readonly Domain0AuthenticationContext authContext;
+        private readonly AuthenticationContext authContext;
         private readonly IClientLockScope clientScope;
 
         public RefreshTokenInterceptor(
-            Domain0AuthenticationContext domain0AuthenticationContext,
+            AuthenticationContext domain0AuthenticationContext,
             IClientLockScope clientLockScope)
         {
             authContext = domain0AuthenticationContext;

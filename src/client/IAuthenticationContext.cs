@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Domain0.Api.Client
 {
-    public interface IDomain0AuthenticationContext
+    public interface IAuthenticationContext
     {
         IDomain0Client Client { get; }
 

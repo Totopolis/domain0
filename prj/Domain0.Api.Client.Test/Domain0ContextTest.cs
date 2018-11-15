@@ -11,7 +11,7 @@ namespace Domain0.Api.Client.Test
         {
             var testContext = TestContext.MockUp();
 
-            var domain0Context = new Domain0AuthenticationContext(
+            var domain0Context = new AuthenticationContext(
                 domain0ClientEnvironment: testContext.ClientScopeMock.Object,
                 externalStorage: testContext.LoginInfoStorageMock.Object);
 
@@ -33,7 +33,7 @@ namespace Domain0.Api.Client.Test
         {
             var testContext = TestContext.MockUp();
 
-            var domain0Context = new Domain0AuthenticationContext(
+            var domain0Context = new AuthenticationContext(
                 domain0ClientEnvironment: testContext.ClientScopeMock.Object,
                 externalStorage: testContext.LoginInfoStorageMock.Object);
 
@@ -55,7 +55,7 @@ namespace Domain0.Api.Client.Test
         {
             var testContext = TestContext.MockUp();
 
-            var domain0Context = new Domain0AuthenticationContext(
+            var domain0Context = new AuthenticationContext(
                 domain0ClientEnvironment: testContext.ClientScopeMock.Object,
                 externalStorage: testContext.LoginInfoStorageMock.Object);
 
@@ -91,7 +91,7 @@ namespace Domain0.Api.Client.Test
         {
             var testContext = TestContext.MockUp(accessValidTime: 0.1);
 
-            var domain0Context = new Domain0AuthenticationContext(
+            var domain0Context = new AuthenticationContext(
                 domain0ClientEnvironment: testContext.ClientScopeMock.Object,
                 reserveTimeToUpdateToken: 0,
                 externalStorage: testContext.LoginInfoStorageMock.Object);
@@ -138,7 +138,7 @@ namespace Domain0.Api.Client.Test
                 .Setup(callTo => callTo.Load())
                 .Returns(() => savedLoginInfo);
 
-            var domain0Context = new Domain0AuthenticationContext(
+            var domain0Context = new AuthenticationContext(
                 domain0ClientEnvironment: testContext.ClientScopeMock.Object,
                 externalStorage: testContext.LoginInfoStorageMock.Object);
 
@@ -151,7 +151,7 @@ namespace Domain0.Api.Client.Test
 
             Assert.True(domain0Context.IsLoggedIn);
 
-            var newDomain0Context = new Domain0AuthenticationContext(
+            var newDomain0Context = new AuthenticationContext(
                 domain0ClientEnvironment: testContext.ClientScopeMock.Object,
                 externalStorage: testContext.LoginInfoStorageMock.Object);
 
@@ -163,7 +163,7 @@ namespace Domain0.Api.Client.Test
         {
             var testContext = TestContext.MockUp();
 
-            var domain0Context = new Domain0AuthenticationContext(
+            var domain0Context = new AuthenticationContext(
                 domain0ClientEnvironment: testContext.ClientScopeMock.Object,
                 externalStorage: testContext.LoginInfoStorageMock.Object);
 
@@ -178,13 +178,13 @@ namespace Domain0.Api.Client.Test
         {
             var testContext = TestContext.MockUp();
 
-            var domain0Context = new Domain0AuthenticationContext(
+            var domain0Context = new AuthenticationContext(
                 domain0ClientEnvironment: testContext.ClientScopeMock.Object,
                 externalStorage: testContext.LoginInfoStorageMock.Object);
 
             Assert.False(domain0Context.IsLoggedIn);
 
-            Assert.Throws<Domain0AuthenticationContextException>(
+            Assert.Throws<AuthenticationContextException>(
                 () => domain0Context.HavePermission("p"));
         }
 
@@ -193,7 +193,7 @@ namespace Domain0.Api.Client.Test
         {
             var testContext = TestContext.MockUp();
 
-            var domain0Context = new Domain0AuthenticationContext(
+            var domain0Context = new AuthenticationContext(
                 domain0ClientEnvironment: testContext.ClientScopeMock.Object,
                 externalStorage: testContext.LoginInfoStorageMock.Object);
 
@@ -215,13 +215,13 @@ namespace Domain0.Api.Client.Test
         {
             var testContext = TestContext.MockUp();
 
-            var domain0Context = new Domain0AuthenticationContext(
+            var domain0Context = new AuthenticationContext(
                 domain0ClientEnvironment: testContext.ClientScopeMock.Object,
                 externalStorage: testContext.LoginInfoStorageMock.Object);
 
             Assert.False(domain0Context.IsLoggedIn);
 
-            Assert.Throws<Domain0AuthenticationContextException>(
+            Assert.Throws<AuthenticationContextException>(
                 () => domain0Context.HavePermission("p"));
 
             var profile = await domain0Context.LoginByPhone(123, "2");
