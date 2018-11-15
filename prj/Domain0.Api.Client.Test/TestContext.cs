@@ -2,7 +2,9 @@
 using Moq;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Nito.AsyncEx;
+using Newtonsoft.Json;
 
 namespace Domain0.Api.Client.Test
 {
@@ -56,10 +58,17 @@ namespace Domain0.Api.Client.Test
             double accessValidTime,
             double refreshValidTime)
         {
+            var defPermissions = new Claim[]
+            {
+                new Claim("permissions",
+                    JsonConvert.SerializeObject(new[] {"claimsA", "claimsB"}))
+            };
+
             var access = Handler.CreateToken(
                 new SecurityTokenDescriptor
                 {
-                    Expires = DateTime.UtcNow.AddSeconds(accessValidTime)
+                    Expires = DateTime.UtcNow.AddSeconds(accessValidTime),
+                    Subject = new ClaimsIdentity(defPermissions)
                 });
 
             var refresh = Handler.CreateToken(

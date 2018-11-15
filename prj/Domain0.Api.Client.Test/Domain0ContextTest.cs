@@ -172,5 +172,66 @@ namespace Domain0.Api.Client.Test
             testContext.ClientScopeMock
                 .VerifySet(x => x.HostUrl = "https://custom.com");
         }
+
+        [Fact]
+        public async void CheckRights_ShouldFailWhenLoggedOut()
+        {
+            var testContext = TestContext.MockUp();
+
+            var domain0Context = new Domain0AuthenticationContext(
+                domain0ClientEnvironment: testContext.ClientScopeMock.Object,
+                externalStorage: testContext.LoginInfoStorageMock.Object);
+
+            Assert.False(domain0Context.IsLoggedIn);
+
+            Assert.Throws<Domain0AuthenticationContextException>(
+                () => domain0Context.HavePermission("p"));
+        }
+
+        [Fact]
+        public async void CheckRights_Graned_Permission()
+        {
+            var testContext = TestContext.MockUp();
+
+            var domain0Context = new Domain0AuthenticationContext(
+                domain0ClientEnvironment: testContext.ClientScopeMock.Object,
+                externalStorage: testContext.LoginInfoStorageMock.Object);
+
+            Assert.False(domain0Context.IsLoggedIn);
+
+            var profile = await domain0Context.LoginByPhone(123, "2");
+            Assert.NotNull(profile);
+
+
+            Assert.True(domain0Context.HavePermission("claimsA"));
+            Assert.True(domain0Context.HavePermission("claimsB"));
+
+            Assert.True(domain0Context.HavePermissions(new []{"claimsA", "claimsB"}));
+            Assert.True(domain0Context.HavePermissions(new[] { "claimsA" }));
+        }
+
+        [Fact]
+        public async void CheckRights_Restricted()
+        {
+            var testContext = TestContext.MockUp();
+
+            var domain0Context = new Domain0AuthenticationContext(
+                domain0ClientEnvironment: testContext.ClientScopeMock.Object,
+                externalStorage: testContext.LoginInfoStorageMock.Object);
+
+            Assert.False(domain0Context.IsLoggedIn);
+
+            Assert.Throws<Domain0AuthenticationContextException>(
+                () => domain0Context.HavePermission("p"));
+
+            var profile = await domain0Context.LoginByPhone(123, "2");
+            Assert.NotNull(profile);
+
+            Assert.False(domain0Context.HavePermission("claimsC"));
+
+            Assert.False(domain0Context.HavePermissions(new[] { "claimsC", "claimsB" }));
+            Assert.False(domain0Context.HavePermissions(new[] { "claimsC" }));
+            Assert.False(domain0Context.HavePermissions(new[] { "claimsA", "claimsB", "asdf" }));
+        }
     }
 }

@@ -83,23 +83,14 @@ namespace Domain0.Api.Client
 
         private DateTime? accessTokenValidTo;
         private DateTime? refreshTokenValidTo;
+        private HashSet<string> permissions;
         public bool IsLoggedIn
         {
             get
             {
                 using (tokenChangeLock.ReaderLock())
                 {
-
-                    if (loginInfo == null)
-                        return false;
-
-                    if (accessTokenValidTo > DateTime.UtcNow.AddSeconds(domain0AuthenticationContext.ReserveTimeToUpdate))
-                        return true;
-
-                    if (refreshTokenValidTo > DateTime.UtcNow.AddSeconds(domain0AuthenticationContext.ReserveTimeToUpdate))
-                        return true;
-
-                    return false;
+                    return CheckIsLoggedIsLoggedIn();
                 }
             }
         }
@@ -123,6 +114,32 @@ namespace Domain0.Api.Client
             }
         }
 
+        internal bool HavePermissions(IEnumerable<string> permissionsToCheck)
+        {
+            using (tokenChangeLock.ReaderLock())
+            {
+                if (!CheckIsLoggedIsLoggedIn())
+                {
+                    throw new Domain0AuthenticationContextException("not logged in");
+                }
+
+                return permissionsToCheck.All(p => permissions?.Contains(p) == true);
+            }
+        }
+
+        internal bool HavePermission(string permissionToCheck)
+        {
+            using (tokenChangeLock.ReaderLock())
+            {
+                if (!CheckIsLoggedIsLoggedIn())
+                {
+                    throw new Domain0AuthenticationContextException("not logged in");
+                }
+
+                return permissions?.Contains(permissionToCheck) == true;
+            }
+        }
+
         private AccessTokenResponse loginInfo;
         internal AccessTokenResponse LoginInfo
         {
@@ -140,14 +157,14 @@ namespace Domain0.Api.Client
                     loginInfo = value;
                     if (loginInfo != null)
                     {
-                        ReadExpireDates();
+                        ReadTokenData();
                         SetToken();
                         if (shouldRemember)
                             loginInfoStorage.Save(loginInfo);
                     }
                     else
                     {
-                        ReadExpireDates();
+                        ReadTokenData();
                         SetToken();
                         loginInfoStorage.Delete();
                     }
@@ -166,7 +183,7 @@ namespace Domain0.Api.Client
             using (tokenChangeLock.WriterLock())
             {
                 loginInfo = loginInfoStorage.Load();
-                ReadExpireDates();
+                ReadTokenData();
                 SetToken();
             }
         }
@@ -242,9 +259,11 @@ namespace Domain0.Api.Client
             }
         }
 
-        private class TokenExpirationPrams
+        private class TokenPrams
         {
             public long? Exp;
+
+            public string Permissions;
 
             public DateTime? ValidTo
             {
@@ -259,6 +278,17 @@ namespace Domain0.Api.Client
                 }
             }
 
+            public HashSet<string> PermissionSet
+            {
+                get
+                {
+                    return new HashSet<string>(
+                        string.IsNullOrWhiteSpace(Permissions)
+                            ? Enumerable.Empty<string>()
+                            : JsonConvert.DeserializeObject<IEnumerable<string>>(Permissions));
+                }
+            }
+
             public static DateTime UnixTimeStampToDateTime(long unixTimeStamp)
             {
                 var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
@@ -266,15 +296,17 @@ namespace Domain0.Api.Client
             }
         }
 
-        private void ReadExpireDates()
+        private void ReadTokenData()
         {
             if (loginInfo != null)
             {
-                var accessTokenInfo = JsonConvert.DeserializeObject<TokenExpirationPrams>(
+                var accessTokenInfo = JsonConvert.DeserializeObject<TokenPrams>(
                     JWT.Payload(loginInfo.AccessToken));
                 accessTokenValidTo = accessTokenInfo.ValidTo;
 
-                var refreshTokenInfo = JsonConvert.DeserializeObject<TokenExpirationPrams>(
+                permissions = accessTokenInfo.PermissionSet;
+
+                var refreshTokenInfo = JsonConvert.DeserializeObject<TokenPrams>(
                     JWT.Payload(loginInfo.RefreshToken));
                 refreshTokenValidTo = refreshTokenInfo.ValidTo;
             }
@@ -282,7 +314,22 @@ namespace Domain0.Api.Client
             {
                 accessTokenValidTo = null;
                 refreshTokenValidTo = null;
+                permissions = null;
             }
+        }
+
+        private bool CheckIsLoggedIsLoggedIn()
+        {
+            if (loginInfo == null)
+                return false;
+
+            if (accessTokenValidTo > DateTime.UtcNow.AddSeconds(domain0AuthenticationContext.ReserveTimeToUpdate))
+                return true;
+
+            if (refreshTokenValidTo > DateTime.UtcNow.AddSeconds(domain0AuthenticationContext.ReserveTimeToUpdate))
+                return true;
+
+            return false;
         }
 
         public void Dispose()

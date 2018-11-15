@@ -8,5 +8,10 @@ namespace Domain0.Api.Client
             : base(message, innerException) 
         {
         }
+
+        public Domain0AuthenticationContextException(string message)
+            :base(message)
+        {
+        }
     }
 }

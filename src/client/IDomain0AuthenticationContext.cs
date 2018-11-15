@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Domain0.Api.Client
 {
@@ -29,5 +30,9 @@ namespace Domain0.Api.Client
         Task<UserProfile> LoginByEmail(string email, string password);
 
         void Logout();
+
+        bool HavePermission(string permission);
+
+        bool HavePermissions(IEnumerable<string> permissions);
     }
 }

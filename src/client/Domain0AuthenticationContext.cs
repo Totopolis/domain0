@@ -1,5 +1,6 @@
 ﻿using Castle.DynamicProxy;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -93,6 +94,17 @@ namespace Domain0.Api.Client
             Trace.TraceInformation($"Logout: { tokenChangeManager.LoginInfo?.Profile?.Id }");
             tokenChangeManager.LoginInfo = null;
         }
+
+        public bool HavePermission(string permissionToCheck)
+        {
+            return tokenChangeManager.HavePermission(permissionToCheck);
+        }
+
+        public bool HavePermissions(IEnumerable<string> permissionsToCheck)
+        {
+            return tokenChangeManager.HavePermissions(permissionsToCheck);
+        }
+
 
         public IDomain0Client Client { get; }
 
