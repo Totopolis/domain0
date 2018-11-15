@@ -195,10 +195,16 @@ namespace Domain0.Nancy.Service
         public async Task<Environment[]> GetByFilter(EnvironmentFilter filter)
         {
             if (filter.LoadAll.GetValueOrDefault())
-                await environmentRepository.FindByIds(Enumerable.Empty<int>());
+            {
+                var environments = await environmentRepository.FindByIds(Enumerable.Empty<int>());
+                return mapper.Map<Environment[]>(environments);
+            }
 
             if (filter.Ids.Any())
-                await environmentRepository.FindByIds(filter.Ids);
+            {
+                var environments = await environmentRepository.FindByIds(filter.Ids);
+                return mapper.Map<Environment[]>(environments);
+            }
 
             return new Environment[0];
         }
