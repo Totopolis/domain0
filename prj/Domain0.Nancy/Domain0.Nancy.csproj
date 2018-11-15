@@ -279,13 +279,13 @@
       <Link>Service\Repository\IRoleRepository.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\ISmsClient.cs">
-      <Link>Service\ISmsClient.cs</Link>
+      <Link>Service\Sms\ISmsClient.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\ISmsRequestRepository.cs">
       <Link>Service\Repository\ISmsRequestRepository.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\ITokenGenerator.cs">
-      <Link>Service\ITokenGenerator.cs</Link>
+      <Link>Service\Tokens\ITokenGenerator.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\ITokenRegistrationRepository.cs">
       <Link>Service\Repository\ITokenRegistrationRepository.cs</Link>
@@ -312,7 +312,7 @@
       <Link>Infrastructure\NancySecurityCriticalActionsHandling.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\PasswordGenerator.cs">
-      <Link>Service\PasswordGenerator.cs</Link>
+      <Link>Service\Tokens\PasswordGenerator.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\ProtobufBodyDeserializer.cs">
       <Link>Infrastructure\ProtobufBodyDeserializer.cs</Link>
@@ -354,7 +354,7 @@
       <Link>Infrastructure\TokenGenerathorBuilder.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\TokenGenerator.cs">
-      <Link>Service\TokenGenerator.cs</Link>
+      <Link>Service\Tokens\TokenGenerator.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\TokenRegistration.cs">
       <Link>Service\Repository\Model\TokenRegistration.cs</Link>
@@ -399,19 +399,19 @@
       <Link>Service\AdminService.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\FakeEmailClient.cs">
-      <Link>Service\FakeEmailClient.cs</Link>
+      <Link>Service\Email\FakeEmailClient.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\EmailClient.cs">
-      <Link>Service\EmailClient.cs</Link>
+      <Link>Service\Email\EmailClient.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\IAdminService.cs">
       <Link>Service\IAdminService.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\FakeSmsClient.cs">
-      <Link>Service\FakeSmsClient.cs</Link>
+      <Link>Service\Sms\FakeSmsClient.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\IEmailClient.cs">
-      <Link>Service\IEmailClient.cs</Link>
+      <Link>Service\Email\IEmailClient.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server\IApplicationRepository.cs">
       <Link>Service\Repository\IApplicationRepository.cs</Link>
