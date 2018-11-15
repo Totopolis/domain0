@@ -3,8 +3,9 @@ using Nito.AsyncEx;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using Jose;
+using Newtonsoft.Json;
 
 namespace Domain0.Api.Client
 {
@@ -241,14 +242,40 @@ namespace Domain0.Api.Client
             }
         }
 
+        private class TokenExpirationPrams
+        {
+            public long? Exp;
+
+            public DateTime? ValidTo
+            {
+                get
+                {
+                    if (Exp.HasValue)
+                    {
+                        return UnixTimeStampToDateTime(Exp.Value);
+                    }
+
+                    return null;
+                }
+            }
+
+            public static DateTime UnixTimeStampToDateTime(long unixTimeStamp)
+            {
+                var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+                return dtDateTime.AddSeconds(unixTimeStamp);
+            }
+        }
+
         private void ReadExpireDates()
         {
             if (loginInfo != null)
             {
-                var accessTokenInfo = handler.ReadJwtToken(loginInfo.AccessToken);
-                var refreshTokenInfo = handler.ReadJwtToken(loginInfo.RefreshToken);
-
+                var accessTokenInfo = JsonConvert.DeserializeObject<TokenExpirationPrams>(
+                    JWT.Payload(loginInfo.AccessToken));
                 accessTokenValidTo = accessTokenInfo.ValidTo;
+
+                var refreshTokenInfo = JsonConvert.DeserializeObject<TokenExpirationPrams>(
+                    JWT.Payload(loginInfo.RefreshToken));
                 refreshTokenValidTo = refreshTokenInfo.ValidTo;
             }
             else
@@ -265,7 +292,6 @@ namespace Domain0.Api.Client
 
         private readonly List<WeakReference<ITokenStore>> attachedClients = new List<WeakReference<ITokenStore>>();
         private readonly Domain0AuthenticationContext domain0AuthenticationContext;
-        private readonly JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
         private readonly ILoginInfoStorage loginInfoStorage;
         private readonly RefreshTokenTimer refreshTokenTimer;
         private readonly AsyncReaderWriterLock tokenChangeLock = new AsyncReaderWriterLock();
