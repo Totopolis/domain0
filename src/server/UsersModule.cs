@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Domain0.Exceptions;
 using Domain0.Model;
 using Domain0.Nancy.Infrastructure;
+using Domain0.Nancy.Service;
 using Domain0.Service;
 using Domain0.Service.Throttling;
 using Domain0.Service.Tokens;
@@ -33,13 +34,17 @@ namespace Domain0.Nancy
 
         public const string DeleteUserByPhoneUrl = "/api/sms/{phone}";
 
+        public const string GetEnvironmentsAvalibleForCreateUsersUrl = "/api/environments/AvalibleForCreateUsers";
+
         public UsersModule(
             IAccountService accountServiceInstance,
+            IAdminService adminServiceInstance,
             ILogger loggerInstance,
             IRequestContext requestContextInstance,
             IRequestThrottleManager requestThrottleManagerInstance)
         {
             accountService = accountServiceInstance;
+            adminService = adminServiceInstance;
             logger = loggerInstance;
             requestContext = requestContextInstance;
             requestThrottleManager = requestThrottleManagerInstance;
@@ -58,6 +63,10 @@ namespace Domain0.Nancy
             Post(UnlockUserUrl, ctx => UnlockUser(), name: nameof(UnlockUser));
 
             Delete(DeleteUserByPhoneUrl, ctx => DeleteUserByPhone(), name: nameof(DeleteUserByPhone));
+
+            Get(GetEnvironmentsAvalibleForCreateUsersUrl, 
+                ctx => GetEnvironmentsAvalibleForCreateUsers(), 
+                name: nameof(GetEnvironmentsAvalibleForCreateUsers));
         }
 
         [Route(nameof(GetMyProfile))]
@@ -392,7 +401,32 @@ namespace Domain0.Nancy
             return await accountService.GetProfilesByFilter(new UserProfileFilter());
         }
 
+        [Route(nameof(GetEnvironmentsAvalibleForCreateUsers))]
+        [Route(HttpMethod.Get, GetEnvironmentsAvalibleForCreateUsersUrl)]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Tags = new[] { "Users" }, Summary = "Method for receive environments")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(IEnumerable<Environment>))]
+        public async Task<object> GetEnvironmentsAvalibleForCreateUsers()
+        {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && ( 
+                    c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_VIEW_PROFILE) 
+                    || c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_FORCE_CREATE_USER)
+                    || c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_ADMIN)
+                    || c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_VIEW_USERS)
+                    || c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_EDIT_USERS)
+                ));
+
+            return await adminService.GetByFilter(new EnvironmentFilter(loadAll: true));
+        }
+
+
         private readonly IAccountService accountService;
+
+        private readonly IAdminService adminService;
 
         private readonly ILogger logger;
 
