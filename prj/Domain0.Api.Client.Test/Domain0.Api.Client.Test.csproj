@@ -137,6 +137,10 @@
       <Project>{2f642cf4-abfc-41a5-bf1e-8dacabfc44f3}</Project>
       <Name>Domain0.Api.Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Domain0.Client.AuthContext\Domain0.Client.AuthContext.csproj">
+      <Project>{60379e8a-050d-445b-9da1-4c6d4b705a8c}</Project>
+      <Name>Domain0.Client.AuthContext</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\xunit.analyzers.0.10.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
