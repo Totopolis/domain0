@@ -742,7 +742,7 @@ namespace Domain0.Service
             var existed = await smsRequestRepository.Pick(phone);
             if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.PinExpirationTime))
             {
-                logger.Warn($"User { account.Id } attempt to get pasword reset pin multiple times! Phone: { phone }");
+                logger.Warn($"User { account.Id } attempt to get password reset pin multiple times! Phone: { phone }");
                 return;
             }
             var password = passwordGenerator.GeneratePassword();
@@ -784,7 +784,7 @@ namespace Domain0.Service
             var existed = await emailRequestRepository.Pick(email);
             if (existed != null && IsNeedCooldown(existed.ExpiredAt, accountServiceSettings.EmailCodeExpirationTime))
             {
-                logger.Warn($"User { account.Id } attempt to get pasword reset pin multiple times! Email: { email }");
+                logger.Warn($"User { account.Id } attempt to get password reset pin multiple times! Email: { email }");
                 return;
             }
 
