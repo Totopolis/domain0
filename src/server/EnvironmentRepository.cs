@@ -50,7 +50,7 @@ namespace Domain0.FastSql
                     $"select e.* from {TableName} e " +
                     $"join { TableAccountEnvironmentName } ae on " +
                     $"  e.{KeyName} = ae.UserId " +
-                    $"where ae UserId = @p0",
+                    $"where ae.UserId = @p0",
                     userId)
                 .ExecuteQueryAsync<Environment>()
                 .FirstOrDefault();
