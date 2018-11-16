@@ -17,8 +17,7 @@ namespace Domain0
             builder.RegisterInstance(ReadTokenSettings());
             builder
                 .RegisterType<AsymmetricKeyPairTokenGenerator>()
-                .Keyed<ITokenGenerator>(SecurityAlgorithms.RsaSha256)
-                .SingleInstance();
+                .Keyed<ITokenGenerator>(SecurityAlgorithms.RsaSha256);
             builder
                 .RegisterType<SymmetricKeyTokenGenerator>()
                 .Keyed<ITokenGenerator>(SecurityAlgorithms.HmacSha256)
