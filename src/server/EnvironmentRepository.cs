@@ -49,7 +49,7 @@ namespace Domain0.FastSql
                 .CreateSimple(
                     $"select e.* from {TableName} e " +
                     $"join { TableAccountEnvironmentName } ae on " +
-                    $"  e.{KeyName} = ae.UserId " +
+                    $"  e.{KeyName} = ae.EnvironmentId " +
                     $"where ae.UserId = @p0",
                     userId)
                 .ExecuteQueryAsync<Environment>()
