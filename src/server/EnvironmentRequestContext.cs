@@ -17,7 +17,7 @@ namespace Domain0.Nancy.Infrastructure
         }
 
 
-        public async Task<Environment> LoadEnvironment(int userId)
+        public async Task<Environment> LoadEnvironmentByUser(int userId)
         {
             environment = await environmentRepository.GetByUser(userId);
             return environment;
@@ -45,9 +45,28 @@ namespace Domain0.Nancy.Infrastructure
                 return environment;
 
             if (!int.TryParse(nancyContext?.CurrentUser?.Identity?.Name, out var userId))
-                return null;
+            {
+                environment = await environmentRepository.GetDefault();
+            }
+            else
+            {
+                environment = await environmentRepository.GetByUser(userId);
+            }
 
-            environment = await environmentRepository.GetByUser(userId);
+            return environment;
+        }
+
+        public async Task<Environment> LoadOrDefault(int? environmentId)
+        {
+            if (environmentId.HasValue)
+            {
+                environment = await environmentRepository.FindById(environmentId.Value);
+            }
+            else
+            {
+                environment = await environmentRepository.GetDefault();
+            }
+
             return environment;
         }
 
@@ -67,11 +86,6 @@ namespace Domain0.Nancy.Infrastructure
                 return;
 
             await environmentRepository.SetUserEnvironment(userId, environment.Id.Value);
-        }
-
-        public async Task SetEnvironment(int environmentId)
-        {
-            environment = await environmentRepository.FindById(environmentId);
         }
 
         private Environment environment;

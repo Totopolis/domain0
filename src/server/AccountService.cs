@@ -145,6 +145,7 @@ namespace Domain0.Service
             }
 
             var environment = await environmentRequestContext.LoadEnvironment(environmentToken);
+            chekEnvironmentTokenValid(environmentToken, environment);
 
             var expirationTime = accountServiceSettings.PinExpirationTime;
             var password = passwordGenerator.GeneratePassword();
@@ -162,7 +163,7 @@ namespace Domain0.Service
                 MessageTemplateName.RegisterTemplate,
                 MessageTemplateType.sms,
                 password, expirationTime.TotalMinutes);
-            
+
             await smsClient.Send(phone, message);
             logger.Info($"New user pin has been sent to phone: {phone}");
         }
@@ -183,6 +184,7 @@ namespace Domain0.Service
             }
 
             var environment = await environmentRequestContext.LoadEnvironment(environmentToken);
+            chekEnvironmentTokenValid(environmentToken, environment);
 
             var password = passwordGenerator.GeneratePassword();
             var expirationTime = accountServiceSettings.EmailCodeExpirationTime;
@@ -242,11 +244,8 @@ namespace Domain0.Service
             }
 
             var environment = await environmentRequestContext.LoadEnvironment(request.EnvironmentToken);
-            if (environment?.Id == null && !string.IsNullOrWhiteSpace(request.EnvironmentToken))
-            {
-                logger.Warn($"Attempt to register user with unknown environment token: {request.EnvironmentToken}");
-                throw new ArgumentException("unknown environment token", nameof(ForceCreateUserRequest.EnvironmentToken));
-            }
+            chekEnvironmentTokenValid(request.EnvironmentToken, environment);
+
 
             var password = passwordGenerator.GeneratePassword();
             var id = await accountRepository.Insert(new Account
@@ -273,10 +272,9 @@ namespace Domain0.Service
                 await roleRepository.AddUserToDefaultRoles(id);
             }
 
-            if (environment?.Id != null)
-            {
-                await environmentRequestContext.SetUserEnvironment(id, environment);
-            }
+
+            await environmentRequestContext.SetUserEnvironment(id, environment);
+            
 
             var result = mapper.Map<UserProfile>(await accountRepository.FindByLogin(phone.ToString()));
             if (request.BlockSmsSend)
@@ -325,11 +323,8 @@ namespace Domain0.Service
             }
 
             var environment = await environmentRequestContext.LoadEnvironment(request.EnvironmentToken);
-            if (environment?.Id == null && !string.IsNullOrWhiteSpace(request.EnvironmentToken))
-            {
-                logger.Warn($"Attempt to register user with unknown environment token: {request.EnvironmentToken}");
-                throw new ArgumentException(nameof(ForceCreateUserRequest.EnvironmentToken));
-            }
+            chekEnvironmentTokenValid(request.EnvironmentToken, environment);
+
 
             var password = passwordGenerator.GeneratePassword();
             var id = await accountRepository.Insert(new Account
@@ -355,10 +350,7 @@ namespace Domain0.Service
                 await roleRepository.AddUserToDefaultRoles(id);
             }
 
-            if (environment?.Id != null)
-            {
-                await environmentRequestContext.SetUserEnvironment(id, environment);
-            }
+            await environmentRequestContext.SetUserEnvironment(id, environment);
 
             var result = mapper.Map<UserProfile>(await accountRepository.FindByLogin(email));
             if (request.BlockEmailSend)
@@ -532,14 +524,11 @@ namespace Domain0.Service
                 }
             }
 
-            if (smsRequest.EnvironmentId.HasValue)
-            {
-                await environmentRequestContext.SetEnvironment(smsRequest.EnvironmentId.Value);
-            }
 
             // confirm sms request
             if (account != null)
             {
+                await environmentRequestContext.LoadEnvironmentByUser(account.Id);
                 // change password
                 var hashPassword = passwordGenerator.HashPassword(request.Password);
                 account.Password = hashPassword;
@@ -549,6 +538,8 @@ namespace Domain0.Service
             }
             else
             {
+                var environment = await environmentRequestContext.LoadOrDefault(smsRequest.EnvironmentId.Value);
+
                 // confirm registration
                 var password = passwordGenerator.GeneratePassword();
                 var hashPassword = passwordGenerator.HashPassword(password);
@@ -575,10 +566,7 @@ namespace Domain0.Service
 
                 await roleRepository.AddUserToDefaultRoles(userId);
 
-                if (smsRequest.EnvironmentId != null)
-                {
-                    await environmentRequestContext.SetUserEnvironment(userId, smsRequest.EnvironmentId.Value);
-                }
+                await environmentRequestContext.SetUserEnvironment(userId, environment);
 
                 logger.Info($"User { account.Id } | { request.Phone } account created successful!");
             }
@@ -637,14 +625,11 @@ namespace Domain0.Service
                 }
             }
 
-            if (emailRequest.EnvironmentId.HasValue)
-            {
-                await environmentRequestContext.SetEnvironment(emailRequest.EnvironmentId.Value);
-            }
 
             // confirm email request
             if (account != null)
             {
+                await environmentRequestContext.LoadEnvironmentByUser(account.Id);
                 // change password
                 account.Password = hashPassword;
                 account.LastDate = DateTime.UtcNow;
@@ -653,6 +638,8 @@ namespace Domain0.Service
             }
             else
             {
+                var environment = await environmentRequestContext.LoadOrDefault(emailRequest.EnvironmentId);
+
                 var password = passwordGenerator.GeneratePassword();
                 hashPassword = passwordGenerator.HashPassword(password);
 
@@ -685,10 +672,7 @@ namespace Domain0.Service
 
                 await roleRepository.AddUserToDefaultRoles(userId);
 
-                if (emailRequest.EnvironmentId.HasValue)
-                {
-                    await environmentRequestContext.SetUserEnvironment(userId, emailRequest.EnvironmentId.Value);
-                }
+                await environmentRequestContext.SetUserEnvironment(userId, environment);
 
                 logger.Info($"User { account.Id } | { request.Email } account created successful!");
             }
@@ -754,7 +738,7 @@ namespace Domain0.Service
                 ExpiredAt = DateTime.UtcNow.Add(expirationTime)
             });
 
-            await environmentRequestContext.LoadEnvironment(account.Id);
+            await environmentRequestContext.LoadEnvironmentByUser(account.Id);
                 
             var message = await messageBuilder.Build(
                 MessageTemplateName.RequestResetTemplate,
@@ -797,7 +781,7 @@ namespace Domain0.Service
                 ExpiredAt = DateTime.UtcNow.Add(expirationTime)
             });
 
-            await environmentRequestContext.LoadEnvironment(account.Id);
+            await environmentRequestContext.LoadEnvironmentByUser(account.Id);
 
             var subject = await messageBuilder.Build(
                 MessageTemplateName.RequestResetSubjectTemplate,
@@ -860,6 +844,8 @@ namespace Domain0.Service
                 Password = pin,
                 ExpiredAt = DateTime.UtcNow.Add(expirationTime)
             });
+
+            await environmentRequestContext.LoadEnvironmentByUser(account.Id);
 
             var message = await messageBuilder.Build(
                 MessageTemplateName.RequestPhoneChangeTemplate,
@@ -949,6 +935,8 @@ namespace Domain0.Service
                 Password = pin,
                 ExpiredAt = DateTime.UtcNow.Add(expirationTime)
             });
+
+            await environmentRequestContext.LoadEnvironmentByUser(account.Id);
 
             var message = await messageBuilder.Build(
                 MessageTemplateName.RequestEmailChangeTemplate,
@@ -1064,6 +1052,7 @@ namespace Domain0.Service
             await accountRepository.Update(account);
             logger.Info($"User { requestContext.UserId } reset password for user { account.Id }");
 
+            await environmentRequestContext.LoadEnvironmentByUser(account.Id);
             var message = await messageBuilder.Build(
                 MessageTemplateName.ForcePasswordResetTemplate,
                 MessageTemplateType.sms,
@@ -1090,6 +1079,8 @@ namespace Domain0.Service
             await accountRepository.Update(account);
             logger.Info($"User { requestContext.UserId } reset password for user { account.Id }");
 
+
+            await environmentRequestContext.LoadEnvironmentByUser(account.Id);
 
             var message = await messageBuilder.Build( 
                 MessageTemplateName.ForcePasswordResetTemplate,
@@ -1227,7 +1218,25 @@ namespace Domain0.Service
         {
             return (expiredAt - expirationTime - DateTime.UtcNow).Duration() < accountServiceSettings.MessagesResendCooldown;
         }
-        
+
+        private void chekEnvironmentTokenValid(string environmentToken, Repository.Model.Environment environment)
+        {
+            if (environment?.Id == null)
+            {
+                if (string.IsNullOrWhiteSpace(environmentToken))
+                {
+                    logger.Warn($"Attempt to register user without default token");
+                    throw new ArgumentException("unknown default environment token");
+                }
+                else
+                {
+                    logger.Warn($"Attempt to register user with unknown environment token: {environmentToken}");
+                    throw new ArgumentException("unknown environment token",
+                        "EnvironmentToken");
+                }
+            }
+        }
+
         private readonly IEmailClient emailClient;
 
         private readonly IEmailRequestRepository emailRequestRepository;
