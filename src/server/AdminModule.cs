@@ -90,7 +90,7 @@ namespace Domain0.Nancy
                 name: nameof(RemoveApplication));
 
 
-            Post(LoadEnvironmentUrl,
+            Post(LoadEnvironmentsByFilterUrl,
                 ctx => LoadEnvironmentsByFilter(),
                 name: nameof(LoadEnvironmentsByFilter));
             Get(LoadEnvironmentUrl,
