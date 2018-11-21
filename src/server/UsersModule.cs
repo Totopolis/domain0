@@ -28,6 +28,7 @@ namespace Domain0.Nancy
         public const string GetUserByIdUrl = "/api/users/{id}";
         public const string PostUserUrl = "/api/users/{id}";
         public const string DeleteUserUrl = "/api/users/{id}";
+        public const string ForceResetUserPasswordUrl = "/api/users/ForceResetPassword";
 
         public const string LockUserUrl = "/api/users/{id}/lock";
         public const string UnlockUserUrl = "/api/users/{id}/unlock";
@@ -423,6 +424,34 @@ namespace Domain0.Nancy
             return await adminService.GetByFilter(new EnvironmentFilter(loadAll: true));
         }
 
+
+        [Route(nameof(ForceResetUserPassword))]
+        [Route(HttpMethod.Post, ForceResetUserPasswordUrl)]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Produces = new string[] { })]
+        [Route(Tags = new[] { "Users" }, Summary = "Method for force reset password only administrator")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body,
+            Name = "request",
+            ParamType = typeof(ForceResetPasswordRequest),
+            Required = true,
+            Description = "user's phone, email or id")]
+        [SwaggerResponse(HttpStatusCode.NoContent, "operation completes successfully, new password sent to user")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone, email or user with this phone not found")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.forceResetPassword permission required")]
+        public async Task<object> ForceResetUserPassword()
+        {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_FORCE_PASSWORD_RESET));
+
+            var request = this.BindAndValidateModel<ForceResetPasswordRequest>();
+            await accountService.ForceResetPassword(request);
+            return HttpStatusCode.NoContent;
+        }
 
         private readonly IAccountService accountService;
 

@@ -68,6 +68,8 @@ namespace Domain0.Service
 
         Task ForceResetPassword(string email);
 
+        Task ForceResetPassword(ForceResetPasswordRequest request);
+
         Task<AccessTokenResponse> Refresh(string refreshToken);
 
         Task<UserProfile> GetMyProfile();
@@ -1045,6 +1047,43 @@ namespace Domain0.Service
             logger.Info($"User {requestContext.UserId} changed email for user { request.UserId }");
         }
 
+        public async Task ForceResetPassword(ForceResetPasswordRequest request)
+        {
+            if (!string.IsNullOrWhiteSpace(request.Locale))
+            {
+                cultureRequestContext.Culture = CultureInfo.GetCultureInfo(request.Locale);
+            }
+
+            if (request.UserId.HasValue)
+            {
+                await ForceResetUserPassword(request.UserId.Value);
+            }
+            else if(request.Phone.HasValue)
+            {
+                await ForceResetPassword(request.Phone.Value);
+            }
+            else if (!string.IsNullOrWhiteSpace(request.Email))
+            {
+                await ForceResetPassword(request.Email);
+            }
+            else
+            {
+                throw new ArgumentException("you must provide one of the following: userId, phone, email");
+            }
+        }
+
+        public async Task ForceResetUserPassword(int userId)
+        {
+            var account = await accountRepository.FindByUserId(userId);
+            if (account == null)
+            {
+                logger.Warn($"User { requestContext.UserId } trys reset password for unexisted user { userId }");
+                throw new NotFoundException(nameof(userId), "account not found");
+            }
+
+            await ForceResetPassword(account, ForceResetPasswordSmsNotify);
+        }
+
         public async Task ForceResetPassword(long phone)
         {
             var account = await accountRepository.FindByPhone(phone);
@@ -1054,22 +1093,7 @@ namespace Domain0.Service
                 throw new NotFoundException(nameof(phone), "account not found");
             }
 
-            var newPassword = passwordGenerator.GeneratePassword();
-            var hashNewPassword = passwordGenerator.HashPassword(newPassword);
-
-            // change password
-            account.Password = hashNewPassword;
-            await accountRepository.Update(account);
-            logger.Info($"User { requestContext.UserId } reset password for user { account.Id }");
-
-            await environmentRequestContext.LoadEnvironmentByUser(account.Id);
-            var message = await messageBuilder.Build(
-                MessageTemplateName.ForcePasswordResetTemplate,
-                MessageTemplateType.sms,
-                newPassword);
-
-            await smsClient.Send(phone, message);
-            logger.Info($"New password sent to user { account.Id }");
+            await ForceResetPassword(account, ForceResetPasswordSmsNotify);
         }
 
         public async Task ForceResetPassword(string email)
@@ -1081,6 +1105,11 @@ namespace Domain0.Service
                 throw new NotFoundException(nameof(email), "account not found");
             }
 
+            await ForceResetPassword(account, ForceResetPasswordEmailNotify);
+        }
+
+        public async Task ForceResetPassword(Account account, Func<Account, string, Task> notify)
+        {
             var newPassword = passwordGenerator.GeneratePassword();
             var hashNewPassword = passwordGenerator.HashPassword(newPassword);
 
@@ -1089,10 +1118,25 @@ namespace Domain0.Service
             await accountRepository.Update(account);
             logger.Info($"User { requestContext.UserId } reset password for user { account.Id }");
 
-
             await environmentRequestContext.LoadEnvironmentByUser(account.Id);
 
-            var message = await messageBuilder.Build( 
+            await notify(account, newPassword);
+        }
+
+        public async Task ForceResetPasswordSmsNotify(Account account, string newPassword)
+        {
+            var message = await messageBuilder.Build(
+                MessageTemplateName.ForcePasswordResetTemplate,
+                MessageTemplateType.sms,
+                newPassword);
+
+            await smsClient.Send(account.Phone.Value, message);
+            logger.Info($"New password sent to user { account.Id }");
+        }
+
+        public async Task ForceResetPasswordEmailNotify(Account account, string newPassword)
+        {
+            var message = await messageBuilder.Build(
                 MessageTemplateName.ForcePasswordResetTemplate,
                 MessageTemplateType.email,
                 newPassword);
@@ -1100,9 +1144,9 @@ namespace Domain0.Service
             var subject = await messageBuilder.Build(
                 MessageTemplateName.ForcePasswordResetSubjectTemplate,
                 MessageTemplateType.email,
-                email, "domain0");
+                account.Email, "domain0");
 
-            await emailClient.Send(subject, email, message);
+            await emailClient.Send(subject, account.Email, message);
             logger.Info($"New password sent to user { account.Id }");
         }
 
