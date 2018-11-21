@@ -34,7 +34,7 @@ namespace Domain0.Nancy
 
         public const string DeleteUserByPhoneUrl = "/api/sms/{phone}";
 
-        public const string GetEnvironmentsAvalibleForCreateUsersUrl = "/api/environments/AvalibleForCreateUsers";
+        public const string GetEnvironmentsAvailableForCreateUsersUrl = "/api/environments/AvailableForCreateUsers";
 
         public UsersModule(
             IAccountService accountServiceInstance,
@@ -64,9 +64,9 @@ namespace Domain0.Nancy
 
             Delete(DeleteUserByPhoneUrl, ctx => DeleteUserByPhone(), name: nameof(DeleteUserByPhone));
 
-            Get(GetEnvironmentsAvalibleForCreateUsersUrl, 
-                ctx => GetEnvironmentsAvalibleForCreateUsers(), 
-                name: nameof(GetEnvironmentsAvalibleForCreateUsers));
+            Get(GetEnvironmentsAvailableForCreateUsersUrl, 
+                ctx => GetEnvironmentsAvailableForCreateUsers(), 
+                name: nameof(GetEnvironmentsAvailableForCreateUsers));
         }
 
         [Route(nameof(GetMyProfile))]
@@ -401,13 +401,13 @@ namespace Domain0.Nancy
             return await accountService.GetProfilesByFilter(new UserProfileFilter());
         }
 
-        [Route(nameof(GetEnvironmentsAvalibleForCreateUsers))]
-        [Route(HttpMethod.Get, GetEnvironmentsAvalibleForCreateUsersUrl)]
+        [Route(nameof(GetEnvironmentsAvailableForCreateUsers))]
+        [Route(HttpMethod.Get, GetEnvironmentsAvailableForCreateUsersUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Users" }, Summary = "Method for receive environments")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(IEnumerable<Environment>))]
-        public async Task<object> GetEnvironmentsAvalibleForCreateUsers()
+        public async Task<object> GetEnvironmentsAvailableForCreateUsers()
         {
             this.RequiresAuthentication();
             this.RequiresClaims(c =>
