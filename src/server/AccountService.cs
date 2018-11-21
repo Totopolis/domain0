@@ -1002,6 +1002,11 @@ namespace Domain0.Service
                 throw new NotFoundException(nameof(request.UserId), "account not found");
             }
 
+            if (!string.IsNullOrWhiteSpace(request.Locale))
+            {
+                cultureRequestContext.Culture = CultureInfo.GetCultureInfo(request.Locale);
+            }
+
             if (account.Login == account.Phone.ToString())
                 account.Login = request.NewPhone.ToString();
             account.Phone = request.NewPhone;
@@ -1025,6 +1030,11 @@ namespace Domain0.Service
             {
                 logger.Warn($"User {requestContext.UserId} attempt to force change email for unexisted user { request.UserId }");
                 throw new NotFoundException(nameof(request.UserId), "account not found");
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Locale))
+            {
+                cultureRequestContext.Culture = CultureInfo.GetCultureInfo(request.Locale);
             }
 
             if (account.Login == account.Email)
