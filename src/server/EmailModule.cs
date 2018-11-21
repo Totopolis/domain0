@@ -129,6 +129,11 @@ namespace Domain0.Nancy
                 ModelValidationResult.Errors.Add(nameof(request.Email), ex.Message);
                 throw new BadModelException(ModelValidationResult);
             }
+            catch (ArgumentException ex)
+            {
+                ModelValidationResult.Errors.Add("wrong data: ", ex.Message);
+                throw new BadModelException(ModelValidationResult);
+            }
 
             return HttpStatusCode.NoContent;
         }
