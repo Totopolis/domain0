@@ -98,6 +98,12 @@ namespace Domain0.Nancy.Infrastructure
         {
             switch (ex)
             {
+                case ArgumentException bad:
+                    return new Negotiator(ctx)
+                        .WithStatusCode(HttpStatusCode.BadRequest)
+                        .WithHeader("X-Status-Reason", "validation error")
+                        .WithReasonPhrase("validation error")
+                        .WithMediaRangeModel("application/json", new ModelValidationError (bad.ParamName, bad.Message));
                 case BadModelException bad:
                     return new Negotiator(ctx)
                         .WithStatusCode(HttpStatusCode.BadRequest)
@@ -139,6 +145,8 @@ namespace Domain0.Nancy.Infrastructure
         {
             switch (exception)
             {
+                case ArgumentException _:
+                    return HttpStatusCode.BadRequest;
                 case BadModelException _:
                     return HttpStatusCode.BadRequest;
                 case NotFoundException _:
