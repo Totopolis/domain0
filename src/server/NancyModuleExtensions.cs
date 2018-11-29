@@ -85,8 +85,10 @@ namespace Domain0.Nancy.Infrastructure
 
         public static string GetClientHost(this NancyContext context)
         {
-            if (context.Request != null 
-                && context.Request.Headers["X-Real-IP"].Any())
+            if (context.Request == null)
+                return string.Empty;
+
+            if (context.Request.Headers["X-Real-IP"].Any())
             {
                 return string.Join(", ", context.Request.Headers["X-Real-IP"]);
             }
