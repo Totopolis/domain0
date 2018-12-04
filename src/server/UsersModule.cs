@@ -37,6 +37,8 @@ namespace Domain0.Nancy
 
         public const string GetEnvironmentsAvailableForCreateUsersUrl = "/api/environments/AvailableForCreateUsers";
 
+        public const string RefreshUrl = "/api/Refresh/";
+
         public UsersModule(
             IAccountService accountServiceInstance,
             IAdminService adminServiceInstance,
@@ -68,6 +70,8 @@ namespace Domain0.Nancy
             Get(GetEnvironmentsAvailableForCreateUsersUrl, 
                 ctx => GetEnvironmentsAvailableForCreateUsers(), 
                 name: nameof(GetEnvironmentsAvailableForCreateUsers));
+
+            Post(RefreshUrl, ctx => RefreshToken(), name: nameof(RefreshToken));
         }
 
         [Route(nameof(GetMyProfile))]
@@ -451,6 +455,19 @@ namespace Domain0.Nancy
             var request = this.BindAndValidateModel<ForceResetPasswordRequest>();
             await accountService.ForceResetPassword(request);
             return HttpStatusCode.NoContent;
+        }
+
+        [Route(nameof(RefreshToken))]
+        [Route(HttpMethod.Post, RefreshUrl)]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Tags = new[] { "Refresh" }, Summary = "Method for refresh access token")]
+        [RouteParam(ParamIn = ParameterIn.Body, Name = "refreshToken", ParamType = typeof(RefreshTokenRequest), Required = true, Description = "Refresh token")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(AccessTokenResponse))]
+        public async Task<object> RefreshToken()
+        {
+            var request = this.BindAndValidateModel<RefreshTokenRequest>();
+            var response = await accountService.Refresh(request.RefreshToken);
+            return response;
         }
 
         private readonly IAccountService accountService;
