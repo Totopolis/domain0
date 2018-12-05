@@ -808,6 +808,17 @@ namespace Domain0.Api.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         System.Threading.Tasks.Task UnlockUserAsync(int id, System.Threading.CancellationToken cancellationToken);
     
+        /// <summary>Method for force reset password only administrator</summary>
+        /// <returns>operation completes successfully, new password sent to user</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task ForceResetUserPasswordAsync(ForceResetPasswordRequest request);
+    
+        /// <summary>Method for force reset password only administrator</summary>
+        /// <returns>operation completes successfully, new password sent to user</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        System.Threading.Tasks.Task ForceResetUserPasswordAsync(ForceResetPasswordRequest request, System.Threading.CancellationToken cancellationToken);
+    
         /// <summary>Method for delete user</summary>
         /// <param name="phone">phone</param>
         /// <returns>Success</returns>
@@ -6611,6 +6622,98 @@ namespace Domain0.Api.Client
             }
         }
     
+        /// <summary>Method for force reset password only administrator</summary>
+        /// <returns>operation completes successfully, new password sent to user</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task ForceResetUserPasswordAsync(ForceResetPasswordRequest request)
+        {
+            return ForceResetUserPasswordAsync(request, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Method for force reset password only administrator</summary>
+        /// <returns>operation completes successfully, new password sent to user</returns>
+        /// <exception cref="Domain0ClientException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public async System.Threading.Tasks.Task ForceResetUserPasswordAsync(ForceResetPasswordRequest request, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/users/ForceResetPassword");
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(request, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "204") 
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("wrong phone, email or user with this phone not found", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "500") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("internal error during request execution", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("authentication required. jwt token in header", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("domain0.forceResetPassword permission required", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new Domain0ClientException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
         /// <summary>Method for delete user</summary>
         /// <param name="phone">phone</param>
         /// <returns>Success</returns>
@@ -7927,6 +8030,43 @@ namespace Domain0.Api.Client
         public static UserProfileFilter FromJson(string data)
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<UserProfileFilter>(data);
+        }
+    
+    }
+    
+    /// <summary>Force reset user request</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.12.2.0 (Newtonsoft.Json v11.0.0.0)")]
+    public partial class ForceResetPasswordRequest 
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public ForceResetPasswordRequest(string @email, string @locale, long? @phone, int? @userId)
+        {
+            Email = @email;
+            Locale = @locale;
+            Phone = @phone;
+            UserId = @userId;
+        }
+    
+        [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Email { get; }
+    
+        [Newtonsoft.Json.JsonProperty("locale", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Locale { get; }
+    
+        [Newtonsoft.Json.JsonProperty("phone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long? Phone { get; }
+    
+        [Newtonsoft.Json.JsonProperty("userId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? UserId { get; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+        
+        public static ForceResetPasswordRequest FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ForceResetPasswordRequest>(data);
         }
     
     }
