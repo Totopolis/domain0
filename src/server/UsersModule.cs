@@ -64,6 +64,7 @@ namespace Domain0.Nancy
             Delete(DeleteUserUrl, ctx => DeleteUser(), name: nameof(DeleteUser));
             Post(LockUserUrl, ctx => LockUser(), name: nameof(LockUser));
             Post(UnlockUserUrl, ctx => UnlockUser(), name: nameof(UnlockUser));
+            Post(ForceResetUserPasswordUrl, ctx => ForceResetUserPassword(), name: nameof(ForceResetUserPassword));
 
             Delete(DeleteUserByPhoneUrl, ctx => DeleteUserByPhone(), name: nameof(DeleteUserByPhone));
 

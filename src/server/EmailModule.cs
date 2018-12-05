@@ -25,7 +25,6 @@ namespace Domain0.Nancy
 
         public const string ForceChangeEmailUrl = "/api/email/ForceChangeEmail";
         public const string ForceCreateUserUrl = "/api/email/ForceCreateUser";
-        public const string ForceResetPasswordUrl = "/api/email/ForceResetPassword";
 
         public const string RequestChangeEmailUrl = "/api/email/RequestChangeEmail";
         public const string CommitChangeEmailUrl = "/api/email/CommitChangeEmail";
