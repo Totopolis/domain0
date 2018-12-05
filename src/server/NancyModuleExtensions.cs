@@ -7,6 +7,7 @@ using Nancy.ModelBinding;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Nancy.Responses.Negotiation;
 
 namespace Domain0.Nancy.Infrastructure
 {
@@ -56,6 +57,18 @@ namespace Domain0.Nancy.Infrastructure
 
                 var allowedHeaders = string.Join(", ", ctx.Request.Headers[RequestHeadersKey]);
                 ctx.Response.Headers[AllowHeadersKey] = allowedHeaders;
+            });
+
+            pipelines.OnError.AddItemToStartOfPipeline((ctx, ex) =>
+            {
+                if (!ctx.Request.Headers.Keys.Contains(OriginKey))
+                    return null;
+
+                var origins = string.Join(" ", ctx.Request.Headers[OriginKey]);
+                var negotiator = new Negotiator(ctx);
+                negotiator.WithHeader(AllowOriginKey, origins);
+
+                return null;
             });
         }
 

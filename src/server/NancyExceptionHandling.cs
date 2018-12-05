@@ -24,15 +24,15 @@ namespace Domain0.Nancy.Infrastructure
         {
             context.Trace.Items.Add("StartProcessingTime", DateTime.UtcNow);
 
-            pipelines.OnError.AddItemToStartOfPipeline((ctx, ex) =>
-            {
-                return ProcessException(requestContainer, ctx, ex);
-            });
-
-            pipelines.OnError.AddItemToStartOfPipeline((ctx, ex) =>
+            pipelines.OnError.AddItemToEndOfPipeline((ctx, ex) =>
             {
                 Task.Run(() => LogRequest(ctx, requestContainer, MapExceptionToHttpCode(ex)));
                 return null;
+            });
+
+            pipelines.OnError.AddItemToEndOfPipeline((ctx, ex) =>
+            {
+                return ProcessException(requestContainer, ctx, ex);
             });
 
             pipelines.AfterRequest.AddItemToEndOfPipeline(async ctx =>
