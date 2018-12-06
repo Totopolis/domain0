@@ -49,6 +49,9 @@ go
 if object_id('dom.TokenRegistration') is not null
 	drop table dom.TokenRegistration
 go
+if object_id('dom.ImpersonationSession') is not null
+	drop table dom.ImpersonationSession
+go
 if object_id('log.Access') is not null
 	drop table log.Access
 go
@@ -280,6 +283,20 @@ create table log.Access(
 	[ProcessingTime] int null
 )
 go
+
+create table dom.ImpersonationSession (
+	[Id] int identity(1,1) not null constraint PK_Impersonation_Id primary key,
+	[Opened] datetime not null,
+	[Closed] datetime null,
+	[UserId] int not null,
+	[PersonUserId] int not null
+)
+go
+create index IX_ImpersonationSession_UserId_OpenedDate 
+	on dom.ImpersonationSession ([UserId] ASC, [Opened] DESC)
+	include([Closed])
+go
+
 
 if object_id('[hst_dom].[Application]') is not null
 	DROP TABLE [hst_dom].[Application]
