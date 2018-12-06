@@ -28,6 +28,13 @@
         <dependency id="Nito.AsyncEx" version="4.0.1" />
         <dependency id="Newtonsoft.Json" version="[8.0.3, )" />
       </group>
+      <group targetFramework=".netstandard1.4">
+        <dependency id="Castle.Core.AsyncInterceptor" version="1.6.0" />
+        <dependency id="Domain0.Api.Client" version="1.0.4" />
+        <dependency id="jose-jwt" version="2.4.0" />
+        <dependency id="Nito.AsyncEx" version="5.0.0-pre-05"/>
+        <dependency id="Newtonsoft.Json" version="11.0.2" />        
+      </group>
       <group targetFramework=".netstandard2.0">
         <dependency id="Castle.Core.AsyncInterceptor" version="1.6.0" />
         <dependency id="Domain0.Api.Client" version="1.0.4" />
