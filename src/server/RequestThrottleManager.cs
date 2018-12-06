@@ -196,7 +196,7 @@ namespace Domain0.Service.Throttling
 
             // count power of flood in dB, 
             // need to log when counterValue 10, 100, 1000... times more than limit
-            var dB = 10 * Math.Log10(counterValue / requestCountLimit);
+            var dB = 10 * Math.Log10((double)counterValue / requestCountLimit);
             if (Math.Abs(dB % 10) < double.Epsilon)
                 return true;
 
