@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain0.Api.Client", "..\prj\Domain0.Api.Client\Domain0.Api.Client.csproj", "{2F642CF4-ABFC-41A5-BF1E-8DACABFC44F3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain0.Client.AuthContext", "..\prj\Domain0.Client.AuthContext\Domain0.Client.AuthContext.csproj", "{60379E8A-050D-445B-9DA1-4C6D4B705A8C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2F642CF4-ABFC-41A5-BF1E-8DACABFC44F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F642CF4-ABFC-41A5-BF1E-8DACABFC44F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F642CF4-ABFC-41A5-BF1E-8DACABFC44F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F642CF4-ABFC-41A5-BF1E-8DACABFC44F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60379E8A-050D-445B-9DA1-4C6D4B705A8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60379E8A-050D-445B-9DA1-4C6D4B705A8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60379E8A-050D-445B-9DA1-4C6D4B705A8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60379E8A-050D-445B-9DA1-4C6D4B705A8C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A029A2A8-39B0-416B-8034-EB3EE5A7AC41}
+	EndGlobalSection
+EndGlobal
