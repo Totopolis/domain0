@@ -194,12 +194,17 @@ namespace Domain0.Test
                 .ReturnsAsync("subject");
 
             var response = await browser.Post(
-                EmailModule.ForceResetPasswordUrl,
+                UsersModule.ForceResetUserPasswordUrl,
                 with =>
                 {
                     with.Accept(format);
                     with.Header("Authorization", $"Bearer {accessToken}");
-                    with.Body(email);
+                    with.DataFormatBody(
+                        format,
+                        new ForceResetPasswordRequest
+                        {
+                            Email = email
+                        });
                 });
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);

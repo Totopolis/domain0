@@ -755,6 +755,14 @@ namespace Domain0.Test
             smsMock.Verify(a => a.Send(phone, password + "_test"), Times.Once);
         }
 
+        [Fact]
+        public void Generate()
+        {
+            var passwordGenerator = new PasswordGenerator();
+            var password = passwordGenerator.GeneratePassword();
+            var hash = passwordGenerator.HashPassword(password);
+        }
+
         [Theory]
         [InlineData(DataFormat.Json)]
         [InlineData(DataFormat.Proto)]

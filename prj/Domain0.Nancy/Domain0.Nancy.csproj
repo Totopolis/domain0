@@ -194,8 +194,14 @@
     <Compile Include="..\..\src\server.nancy\ForceCreateUser.cs">
       <Link>Model\ForceCreateUser.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\server.nancy\ForceResetPasswordRequest.cs">
+      <Link>Model\ForceResetPasswordRequest.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\server.nancy\IdArrayRequest.cs">
       <Link>Model\IdArrayRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server.nancy\RefreshTokenRequest.cs">
+      <Link>Model\RefreshTokenRequest.cs</Link>
     </Compile>
     <Compile Include="..\..\src\server.nancy\RolePermission.cs">
       <Link>Model\RolePermission.cs</Link>

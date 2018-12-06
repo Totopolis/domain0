@@ -28,13 +28,16 @@ namespace Domain0.Nancy
         public const string GetUserByIdUrl = "/api/users/{id}";
         public const string PostUserUrl = "/api/users/{id}";
         public const string DeleteUserUrl = "/api/users/{id}";
+        public const string ForceResetUserPasswordUrl = "/api/users/ForceResetPassword";
 
         public const string LockUserUrl = "/api/users/{id}/lock";
         public const string UnlockUserUrl = "/api/users/{id}/unlock";
 
         public const string DeleteUserByPhoneUrl = "/api/sms/{phone}";
 
-        public const string GetEnvironmentsAvalibleForCreateUsersUrl = "/api/environments/AvalibleForCreateUsers";
+        public const string GetEnvironmentsAvailableForCreateUsersUrl = "/api/environments/AvailableForCreateUsers";
+
+        public const string RefreshUrl = "/api/Refresh/";
 
         public UsersModule(
             IAccountService accountServiceInstance,
@@ -61,12 +64,15 @@ namespace Domain0.Nancy
             Delete(DeleteUserUrl, ctx => DeleteUser(), name: nameof(DeleteUser));
             Post(LockUserUrl, ctx => LockUser(), name: nameof(LockUser));
             Post(UnlockUserUrl, ctx => UnlockUser(), name: nameof(UnlockUser));
+            Post(ForceResetUserPasswordUrl, ctx => ForceResetUserPassword(), name: nameof(ForceResetUserPassword));
 
             Delete(DeleteUserByPhoneUrl, ctx => DeleteUserByPhone(), name: nameof(DeleteUserByPhone));
 
-            Get(GetEnvironmentsAvalibleForCreateUsersUrl, 
-                ctx => GetEnvironmentsAvalibleForCreateUsers(), 
-                name: nameof(GetEnvironmentsAvalibleForCreateUsers));
+            Get(GetEnvironmentsAvailableForCreateUsersUrl, 
+                ctx => GetEnvironmentsAvailableForCreateUsers(), 
+                name: nameof(GetEnvironmentsAvailableForCreateUsers));
+
+            Post(RefreshUrl, ctx => RefreshToken(), name: nameof(RefreshToken));
         }
 
         [Route(nameof(GetMyProfile))]
@@ -401,13 +407,13 @@ namespace Domain0.Nancy
             return await accountService.GetProfilesByFilter(new UserProfileFilter());
         }
 
-        [Route(nameof(GetEnvironmentsAvalibleForCreateUsers))]
-        [Route(HttpMethod.Get, GetEnvironmentsAvalibleForCreateUsersUrl)]
+        [Route(nameof(GetEnvironmentsAvailableForCreateUsers))]
+        [Route(HttpMethod.Get, GetEnvironmentsAvailableForCreateUsersUrl)]
         [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
         [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
         [Route(Tags = new[] { "Users" }, Summary = "Method for receive environments")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(IEnumerable<Environment>))]
-        public async Task<object> GetEnvironmentsAvalibleForCreateUsers()
+        public async Task<object> GetEnvironmentsAvailableForCreateUsers()
         {
             this.RequiresAuthentication();
             this.RequiresClaims(c =>
@@ -423,6 +429,47 @@ namespace Domain0.Nancy
             return await adminService.GetByFilter(new EnvironmentFilter(loadAll: true));
         }
 
+
+        [Route(nameof(ForceResetUserPassword))]
+        [Route(HttpMethod.Post, ForceResetUserPasswordUrl)]
+        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Produces = new string[] { })]
+        [Route(Tags = new[] { "Users" }, Summary = "Method for force reset password only administrator")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body,
+            Name = "request",
+            ParamType = typeof(ForceResetPasswordRequest),
+            Required = true,
+            Description = "user's phone, email or id")]
+        [SwaggerResponse(HttpStatusCode.NoContent, "operation completes successfully, new password sent to user")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone, email or user with this phone not found")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.forceResetPassword permission required")]
+        public async Task<object> ForceResetUserPassword()
+        {
+            this.RequiresAuthentication();
+            this.RequiresClaims(c =>
+                c.Type == TokenClaims.CLAIM_PERMISSIONS
+                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_FORCE_PASSWORD_RESET));
+
+            var request = this.BindAndValidateModel<ForceResetPasswordRequest>();
+            await accountService.ForceResetPassword(request);
+            return HttpStatusCode.NoContent;
+        }
+
+        [Route(nameof(RefreshToken))]
+        [Route(HttpMethod.Post, RefreshUrl)]
+        [Route(Produces = new[] { "application/json", "application/x-protobuf" })]
+        [Route(Tags = new[] { "Refresh" }, Summary = "Method for refresh access token")]
+        [RouteParam(ParamIn = ParameterIn.Body, Name = "refreshToken", ParamType = typeof(RefreshTokenRequest), Required = true, Description = "Refresh token")]
+        [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(AccessTokenResponse))]
+        public async Task<object> RefreshToken()
+        {
+            var request = this.BindAndValidateModel<RefreshTokenRequest>();
+            var response = await accountService.Refresh(request.RefreshToken);
+            return response;
+        }
 
         private readonly IAccountService accountService;
 

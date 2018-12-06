@@ -25,7 +25,6 @@ namespace Domain0.Nancy
 
         public const string ForceChangeEmailUrl = "/api/email/ForceChangeEmail";
         public const string ForceCreateUserUrl = "/api/email/ForceCreateUser";
-        public const string ForceResetPasswordUrl = "/api/email/ForceResetPassword";
 
         public const string RequestChangeEmailUrl = "/api/email/RequestChangeEmail";
         public const string CommitChangeEmailUrl = "/api/email/CommitChangeEmail";
@@ -51,7 +50,6 @@ namespace Domain0.Nancy
 
             Post(ForceChangeEmailUrl, ctx => ForceChangeEmail(), name: nameof(ForceChangeEmail));
             Put(ForceCreateUserUrl, ctx => ForceCreateUser(), name: nameof(ForceCreateUser));
-            Post(ForceResetPasswordUrl, ctx => ForceResetPassword(), name: nameof(ForceResetPassword));
 
             Post(RequestChangeEmailUrl, ctx => RequestChangeEmail(), name: nameof(RequestChangeEmail));
             Post(CommitChangeEmailUrl, ctx => CommitChangeEmail(), name: nameof(CommitChangeEmail));
@@ -127,6 +125,11 @@ namespace Domain0.Nancy
             catch (SecurityException ex)
             {
                 ModelValidationResult.Errors.Add(nameof(request.Email), ex.Message);
+                throw new BadModelException(ModelValidationResult);
+            }
+            catch (ArgumentException ex)
+            {
+                ModelValidationResult.Errors.Add("wrong data: ", ex.Message);
                 throw new BadModelException(ModelValidationResult);
             }
 
@@ -303,34 +306,6 @@ namespace Domain0.Nancy
                 ModelValidationResult.Errors.Add("wrong data: ", ex.Message);
                 throw new BadModelException(ModelValidationResult);
             }
-        }
-
-        [Route(nameof(ForceResetPassword))]
-        [Route(HttpMethod.Post, ForceResetPasswordUrl)]
-        [Route(Consumes = new[] { "application/json", "application/x-protobuf" })]
-        [Route(Produces = new string[] { })]
-        [Route(Tags = new[] { "Email" }, Summary = "Method for force reset password only administrator")]
-        [RouteParam(
-            ParamIn = ParameterIn.Body,
-            Name = "email",
-            ParamType = typeof(string),
-            Required = true,
-            Description = "user's email")]
-        [SwaggerResponse(HttpStatusCode.NoContent, "operation completes successfully, new password sent to user")]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone or user with this email not found")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.forceResetPassword permission required")]
-        public async Task<object> ForceResetPassword()
-        {
-            this.RequiresAuthentication();
-            this.RequiresClaims(c =>
-                c.Type == TokenClaims.CLAIM_PERMISSIONS
-                && c.Value.Contains(TokenClaims.CLAIM_PERMISSIONS_FORCE_PASSWORD_RESET));
-
-            var email = await Context.Request.Body.AsString();
-            await accountService.ForceResetPassword(email);
-            return HttpStatusCode.NoContent;
         }
 
         [Route(nameof(RequestChangeEmail))]

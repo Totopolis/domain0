@@ -7,6 +7,7 @@ using Nancy.ModelBinding;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Nancy.Responses.Negotiation;
 
 namespace Domain0.Nancy.Infrastructure
 {
@@ -57,6 +58,18 @@ namespace Domain0.Nancy.Infrastructure
                 var allowedHeaders = string.Join(", ", ctx.Request.Headers[RequestHeadersKey]);
                 ctx.Response.Headers[AllowHeadersKey] = allowedHeaders;
             });
+
+            pipelines.OnError.AddItemToStartOfPipeline((ctx, ex) =>
+            {
+                if (!ctx.Request.Headers.Keys.Contains(OriginKey))
+                    return null;
+
+                var origins = string.Join(" ", ctx.Request.Headers[OriginKey]);
+                var negotiator = new Negotiator(ctx);
+                negotiator.WithHeader(AllowOriginKey, origins);
+
+                return null;
+            });
         }
 
         public static async Task<string> AsString(this Stream stream)
@@ -85,8 +98,10 @@ namespace Domain0.Nancy.Infrastructure
 
         public static string GetClientHost(this NancyContext context)
         {
-            if (context.Request != null 
-                && context.Request.Headers["X-Real-IP"].Any())
+            if (context.Request == null)
+                return string.Empty;
+
+            if (context.Request.Headers["X-Real-IP"].Any())
             {
                 return string.Join(", ", context.Request.Headers["X-Real-IP"]);
             }

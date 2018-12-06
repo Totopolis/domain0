@@ -222,7 +222,7 @@ namespace Domain0.Test
         [Fact]
         public async Task Sms_ClientForceChangePhoneTest()
         {
-            var testRequest = new ChangePhoneRequest(3579, 1);
+            var testRequest = new ChangePhoneRequest("ru", 3579, 1);
 
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountRepositoryMock = Mock.Get(accountRepository);
@@ -518,7 +518,7 @@ namespace Domain0.Test
         [Fact]
         public async Task Email_ClientForceChangeEmailTest()
         {
-            var testRequest = new ChangeEmailRequest("email", 1);
+            var testRequest = new ChangeEmailRequest("ru", "email", 1);
 
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountRepositoryMock = Mock.Get(accountRepository);

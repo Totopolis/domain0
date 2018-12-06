@@ -11,17 +11,18 @@ namespace Domain0.Model
             => MessageDescriptor<ChangePhoneRequest>.Create(new[]
             {
                 FieldSetting<ChangePhoneRequest>.CreateInt32(1, c => c.UserId, (c, v) => c.UserId = v),
-                FieldSetting<ChangePhoneRequest>.CreateInt64(2, c => c.NewPhone, (c, v) => c.NewPhone = v)
+                FieldSetting<ChangePhoneRequest>.CreateInt64(2, c => c.NewPhone, (c, v) => c.NewPhone = v),
+                FieldSetting<ChangePhoneRequest>.CreateString(
+                    3,
+                    c => c.Locale,
+                    (c, v) => c.Locale = v,
+                    c => !string.IsNullOrWhiteSpace(c.Locale)),
             });
 
-        /// <summary>
-        /// Идентификатор пользователя.
-        /// </summary>
         public int UserId { get; set; }
 
-        /// <summary>
-        /// Новый телефон.
-        /// </summary>
         public long NewPhone { get; set; }
+
+        public string Locale { get; set; }
     }
 }
