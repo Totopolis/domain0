@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyName>Domain0.Api.Client</AssemblyName>
     <RootNamespace>Domain0.Api.Client</RootNamespace>
-    <TargetFrameworks>net45;net462;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net45;net462;netstandard1.3;netstandard2.0</TargetFrameworks>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
@@ -49,6 +49,14 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>8.0.3</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="System.Net.Http">
+      <Version>4.3.4</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>11.0.2</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
