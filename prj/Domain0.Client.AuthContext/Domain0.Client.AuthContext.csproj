@@ -86,7 +86,7 @@
       <Version>8.0.3</Version>
     </PackageReference>    
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.4'">
     <PackageReference Include="Nito.AsyncEx">
       <Version>5.0.0-pre-05</Version>
     </PackageReference>

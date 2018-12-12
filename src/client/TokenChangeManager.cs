@@ -259,7 +259,7 @@ namespace Domain0.Api.Client
             }
         }
 
-        private class TokenPrams
+        internal class TokenPrams
         {
             public long? Exp;
 
@@ -291,7 +291,7 @@ namespace Domain0.Api.Client
 
             public static DateTime UnixTimeStampToDateTime(long unixTimeStamp)
             {
-                var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+                var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
                 return dtDateTime.AddSeconds(unixTimeStamp);
             }
         }

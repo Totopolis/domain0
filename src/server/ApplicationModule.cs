@@ -6,6 +6,7 @@ using AutoMapper;
 using Domain0.Nancy.Infrastructure;
 using Domain0.Nancy.Service;
 using Domain0.Service;
+using Domain0.Tokens;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Domain0

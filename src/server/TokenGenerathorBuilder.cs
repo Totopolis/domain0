@@ -3,6 +3,7 @@ using Domain0.Service;
 using Microsoft.IdentityModel.Tokens;
 using Nancy;
 using System.Linq;
+using Domain0.Tokens;
 
 namespace Domain0.Nancy.Infrastructure
 {

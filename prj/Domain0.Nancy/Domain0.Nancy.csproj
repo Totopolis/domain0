@@ -449,6 +449,9 @@
     <Compile Include="..\..\src\server\UsersModule.cs">
       <Link>UsersModule.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\token\TokenGeneratorSettings.cs">
+      <Link>Service\Tokens\TokenGeneratorSettings.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

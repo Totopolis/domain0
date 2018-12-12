@@ -9,6 +9,7 @@ using AutoMapper;
 using Domain0.Exceptions;
 using System.Linq;
 using System.Security.Claims;
+using Domain0.Tokens;
 using NLog;
 
 namespace Domain0.Service
