@@ -18,7 +18,7 @@ namespace Domain0.Auth.AspNet
                 .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
                 .RequireAuthenticatedUser()
                 .Build();
-            services.AddAuthorization(opt => opt.AddPolicy("Domain0", defaultPolicy));
+            services.AddAuthorization(opt => opt.AddPolicy(Domain0Auth.Policy, defaultPolicy));
         }
 
         public static void UseDomain0Auth(this IApplicationBuilder builder)

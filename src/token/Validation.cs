@@ -8,6 +8,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Domain0.Tokens
 {
+    public static class Domain0Auth
+    {
+        public const string Policy = "Domain0";
+    }
+
     public static class ValidationExtensions
     {
         public static TokenValidationParameters BuildTokenValidationParameters(this TokenValidationSettings settings)
