@@ -37,6 +37,7 @@
   <files>
     <file src="..\prj\Domain0.Auth.AspNet\bin\Release\**\*.*" target="lib" />
     <file src="..\src\token\TokenValidationSettings.cs" target="src" />
+    <file src="..\src\token\Validation.cs" target="src" />
     <file src="..\src\Auth.AspNet\AspNetExtensions.cs" target="src" />
   </files>
 </package>
