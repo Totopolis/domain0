@@ -271,6 +271,8 @@ namespace Domain0.Nancy
         [SwaggerResponse(HttpStatusCode.OK, Message = "User phone", Model = typeof(long))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone format")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "authentication required. jwt token in header")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "domain0.viewUsers permission required")]
         public async Task<object> PhoneByUserId()
         {
             this.RequiresAuthentication();
