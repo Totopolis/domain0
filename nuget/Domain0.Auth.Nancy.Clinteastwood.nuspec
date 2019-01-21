@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
-    <id>Domain0.Auth.Nancy</id>
+    <id>Domain0.Auth.Nancy.Clinteastwood</id>
     <title>JWT Auth checker for Nancy services</title>
     <version>1.0.1</version>
     <authors>Totopolis</authors>
@@ -19,8 +19,8 @@
         <dependency id="Microsoft.AspNetCore.Authorization" version="2.2.0"/>
         <dependency id="Microsoft.IdentityModel.JsonWebTokens" version="5.3.0"/>
         <dependency id="Newtonsoft.Json" version="12.0.1"/>
-        <dependency id="Nancy" version="1.4.5"/>
-        <dependency id="Nancy.Authentication.Stateless" version="1.4.1"/>
+        <dependency id="Nancy" version="2.0.0-clinteastwood"/>
+        <dependency id="Nancy.Authentication.Stateless" version="2.0.0-clinteastwood"/>
       </group>
     </dependencies>
   </metadata>
@@ -28,7 +28,7 @@
     <file src="..\prj\Domain0.Auth.Nancy\bin\Release\**\*.*" target="lib" />
     <file src="..\src\token\TokenValidationSettings.cs" target="src" />
     <file src="..\src\token\Validation.cs" target="src" />
-    <file src="..\src\Auth.Nancy\NancyExtensions.cs" target="src" />
+    <file src="..\src\Auth.Nancy\NancyExtensions.Clinteastwood.cs" target="src" />
     <file src="..\src\server\TokenClaims.cs" target="src" />
   </files>
 </package>
