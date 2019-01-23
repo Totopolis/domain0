@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.DirectoryServices.Protocols;
 using Autofac;
 using AutoMapper;
 using Domain0.Nancy.Infrastructure;
 using Domain0.Nancy.Service;
+using Domain0.Nancy.Service.Ldap;
 using Domain0.Service;
 using Domain0.Tokens;
 using Microsoft.IdentityModel.Tokens;
@@ -54,6 +56,9 @@ namespace Domain0
                 return mapper;
 
             }).As<IMapper>().SingleInstance();
+
+            builder.RegisterInstance(ReadLdapSettings());
+            builder.RegisterType<LdapClient>().As<ILdapClient>().SingleInstance();
         }
 
         private AccountServiceSettings ReadAccountServiceSettings()
@@ -75,13 +80,13 @@ namespace Domain0
         {
             var settings = new ThresholdSettings
             {
-                HourlyRequestsLimitByActionByIP = 
+                HourlyRequestsLimitByActionByIP =
                     int.Parse(ConfigurationManager.AppSettings["ThresholdSettings_HourlyRequestsLimitByActionByIP"] ?? "6000"),
 
                 MinuteRequestsLimitByActionByIP =
                     int.Parse(ConfigurationManager.AppSettings["ThresholdSettings_MinuteRequestsLimitByActionByIP"] ?? "300"),
 
-                CacheLimitMB = 
+                CacheLimitMB =
                     int.Parse(ConfigurationManager.AppSettings["ThresholdSettings_CacheLimitMB"] ?? "512")
             };
 
@@ -138,6 +143,19 @@ namespace Domain0
             {
                 Host = ConfigurationManager.AppSettings["SmsGateway_Host"],
                 Token = ConfigurationManager.AppSettings["SmsGateway_Token"],
+            };
+        }
+
+        private static LdapSettings ReadLdapSettings()
+        {
+            return new LdapSettings
+            {
+                DomainControllerName = ConfigurationManager.AppSettings["DomainControllerName"] ?? "corp.smartdriving.io",
+                LdapPort = int.Parse(ConfigurationManager.AppSettings["LdapPort"] ?? "636"),
+                UseSecureSocketLayer = bool.Parse(ConfigurationManager.AppSettings["UseSecureSocketLayer"] ?? "true"),
+                LdapProtocolVersion = int.Parse(ConfigurationManager.AppSettings["LdapProtocolVersion"] ?? "3"),
+                LdapAuthType = (AuthType)Enum.Parse(typeof(AuthType), ConfigurationManager.AppSettings["LdapAuthType"] ?? "Ntlm", true),
+                EmailAttributeName = ConfigurationManager.AppSettings["EmailAttributeName"] ?? "mail"
             };
         }
     }
