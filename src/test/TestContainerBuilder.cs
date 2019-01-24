@@ -1,5 +1,6 @@
 using System;
 using Autofac;
+using Domain0.Nancy.Service.Ldap;
 using Domain0.Repository;
 using Domain0.Service;
 using Domain0.Test.Infrastructure;
@@ -38,6 +39,7 @@ namespace Domain0.Test
                 .SingleInstance();
             builder.RegisterInstance(new Mock<ISmsClient>().Object).As<ISmsClient>().SingleInstance();
             builder.RegisterInstance(new Mock<IEmailClient>().Object).As<IEmailClient>().SingleInstance();
+            builder.RegisterInstance(new Mock<ILdapClient>().Object).As<ILdapClient>().SingleInstance();
 
             setUpEnvironmentRepository(builder);
 

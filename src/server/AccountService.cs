@@ -49,7 +49,7 @@ namespace Domain0.Service
 
         Task<AccessTokenResponse> Login(EmailLoginRequest request);
 
-        Task<AccessTokenResponse> Login(ActiveDirectoryUserLoginRequest request);
+        Task<AccessTokenResponse> Login(ActiveDirectoryUserLoginRequest request , string environmentToken);
 
         Task ChangePassword(ChangePasswordRequest request);
 
@@ -689,7 +689,7 @@ namespace Domain0.Service
             return await GetTokenResponse(account);
         }
 
-        public async Task<AccessTokenResponse> Login(ActiveDirectoryUserLoginRequest request)
+        public async Task<AccessTokenResponse> Login(ActiveDirectoryUserLoginRequest request, string environmentToken = null)
         {
             var domainuser = ldapClient.Authorize(request.UserName, request.Password);
             if (domainuser == null)
@@ -701,7 +701,8 @@ namespace Domain0.Service
             var account = await accountRepository.FindByLogin(domainuser.Email);
             if (account == null)
             {
-                var environment = await environmentRequestContext.LoadOrDefault(null);
+                var environment = await environmentRequestContext.LoadEnvironment(environmentToken);
+                chekEnvironmentTokenValid(environmentToken, environment);
 
                 var newPassword = passwordGenerator.GeneratePassword();
                 var hashPassword = passwordGenerator.HashPassword(newPassword);
