@@ -453,13 +453,25 @@
     <Compile Include="..\..\src\token\TokenGeneratorSettings.cs">
       <Link>Service\Tokens\TokenGeneratorSettings.cs</Link>
     </Compile>
-    <Compile Include="LdapModule.cs" />
-    <Compile Include="Model\DomainUserLoginRequest.cs" />
-    <Compile Include="Model\LdapUser.cs" />
+    <Compile Include="..\..\src\server\LdapModule.cs">
+      <Link>LdapModule.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server.nancy\ActiveDirectoryUserLoginRequest.cs">
+      <Link>Model\ActiveDirectoryUserLoginRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server.nancy\LdapUser.cs">
+      <Link>Model\LdapUser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\ILdapClient.cs">
+      <Link>Service\Ldap\ILdapClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\LdapClient.cs">
+      <Link>Service\Ldap\LdapClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\server\LdapSettings.cs">
+      <Link>Service\Ldap\LdapSettings.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service\Ldap\ILdapClient.cs" />
-    <Compile Include="Service\Ldap\LdapClient.cs" />
-    <Compile Include="Service\Ldap\LdapSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\..\src\swagger\swagger-ui-bundle.js.map">

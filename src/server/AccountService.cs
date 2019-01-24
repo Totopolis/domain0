@@ -49,7 +49,7 @@ namespace Domain0.Service
 
         Task<AccessTokenResponse> Login(EmailLoginRequest request);
 
-        Task<AccessTokenResponse> Login(DomainUserLoginRequest request);
+        Task<AccessTokenResponse> Login(ActiveDirectoryUserLoginRequest request);
 
         Task ChangePassword(ChangePasswordRequest request);
 
@@ -689,7 +689,7 @@ namespace Domain0.Service
             return await GetTokenResponse(account);
         }
 
-        public async Task<AccessTokenResponse> Login(DomainUserLoginRequest request)
+        public async Task<AccessTokenResponse> Login(ActiveDirectoryUserLoginRequest request)
         {
             var domainuser = ldapClient.Authorize(request.UserName, request.Password);
             if (domainuser == null)

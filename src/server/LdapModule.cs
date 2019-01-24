@@ -43,14 +43,14 @@ namespace Domain0.Nancy
         [RouteParam(
             ParamIn = ParameterIn.Body, 
             Name = "request", 
-            ParamType = typeof(DomainUserLoginRequest), 
+            ParamType = typeof(ActiveDirectoryUserLoginRequest), 
             Required = true, Description = "parameters for login")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success", Model = typeof(AccessTokenResponse))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "wrong user name format / wrong username and password pair")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
         public async Task<object> LoginByDomainUser()
         {
-            var request = this.BindAndValidateModel<DomainUserLoginRequest>();
+            var request = this.BindAndValidateModel<ActiveDirectoryUserLoginRequest>();
             request.UserName = request.UserName.Trim();
 
             _requestThrottleManagerInstance.RequiresThrottling(
