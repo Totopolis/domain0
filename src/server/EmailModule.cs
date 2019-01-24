@@ -87,7 +87,7 @@ namespace Domain0.Nancy
             Description = "user's email")]
         [RouteParam(
             ParamIn = ParameterIn.Path,
-            Name = "environmentToken",
+            Name = "EnvironmentToken",
             ParamType = typeof(string),
             Required = false,
             Description = "user's environment token")]

@@ -9,6 +9,8 @@ using AutoMapper;
 using Domain0.Exceptions;
 using System.Linq;
 using System.Security.Claims;
+using Domain0.Nancy.Model;
+using Domain0.Nancy.Service.Ldap;
 using Domain0.Tokens;
 using NLog;
 
@@ -46,6 +48,8 @@ namespace Domain0.Service
         Task<AccessTokenResponse> Login(SmsLoginRequest request);
 
         Task<AccessTokenResponse> Login(EmailLoginRequest request);
+
+        Task<AccessTokenResponse> Login(ActiveDirectoryUserLoginRequest request , string environmentToken);
 
         Task ChangePassword(ChangePasswordRequest request);
 
@@ -110,7 +114,8 @@ namespace Domain0.Service
             ITokenGenerator tokenGeneratorInstance,
             ITokenRegistrationRepository tokenRegistrationRepositoryInstance,
             TokenGeneratorSettings tokenGeneratorSettingsInstance,
-            AccountServiceSettings accountServiceSettingsInstance)
+            AccountServiceSettings accountServiceSettingsInstance,
+            ILdapClient ldapClientInstance)
         {
             accountRepository = accountRepositoryInstance;
             cultureRequestContext = cultureRequestContextInstance;
@@ -130,6 +135,7 @@ namespace Domain0.Service
             tokenRegistrationRepository = tokenRegistrationRepositoryInstance;
             tokenGeneratorSettings = tokenGeneratorSettingsInstance;
             accountServiceSettings = accountServiceSettingsInstance;
+            ldapClient = ldapClientInstance;
         }
 
         public async Task Register(decimal phone, string environmentToken = null)
@@ -201,13 +207,13 @@ namespace Domain0.Service
             logger.Info($"New user registration request. Email: {email}");
 
 
-            var message = await messageBuilder.Build( 
+            var message = await messageBuilder.Build(
                 MessageTemplateName.RegisterTemplate,
                 MessageTemplateType.email,
                 password, expirationTime.TotalMinutes);
-                
-            var subject = await messageBuilder.Build( 
-                MessageTemplateName.RegisterSubjectTemplate,                
+
+            var subject = await messageBuilder.Build(
+                MessageTemplateName.RegisterSubjectTemplate,
                 MessageTemplateType.email,
                 email, "domain0");
 
@@ -277,7 +283,7 @@ namespace Domain0.Service
 
 
             await environmentRequestContext.SetUserEnvironment(id, environment);
-            
+
 
             var result = mapper.Map<UserProfile>(await accountRepository.FindByLogin(phone.ToString()));
             if (request.BlockSmsSend)
@@ -292,7 +298,7 @@ namespace Domain0.Service
                 message = await messageBuilder.Build(
                     MessageTemplateName.WelcomeTemplate,
                     MessageTemplateType.sms,
-                    request.Phone, password);                   
+                    request.Phone, password);
             }
             else
                 message = request.CustomSmsTemplate
@@ -373,7 +379,7 @@ namespace Domain0.Service
 
                 message = await messageBuilder.Build(
                     MessageTemplateName.WelcomeTemplate,
-                    MessageTemplateType.email, 
+                    MessageTemplateType.email,
                     request.Email, password);
             }
             else
@@ -430,8 +436,8 @@ namespace Domain0.Service
                 var issueDate = DateTime.UtcNow;
                 var expiredAt = issueDate.Add(tokenGeneratorSettings.Lifetime);
                 accessToken = tokenGenerator.GenerateAccessToken(
-                    account.Id, 
-                    issueDate, 
+                    account.Id,
+                    issueDate,
                     userPermissions.Select(p => p.Name).ToArray());
                 await tokenRegistrationRepository.Save(registration = new TokenRegistration
                 {
@@ -454,7 +460,7 @@ namespace Domain0.Service
         }
 
         private static bool IsRightsDifferent(
-            Repository.Model.Permission[] userPermissions, 
+            Repository.Model.Permission[] userPermissions,
             string[] tokenPermissions)
         {
             // assume checking permissions is distinctive
@@ -462,12 +468,12 @@ namespace Domain0.Service
                 // rigths are different!
                 return true;
 
-                var matchedRights = userPermissions.Select(p => p.Name)
-                .Join(tokenPermissions,
-                    up => up,
-                    tp => tp,
-                    (up, tp) => up)
-                .ToArray();
+            var matchedRights = userPermissions.Select(p => p.Name)
+            .Join(tokenPermissions,
+                up => up,
+                tp => tp,
+                (up, tp) => up)
+            .ToArray();
 
             if (userPermissions.Length != matchedRights.Length)
                 // rigths are different!
@@ -552,7 +558,7 @@ namespace Domain0.Service
                     MessageTemplateName.WelcomeTemplate,
                     MessageTemplateType.sms,
                     request.Phone, password);
-                    
+
                 await smsClient.Send(request.Phone, message);
 
                 var userId = await accountRepository.Insert(account = new Account
@@ -659,7 +665,7 @@ namespace Domain0.Service
                 await emailClient.Send(subject, request.Email, message);
 
                 var currentDateTime = DateTime.UtcNow;
-                
+
                 // confirm registration
                 var userId = await accountRepository.Insert(account = new Account
                 {
@@ -680,6 +686,48 @@ namespace Domain0.Service
                 logger.Info($"User { account.Id } | { request.Email } account created successful!");
             }
 
+            return await GetTokenResponse(account);
+        }
+
+        public async Task<AccessTokenResponse> Login(ActiveDirectoryUserLoginRequest request, string environmentToken = null)
+        {
+            var domainuser = ldapClient.Authorize(request.UserName, request.Password);
+            if (domainuser == null)
+            {
+                logger.Warn($"User {request.UserName} wrong login or password!");
+                return null;
+            }
+
+            var account = await accountRepository.FindByLogin(domainuser.Email);
+            if (account == null)
+            {
+                var environment = await environmentRequestContext.LoadEnvironment(environmentToken);
+                chekEnvironmentTokenValid(environmentToken, environment);
+
+                var newPassword = passwordGenerator.GeneratePassword();
+                var hashPassword = passwordGenerator.HashPassword(newPassword);
+
+               var currentDateTime = DateTime.UtcNow;
+
+                // confirm registration
+                var userId = await accountRepository.Insert(account = new Account
+                {
+                    Email = domainuser.Email,
+                    Login = domainuser.Email,
+                    Password = hashPassword,
+                    FirstDate = currentDateTime,
+                    LastDate = currentDateTime
+                });
+
+                // store new assigned Id
+                account.Id = userId;
+
+                await roleRepository.AddUserToDefaultRoles(userId);
+
+                await environmentRequestContext.SetUserEnvironment(userId, environment);
+
+                logger.Info($"User { account.Id } | { domainuser.Email } account created successful!");
+            }
             return await GetTokenResponse(account);
         }
 
@@ -742,7 +790,7 @@ namespace Domain0.Service
             });
 
             await environmentRequestContext.LoadEnvironmentByUser(account.Id);
-                
+
             var message = await messageBuilder.Build(
                 MessageTemplateName.RequestResetTemplate,
                 MessageTemplateType.sms,
@@ -789,8 +837,8 @@ namespace Domain0.Service
             var subject = await messageBuilder.Build(
                 MessageTemplateName.RequestResetSubjectTemplate,
                 MessageTemplateType.email,
-                "domain0", account.Name); 
-                
+                "domain0", account.Name);
+
             var message = await messageBuilder.Build(
                 MessageTemplateName.RequestResetTemplate,
                 MessageTemplateType.email,
@@ -1059,7 +1107,7 @@ namespace Domain0.Service
             {
                 await ForceResetUserPassword(request.UserId.Value);
             }
-            else if(request.Phone.HasValue)
+            else if (request.Phone.HasValue)
             {
                 await ForceResetPassword(request.Phone.Value);
             }
@@ -1301,7 +1349,7 @@ namespace Domain0.Service
         private readonly ILogger logger;
 
         private readonly IMapper mapper;
-        
+
         private readonly IMessageBuilder messageBuilder;
 
         private readonly ISmsClient smsClient;
@@ -1327,5 +1375,8 @@ namespace Domain0.Service
         private readonly TokenGeneratorSettings tokenGeneratorSettings;
 
         private readonly AccountServiceSettings accountServiceSettings;
+
+        private readonly ILdapClient ldapClient;
+
     }
 }

@@ -94,7 +94,7 @@ namespace Domain0.Nancy
             Description = "user's phone with single number, started from 7 for Russia, 71231234567 for example")]
         [RouteParam(
             ParamIn = ParameterIn.Path,
-            Name = "environmentToken",
+            Name = "EnvironmentToken",
             ParamType = typeof(string),
             Required = false,
             Description = "user's environment token")]
