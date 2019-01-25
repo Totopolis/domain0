@@ -150,7 +150,7 @@ namespace Domain0
         {
             return new LdapSettings
             {
-                DomainControllerName = ConfigurationManager.AppSettings["DomainControllerName"] ?? "corp.smartdriving.io",
+                DomainControllerName = ConfigurationManager.AppSettings["DomainControllerName"] ?? "domain.local",
                 LdapPort = int.Parse(ConfigurationManager.AppSettings["LdapPort"] ?? "636"),
                 UseSecureSocketLayer = bool.Parse(ConfigurationManager.AppSettings["UseSecureSocketLayer"] ?? "true"),
                 LdapProtocolVersion = int.Parse(ConfigurationManager.AppSettings["LdapProtocolVersion"] ?? "3"),
