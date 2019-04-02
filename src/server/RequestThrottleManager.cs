@@ -23,10 +23,12 @@ namespace Domain0.Service.Throttling
     [Flags]
     public enum ThrottlingProperties
     {
-        None,
-        RemoteIp,
-        Path,
-        Method
+        None        = 0,
+        RemoteIp    = 1 << 0,
+        Path        = 1 << 1,
+        Method      = 1 << 2,
+
+        MethodAndPath = Method | Path
     }
 
     public interface IRequestThrottleManager
