@@ -173,7 +173,7 @@ namespace Domain0.Service
                 MessageTemplateType.sms,
                 password, expirationTime.TotalMinutes);
 
-            await smsClient.Send(phone, message);
+            await smsClient.Send(phone, message, environment?.Token);
             logger.Info($"New user pin has been sent to phone: {phone}");
         }
 
@@ -305,7 +305,7 @@ namespace Domain0.Service
                     .Replace("{phone}", request.Phone.ToString())
                     .Replace("{password}", password);
 
-            await smsClient.Send(request.Phone.Value, message);
+            await smsClient.Send(request.Phone.Value, message, environment?.Token);
 
             logger.Info($"User { result?.Id } created. New user pin has been sent to phone: {request.Phone}");
 
@@ -559,7 +559,7 @@ namespace Domain0.Service
                     MessageTemplateType.sms,
                     request.Phone, password);
 
-                await smsClient.Send(request.Phone, message);
+                await smsClient.Send(request.Phone, message, environment?.Token);
 
                 var userId = await accountRepository.Insert(account = new Account
                 {
@@ -796,7 +796,9 @@ namespace Domain0.Service
                 MessageTemplateType.sms,
                 password, expirationTime.TotalMinutes);
 
-            await smsClient.Send(phone, message);
+            var environment = await environmentRequestContext.LoadEnvironment();
+
+            await smsClient.Send(phone, message, environment.Token);
             logger.Info($"User { account.Id } attempt to reset password. New user pin has been sent to phone: { phone }");
         }
 
@@ -896,14 +898,14 @@ namespace Domain0.Service
                 ExpiredAt = DateTime.UtcNow.Add(expirationTime)
             });
 
-            await environmentRequestContext.LoadEnvironmentByUser(account.Id);
+            var environment = await environmentRequestContext.LoadEnvironmentByUser(account.Id);
 
             var message = await messageBuilder.Build(
                 MessageTemplateName.RequestPhoneChangeTemplate,
                 MessageTemplateType.sms,
                 pin, expirationTime.TotalMinutes);
 
-            await smsClient.Send(changePhoneRequest.Phone, message);
+            await smsClient.Send(changePhoneRequest.Phone, message, environment.Token);
             logger.Info($"Attempt to change phone for user { userId }. New user pin has been sent to phone: { changePhoneRequest.Phone }");
         }
 
@@ -1174,12 +1176,14 @@ namespace Domain0.Service
 
         public async Task ForceResetPasswordSmsNotify(Account account, string newPassword)
         {
+            var environment = await environmentRequestContext.LoadEnvironmentByUser(account.Id);
+
             var message = await messageBuilder.Build(
                 MessageTemplateName.ForcePasswordResetTemplate,
                 MessageTemplateType.sms,
                 newPassword);
 
-            await smsClient.Send(account.Phone.Value, message);
+            await smsClient.Send(account.Phone.Value, message, environment.Token);
             logger.Info($"New password sent to user { account.Id }");
         }
 

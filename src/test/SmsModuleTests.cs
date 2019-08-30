@@ -15,6 +15,7 @@ using System;
 using System.Security.Claims;
 using Domain0.Service.Tokens;
 using System.Globalization;
+using Environment = Domain0.Model.Environment;
 
 namespace Domain0.Test
 {
@@ -126,7 +127,7 @@ namespace Domain0.Test
 
             var smsClient = container.Resolve<ISmsClient>();
             var smsMock = Mock.Get(smsClient);
-            smsMock.Verify(s => s.Send(phone, "Your password is: password will valid for 15 min"));
+            smsMock.Verify(s => s.Send(phone, "Your password is: password will valid for 15 min", It.IsAny<string>()));
 
             var firstLoginResponse = await browser.Post(SmsModule.LoginUrl, 
                 with =>
@@ -239,7 +240,7 @@ namespace Domain0.Test
 
             var smsClient = container.Resolve<ISmsClient>();
             var smsMock = Mock.Get(smsClient);
-            smsMock.Verify(s => s.Send(phone, "Your password is: password will valid for 15 min"));
+            smsMock.Verify(s => s.Send(phone, "Your password is: password will valid for 15 min", It.IsAny<string>()));
 
             var firstLoginResponse = await browser.Post(SmsModule.LoginUrl,
                 with =>
@@ -309,7 +310,7 @@ namespace Domain0.Test
 
             var smsClient = container.Resolve<ISmsClient>();
             var smsMock = Mock.Get(smsClient);
-            smsMock.Verify(s => s.Send(phone, "password password phone " + phone));
+            smsMock.Verify(s => s.Send(phone, "password password phone " + phone, It.IsAny<string>()));
         }
 
         [Theory]
@@ -375,7 +376,7 @@ namespace Domain0.Test
 
             var smsClient = container.Resolve<ISmsClient>();
             var smsMock = Mock.Get(smsClient);
-            smsMock.Verify(s => s.Send(phone, "hello password " + phone + "!"));
+            smsMock.Verify(s => s.Send(phone, "hello password " + phone + "!", It.IsAny<string>()));
         }
 
         
@@ -444,7 +445,7 @@ namespace Domain0.Test
             var smsClient = container.Resolve<ISmsClient>();
             var smsMock = Mock.Get(smsClient);
             smsMock.Verify(s => 
-                s.Send(phone, "hello, your new password is password!"));
+                s.Send(phone, "hello, your new password is password!", It.IsAny<string>()));
         }
 
         [Theory]
@@ -500,7 +501,7 @@ namespace Domain0.Test
 
             var smsClient = container.Resolve<ISmsClient>();
             var smsMock = Mock.Get(smsClient);
-            smsMock.Verify(c => c.Send(It.IsAny<decimal>(), It.IsAny<string>()), Times.Never);
+            smsMock.Verify(c => c.Send(It.IsAny<decimal>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
         [Theory]
@@ -752,7 +753,7 @@ namespace Domain0.Test
             smsRequestMock.Verify(a => a.Save(It.IsAny<SmsRequest>()), Times.Once);
 
             var smsMock = Mock.Get(container.Resolve<ISmsClient>());
-            smsMock.Verify(a => a.Send(phone, password + "_test"), Times.Once);
+            smsMock.Verify(a => a.Send(phone, password + "_test", It.IsAny<string>()), Times.Once);
         }
 
         [Fact]
@@ -945,6 +946,7 @@ namespace Domain0.Test
             smsClient.Verify(sc => 
                 sc.Send(
                     It.Is<decimal>(x => x == newPhone),
+                    It.IsAny<string>(),
                     It.IsAny<string>()),
                 Times.Once);
             

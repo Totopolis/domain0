@@ -24,7 +24,7 @@ namespace Domain0.Nancy.Service
             writer = client.CreateWriter();
         }
 
-        public Task Send(decimal phone, string message)
+        public Task Send(decimal phone, string message, string environment)
         {
             var raw = Encoding.UTF8.GetBytes(
                 JsonConvert.SerializeObject(new SqlQueueSms { Phone = phone, Message = message }));
