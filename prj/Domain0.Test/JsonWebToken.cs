@@ -160,8 +160,7 @@ namespace Sdl.Domain0.Shared
             var payloadJson = Decode(token, key, verify);
             var payloadData = _jsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
 
-            object aud;
-            if (!string.IsNullOrEmpty(audience) && payloadData.TryGetValue("aud", out aud))
+            if (!string.IsNullOrEmpty(audience) && payloadData.TryGetValue("aud", out var aud))
             {
                 if (!aud.ToString().Equals(audience, StringComparison.Ordinal))
                 {
@@ -169,8 +168,7 @@ namespace Sdl.Domain0.Shared
                 }
             }
 
-            object exp;
-            if (checkExpiration && payloadData.TryGetValue("exp", out exp))
+            if (checkExpiration && payloadData.TryGetValue("exp", out var exp))
             {
                 DateTime validTo = FromUnixTime(long.Parse(exp.ToString()));
                 if (DateTime.Compare(validTo, DateTime.UtcNow) <= 0)
@@ -180,8 +178,7 @@ namespace Sdl.Domain0.Shared
                 }
             }
 
-            object iss;
-            if (!string.IsNullOrEmpty(issuer) && payloadData.TryGetValue("iss", out iss))
+            if (!string.IsNullOrEmpty(issuer) && payloadData.TryGetValue("iss", out var iss))
             {
                 if (!iss.ToString().Equals(issuer, StringComparison.Ordinal))
                 {

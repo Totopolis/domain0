@@ -4,6 +4,7 @@
     <TargetFrameworks>net462</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\src\server.nancy\GlobalSuppression.cs" Link="GlobalSuppression.cs" />
     <Compile Include="..\..\src\server\AccessLogRepository.cs" Link="FastSql\AccessLogRepository.cs" />
     <Compile Include="..\..\src\server\AccountRepository.cs" Link="FastSql\AccountRepository.cs" />
     <Compile Include="..\..\src\server\CertificateHelper.cs" Link="Infrastructure\CertificateHelper.cs" />

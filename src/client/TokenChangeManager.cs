@@ -261,9 +261,9 @@ namespace Domain0.Api.Client
 
         internal class TokenPrams
         {
-            public long? Exp;
+            public long? Exp { get; set; }
 
-            public string Permissions;
+            public string Permissions { get; set; }
 
             public DateTime? ValidTo
             {
