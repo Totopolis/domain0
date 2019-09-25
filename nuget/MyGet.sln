@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29230.61
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain0.Api.Client", "..\prj\Domain0.Api.Client\Domain0.Api.Client.csproj", "{2F642CF4-ABFC-41A5-BF1E-8DACABFC44F3}"
 EndProject
@@ -10,8 +10,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain0.Auth.AspNet", "..\prj\Domain0.Auth.AspNet\Domain0.Auth.AspNet.csproj", "{EE760B4A-15DF-4D0E-AFF0-71929DE9F147}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain0.Auth.Nancy", "..\prj\Domain0.Auth.Nancy\Domain0.Auth.Nancy.csproj", "{5F9564AA-34E4-458D-8D0D-E1106C3D9224}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain0.Auth.Nancy.Clinteastwood", "..\prj\Domain0.Auth.Nancy.Clinteastwood\Domain0.Auth.Nancy.Clinteastwood.csproj", "{6706E00F-EA7D-4399-83CD-6E97B597E64A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +33,6 @@ Global
 		{5F9564AA-34E4-458D-8D0D-E1106C3D9224}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F9564AA-34E4-458D-8D0D-E1106C3D9224}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F9564AA-34E4-458D-8D0D-E1106C3D9224}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6706E00F-EA7D-4399-83CD-6E97B597E64A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6706E00F-EA7D-4399-83CD-6E97B597E64A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6706E00F-EA7D-4399-83CD-6E97B597E64A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6706E00F-EA7D-4399-83CD-6E97B597E64A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

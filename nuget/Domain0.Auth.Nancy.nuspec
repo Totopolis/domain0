@@ -15,12 +15,12 @@
     <language>en-US</language>
     <dependencies>
       <group targetFramework="net461">
+        <dependency id="System.IdentityModel.Tokens.Jwt" version="5.5.0"/>
         <dependency id="Microsoft.AspNetCore.Authentication.JwtBearer" version="2.2.0"/>
         <dependency id="Microsoft.AspNetCore.Authorization" version="2.2.0"/>
-        <dependency id="Microsoft.IdentityModel.JsonWebTokens" version="5.3.0"/>
         <dependency id="Newtonsoft.Json" version="12.0.1"/>
-        <dependency id="Nancy" version="1.4.5"/>
-        <dependency id="Nancy.Authentication.Stateless" version="1.4.1"/>
+        <dependency id="Nancy" version="2.0.0"/>
+        <dependency id="Nancy.Authentication.Stateless" version="2.0.0"/>
       </group>
     </dependencies>
   </metadata>

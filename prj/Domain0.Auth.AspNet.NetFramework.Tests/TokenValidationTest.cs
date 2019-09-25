@@ -63,8 +63,7 @@ namespace Domain0.Auth.AspNet.NetFramework.Tests
             var settings = BuildDefaultTokenValidationSettings();
 
             var validationParameters = settings.BuildTokenValidationParameters();
-
-            var claims = new JwtSecurityTokenHandler().ValidateToken(token, validationParameters, out SecurityToken securityToken);
+            var claims = new JwtSecurityTokenHandler().ValidateToken(token, validationParameters, out _);
             Assert.NotNull(claims);
         }
 

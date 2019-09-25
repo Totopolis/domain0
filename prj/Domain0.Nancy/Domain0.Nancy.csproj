@@ -137,15 +137,12 @@
     <PackageReference Include="Gerakul.ProtoBufSerializer" Version="1.2.1" />
     <PackageReference Include="Gerakul.SqlQueue.InMemory" Version="1.2.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.2" />
-    <PackageReference Include="Nancy.Authentication.Stateless" Version="2.0.0-clinteastwood" />
+    <PackageReference Include="Nancy.Authentication.Stateless" Version="2.0.0" />
     <PackageReference Include="Nancy.Bootstrappers.Autofac" Version="2.0.0-clinteastwood" />
-    <PackageReference Include="Nancy.Swagger.Annotations" Version="2.2.53-alpha" />
-    <PackageReference Include="Nancy.Validation.DataAnnotations" Version="2.0.0-clinteastwood" />
+    <PackageReference Include="Nancy.Swagger.Annotations" Version="2.2.56-alpha" />
+    <PackageReference Include="Nancy.Validation.DataAnnotations" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="NLog" Version="4.5.9" />
-    <PackageReference Include="System.Data.Common" Version="4.3.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.5.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.5.0" />
-    <PackageReference Include="System.Interactive.Async" Version="3.2.0" />
   </ItemGroup>
 </Project>
