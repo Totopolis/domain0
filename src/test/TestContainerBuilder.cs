@@ -41,13 +41,13 @@ namespace Domain0.Test
             builder.RegisterInstance(new Mock<IEmailClient>().Object).As<IEmailClient>().SingleInstance();
             builder.RegisterInstance(new Mock<ILdapClient>().Object).As<ILdapClient>().SingleInstance();
 
-            setUpEnvironmentRepository(builder);
+            SetUpEnvironmentRepository(builder);
 
             upgrade?.Invoke(builder);
             return builder.Build();
         }
 
-        private static void setUpEnvironmentRepository(ContainerBuilder builder)
+        private static void SetUpEnvironmentRepository(ContainerBuilder builder)
         {
             var environmentMock = new Mock<IEnvironmentRepository>();
             environmentMock

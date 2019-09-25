@@ -1,106 +1,28 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyName>Domain0.Client.AuthContext</AssemblyName>
-    <RootNamespace>Domain0.Client.AuthContext</RootNamespace>
-    <TargetFrameworks>net45;net462;netstandard1.4;netstandard2.0</TargetFrameworks>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems> 
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\$(TargetFramework)</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\$(TargetFramework)</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <TargetFrameworks>net45</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <Compile Include="..\..\src\client\ClientLockScope.cs" Link="ClientLockScope.cs" />
+    <Compile Include="..\..\src\client\AuthenticationContext.cs" Link="AuthenticationContext.cs" />
+    <Compile Include="..\..\src\client\AuthenticationContextException.cs" Link="AuthenticationContextException.cs" />
+    <Compile Include="..\..\src\client\Domain0ClientScope.cs" Link="Domain0ClientScope.cs" />
+    <Compile Include="..\..\src\client\IAuthenticationContext.cs" Link="IAuthenticationContext.cs" />
+    <Compile Include="..\..\src\client\LoginInfoStorage.cs" Link="LoginInfoStorage.cs" />
+    <Compile Include="..\..\src\client\RefreshTokenInterceptor.cs" Link="RefreshTokenInterceptor.cs" />
+    <Compile Include="..\..\src\client\RefreshTokenTimer.cs" Link="RefreshTokenTimer.cs" />
+    <Compile Include="..\..\src\client\TokenChangeManager.cs" Link="TokenChangeManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\client\ClientLockScope.cs">
-      <Link>ClientLockScope.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\client\AuthenticationContext.cs">
-      <Link>AuthenticationContext.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\client\AuthenticationContextException.cs">
-      <Link>AuthenticationContextException.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\client\Domain0ClientScope.cs">
-      <Link>Domain0ClientScope.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\client\IAuthenticationContext.cs">
-      <Link>IAuthenticationContext.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\client\LoginInfoStorage.cs">
-      <Link>LoginInfoStorage.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\client\RefreshTokenInterceptor.cs">
-      <Link>RefreshTokenInterceptor.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\client\RefreshTokenTimer.cs">
-      <Link>RefreshTokenTimer.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\client\TokenChangeManager.cs">
-      <Link>TokenChangeManager.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Castle.Core.AsyncInterceptor" Version="1.6.0" />
-    <PackageReference Include="Domain0.Api.Client" Version="1.0.4" />
+    <PackageReference Include="Castle.Core.AsyncInterceptor" Version="1.7.0" />
     <PackageReference Include="jose-jwt" Version="2.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="8.0.3" />
+    <PackageReference Include="Nito.AsyncEx" Version="4.0.1" />
+    <!--
+    <PackageReference Include="Domain0.Api.Client" Version="1.0.10" />
+    -->
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
-    <PackageReference Include="Nito.AsyncEx">
-      <Version>4.0.1</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>8.0.3</Version>
-    </PackageReference>    
-  </ItemGroup>  
-  <ItemGroup Condition="'$(TargetFramework)' == 'net462'">  
-    <PackageReference Include="Nito.AsyncEx">
-      <Version>4.0.1</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>8.0.3</Version>
-    </PackageReference>    
+  <ItemGroup>
+    <ProjectReference Include="..\Domain0.Api.Client\Domain0.Api.Client.csproj" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.4'">
-    <PackageReference Include="Nito.AsyncEx">
-      <Version>5.0.0-pre-05</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>11.0.2</Version>
-    </PackageReference>    
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Nito.AsyncEx">
-      <Version>5.0.0-pre-05</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>11.0.2</Version>
-    </PackageReference>    
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
