@@ -14,22 +14,8 @@
     <tags>Domain0 JWT Authentication Identity service</tags>
     <language>en-US</language>
     <dependencies>
-      <group targetFramework="net45">
-        <dependency id="System.Net.Http" version="4.3.4" />
-        <dependency id="Newtonsoft.Json" version="[8.0.3, )" />
-      </group>
-      <group targetFramework="net462">
-        <dependency id="System.Net.Http" version="4.3.4" />
-        <dependency id="Newtonsoft.Json" version="[8.0.3, )" />
-      </group>
-      <group targetFramework="netstandard1.3">
-        <dependency id="System.Net.Http" version="4.3.4" />
-        <dependency id="Newtonsoft.Json" version="[11.0.2, )" />
-      </group>
-      <group targetFramework="netstandard2.0">
-        <dependency id="System.Net.Http" version="4.3.4" />
-        <dependency id="Newtonsoft.Json" version="[11.0.2, )" />
-      </group>
+      <dependency id="Newtonsoft.Json" version="[12.0.2, )" />
+      <dependency id="System.Net.Http" version="[4.3.4, )" />
     </dependencies>
   </metadata>
   <files>

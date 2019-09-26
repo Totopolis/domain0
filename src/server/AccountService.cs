@@ -154,7 +154,7 @@ namespace Domain0.Service
             }
 
             var environment = await environmentRequestContext.LoadEnvironment(environmentToken);
-            chekEnvironmentTokenValid(environmentToken, environment);
+            CheckEnvironmentTokenValid(environmentToken, environment);
 
             var expirationTime = accountServiceSettings.PinExpirationTime;
             var password = passwordGenerator.GeneratePassword();
@@ -193,7 +193,7 @@ namespace Domain0.Service
             }
 
             var environment = await environmentRequestContext.LoadEnvironment(environmentToken);
-            chekEnvironmentTokenValid(environmentToken, environment);
+            CheckEnvironmentTokenValid(environmentToken, environment);
 
             var password = passwordGenerator.GeneratePassword();
             var expirationTime = accountServiceSettings.EmailCodeExpirationTime;
@@ -253,7 +253,7 @@ namespace Domain0.Service
             }
 
             var environment = await environmentRequestContext.LoadEnvironment(request.EnvironmentToken);
-            chekEnvironmentTokenValid(request.EnvironmentToken, environment);
+            CheckEnvironmentTokenValid(request.EnvironmentToken, environment);
 
 
             var password = passwordGenerator.GeneratePassword();
@@ -332,7 +332,7 @@ namespace Domain0.Service
             }
 
             var environment = await environmentRequestContext.LoadEnvironment(request.EnvironmentToken);
-            chekEnvironmentTokenValid(request.EnvironmentToken, environment);
+            CheckEnvironmentTokenValid(request.EnvironmentToken, environment);
 
 
             var password = passwordGenerator.GeneratePassword();
@@ -702,7 +702,7 @@ namespace Domain0.Service
             if (account == null)
             {
                 var environment = await environmentRequestContext.LoadEnvironment(environmentToken);
-                chekEnvironmentTokenValid(environmentToken, environment);
+                CheckEnvironmentTokenValid(environmentToken, environment);
 
                 var newPassword = passwordGenerator.GeneratePassword();
                 var hashPassword = passwordGenerator.HashPassword(newPassword);
@@ -1326,7 +1326,7 @@ namespace Domain0.Service
             return (expiredAt - expirationTime - DateTime.UtcNow).Duration() < accountServiceSettings.MessagesResendCooldown;
         }
 
-        private void chekEnvironmentTokenValid(string environmentToken, Repository.Model.Environment environment)
+        private void CheckEnvironmentTokenValid(string environmentToken, Repository.Model.Environment environment)
         {
             if (environment?.Id == null)
             {

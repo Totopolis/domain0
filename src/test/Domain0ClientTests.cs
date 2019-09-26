@@ -887,6 +887,7 @@ namespace Domain0.Test
         public void Dispose()
         {
             host.Dispose();
+            container.Dispose();
         }
     }
 }

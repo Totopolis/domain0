@@ -37,17 +37,11 @@
     <EmbeddedResource Include="..\..\src\server\database.sql" Link="Scripts\database.sql" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="4.8.1" />
     <PackageReference Include="Gerakul.FastSql.SqlServer" Version="1.0.0" />
-    <PackageReference Include="Monik.Client.Azure" Version="1.0.22" />
-    <PackageReference Include="Nancy.Authentication.Stateless" Version="2.0.0" />
-    <PackageReference Include="Nancy.Bootstrappers.Autofac" Version="2.0.0-clinteastwood" />
+    <PackageReference Include="Monik.Client.Azure" Version="1.0.24" />
     <PackageReference Include="Nancy.Hosting.Self" Version="2.0.0" />
-    <PackageReference Include="Nancy.Validation.DataAnnotations" Version="2.0.0" />
-    <PackageReference Include="NLog.Config" Version="4.5.9" />
-    <PackageReference Include="System.Data.Common" Version="4.3.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.5.0" />
-    <PackageReference Include="Topshelf" Version="4.0.4" />
+    <PackageReference Include="NLog.Config" Version="4.6.7" />
+    <PackageReference Include="Topshelf" Version="4.2.1" />
   </ItemGroup>
   <UsingTask TaskName="TransformXml" AssemblyFile="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Web\Microsoft.Web.Publishing.Tasks.dll" />
   <Target Name="App_config_AfterCompile" AfterTargets="AfterCompile" Condition="Exists('..\..\src\config\App.config')">

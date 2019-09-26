@@ -14,7 +14,7 @@
     <Compile Include="..\..\src\test\TestContainerBuilder.cs" Link="TestContainerBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Moq" Version="4.10.0" />
+    <PackageReference Include="Moq" Version="4.13.0" />
     <PackageReference Include="Nancy.Hosting.Self" Version="2.0.0" />
     <PackageReference Include="Nancy.Testing" Version="2.0.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
