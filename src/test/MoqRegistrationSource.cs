@@ -6,6 +6,7 @@ using Autofac.Core.Registration;
 using Autofac.Core.Activators.Delegate;
 using Moq;
 using Autofac.Core.Lifetime;
+using Autofac.Features.Decorators;
 
 namespace Domain0.Test.Infrastructure
 {
@@ -15,6 +16,9 @@ namespace Domain0.Test.Infrastructure
 
         public IEnumerable<IComponentRegistration> RegistrationsFor(Autofac.Core.Service service, Func<Autofac.Core.Service, IEnumerable<IComponentRegistration>> registrationAccessor)
         {
+            if (!(service is IServiceWithType) || service is DecoratorService)
+                return Enumerable.Empty<IComponentRegistration>();
+
             if (!service.Description.Contains("Domain0"))
                 return Enumerable.Empty<IComponentRegistration>();
 

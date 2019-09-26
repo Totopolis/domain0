@@ -132,7 +132,7 @@
     <EmbeddedResource Include="..\..\src\swagger\swagger-ui.js" Link="Swagger-UI\swagger-ui.js" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="4.8.1" />
+    <PackageReference Include="Autofac" Version="4.9.4" />
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="Gerakul.ProtoBufSerializer" Version="1.2.1" />
     <PackageReference Include="Gerakul.SqlQueue.InMemory" Version="1.5.2" />
