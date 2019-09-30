@@ -1,10 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFrameworks>net462;netcoreapp3.0</TargetFrameworks>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System.Web.Extensions" />
-  </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\src\server.nancy\GlobalSuppression.cs" Link="GlobalSuppression.cs" />
     <Compile Include="..\..\src\test\BrowserResponseBodyWrapperExtensions.cs" Link="BrowserResponseBodyWrapperExtensions.cs" />
@@ -15,10 +12,12 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Moq" Version="4.13.0" />
-    <PackageReference Include="Nancy.Hosting.Self" Version="2.0.0" />
     <PackageReference Include="Nancy.Testing" Version="2.0.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
+    <PackageReference Include="Nancy.Hosting.Self" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Domain0.Api.Client\Domain0.Api.Client.csproj" />

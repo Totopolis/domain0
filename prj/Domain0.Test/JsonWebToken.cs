@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web.Script.Serialization;
+using Nancy.Json;
 
 namespace Sdl.Domain0.Shared
 {
@@ -49,7 +49,7 @@ namespace Sdl.Domain0.Shared
         /// <summary>
         /// Creates a JWT given a payload, the signing key (as a string that will be decoded with UTF8), and the algorithm to use.
         /// </summary>
-        /// <param name="payload">An arbitrary payload (must be serializable to JSON via <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>).</param>
+        /// <param name="payload">An arbitrary payload (must be serializable to JSON via <see cref="JavaScriptSerializer"/>).</param>
         /// <param name="key">The key used to sign the token.</param>
         /// <param name="algorithm">The hash algorithm to use.</param>
         /// <returns>The generated JWT.</returns>
@@ -61,7 +61,7 @@ namespace Sdl.Domain0.Shared
         /// <summary>
         /// Creates a JWT given a payload, the signing key, and the algorithm to use.
         /// </summary>
-        /// <param name="payload">An arbitrary payload (must be serializable to JSON via <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>).</param>
+        /// <param name="payload">An arbitrary payload (must be serializable to JSON via <see cref="JavaScriptSerializer"/>).</param>
         /// <param name="key">The key used to sign the token.</param>
         /// <param name="algorithm">The hash algorithm to use.</param>
         /// <returns>The generated JWT.</returns>
@@ -127,7 +127,7 @@ namespace Sdl.Domain0.Shared
         }
 
         /// <summary>
-        /// Given a JWT, decode it and return the payload as an object (by deserializing it with <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>).
+        /// Given a JWT, decode it and return the payload as an object (by deserializing it with <see cref="JavaScriptSerializer"/>).
         /// </summary>
         /// <param name="token">The JWT.</param>
         /// <param name="key">The key that was used to sign the JWT as a string that will be decoded with UTF8.</param>
@@ -144,7 +144,7 @@ namespace Sdl.Domain0.Shared
         }
 
         /// <summary>
-        /// Given a JWT, decode it and return the payload as an object (by deserializing it with <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>).
+        /// Given a JWT, decode it and return the payload as an object (by deserializing it with <see cref="JavaScriptSerializer"/>).
         /// </summary>
         /// <param name="token">The JWT.</param>
         /// <param name="key">The key that was used to sign the JWT as a byte array.</param>

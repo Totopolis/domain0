@@ -34,6 +34,7 @@ namespace Domain0.Nancy.Kestrel
                 {
                     webBuilder
                         .UseKestrel(serverOptions => { serverOptions.AllowSynchronousIO = true; })
+                        .UseUrls(Settings.Uri.ToString().Replace("localhost", "*"))
                         .UseStartup<Startup>();
                 })
                 .Build();

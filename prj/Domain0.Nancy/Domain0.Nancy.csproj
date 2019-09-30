@@ -1,10 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net462;netcoreapp2.2</TargetFrameworks>
+    <TargetFrameworks>net462;netcoreapp3.0</TargetFrameworks>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-  </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\src\server.nancy\GlobalSuppression.cs" Link="GlobalSuppression.cs" />
     <Compile Include="..\..\src\common\BadModelException.cs" Link="Exceptions\BadModelException.cs" />
@@ -121,6 +118,7 @@
     <PackageReference Include="Nancy.Validation.FluentValidation" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="NLog" Version="4.6.7" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.6.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" />
     <PackageReference Include="System.DirectoryServices.Protocols" Version="4.6.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.5.0" />

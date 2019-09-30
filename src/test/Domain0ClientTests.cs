@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if NETFRAMEWORK
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -888,3 +890,6 @@ namespace Domain0.Test
         }
     }
 }
+
+
+#endif
