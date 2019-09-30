@@ -4,7 +4,6 @@ using System.Reflection;
 using Microsoft.Extensions.Hosting;
 using NLog;
 using NLog.Common;
-using NLog.Web;
 
 namespace Domain0.Nancy.Kestrel
 {
@@ -20,7 +19,7 @@ namespace Domain0.Nancy.Kestrel
             InternalLogger.LogFile = "error.log";
             InternalLogger.LogLevel = LogLevel.Error;
 
-            Logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+            Logger = LogManager.GetCurrentClassLogger();
         }
 
         public static void Main()

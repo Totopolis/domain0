@@ -15,6 +15,11 @@
     <Compile Include="..\..\src\server\X509StoreProvider.cs" Link="Certificate\X509StoreProvider.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Domain0.Nancy\Domain0.Nancy.csproj" />
     <ProjectReference Include="..\Domain0.Repository.FastSql\Domain0.Repository.FastSql.csproj" />
   </ItemGroup>
