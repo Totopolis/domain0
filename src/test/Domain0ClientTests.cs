@@ -560,7 +560,7 @@ namespace Domain0.Test
             var permissionRepositoryMock = Mock.Get(permissionRepository);
 
             permissionRepositoryMock
-                .Setup(x => x.FindByFilter(It.IsAny<Model.RolePermissionFilter>()))
+                .Setup(x => x.FindRolePermissionsByRoleIds(It.IsAny<List<int>>()))
                 .ReturnsAsync(
                     ids.Ids.Select(x => 
                         new Repository.Model.RolePermission
@@ -585,10 +585,7 @@ namespace Domain0.Test
 
                 var rolePermissions = await client.LoadRolePermissionsAsync(roleId);
                 Assert.True(ids.Ids.SequenceEqual(rolePermissions.Select(x=> x.Id.GetValueOrDefault())));
-                permissionRepositoryMock.Verify(t => 
-                    t.FindByFilter(It.Is<Model.RolePermissionFilter>(f => 
-                        f.RoleIds.Contains(roleId))), 
-                    Times.Once);
+                permissionRepositoryMock.Verify(t => t.FindRolePermissionsByRoleIds(It.Is<List<int>>(roleIds => roleIds.Contains(roleId))), Times.Once);
 
                 await client.RemoveRolePermissionsAsync(roleId, ids);
                 roleRepositoryMock.Verify(t => t.RemoveRolePermissions(
@@ -609,7 +606,7 @@ namespace Domain0.Test
             var permissionRepositoryMock = Mock.Get(permissionRepository);
 
             permissionRepositoryMock
-                .Setup(x => x.FindByFilter(It.IsAny<Model.UserPermissionFilter>()))
+                .Setup(x => x.FindUserPermissionsByUserIds(It.IsAny<List<int>>()))
                 .ReturnsAsync(new[] { new Repository.Model.UserPermission() { Id = permissionId } });
 
             using (var http = new HttpClient())
@@ -623,7 +620,7 @@ namespace Domain0.Test
                 permissionRepositoryMock.Verify(t => t.AddUserPermission(userId, It.IsAny<int[]>()), Times.Once);
 
                 var permissions = await client.LoadPermissionsByUserFilterAsync(new UserPermissionFilter(new List<int> { userId }));
-                permissionRepositoryMock.Verify(t => t.FindByFilter(It.Is<Model.UserPermissionFilter>(pf => pf.UserIds.Contains(userId))), Times.Once);
+                permissionRepositoryMock.Verify(t => t.FindUserPermissionsByUserIds(It.Is<List<int>>(userIds => userIds.Contains(userId))), Times.Once);
                 Assert.Equal(permissionId, permissions.FirstOrDefault()?.Id);
 
                 await client.RemoveUserPermissionsAsync(userId, ids);

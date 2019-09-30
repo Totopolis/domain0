@@ -171,8 +171,7 @@ namespace Domain0.Nancy
 
         public override void Configure(INancyEnvironment environment)
         {
-            var supportedCultures = CultureInfo.GetCultures(
-                    CultureTypes.AllCultures & ~CultureTypes.SpecificCultures)
+            var supportedCultures = CultureInfo.GetCultures(CultureTypes.AllCultures)
                 .Select(x => x.Name)
                 .ToArray();
             environment.Globalization(supportedCultures, "en-US");

@@ -5,62 +5,22 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\src\server.nancy\GlobalSuppression.cs" Link="GlobalSuppression.cs" />
-    <Compile Include="..\..\src\server\AccessLogRepository.cs" Link="FastSql\AccessLogRepository.cs" />
-    <Compile Include="..\..\src\server\AccountRepository.cs" Link="FastSql\AccountRepository.cs" />
     <Compile Include="..\..\src\server\CertificateHelper.cs" Link="Infrastructure\CertificateHelper.cs" />
     <Compile Include="..\..\src\server\CommandHelper.cs" Link="Infrastructure\CommandHelper.cs" />
-    <Compile Include="..\..\src\server\DbManager.cs" Link="FastSql\DbManager.cs" />
-    <Compile Include="..\..\src\server\EnvironmentRepository.cs" Link="FastSql\EnvironmentRepository.cs" />
-    <Compile Include="..\..\src\server\IX509CertificateProvider.cs" Link="Certificate\IX509CertificateProvider.cs" />
-    <Compile Include="..\..\src\server\MessageTemplateRepository.cs" Link="FastSql\MessageTemplateRepository.cs" />
     <Compile Include="..\..\src\server\MonikNLogTarget.cs" Link="Infrastructure\MonikNLogTarget.cs" />
     <Compile Include="..\..\src\server\NancyConfigurationExtensions.cs" Link="Infrastructure\NancyConfigurationExtensions.cs" />
     <Compile Include="..\..\src\server\NancyService.cs" Link="Infrastructure\NancyService.cs" />
-    <Compile Include="..\..\src\server\DatabaseModule.cs" Link="Infrastructure\DatabaseModule.cs" />
-    <Compile Include="..\..\src\server\PermissionRepository.cs" Link="FastSql\PermissionRepository.cs" />
-    <Compile Include="..\..\src\server\RoleRepository.cs" Link="FastSql\RoleRepository.cs" />
-    <Compile Include="..\..\src\server\SmsRequestRepository.cs" Link="FastSql\SmsRequestRepository.cs" />
-    <Compile Include="..\..\src\server\TokenRegistrationRepository.cs" Link="FastSql\TokenRegistrationRepository.cs" />
-    <Compile Include="..\..\src\server\ApplicationRepository.cs" Link="FastSql\ApplicationRepository.cs" />
-    <Compile Include="..\..\src\server\EmailRequestRepository.cs" Link="FastSql\EmailRequestRepository.cs" />
-    <Compile Include="..\..\src\server\RepositoryBase.cs" Link="FastSql\RepositoryBase.cs" />
+    <Compile Include="..\..\src\server\IX509CertificateProvider.cs" Link="Certificate\IX509CertificateProvider.cs" />
     <Compile Include="..\..\src\server\X509FileProvider.cs" Link="Certificate\X509FileProvider.cs" />
     <Compile Include="..\..\src\server\X509StoreProvider.cs" Link="Certificate\X509StoreProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Domain0.Nancy\Domain0.Nancy.csproj" />
+    <ProjectReference Include="..\Domain0.Repository.FastSql\Domain0.Repository.FastSql.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <EmbeddedResource Include="..\..\src\server\database.sql" Link="Scripts\database.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Gerakul.FastSql.SqlServer" Version="1.0.0" />
     <PackageReference Include="Monik.Client.Azure" Version="1.0.24" />
     <PackageReference Include="Nancy.Hosting.Self" Version="2.0.0" />
-    <PackageReference Include="NLog.Config" Version="4.6.7" />
     <PackageReference Include="Topshelf" Version="4.2.1" />
   </ItemGroup>
-  <UsingTask TaskName="TransformXml" AssemblyFile="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Web\Microsoft.Web.Publishing.Tasks.dll" />
-  <Target Name="App_config_AfterCompile" AfterTargets="AfterCompile" Condition="Exists('..\..\src\config\App.config')">
-    <!--Generate transformed app config in the intermediate directory-->
-    <TransformXml Source="App.config" Destination="$(IntermediateOutputPath)$(TargetFileName).config" Transform="..\..\src\config\App.config" />
-    <!--Force build process to use the transformed configuration file from now on.-->
-    <ItemGroup>
-      <AppConfigWithTargetPath Remove="App.config" />
-      <AppConfigWithTargetPath Include="$(IntermediateOutputPath)$(TargetFileName).config">
-        <TargetPath>$(TargetFileName).config</TargetPath>
-      </AppConfigWithTargetPath>
-    </ItemGroup>
-  </Target>
-  <!--Override After Publish to support ClickOnce AfterPublish. Target replaces the untransformed config file copied to the deployment directory with the transformed one.-->
-  <Target Name="App_config_AfterPublish" AfterTargets="AfterPublish" Condition="Exists('..\..\src\config\App.config')">
-    <PropertyGroup>
-      <DeployedConfig>$(_DeploymentApplicationDir)$(TargetName)$(TargetExt).config$(_DeploymentFileMappingExtension)</DeployedConfig>
-    </PropertyGroup>
-    <!--Publish copies the untransformed App.config to deployment directory so overwrite it-->
-    <Copy Condition="Exists('$(DeployedConfig)')" SourceFiles="$(IntermediateOutputPath)$(TargetFileName).config" DestinationFiles="$(DeployedConfig)" />
-  </Target>
 </Project>

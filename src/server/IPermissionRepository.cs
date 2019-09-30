@@ -1,4 +1,5 @@
-﻿using Domain0.Repository.Model;
+﻿using System.Collections.Generic;
+using Domain0.Repository.Model;
 using System.Threading.Tasks;
 
 namespace Domain0.Repository
@@ -9,11 +10,9 @@ namespace Domain0.Repository
 
         Task<Permission[]> GetByRoleId(int userId);
 
-        Task<Permission[]> FindByFilter(Domain0.Model.PermissionFilter filter);
+        Task<UserPermission[]> FindUserPermissionsByUserIds(List<int> ids);
 
-        Task<UserPermission[]> FindByFilter(Domain0.Model.UserPermissionFilter filter);
-
-        Task<RolePermission[]> FindByFilter(Domain0.Model.RolePermissionFilter filter);
+        Task<RolePermission[]> FindRolePermissionsByRoleIds(List<int> ids);
 
         Task AddUserPermission(int userId, int[] ids);
 

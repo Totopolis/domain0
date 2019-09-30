@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Gerakul.FastSql.Common;
 using System;
+using System.Collections.Generic;
 
 namespace Domain0.FastSql
 {
@@ -35,17 +36,12 @@ namespace Domain0.FastSql
                 .ExecuteNonQueryAsync();
         }
 
-        public async Task<Permission[]> FindByFilter(Model.PermissionFilter filter)
+        public async Task<RolePermission[]> FindRolePermissionsByRoleIds(List<int> ids)
         {
-            return await FindByIds(filter.PermissionIds);
-        }
-
-        public async Task<RolePermission[]> FindByFilter(Model.RolePermissionFilter filter)
-        {
-            if (!filter.RoleIds.Any())
+            if (!ids.Any())
                 return new RolePermission[0];
 
-            var roleIds = string.Join(",", filter.RoleIds);
+            var roleIds = string.Join(",", ids);
 
             var rolePermissions = await getContext()
                 .CreateSimple(
@@ -59,12 +55,12 @@ namespace Domain0.FastSql
             return rolePermissions;
         }
 
-        public async Task<UserPermission[]> FindByFilter(Model.UserPermissionFilter filter)
+        public async Task<UserPermission[]> FindUserPermissionsByUserIds(List<int> ids)
         {
-            if (!filter.UserIds.Any())
+            if (!ids.Any())
                 return new UserPermission[0];
 
-            var userIds = string.Join(",", filter.UserIds);
+            var userIds = string.Join(",", ids);
 
             var rolePermissions = await getContext()
                 .CreateSimple(
