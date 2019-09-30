@@ -2,7 +2,7 @@ using Autofac;
 using Domain0.FastSql;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Nancy;
+using Microsoft.Extensions.Hosting;
 using Nancy.Owin;
 using NLog;
 
@@ -11,8 +11,13 @@ namespace Domain0.Nancy.Kestrel
     public class Startup
     {
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
             app.UseOwin(x => x.UseNancy(opt =>
             {
                 var container = CreateContainer();

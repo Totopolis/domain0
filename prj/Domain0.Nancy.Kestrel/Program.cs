@@ -1,14 +1,12 @@
 using System;
-using System.IO;
 using System.Reflection;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using NLog;
 using NLog.Common;
 
 namespace Domain0.Nancy.Kestrel
 {
-    using Microsoft.AspNetCore.Hosting;
-
     public class Program
     {
         private static readonly ILogger Logger;
@@ -26,9 +24,11 @@ namespace Domain0.Nancy.Kestrel
         {
             Logger.Info($"Starting version: {Assembly.GetExecutingAssembly().GetName().Version}");
             Logger.Info($"Use BasePath: {AppContext.BaseDirectory}");
+            
+            Logger.Info("Use Uri={0}", Settings.Uri);
+            Logger.Info("Use ConnectionString={0}", Settings.ConnectionString);
 
             var host = new HostBuilder()
-                .UseContentRoot(Directory.GetCurrentDirectory())
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
@@ -39,6 +39,8 @@ namespace Domain0.Nancy.Kestrel
                 .Build();
 
             host.Run();
+
+            Logger.Warn("Stopped");
         }
     }
 }
