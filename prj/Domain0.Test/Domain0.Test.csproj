@@ -3,7 +3,6 @@
     <TargetFrameworks>net462;netcoreapp3.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\server.nancy\GlobalSuppression.cs" Link="GlobalSuppression.cs" />
     <Compile Include="..\..\src\test\BrowserResponseBodyWrapperExtensions.cs" Link="BrowserResponseBodyWrapperExtensions.cs" />
     <Compile Include="..\..\src\test\Domain0ClientTests.cs" Link="Domain0ClientTests.cs" />
     <Compile Include="..\..\src\test\MoqRegistrationSource.cs" Link="MoqRegistrationSource.cs" />

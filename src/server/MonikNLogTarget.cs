@@ -72,10 +72,10 @@ namespace Domain0.WinService
             }
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void CloseTarget()
         {
-            base.Dispose(disposing);
-            M.OnStop();
+            monikClient?.OnStop();
+            base.CloseTarget();
         }
     }
 }

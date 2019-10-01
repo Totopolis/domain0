@@ -3,7 +3,6 @@
     <TargetFrameworks>net462;netcoreapp3.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\server.nancy\GlobalSuppression.cs" Link="GlobalSuppression.cs" />
     <Compile Include="..\..\src\common\BadModelException.cs" Link="Exceptions\BadModelException.cs" />
     <Compile Include="..\..\src\common\ForbiddenSecurityException.cs" Link="Exceptions\ForbiddenSecurityException.cs" />
     <Compile Include="..\..\src\common\NotFoundException.cs" Link="Exceptions\NotFoundException.cs" />

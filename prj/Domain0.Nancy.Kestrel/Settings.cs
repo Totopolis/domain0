@@ -14,26 +14,14 @@ namespace Domain0.Nancy.Kestrel
 
         public static Uri Uri =>
             string.IsNullOrEmpty(ConfigurationManager.AppSettings["Url"])
-                ? new Uri(HasX509CertificateSettings()? DefaultHttpsUri : DefaultHttpUri)
+                ? new Uri(DefaultHttpUri)
                 : new Uri(ConfigurationManager.AppSettings["Url"]);
-
-        public static bool HasX509CertificateSettings()
-        {
-            return !string.IsNullOrEmpty(ConfigurationManager.AppSettings["X509_Filepath"])
-                   || !string.IsNullOrEmpty(ConfigurationManager.AppSettings["X509_Subject"]);
-        }
 
 
 #if DEBUG
         public const string ServiceName = "domain0Debug";
 #else
         public const string ServiceName = "domain0";
-#endif
-
-#if DEBUG
-        public const string DefaultHttpsUri = "https://localhost:4443";
-#else
-        public const string DefaultHttpsUri = "https://localhost";
 #endif
 
 #if DEBUG
