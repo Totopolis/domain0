@@ -154,7 +154,6 @@ namespace Domain0.Test
 
             var user = "user";
             var password = "password";
-            var email = "user@domain.ru";
 
 
             var ldapMock = Mock.Get(container.Resolve<ILdapClient>());

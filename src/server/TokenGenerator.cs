@@ -58,7 +58,7 @@ namespace Domain0.Service
                 var principal = handler.ValidateToken(accessToken, parameters, out _);
                 var identity = (ClaimsIdentity)principal.Identity;
                 identity.AddClaim(new Claim("id_token", accessToken));
-                foreach (var role in principal.FindAll(TokenClaims.CLAIM_PERMISSIONS))
+                foreach (var role in principal.FindAll(TokenClaims.CLAIM_PERMISSIONS).ToList())
                 {
                     foreach (var permission in JsonConvert.DeserializeObject<string[]>(role.Value))
                     {

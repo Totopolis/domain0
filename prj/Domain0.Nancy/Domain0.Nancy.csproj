@@ -1,522 +1,128 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B5D06024-A211-4154-BAC8-02A517EC391B}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Domain0.Nancy</RootNamespace>
-    <AssemblyName>Domain0.Nancy</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <TargetFrameworks>net462;netcoreapp3.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=4.8.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\packages\Autofac.4.8.1\lib\net45\Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="AutoMapper, Version=7.0.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoMapper.7.0.1\lib\net45\AutoMapper.dll</HintPath>
-    </Reference>
-    <Reference Include="Gerakul.ProtoBufSerializer, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Gerakul.ProtoBufSerializer.1.2.1\lib\net46\Gerakul.ProtoBufSerializer.dll</HintPath>
-    </Reference>
-    <Reference Include="Gerakul.SqlQueue.Core, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Gerakul.SqlQueue.Core.1.0.4\lib\net46\Gerakul.SqlQueue.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Gerakul.SqlQueue.InMemory, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Gerakul.SqlQueue.InMemory.1.2.0\lib\net46\Gerakul.SqlQueue.InMemory.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Caching.Abstractions, Version=2.1.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Caching.Abstractions.2.1.2\lib\netstandard2.0\Microsoft.Extensions.Caching.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Caching.Memory, Version=2.1.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Caching.Memory.2.1.2\lib\netstandard2.0\Microsoft.Extensions.Caching.Memory.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.2.1.1\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Options, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Options.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Options.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Primitives, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Primitives.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.IdentityModel.JsonWebTokens, Version=5.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <HintPath>..\packages\Microsoft.IdentityModel.JsonWebTokens.5.3.0\lib\net461\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.IdentityModel.Logging, Version=5.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <HintPath>..\packages\Microsoft.IdentityModel.Logging.5.3.0\lib\net461\Microsoft.IdentityModel.Logging.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.IdentityModel.Tokens, Version=5.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <HintPath>..\packages\Microsoft.IdentityModel.Tokens.5.3.0\lib\net461\Microsoft.IdentityModel.Tokens.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Nancy, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.2.0.0-clinteastwood\lib\net452\Nancy.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Authentication.Stateless, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.Authentication.Stateless.2.0.0-clinteastwood\lib\net452\Nancy.Authentication.Stateless.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Bootstrappers.Autofac, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.Bootstrappers.Autofac.2.0.0-clinteastwood\lib\net452\Nancy.Bootstrappers.Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Metadata.Modules, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.Metadata.Modules.2.0.0-barneyrubble\lib\net452\Nancy.Metadata.Modules.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Swagger, Version=2.2.53.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.Swagger.2.2.53-alpha\lib\net452\Nancy.Swagger.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Swagger.Annotations, Version=2.2.53.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.Swagger.Annotations.2.2.53-alpha\lib\net452\Nancy.Swagger.Annotations.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Validation.DataAnnotations, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.Validation.DataAnnotations.2.0.0-clinteastwood\lib\net452\Nancy.Validation.DataAnnotations.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.5.9\lib\net45\NLog.dll</HintPath>
-    </Reference>
-    <Reference Include="Swagger.ObjectModel, Version=2.2.53.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Swagger.ObjectModel.2.2.53-alpha\lib\net452\Swagger.ObjectModel.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.Common, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.Common.4.3.0\lib\net451\System.Data.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SqlClient, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SqlClient.4.5.1\lib\net461\System.Data.SqlClient.dll</HintPath>
-    </Reference>
-    <Reference Include="System.DirectoryServices.Protocols" />
-    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=5.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.5.3.0\lib\net461\System.IdentityModel.Tokens.Jwt.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Interactive.Async, Version=3.2.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Interactive.Async.3.2.0\lib\net46\System.Interactive.Async.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Memory, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.1\lib\netstandard2.0\System.Memory.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.Caching" />
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.1\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <Compile Include="..\..\src\common\BadModelException.cs" Link="Exceptions\BadModelException.cs" />
+    <Compile Include="..\..\src\common\ForbiddenSecurityException.cs" Link="Exceptions\ForbiddenSecurityException.cs" />
+    <Compile Include="..\..\src\common\NotFoundException.cs" Link="Exceptions\NotFoundException.cs" />
+    <Compile Include="..\..\src\common\TokenSecurityException.cs" Link="Exceptions\TokenSecurityException.cs" />
+    <Compile Include="..\..\src\common\UserLockedSecurityException.cs" Link="Exceptions\UserLockedSecurityException.cs" />
+    <Compile Include="..\..\src\server.nancy\SmsModule.cs" Link="SmsModule.cs" />
+    <Compile Include="..\..\src\server\AccountService.cs" Link="Service\AccountService.cs" />
+    <Compile Include="..\..\src\server\ApplicationModule.cs" Link="Infrastructure\ApplicationModule.cs" />
+    <Compile Include="..\..\src\server\CultureRequestContext.cs" Link="Infrastructure\CultureRequestContext.cs" />
+    <Compile Include="..\..\src\server\CustomStatusCodeHandler.cs" Link="Infrastructure\CustomStatusCodeHandler.cs" />
+    <Compile Include="..\..\src\server\DefaultResponseProcessor.cs" Link="Infrastructure\DefaultResponseProcessor.cs" />
+    <Compile Include="..\..\src\server\Domain0Bootstrapper.cs" Link="Domain0Bootstrapper.cs" />
+    <Compile Include="..\..\src\server\EmbeddedContentConventionBuilder.cs" Link="Infrastructure\EmbeddedContentConventionBuilder.cs" />
+    <Compile Include="..\..\src\server\EnvironmentRequestContext.cs" Link="Infrastructure\EnvironmentRequestContext.cs" />
+    <Compile Include="..\..\src\server\ICultureRequestContext.cs" Link="Infrastructure\ICultureRequestContext.cs" />
+    <Compile Include="..\..\src\server\IEnvironmentRequestContext.cs" Link="Service\IEnvironmentRequestContext.cs" />
+    <Compile Include="..\..\src\server\IMessageBuilder.cs" Link="Service\Messages\IMessageBuilder.cs" />
+    <Compile Include="..\..\src\server\IRequestContext.cs" Link="Service\IRequestContext.cs" />
+    <Compile Include="..\..\src\server\ISmsClient.cs" Link="Service\Sms\ISmsClient.cs" />
+    <Compile Include="..\..\src\server\ITokenGenerator.cs" Link="Service\Tokens\ITokenGenerator.cs" />
+    <Compile Include="..\..\src\server\JsonSerializer.cs" Link="Infrastructure\JsonSerializer.cs" />
+    <Compile Include="..\..\src\server\MapperProfile.cs" Link="Infrastructure\MapperProfile.cs" />
+    <Compile Include="..\..\src\server\MessageBuilder.cs" Link="Service\Messages\MessageBuilder.cs" />
+    <Compile Include="..\..\src\server\NancyExceptionHandling.cs" Link="Infrastructure\NancyExceptionHandling.cs" />
+    <Compile Include="..\..\src\server\NancyModuleExtensions.cs" Link="Infrastructure\NancyModuleExtensions.cs" />
+    <Compile Include="..\..\src\server\NancySecurityCriticalActionsHandling.cs" Link="Infrastructure\NancySecurityCriticalActionsHandling.cs" />
+    <Compile Include="..\..\src\server\PasswordGenerator.cs" Link="Service\Tokens\PasswordGenerator.cs" />
+    <Compile Include="..\..\src\server\ProtobufBodyDeserializer.cs" Link="Infrastructure\ProtobufBodyDeserializer.cs" />
+    <Compile Include="..\..\src\server\ProtobufResponse.cs" Link="Infrastructure\ProtobufResponse.cs" />
+    <Compile Include="..\..\src\server\ProtobufResponseProcessor.cs" Link="Infrastructure\ProtobufResponseProcessor.cs" />
+    <Compile Include="..\..\src\server\RequestThrottleManager.cs" Link="Service\Throttling\RequestThrottleManager.cs" />
+    <Compile Include="..\..\src\server\SmsGatewayClient.cs" Link="Service\Sms\SmsGatewayClient.cs" />
+    <Compile Include="..\..\src\server\SmsGatewaySettings.cs" Link="Service\Sms\SmsGatewaySettings.cs" />
+    <Compile Include="..\..\src\server\SqlQueueSmsClient.cs" Link="Service\Sms\SqlQueueSmsClient.cs" />
+    <Compile Include="..\..\src\server\SqlQueueSmsClientSettings.cs" Link="Service\Sms\SqlQueueSmsClientSettings.cs" />
+    <Compile Include="..\..\src\server\ThresholdSettings.cs" Link="Service\Settings\ThresholdSettings.cs" />
+    <Compile Include="..\..\src\server\TokenGenerathorBuilder.cs" Link="Infrastructure\TokenGenerathorBuilder.cs" />
+    <Compile Include="..\..\src\server\TokenGenerator.cs" Link="Service\Tokens\TokenGenerator.cs" />
+    <Compile Include="..\..\src\server\AdminModule.cs" Link="AdminModule.cs" />
+    <Compile Include="..\..\src\server\EmailModule.cs" Link="EmailModule.cs" />
+    <Compile Include="..\..\src\server\AuthenticationConfigurationBuilder.cs" Link="Infrastructure\AuthenticationConfigurationBuilder.cs" />
+    <Compile Include="..\..\src\server\IAuthenticationConfigurationBuilder.cs" Link="Infrastructure\IAuthenticationConfigurationBuilder.cs" />
+    <Compile Include="..\..\src\server\JwtAuthenticationRequestContext.cs" Link="Infrastructure\JwtAuthenticationRequestContext.cs" />
+    <Compile Include="..\..\src\server\AdminService.cs" Link="Service\AdminService.cs" />
+    <Compile Include="..\..\src\server\FakeEmailClient.cs" Link="Service\Email\FakeEmailClient.cs" />
+    <Compile Include="..\..\src\server\EmailClient.cs" Link="Service\Email\EmailClient.cs" />
+    <Compile Include="..\..\src\server\IAdminService.cs" Link="Service\IAdminService.cs" />
+    <Compile Include="..\..\src\server\FakeSmsClient.cs" Link="Service\Sms\FakeSmsClient.cs" />
+    <Compile Include="..\..\src\server\IEmailClient.cs" Link="Service\Email\IEmailClient.cs" />
+    <Compile Include="..\..\src\server\UsersModule.cs" Link="UsersModule.cs" />
+    <Compile Include="..\..\src\token\TokenGeneratorSettings.cs" Link="Service\Tokens\TokenGeneratorSettings.cs" />
+    <Compile Include="..\..\src\server\LdapModule.cs" Link="LdapModule.cs" />
+    <Compile Include="..\..\src\server\ILdapClient.cs" Link="Service\Ldap\ILdapClient.cs" />
+    <Compile Include="..\..\src\server\LdapClient.cs" Link="Service\Ldap\LdapClient.cs" />
+    <Compile Include="..\..\src\server\LdapSettings.cs" Link="Service\Ldap\LdapSettings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\common\BadModelException.cs">
-      <Link>Exceptions\BadModelException.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\common\ForbiddenSecurityException.cs">
-      <Link>Exceptions\ForbiddenSecurityException.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\common\NotFoundException.cs">
-      <Link>Exceptions\NotFoundException.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\common\TokenSecurityException.cs">
-      <Link>Exceptions\TokenSecurityException.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\common\UserLockedSecurityException.cs">
-      <Link>Exceptions\UserLockedSecurityException.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\AccessLogEntry.cs">
-      <Link>Service\Repository\Model\AccessLogEntry.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\AccessTokenResponse.cs">
-      <Link>Model\AccessTokenResponse.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\ChangeEmailUserRequest.cs">
-      <Link>Model\ChangeEmailUserRequest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\ChangePasswordRequest.cs">
-      <Link>Model\ChangePasswordRequest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\ChangePhoneUserRequest.cs">
-      <Link>Model\ChangePhoneUserRequest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\Environment.cs">
-      <Link>Model\Environment.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\ForceChangePhone.cs">
-      <Link>Model\ForceChangePhone.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\ForceCreateEmailUserRequest.cs">
-      <Link>Model\ForceCreateEmailUserRequest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\ForceCreateUser.cs">
-      <Link>Model\ForceCreateUser.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\ForceResetPasswordRequest.cs">
-      <Link>Model\ForceResetPasswordRequest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\IdArrayRequest.cs">
-      <Link>Model\IdArrayRequest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\RefreshTokenRequest.cs">
-      <Link>Model\RefreshTokenRequest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\RolePermission.cs">
-      <Link>Model\RolePermission.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\SmsLoginModelDataProvider.cs">
-      <Link>Model\SmsLoginModelDataProvider.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\SmsLoginRequest.cs">
-      <Link>Model\SmsLoginRequest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\SmsModule.cs">
-      <Link>SmsModule.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\UserPermission.cs">
-      <Link>Model\UserPermission.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\UserProfile.cs">
-      <Link>Model\UserProfile.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\UserProfileFilter.cs">
-      <Link>Model\UserProfileFilter.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\UserRole.cs">
-      <Link>Model\UserRole.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\Account.cs">
-      <Link>Service\Repository\Model\Account.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\AccountService.cs">
-      <Link>Service\AccountService.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\ApplicationModule.cs">
-      <Link>Infrastructure\ApplicationModule.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\CultureRequestContext.cs">
-      <Link>Infrastructure\CultureRequestContext.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\CustomStatusCodeHandler.cs">
-      <Link>Infrastructure\CustomStatusCodeHandler.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\DefaultResponseProcessor.cs">
-      <Link>Infrastructure\DefaultResponseProcessor.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\Domain0Bootstrapper.cs">
-      <Link>Domain0Bootstrapper.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\EmbeddedContentConventionBuilder.cs">
-      <Link>Infrastructure\EmbeddedContentConventionBuilder.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\EnvironmentRequestContext.cs">
-      <Link>Infrastructure\EnvironmentRequestContext.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\IAccessLogRepository.cs">
-      <Link>Service\Repository\IAccessLogRepository.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\IAccountRepository.cs">
-      <Link>Service\Repository\IAccountRepository.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\ICultureRequestContext.cs">
-      <Link>Infrastructure\ICultureRequestContext.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\IEnvironmentRepository.cs">
-      <Link>Service\Repository\IEnvironmentRepository.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\IEnvironmentRequestContext.cs">
-      <Link>Service\IEnvironmentRequestContext.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\IMessageBuilder.cs">
-      <Link>Service\Messages\IMessageBuilder.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\IMessageTemplateRepository.cs">
-      <Link>Service\Repository\IMessageTemplateRepository.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\IPermissionRepository.cs">
-      <Link>Service\Repository\IPermissionRepository.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\IRequestContext.cs">
-      <Link>Service\IRequestContext.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\IRoleRepository.cs">
-      <Link>Service\Repository\IRoleRepository.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\ISmsClient.cs">
-      <Link>Service\Sms\ISmsClient.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\ISmsRequestRepository.cs">
-      <Link>Service\Repository\ISmsRequestRepository.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\ITokenGenerator.cs">
-      <Link>Service\Tokens\ITokenGenerator.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\ITokenRegistrationRepository.cs">
-      <Link>Service\Repository\ITokenRegistrationRepository.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\JsonSerializer.cs">
-      <Link>Infrastructure\JsonSerializer.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\MapperProfile.cs">
-      <Link>Infrastructure\MapperProfile.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\MessageBuilder.cs">
-      <Link>Service\Messages\MessageBuilder.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\MessageTemplate.cs">
-      <Link>Service\Repository\Model\MessageTemplate.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\NancyExceptionHandling.cs">
-      <Link>Infrastructure\NancyExceptionHandling.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\NancyModuleExtensions.cs">
-      <Link>Infrastructure\NancyModuleExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\NancySecurityCriticalActionsHandling.cs">
-      <Link>Infrastructure\NancySecurityCriticalActionsHandling.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\PasswordGenerator.cs">
-      <Link>Service\Tokens\PasswordGenerator.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\ProtobufBodyDeserializer.cs">
-      <Link>Infrastructure\ProtobufBodyDeserializer.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\ProtobufResponse.cs">
-      <Link>Infrastructure\ProtobufResponse.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\ProtobufResponseProcessor.cs">
-      <Link>Infrastructure\ProtobufResponseProcessor.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\RegistryRequest.cs">
-      <Link>Service\Repository\Model\RegistryRequest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\RequestThrottleManager.cs">
-      <Link>Service\Throttling\RequestThrottleManager.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\Role.cs">
-      <Link>Service\Repository\Model\Role.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\RolePermission.cs">
-      <Link>Service\Repository\Model\RolePermission.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\SmsGatewayClient.cs">
-      <Link>Service\Sms\SmsGatewayClient.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\SmsGatewaySettings.cs">
-      <Link>Service\Sms\SmsGatewaySettings.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\SqlQueueSmsClient.cs">
-      <Link>Service\Sms\SqlQueueSmsClient.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\SqlQueueSmsClientSettings.cs">
-      <Link>Service\Sms\SqlQueueSmsClientSettings.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\ThresholdSettings.cs">
-      <Link>Service\Settings\ThresholdSettings.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\TokenGenerathorBuilder.cs">
-      <Link>Infrastructure\TokenGenerathorBuilder.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\TokenGenerator.cs">
-      <Link>Service\Tokens\TokenGenerator.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\TokenRegistration.cs">
-      <Link>Service\Repository\Model\TokenRegistration.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\AdminModule.cs">
-      <Link>AdminModule.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\EmailModule.cs">
-      <Link>EmailModule.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\AuthenticationConfigurationBuilder.cs">
-      <Link>Infrastructure\AuthenticationConfigurationBuilder.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\IAuthenticationConfigurationBuilder.cs">
-      <Link>Infrastructure\IAuthenticationConfigurationBuilder.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\JwtAuthenticationRequestContext.cs">
-      <Link>Infrastructure\JwtAuthenticationRequestContext.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\Application.cs">
-      <Link>Model\Application.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\ChangeEmailRequest.cs">
-      <Link>Model\ChangeEmailRequest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\EmailLoginRequest.cs">
-      <Link>Model\EmailLoginRequest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\MessageTemplate.cs">
-      <Link>Model\MessageTemplate.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\RegisterRequest.cs">
-      <Link>Model\RegisterRequest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\Permission.cs">
-      <Link>Model\Permission.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\Role.cs">
-      <Link>Model\Role.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\AdminService.cs">
-      <Link>Service\AdminService.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\FakeEmailClient.cs">
-      <Link>Service\Email\FakeEmailClient.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\EmailClient.cs">
-      <Link>Service\Email\EmailClient.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\IAdminService.cs">
-      <Link>Service\IAdminService.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\FakeSmsClient.cs">
-      <Link>Service\Sms\FakeSmsClient.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\IEmailClient.cs">
-      <Link>Service\Email\IEmailClient.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\IApplicationRepository.cs">
-      <Link>Service\Repository\IApplicationRepository.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\IEmailRequestRepository.cs">
-      <Link>Service\Repository\IEmailRequestRepository.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\IRepository.cs">
-      <Link>Service\Repository\IRepository.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\Application.cs">
-      <Link>Service\Repository\Model\Application.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\Permission.cs">
-      <Link>Service\Repository\Model\Permission.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\Environment.cs">
-      <Link>Service\Repository\Model\Environment.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\TokenClaims.cs">
-      <Link>Service\Tokens\TokenClaims.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\UserPermission.cs">
-      <Link>Service\Repository\Model\UserPermission.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\UserRole.cs">
-      <Link>Service\Repository\Model\UserRole.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\UsersModule.cs">
-      <Link>UsersModule.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\token\TokenGeneratorSettings.cs">
-      <Link>Service\Tokens\TokenGeneratorSettings.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\LdapModule.cs">
-      <Link>LdapModule.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\ActiveDirectoryUserLoginRequest.cs">
-      <Link>Model\ActiveDirectoryUserLoginRequest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server.nancy\LdapUser.cs">
-      <Link>Model\LdapUser.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\ILdapClient.cs">
-      <Link>Service\Ldap\ILdapClient.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\LdapClient.cs">
-      <Link>Service\Ldap\LdapClient.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\server\LdapSettings.cs">
-      <Link>Service\Ldap\LdapSettings.cs</Link>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\src\server.nancy\AccessTokenResponse.cs" Link="Model\AccessTokenResponse.cs" />
+    <Compile Include="..\..\src\server.nancy\ChangeEmailUserRequest.cs" Link="Model\ChangeEmailUserRequest.cs" />
+    <Compile Include="..\..\src\server.nancy\ChangePasswordRequest.cs" Link="Model\ChangePasswordRequest.cs" />
+    <Compile Include="..\..\src\server.nancy\ChangePhoneUserRequest.cs" Link="Model\ChangePhoneUserRequest.cs" />
+    <Compile Include="..\..\src\server.nancy\Environment.cs" Link="Model\Environment.cs" />
+    <Compile Include="..\..\src\server.nancy\ForceChangePhone.cs" Link="Model\ForceChangePhone.cs" />
+    <Compile Include="..\..\src\server.nancy\ForceCreateEmailUserRequest.cs" Link="Model\ForceCreateEmailUserRequest.cs" />
+    <Compile Include="..\..\src\server.nancy\ForceCreateUser.cs" Link="Model\ForceCreateUser.cs" />
+    <Compile Include="..\..\src\server.nancy\ForceResetPasswordRequest.cs" Link="Model\ForceResetPasswordRequest.cs" />
+    <Compile Include="..\..\src\server.nancy\IdArrayRequest.cs" Link="Model\IdArrayRequest.cs" />
+    <Compile Include="..\..\src\server.nancy\RefreshTokenRequest.cs" Link="Model\RefreshTokenRequest.cs" />
+    <Compile Include="..\..\src\server.nancy\RolePermission.cs" Link="Model\RolePermission.cs" />
+    <Compile Include="..\..\src\server.nancy\SmsLoginModelDataProvider.cs" Link="Model\SmsLoginModelDataProvider.cs" />
+    <Compile Include="..\..\src\server.nancy\SmsLoginRequest.cs" Link="Model\SmsLoginRequest.cs" />
+    <Compile Include="..\..\src\server.nancy\UserPermission.cs" Link="Model\UserPermission.cs" />
+    <Compile Include="..\..\src\server.nancy\UserProfile.cs" Link="Model\UserProfile.cs" />
+    <Compile Include="..\..\src\server.nancy\UserProfileFilter.cs" Link="Model\UserProfileFilter.cs" />
+    <Compile Include="..\..\src\server.nancy\UserRole.cs" Link="Model\UserRole.cs" />
+    <Compile Include="..\..\src\server.nancy\Application.cs" Link="Model\Application.cs" />
+    <Compile Include="..\..\src\server.nancy\ChangeEmailRequest.cs" Link="Model\ChangeEmailRequest.cs" />
+    <Compile Include="..\..\src\server.nancy\EmailLoginRequest.cs" Link="Model\EmailLoginRequest.cs" />
+    <Compile Include="..\..\src\server.nancy\MessageTemplate.cs" Link="Model\MessageTemplate.cs" />
+    <Compile Include="..\..\src\server.nancy\RegisterRequest.cs" Link="Model\RegisterRequest.cs" />
+    <Compile Include="..\..\src\server.nancy\Permission.cs" Link="Model\Permission.cs" />
+    <Compile Include="..\..\src\server.nancy\Role.cs" Link="Model\Role.cs" />
+    <Compile Include="..\..\src\server.nancy\ActiveDirectoryUserLoginRequest.cs" Link="Model\ActiveDirectoryUserLoginRequest.cs" />
+    <Compile Include="..\..\src\server.nancy\LdapUser.cs" Link="Model\LdapUser.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\..\src\swagger\swagger-ui-bundle.js.map">
-      <Link>Swagger-UI\swagger-ui-bundle.js.map</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\src\swagger\swagger-ui-standalone-preset.js.map">
-      <Link>Swagger-UI\swagger-ui-standalone-preset.js.map</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\src\swagger\swagger-ui.css.map">
-      <Link>Swagger-UI\swagger-ui.css.map</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\src\swagger\swagger-ui.js.map">
-      <Link>Swagger-UI\swagger-ui.js.map</Link>
-    </EmbeddedResource>
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <EmbeddedResource Include="..\..\src\swagger\swagger-ui-bundle.js.map" Link="Swagger-UI\swagger-ui-bundle.js.map" />
+    <EmbeddedResource Include="..\..\src\swagger\swagger-ui-standalone-preset.js.map" Link="Swagger-UI\swagger-ui-standalone-preset.js.map" />
+    <EmbeddedResource Include="..\..\src\swagger\swagger-ui.css.map" Link="Swagger-UI\swagger-ui.css.map" />
+    <EmbeddedResource Include="..\..\src\swagger\swagger-ui.js.map" Link="Swagger-UI\swagger-ui.js.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\..\src\swagger\favicon-16x16.png">
-      <Link>Swagger-UI\favicon-16x16.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\src\swagger\favicon-32x32.png">
-      <Link>Swagger-UI\favicon-32x32.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\src\swagger\index.html">
-      <Link>Swagger-UI\index.html</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\src\swagger\oauth2-redirect.html">
-      <Link>Swagger-UI\oauth2-redirect.html</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\src\swagger\swagger-ui-bundle.js">
-      <Link>Swagger-UI\swagger-ui-bundle.js</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\src\swagger\swagger-ui-standalone-preset.js">
-      <Link>Swagger-UI\swagger-ui-standalone-preset.js</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\src\swagger\swagger-ui.css">
-      <Link>Swagger-UI\swagger-ui.css</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\src\swagger\swagger-ui.js">
-      <Link>Swagger-UI\swagger-ui.js</Link>
-    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\src\swagger\favicon-16x16.png" Link="Swagger-UI\favicon-16x16.png" />
+    <EmbeddedResource Include="..\..\src\swagger\favicon-32x32.png" Link="Swagger-UI\favicon-32x32.png" />
+    <EmbeddedResource Include="..\..\src\swagger\index.html" Link="Swagger-UI\index.html" />
+    <EmbeddedResource Include="..\..\src\swagger\oauth2-redirect.html" Link="Swagger-UI\oauth2-redirect.html" />
+    <EmbeddedResource Include="..\..\src\swagger\swagger-ui-bundle.js" Link="Swagger-UI\swagger-ui-bundle.js" />
+    <EmbeddedResource Include="..\..\src\swagger\swagger-ui-standalone-preset.js" Link="Swagger-UI\swagger-ui-standalone-preset.js" />
+    <EmbeddedResource Include="..\..\src\swagger\swagger-ui.css" Link="Swagger-UI\swagger-ui.css" />
+    <EmbeddedResource Include="..\..\src\swagger\swagger-ui.js" Link="Swagger-UI\swagger-ui.js" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.9.4" />
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="Gerakul.ProtoBufSerializer" Version="1.2.1" />
+    <PackageReference Include="Gerakul.SqlQueue.InMemory" Version="1.5.2" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.0.0" />
+    <PackageReference Include="Nancy" Version="2.0.0" />
+    <PackageReference Include="Nancy.Authentication.Stateless" Version="2.0.0" />
+    <PackageReference Include="Nancy.Bootstrappers.Autofac" Version="2.0.0-clinteastwood" />
+    <PackageReference Include="Nancy.Swagger.Annotations" Version="2.2.56-alpha" />
+    <PackageReference Include="Nancy.Validation.FluentValidation" Version="2.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="NLog" Version="4.6.7" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.6.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" />
+    <PackageReference Include="System.DirectoryServices.Protocols" Version="4.6.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Domain0.Repository\Domain0.Repository.csproj" />
+  </ItemGroup>
 </Project>

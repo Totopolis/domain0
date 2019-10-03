@@ -30,15 +30,9 @@ namespace Domain0.Nancy.Infrastructure
                 return null;
             });
 
-            pipelines.OnError.AddItemToEndOfPipeline((ctx, ex) =>
-            {
-                return ProcessException(requestContainer, ctx, ex);
-            });
+            pipelines.OnError.AddItemToEndOfPipeline((ctx, ex) => ProcessException(requestContainer, ctx, ex));
 
-            pipelines.AfterRequest.AddItemToEndOfPipeline(async ctx =>
-            {
-                await LogRequest(ctx, requestContainer);
-            });
+            pipelines.AfterRequest.AddItemToEndOfPipeline((ctx, token) => LogRequest(ctx, requestContainer));
         }
 
         private static async Task LogRequest(

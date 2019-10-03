@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using Domain0.Service.Tokens;
 using Domain0.Tokens;
 using Nancy.Authentication.Stateless;
 using Nancy.Bootstrapper;
-using Nancy.Security;
 using Newtonsoft.Json;
 
 namespace Domain0.Auth.Nancy
@@ -40,7 +37,7 @@ namespace Domain0.Auth.Nancy
 
                         var jwtToken = authorization.Remove(0, TokenPrefix.Length);
 
-                        var handler = new JwtSecurityTokenHandler { SetDefaultTimesOnTokenCreation = false };
+                        var handler = new JwtSecurityTokenHandler {SetDefaultTimesOnTokenCreation = false};
 
                         var principal = handler.ValidateToken(
                             jwtToken,
@@ -49,7 +46,7 @@ namespace Domain0.Auth.Nancy
 
                         ParsePermissions(principal, jwtToken);
 
-                        return new UserModel(principal);
+                        return principal;
                     }
                     catch (Exception)
                     {
@@ -75,19 +72,6 @@ namespace Domain0.Auth.Nancy
             var subClaim = principal.FindFirst(ClaimTypes.NameIdentifier);
             if (subClaim != null)
                 identity.AddClaim(new Claim(ClaimTypes.Name, subClaim.Value));
-        }
-    }
-
-    public class UserModel : IUserIdentity
-    {
-        public string UserName { get; }
-
-        public IEnumerable<string> Claims { get; }
-
-        public UserModel(ClaimsPrincipal principal)
-        {
-            UserName = principal.Identity.Name;
-            Claims = principal.Claims.Select(claim => $"{claim.Type}:{claim.Value}");
         }
     }
 }

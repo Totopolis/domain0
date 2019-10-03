@@ -55,21 +55,21 @@ namespace Domain0.Nancy.Service
         #region Permission
         public async Task<Permission[]> GetByFilter(PermissionFilter filter)
         {
-            var permissions = await permissionRepository.FindByFilter(filter);
+            var permissions = await permissionRepository.FindByIds(filter.PermissionIds);
 
             return mapper.Map<Permission[]>(permissions);
         }
 
         public async Task<RolePermission[]> GetByFilter(RolePermissionFilter filter)
         {
-            var permissions = await permissionRepository.FindByFilter(filter);
+            var permissions = await permissionRepository.FindRolePermissionsByRoleIds(filter.RoleIds);
 
             return mapper.Map<RolePermission[]>(permissions);
         }
 
         public async Task<UserPermission[]> GetByFilter(UserPermissionFilter filter)
         {
-            var permissions = await permissionRepository.FindByFilter(filter);
+            var permissions = await permissionRepository.FindUserPermissionsByUserIds(filter.UserIds);
 
             return mapper.Map<UserPermission[]>(permissions);
         }

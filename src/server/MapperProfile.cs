@@ -16,14 +16,14 @@ namespace Domain0.Service
                 .ForMember(x => x.Description, opt => opt.MapFrom(x => x.Description))
                 .ReverseMap();
 
-            CreateMap<Repository.Model.Application,     Model.Application>();
-            CreateMap<Repository.Model.MessageTemplate, Model.MessageTemplate>();
-            CreateMap<Repository.Model.Permission,      Model.Permission>();
-            CreateMap<Repository.Model.UserPermission,  Model.UserPermission>();
-            CreateMap<Repository.Model.RolePermission,  Model.RolePermission>();
-            CreateMap<Repository.Model.Role,            Model.Role>();
-            CreateMap<Repository.Model.UserRole,        Model.UserRole>();
-            CreateMap<Repository.Model.Environment,     Model.Environment>();
+            CreateMap<Repository.Model.Application,     Model.Application>().ReverseMap();
+            CreateMap<Repository.Model.MessageTemplate, Model.MessageTemplate>().ReverseMap();
+            CreateMap<Repository.Model.Permission,      Model.Permission>().ReverseMap();
+            CreateMap<Repository.Model.UserPermission,  Model.UserPermission>().ReverseMap();
+            CreateMap<Repository.Model.RolePermission,  Model.RolePermission>().ReverseMap();
+            CreateMap<Repository.Model.Role,            Model.Role>().ReverseMap();
+            CreateMap<Repository.Model.UserRole,        Model.UserRole>().ReverseMap();
+            CreateMap<Repository.Model.Environment,     Model.Environment>().ReverseMap();
         }
     }
 }

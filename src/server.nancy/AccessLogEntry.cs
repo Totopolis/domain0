@@ -1,5 +1,4 @@
 using System;
-using Nancy;
 
 namespace Domain0.Repository.Model
 {

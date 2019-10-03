@@ -31,8 +31,7 @@ namespace Domain0.Nancy.Service
 
             var request = new HttpRequestMessage(HttpMethod.Put, urlBuilder.ToString());
             var sendStatus = await httpClient.SendAsync(request);
-            if (sendStatus.StatusCode != HttpStatusCode.OK)
-                throw new CommunicationException(sendStatus.ReasonPhrase);
+            sendStatus.EnsureSuccessStatusCode();
         }
 
         private readonly HttpClient httpClient;

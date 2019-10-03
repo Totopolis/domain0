@@ -25,10 +25,12 @@ namespace Domain0.Test
             config.AddTarget("console", new ColoredConsoleTarget());
             config.AddRule(LogLevel.Error, LogLevel.Fatal, "console");
             LogManager.Configuration = config;
-
             builder.Register(c => LogManager.GetCurrentClassLogger()).As<ILogger>().InstancePerDependency();
+
             builder.RegisterSource(new MoqRegistrationSource());
+
             builder.RegisterModule<ApplicationModule>();
+
             builder.RegisterInstance(new Mock<ITokenGenerator>().Object).As<ITokenGenerator>();
             builder.RegisterInstance(new Mock<IPasswordGenerator>().Object).As<IPasswordGenerator>().SingleInstance();
             builder.RegisterInstance(new Mock<IRequestContext>().Object).As<IRequestContext>().SingleInstance();
@@ -41,13 +43,13 @@ namespace Domain0.Test
             builder.RegisterInstance(new Mock<IEmailClient>().Object).As<IEmailClient>().SingleInstance();
             builder.RegisterInstance(new Mock<ILdapClient>().Object).As<ILdapClient>().SingleInstance();
 
-            setUpEnvironmentRepository(builder);
+            SetUpEnvironmentRepository(builder);
 
             upgrade?.Invoke(builder);
             return builder.Build();
         }
 
-        private static void setUpEnvironmentRepository(ContainerBuilder builder)
+        private static void SetUpEnvironmentRepository(ContainerBuilder builder)
         {
             var environmentMock = new Mock<IEnvironmentRepository>();
             environmentMock
