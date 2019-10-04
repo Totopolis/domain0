@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Nancy.Owin;
 using NLog;
 
-namespace Domain0.Nancy.Kestrel
+namespace Domain0.Nancy
 {
     public class Startup
     {

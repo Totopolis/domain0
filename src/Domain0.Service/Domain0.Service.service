@@ -1,0 +1,9 @@
+[Unit]
+Description=Domain0.Service
+
+[Service]
+Type=notify
+ExecStart=/usr/sbin/Domain0.Service
+
+[Install]
+WantedBy=multi-user.target

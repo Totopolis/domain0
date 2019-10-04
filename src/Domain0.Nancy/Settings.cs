@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Configuration;
 
-namespace Domain0.Nancy.Kestrel
+namespace Domain0.Nancy
 {
-    class Settings
+    public class Settings
     {
         public const string DefaultConnectionString =
             "Data Source=.;Initial Catalog=Domain0;Persist Security Info=True;Integrated Security=True";
