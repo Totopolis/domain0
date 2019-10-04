@@ -1,29 +1,31 @@
-﻿#if NETFRAMEWORK
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Domain0.Nancy;
-using Xunit;
 using Autofac;
-using Domain0.Repository;
-using Moq;
-using Domain0.Repository.Model;
-using Nancy.Hosting.Self;
 using Domain0.Api.Client;
+using Domain0.Nancy;
+using Domain0.Repository;
+using Domain0.Repository.Model;
 using Domain0.Service;
 using Domain0.Service.Tokens;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Moq;
+using Nancy.Owin;
+using Xunit;
 using Application = Domain0.Repository.Model.Application;
 
 namespace Domain0.Test
 {
     public class Domain0ClientTests : IDisposable
     {
-        private readonly NancyHost host;
+        private readonly IHost host;
         private readonly IContainer container;
         private const string TEST_URL =  "http://localhost:51234";
 
@@ -35,8 +37,16 @@ namespace Domain0.Test
                     builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance();
                 });
 
-            var bootstrapper = new Domain0Bootstrapper(container);
-            host = BuildTestNancyHost(bootstrapper);
+            host = Host.CreateDefaultBuilder()
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder
+                        .ConfigureServices(s => { s.AddSingleton<IContainer>(container); })
+                        .UseKestrel(serverOptions => { serverOptions.AllowSynchronousIO = true; })
+                        .UseUrls(TEST_URL)
+                        .UseStartup<TestStartup>();
+                }).Build();
+
             host.Start();
         }
 
@@ -868,28 +878,27 @@ namespace Domain0.Test
             }
         }
 
-        private static NancyHost BuildTestNancyHost(Domain0Bootstrapper bootstrapper)
-        {
-            var host = new NancyHost(
-                bootstrapper,
-                new HostConfiguration
-                {
-                    UrlReservations = new UrlReservations
-                    {
-                        CreateAutomatically = true
-                    }
-                },
-                new Uri(TEST_URL));
-            return host;
-        }
-
         public void Dispose()
         {
             host.Dispose();
             container.Dispose();
         }
+
+        class TestStartup
+        {
+            public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IContainer container)
+            {
+                if (env.IsDevelopment())
+                {
+                    app.UseDeveloperExceptionPage();
+                }
+
+                app.UseOwin(x => x.UseNancy(opt =>
+                {
+                    var bootstrapper = new Domain0Bootstrapper(container);
+                    opt.Bootstrapper = bootstrapper;
+                }));
+            }
+        }
     }
 }
-
-
-#endif
