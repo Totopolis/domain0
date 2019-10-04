@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Configuration;
 
-namespace Domain0.Nancy
+namespace Domain0.Service
 {
     public class Settings
     {
@@ -16,13 +16,6 @@ namespace Domain0.Nancy
             string.IsNullOrEmpty(ConfigurationManager.AppSettings["Url"])
                 ? new Uri(DefaultHttpUri)
                 : new Uri(ConfigurationManager.AppSettings["Url"]);
-
-
-#if DEBUG
-        public const string ServiceName = "domain0Debug";
-#else
-        public const string ServiceName = "domain0";
-#endif
 
 #if DEBUG
         public const string DefaultHttpUri = "http://localhost:8880";

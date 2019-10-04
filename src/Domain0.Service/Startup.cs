@@ -1,12 +1,13 @@
 using Autofac;
 using Domain0.FastSql;
+using Domain0.Nancy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Nancy.Owin;
 using NLog;
 
-namespace Domain0.Nancy
+namespace Domain0.Service
 {
     public class Startup
     {
