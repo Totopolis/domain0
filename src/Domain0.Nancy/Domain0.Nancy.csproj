@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Swagger-UI\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.9.4" />
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="Gerakul.ProtoBufSerializer" Version="1.2.1" />
+    <PackageReference Include="Gerakul.SqlQueue.InMemory" Version="1.5.2" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.0.0" />
+    <PackageReference Include="Nancy" Version="2.0.0" />
+    <PackageReference Include="Nancy.Authentication.Stateless" Version="2.0.0" />
+    <PackageReference Include="Nancy.Bootstrappers.Autofac" Version="2.0.0-clinteastwood" />
+    <PackageReference Include="Nancy.Swagger.Annotations" Version="2.2.56-alpha" />
+    <PackageReference Include="Nancy.Validation.FluentValidation" Version="2.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="NLog" Version="4.6.7" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.6.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" />
+    <PackageReference Include="System.DirectoryServices.Protocols" Version="4.6.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Domain0.Tokens\Domain0.Tokens.csproj" />
+    <ProjectReference Include="..\Domain0.Repository\Domain0.Repository.csproj" />
+  </ItemGroup>
+</Project>

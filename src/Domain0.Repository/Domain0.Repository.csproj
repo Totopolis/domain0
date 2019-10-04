@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Scripts\database.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\database.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" />
+    <PackageReference Include="Gerakul.FastSql.SqlServer" Version="1.0.0" />
+    <PackageReference Include="Autofac" Version="4.9.4" />
+    <PackageReference Include="NLog" Version="4.6.7" />
+  </ItemGroup>
+</Project>
