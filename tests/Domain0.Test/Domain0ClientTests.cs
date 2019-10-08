@@ -37,7 +37,7 @@ namespace Domain0.Test
                     builder.RegisterType<SymmetricKeyTokenGenerator>().As<ITokenGenerator>().SingleInstance();
                 });
 
-            host = Host.CreateDefaultBuilder()
+            host = new HostBuilder()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
