@@ -19,6 +19,12 @@ namespace Domain0.Service
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger.json", "Api");
+                c.RoutePrefix = "swagger-ui";
+            });
+
             app.UseOwin(x => x.UseNancy(opt =>
             {
                 var container = CreateContainer();

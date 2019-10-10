@@ -14,7 +14,6 @@ using Nancy.Authentication.Stateless;
 using Nancy.Bootstrapper;
 using Nancy.Bootstrappers.Autofac;
 using Nancy.Configuration;
-using Nancy.Conventions;
 using Nancy.Responses.Negotiation;
 using Nancy.Swagger;
 using Nancy.Swagger.Annotations;
@@ -105,12 +104,6 @@ namespace Domain0.Nancy
 
 
 
-        }
-
-        protected override void ConfigureConventions(NancyConventions nancyConventions)
-        {
-            // Add swagger
-            nancyConventions.StaticContentsConventions.AddEmbeddedDirectory<Domain0Bootstrapper>("/swagger-ui", "Swagger-UI");
         }
 
         protected override void ConfigureRequestContainer(
