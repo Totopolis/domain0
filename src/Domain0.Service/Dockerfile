@@ -4,14 +4,12 @@
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.0-nanoserver-1809 AS base
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0-nanoserver-1809 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0-nanoserver-1809 AS publish
+ARG VERSION=1.0.0
 WORKDIR /src
 COPY . .
 WORKDIR "/src/src/Domain0.Service"
-RUN dotnet build "Domain0.Service.csproj" -c Release -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "Domain0.Service.csproj" -c Release -o /app/publish
+RUN dotnet publish "Domain0.Service.csproj" -c Release /p:Version=%VERSION% -o /app/publish
 
 FROM base AS final
 WORKDIR /app
