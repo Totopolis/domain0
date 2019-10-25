@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3</TargetFrameworks>
     <Authors>Totopolis</Authors>
     <PackageProjectUrl>https://github.com/Totopolis/domain0</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
