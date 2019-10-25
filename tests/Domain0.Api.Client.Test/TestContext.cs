@@ -27,16 +27,13 @@ namespace Domain0.Api.Client.Test
                 .Setup(callFor => callFor.LoginByEmailAsync(It.IsAny<EmailLoginRequest>()))
                 .ReturnsAsync(MakeTokenResponse(DefaultEmailUser, accessValidTime, refreshValidTime));
 
-            // TODO: build and include new Client library
-            /*
             clientMock
                 .Setup(callFor => callFor.LoginByDomainUserAsync(It.IsAny<ActiveDirectoryUserLoginRequest>()))
                 .ReturnsAsync(MakeTokenResponse(DefaultEmailUser, accessValidTime, refreshValidTime));
-            
+
             clientMock
                 .Setup(callFor => callFor.LoginByDomainUserWithEnvironmentAsync(It.IsAny<ActiveDirectoryUserLoginRequest>(), It.IsAny<string>()))
                 .ReturnsAsync(MakeTokenResponse(DefaultEmailUser, accessValidTime, refreshValidTime));
-            */
 
             clientMock
                 .Setup(callFor => callFor.RefreshAsync(It.IsAny<string>()))

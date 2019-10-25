@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Autofac;
 using Domain0.Api.Client;
 using Domain0.Nancy;
+using Domain0.Nancy.Model;
+using Domain0.Nancy.Service.Ldap;
 using Domain0.Repository;
 using Domain0.Repository.Model;
 using Domain0.Service;
@@ -188,6 +190,48 @@ namespace Domain0.Test
             accountRepositoryMock.Verify(t => t.FindByLogin(It.Is<string>(e => e == testPhone.ToString())), Times.Once);
             passwordGeneratorMock.Verify(t => 
                 t.CheckPassword(testPassword, It.IsAny<string>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Ldap_ClientLoginTest()
+        {
+            var userName = "name";
+            var testPassword = "password";
+
+            var passwordGenerator = container.Resolve<IPasswordGenerator>();
+            var passwordGeneratorMock = Mock.Get(passwordGenerator);
+            passwordGeneratorMock.Setup(p => p.HashPassword(It.IsAny<string>())).Returns(testPassword);
+            passwordGeneratorMock.Setup(p => p.CheckPassword(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
+
+            var ldapClient = container.Resolve<ILdapClient>();
+            var ldapClientMock = Mock.Get(ldapClient);
+            ldapClientMock
+                .Setup(x => x.Authorize(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns((string name, string pass) => new LdapUser {Email = name});
+
+            var accountRepository = container.Resolve<IAccountRepository>();
+            var accountRepositoryMock = Mock.Get(accountRepository);
+            accountRepositoryMock
+                .Setup(x => x.FindByLogin(It.IsAny<string>()))
+                .Returns<string>(x =>
+                    Task.FromResult(new Account { Login = x }));
+
+
+            var permissionRepository = container.Resolve<IPermissionRepository>();
+            var permissionRepositoryMock = Mock.Get(permissionRepository);
+
+            permissionRepositoryMock
+                .Setup(p => p.GetByUserId(It.IsAny<int>()))
+                .ReturnsAsync(new[] { new Repository.Model.Permission() });
+
+            using (var http = new HttpClient())
+            {
+                var client = new Domain0Client(TEST_URL, http);
+                var response = await client.LoginByDomainUserAsync(new Api.Client.ActiveDirectoryUserLoginRequest(testPassword, userName));
+                Assert.NotNull(response.AccessToken);
+            }
+
+            accountRepositoryMock.Verify(t => t.FindByLogin(It.Is<string>(e => e == userName)), Times.Once);
         }
 
         [Fact]
