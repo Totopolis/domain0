@@ -17,7 +17,7 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GH_REPO_OWNER: Totopolis
         GH_SOURCE_NAME: GPR
-      run: ./.github/workflows/AddSourceWithCredentialsToNuGetConfig -ConfigFile ./NuGet.Config -Source $GH_SOURCE_NAME -Username $GH_REPO_OWNER -Password $GH_TOKEN
+      run: ./.github/workflows/AddSourceWithCredentialsToNuGetConfig -ConfigFile ./NuGet.Config -Source $env:GH_SOURCE_NAME -Username $env:GH_REPO_OWNER -Password $env:GH_TOKEN
     - run: dotnet pack ./src/Domain0.Auth.AspNet/Domain0.Auth.AspNet.csproj -c Release -o NuGetPackages /p:Version=$RELEASE_VERSION
     - name: Push to feeds
       env:
