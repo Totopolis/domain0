@@ -14,15 +14,15 @@ jobs:
     - name: Add GPR source with credentials to NuGet.config
       shell: pwsh
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_REPO_OWNER: Totopolis
-        GITHUB_SOURCE_NAME: GPR
-      run: ./.github/workflows/AddSourceWithCredentialsToNuGetConfig -ConfigFile ./NuGet.Config -Source $env:GITHUB_SOURCE_NAME -Username $env:GITHUB_REPO_OWNER -Password $env:GITHUB_TOKEN
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_REPO_OWNER: Totopolis
+        GH_SOURCE_NAME: GPR
+      run: ./.github/workflows/AddSourceWithCredentialsToNuGetConfig -ConfigFile ./NuGet.Config -Source $env:GH_SOURCE_NAME -Username $env:GH_REPO_OWNER -Password $env:GH_TOKEN
     - run: dotnet pack ./src/Domain0.Api.Client/Domain0.Api.Client.csproj -c Release -o NuGetPackages /p:Version=$RELEASE_VERSION
     - name: Push to feeds
       env:
         MYGET_SOURCE: https://www.myget.org/F/totopolis/api/v3/index.json
-        GITHUB_SOURCE_NAME: GPR
+        GH_SOURCE_NAME: GPR
       run: |
         dotnet nuget push ./NuGetPackages/Domain0.Api.Client.$RELEASE_VERSION.nupkg -k ${{ secrets.MYGET_APIKEY }} -s $MYGET_SOURCE
-        dotnet nuget push ./NuGetPackages/Domain0.Api.Client.$RELEASE_VERSION.nupkg -s $GITHUB_SOURCE_NAME
+        dotnet nuget push ./NuGetPackages/Domain0.Api.Client.$RELEASE_VERSION.nupkg -s $GH_SOURCE_NAME
