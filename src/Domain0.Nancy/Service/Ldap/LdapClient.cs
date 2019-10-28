@@ -1,8 +1,9 @@
 ﻿using System;
-using System.DirectoryServices.Protocols;
 using System.Linq;
-using System.Net;
+using System.Threading.Tasks;
 using Domain0.Nancy.Model;
+using LdapForNet;
+using LdapForNet.Native;
 using NLog;
 
 namespace Domain0.Nancy.Service.Ldap
@@ -18,63 +19,47 @@ namespace Domain0.Nancy.Service.Ldap
             _ldapSettings = ldapSettings;
         }
 
-        public LdapUser Authorize(string username, string pwd)
+        public async Task<LdapUser> Authorize(string username, string pwd)
         {
-            var crd = new NetworkCredential(username, pwd);
             try
             {
-                using (var ldapConnection = GetldapConnection(crd))
+                using (var ldapConnection = GetldapConnection(username, pwd))
                 {
-                    var distinguishedName = string.Join(", ",
+                    var distinguishedName = string.Join(",",
                         _ldapSettings.DomainControllerName.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries).Select(dc => $"DC={dc}"));
-
-                    var request = new SearchRequest(
-                        distinguishedName,
+                    var response = await ldapConnection.SearchAsync(distinguishedName,
                         $"(&(objectCategory=person)(objectClass=user)(SAMAccountName={username}))",
-                        SearchScope.Subtree, "*");
-                    var response = (SearchResponse)ldapConnection.SendRequest(request);
+                        Native.LdapSearchScope.LDAP_SCOPE_SUBTREE);
 
-                    if (response == null || response.Entries.Count == 0)
+                    if (response == null || response.Count == 0)
                         return null;
 
-                    var entry = response.Entries[0];
+                    var entry = response.First();
                     var attr = entry.Attributes[_ldapSettings.EmailAttributeName];
 
-                    if (attr != null)
-                        return new LdapUser
-                        {
-                            Email = (string)attr.GetValues(typeof(string)).FirstOrDefault()
-                        };
-                    return null;
-
+                    return attr != null
+                        ? new LdapUser { Email = attr.FirstOrDefault() }
+                        : null;
                 }
             }
             catch (LdapException e)
             {
-                _logger.Warn($"User { username} wrong login or password!");
+                _logger.Warn($"User {username} wrong login or password!");
                 _logger.Error(e.Message);
                 return null;
             }
 
         }
 
-        private LdapConnection GetldapConnection(NetworkCredential cred = null)
+        private LdapConnection GetldapConnection(string username, string pwd)
         {
-            var ldi = new LdapDirectoryIdentifier(_ldapSettings.DomainControllerName, _ldapSettings.LdapPort);
-            var ldapConnection = new LdapConnection(ldi)
-            {
-                AuthType = _ldapSettings.LdapAuthType,
-            };
+            var ldapConnection = new LdapConnection();
+            
+            ldapConnection.Connect(_ldapSettings.DomainControllerName, _ldapSettings.LdapPort,
+                (Native.LdapVersion) _ldapSettings.LdapProtocolVersion);
 
-            ldapConnection.SessionOptions.ProtocolVersion = _ldapSettings.LdapProtocolVersion;
-            if (_ldapSettings.UseSecureSocketLayer)
-            {
-                ldapConnection.SessionOptions.SecureSocketLayer = _ldapSettings.UseSecureSocketLayer;
-                ldapConnection.SessionOptions.VerifyServerCertificate = (con, cer) => true;
-            }
+            ldapConnection.Bind(Native.LdapAuthMechanism.GSSAPI, username, pwd);
 
-            ldapConnection.Credential = cred;
-            ldapConnection.Bind();
             return ldapConnection;
         }
     }

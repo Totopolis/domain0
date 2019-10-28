@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.DirectoryServices.Protocols;
 using Autofac;
 using AutoMapper;
 using Domain0.Nancy.Infrastructure;
@@ -154,7 +153,6 @@ namespace Domain0
                 LdapPort = int.Parse(ConfigurationManager.AppSettings["LdapPort"] ?? "636"),
                 UseSecureSocketLayer = bool.Parse(ConfigurationManager.AppSettings["UseSecureSocketLayer"] ?? "true"),
                 LdapProtocolVersion = int.Parse(ConfigurationManager.AppSettings["LdapProtocolVersion"] ?? "3"),
-                LdapAuthType = (AuthType)Enum.Parse(typeof(AuthType), ConfigurationManager.AppSettings["LdapAuthType"] ?? "Ntlm", true),
                 EmailAttributeName = ConfigurationManager.AppSettings["EmailAttributeName"] ?? "mail"
             };
         }

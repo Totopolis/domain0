@@ -691,14 +691,14 @@ namespace Domain0.Service
 
         public async Task<AccessTokenResponse> Login(ActiveDirectoryUserLoginRequest request, string environmentToken = null)
         {
-            var domainuser = ldapClient.Authorize(request.UserName, request.Password);
-            if (domainuser == null)
+            var domainUser = await ldapClient.Authorize(request.UserName, request.Password);
+            if (domainUser == null)
             {
                 logger.Warn($"User {request.UserName} wrong login or password!");
                 return null;
             }
 
-            var account = await accountRepository.FindByLogin(domainuser.Email);
+            var account = await accountRepository.FindByLogin(domainUser.Email);
             if (account == null)
             {
                 var environment = await environmentRequestContext.LoadEnvironment(environmentToken);
@@ -712,8 +712,8 @@ namespace Domain0.Service
                 // confirm registration
                 var userId = await accountRepository.Insert(account = new Account
                 {
-                    Email = domainuser.Email,
-                    Login = domainuser.Email,
+                    Email = domainUser.Email,
+                    Login = domainUser.Email,
                     Password = hashPassword,
                     FirstDate = currentDateTime,
                     LastDate = currentDateTime
@@ -726,7 +726,7 @@ namespace Domain0.Service
 
                 await environmentRequestContext.SetUserEnvironment(userId, environment);
 
-                logger.Info($"User { account.Id } | { domainuser.Email } account created successful!");
+                logger.Info($"User { account.Id } | { domainUser.Email } account created successful!");
             }
             return await GetTokenResponse(account);
         }

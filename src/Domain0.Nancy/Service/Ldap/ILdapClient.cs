@@ -1,9 +1,10 @@
-﻿using Domain0.Nancy.Model;
+﻿using System.Threading.Tasks;
+using Domain0.Nancy.Model;
 
 namespace Domain0.Nancy.Service.Ldap
 {
     public interface ILdapClient
     {
-        LdapUser Authorize(string username, string pwd);
+        Task<LdapUser> Authorize(string username, string pwd);
     }
 }

@@ -17,7 +17,7 @@
     <PackageReference Include="NLog" Version="4.6.7" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.6.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" />
-    <PackageReference Include="System.DirectoryServices.Protocols" Version="4.6.0" />
+    <PackageReference Include="LdapForNet" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Domain0.Tokens\Domain0.Tokens.csproj" />

@@ -40,7 +40,8 @@ namespace Domain0.Test
             accountMock.Setup(a => a.FindByLogin(email)).ReturnsAsync(new Account {Id = 1, Login = email, Email = email, Password = password});
 
             var ldapMock = Mock.Get(container.Resolve<ILdapClient>());
-            ldapMock.Setup(c => c.Authorize(user, password)).Returns(new LdapUser{Email = email});
+            ldapMock.Setup(c => c.Authorize(user, password))
+                .Returns(Task.FromResult(new LdapUser {Email = email}));
 
             var permissionMock = Mock.Get(container.Resolve<IPermissionRepository>());
             permissionMock.Setup(a => a.GetByUserId(It.IsAny<int>())).ReturnsAsync(new[] 
@@ -102,7 +103,8 @@ namespace Domain0.Test
             accountMock.Setup(a => a.Insert(It.IsAny<Account>())).ReturnsAsync(1);
 
             var ldapMock = Mock.Get(container.Resolve<ILdapClient>());
-            ldapMock.Setup(c => c.Authorize(user, password)).Returns(new LdapUser{Email = email});
+            ldapMock.Setup(c => c.Authorize(user, password))
+                .Returns(Task.FromResult(new LdapUser {Email = email}));
 
             var permissionMock = Mock.Get(container.Resolve<IPermissionRepository>());
             permissionMock.Setup(a => a.GetByUserId(It.IsAny<int>())).ReturnsAsync(new[] 
@@ -157,7 +159,8 @@ namespace Domain0.Test
 
 
             var ldapMock = Mock.Get(container.Resolve<ILdapClient>());
-            ldapMock.Setup(c => c.Authorize(user, password)).Returns((LdapUser)null);
+            ldapMock.Setup(c => c.Authorize(user, password))
+                .Returns(Task.FromResult((LdapUser) null));
 
 
             var response = await browser.Post(LdapModule.LoginByDomainUserUrl, with =>

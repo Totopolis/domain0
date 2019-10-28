@@ -207,7 +207,7 @@ namespace Domain0.Test
             var ldapClientMock = Mock.Get(ldapClient);
             ldapClientMock
                 .Setup(x => x.Authorize(It.IsAny<string>(), It.IsAny<string>()))
-                .Returns((string name, string pass) => new LdapUser {Email = name});
+                .Returns((string name, string pass) => Task.FromResult(new LdapUser {Email = name}));
 
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountRepositoryMock = Mock.Get(accountRepository);
