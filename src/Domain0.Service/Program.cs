@@ -31,7 +31,7 @@ namespace Domain0.Service
         }
 
         private static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+            new HostBuilder()
                 .UseSystemd()
                 .UseWindowsService()
                 .ConfigureWebHostDefaults(webBuilder =>

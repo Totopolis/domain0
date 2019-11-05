@@ -1,8 +1,8 @@
-﻿using Monik.Client;
+﻿using System;
+using Monik.Client;
 using Monik.Common;
 using NLog;
 using NLog.Targets;
-using System;
 
 namespace Domain0.WinService
 {
@@ -32,7 +32,7 @@ namespace Domain0.WinService
             if (string.IsNullOrEmpty(QueueName))
                 throw new ArgumentNullException(nameof(QueueName));
 
-            var sender = new AzureSender(ConnectionString, QueueName);
+            var sender = new RabbitMqSender(ConnectionString, QueueName);
             var settings = new ClientSettings
             {
                 SourceName = Source,
