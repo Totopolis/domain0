@@ -1,9 +1,9 @@
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using Domain0.Nancy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using NLog;
 using NLog.Common;
 
@@ -15,7 +15,7 @@ namespace Domain0.Service
         {
             LogManager.ThrowExceptions = true;
             InternalLogger.LogFile = "error.log";
-            InternalLogger.LogLevel = LogLevel.Error;
+            InternalLogger.LogLevel = NLog.LogLevel.Error;
 
             var logger = LogManager.GetCurrentClassLogger();
 
@@ -34,6 +34,7 @@ namespace Domain0.Service
             new HostBuilder()
                 .UseSystemd()
                 .UseWindowsService()
+                .ConfigureLogging(logging => { logging.ClearProviders(); })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
