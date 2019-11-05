@@ -23,7 +23,7 @@ namespace Domain0.Nancy.Service.Ldap
         {
             try
             {
-                using (var ldapConnection = GetldapConnection(username, pwd))
+                using (var ldapConnection = GetLdapConnection(username, pwd))
                 {
                     var distinguishedName = string.Join(",",
                         _ldapSettings.DomainControllerName.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries).Select(dc => $"DC={dc}"));
@@ -51,14 +51,14 @@ namespace Domain0.Nancy.Service.Ldap
 
         }
 
-        private LdapConnection GetldapConnection(string username, string pwd)
+        private LdapConnection GetLdapConnection(string username, string pwd)
         {
             var ldapConnection = new LdapConnection();
             
             ldapConnection.Connect(_ldapSettings.DomainControllerName, _ldapSettings.LdapPort,
                 (Native.LdapVersion) _ldapSettings.LdapProtocolVersion);
 
-            ldapConnection.Bind(Native.LdapAuthMechanism.GSSAPI, username, pwd);
+            ldapConnection.Bind(_ldapSettings.LdapAuthType, username, pwd);
 
             return ldapConnection;
         }

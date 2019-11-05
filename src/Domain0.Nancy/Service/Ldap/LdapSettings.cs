@@ -7,5 +7,6 @@
         public bool UseSecureSocketLayer { get; set; }
         public int LdapProtocolVersion { get; set; }
         public string EmailAttributeName { get; set; }
+        public string LdapAuthType { get; set; }
     }
 }
