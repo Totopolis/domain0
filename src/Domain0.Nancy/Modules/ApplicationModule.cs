@@ -153,6 +153,7 @@ namespace Domain0
                 LdapPort = int.Parse(ConfigurationManager.AppSettings["LdapPort"] ?? "636"),
                 UseSecureSocketLayer = bool.Parse(ConfigurationManager.AppSettings["UseSecureSocketLayer"] ?? "true"),
                 LdapProtocolVersion = int.Parse(ConfigurationManager.AppSettings["LdapProtocolVersion"] ?? "3"),
+                LdapAuthType = ConfigurationManager.AppSettings["LdapAuthType"] ?? "GSSAPI",
                 EmailAttributeName = ConfigurationManager.AppSettings["EmailAttributeName"] ?? "mail"
             };
         }
