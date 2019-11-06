@@ -6,10 +6,12 @@ on:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - name: Set env
-      run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:18})
+      run: echo "##[set-env name=RELEASE_VERSION;]$($env:GITHUB_REF.substring(18))"
+    - name: print version
+      run: echo $env:RELEASE_VERSION
     - uses: actions/checkout@master
     - name: Add GPR source with credentials to NuGet.config
       shell: pwsh
@@ -18,11 +20,11 @@ jobs:
         GH_REPO_OWNER: Totopolis
         GH_SOURCE_NAME: GPR
       run: ./.github/workflows/AddSourceWithCredentialsToNuGetConfig -ConfigFile ./NuGet.Config -Source $env:GH_SOURCE_NAME -Username $env:GH_REPO_OWNER -Password $env:GH_TOKEN
-    - run: dotnet pack ./src/Domain0.Tokens/Domain0.Tokens.csproj -c Release -o NuGetPackages /p:Version=$RELEASE_VERSION
+    - run: dotnet pack ./src/Domain0.Tokens/Domain0.Tokens.csproj -c Release -o NuGetPackages /p:Version=$env:RELEASE_VERSION
     - name: Push to feeds
       env:
         MYGET_SOURCE: https://www.myget.org/F/totopolis/api/v3/index.json
         GH_SOURCE_NAME: GPR
       run: |
-        dotnet nuget push ./NuGetPackages/Domain0.Tokens.$RELEASE_VERSION.nupkg -k ${{ secrets.MYGET_APIKEY }} -s $MYGET_SOURCE
-        dotnet nuget push ./NuGetPackages/Domain0.Tokens.$RELEASE_VERSION.nupkg -s $GH_SOURCE_NAME
+        dotnet nuget push ./NuGetPackages/Domain0.Tokens.$env:RELEASE_VERSION.nupkg -k ${{ secrets.MYGET_APIKEY }} -s $env:MYGET_SOURCE
+        dotnet nuget push ./NuGetPackages/Domain0.Tokens.$env:RELEASE_VERSION.nupkg -s $env:GH_SOURCE_NAME
