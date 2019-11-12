@@ -10,7 +10,7 @@ namespace Domain0.Api.Client
         void Save(AccessTokenResponse data);
     }
 
-    internal class LoginInfoStorage : ILoginInfoStorage
+    public class LoginInfoStorage : ILoginInfoStorage
     {
         private const string FileName = "LoginInfo";
         private readonly IsolatedStorageFile storage;

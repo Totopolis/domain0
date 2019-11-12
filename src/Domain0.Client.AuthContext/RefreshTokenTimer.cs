@@ -67,14 +67,13 @@ namespace Domain0.Api.Client
                     try
                     {
                         await authContext.Refresh();
+                        currentMinimumAwaitTime = DEFAULT_MIN_AWAIT_TIME;
                     }
                     catch (Exception ex)
                     {
                         Trace.TraceWarning($"Can't auto refresh: {ex.Message}");
                         currentMinimumAwaitTime = EXCEPTION_MIN_AWAIT_TIME;
                     }
-
-                    currentMinimumAwaitTime = DEFAULT_MIN_AWAIT_TIME;
                 }
             }
             catch(OperationCanceledException)
