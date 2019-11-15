@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <Authors>Totopolis</Authors>
-    <PackageProjectUrl>https://github.com/Totopolis/domain0</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Totopolis/domain0</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
