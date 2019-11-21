@@ -17,6 +17,8 @@ namespace Domain0.Nancy.Infrastructure
 {
     public class NancyExceptionHandling
     {
+        public const string SensitiveInfoReplacement = "***";
+
         public static void Enable(
             ILifetimeScope requestContainer, 
             IPipelines pipelines, 
@@ -46,10 +48,14 @@ namespace Domain0.Nancy.Infrastructure
             {
                 var processingTime = CalculateProcessingTime(ctx);
 
+                var sensitiveInfoInPathRegex = ctx.GetRegexForSensitiveInfoInPath();
+                var actionStr = sensitiveInfoInPathRegex != null
+                    ? sensitiveInfoInPathRegex.Replace(ctx.Request.Path, SensitiveInfoReplacement)
+                    : ctx.Request.Path;
 
                 var logEntry = new AccessLogEntry
                 {
-                    Action = Truncate(ctx.Request.Path, 255),
+                    Action = Truncate(actionStr, 255),
                     Method = Truncate(ctx.Request.Method, 15),
                     ClientIp = Truncate(ctx.GetClientHost(), 255),
                     StatusCode = (int?)(statusCode ?? ctx.Response?.StatusCode),
