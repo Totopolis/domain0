@@ -138,7 +138,8 @@ namespace Domain0.Api.Client
                 Trace.TraceInformation($"Refreshing token for { loginInfo.Profile.Id } ...");
                 try
                 {
-                    tokenChangeManager.LoginInfo = await Domain0Scope.Client.RefreshAsync(loginInfo.RefreshToken);
+                    var request = new RefreshTokenRequest(loginInfo.RefreshToken);
+                    tokenChangeManager.LoginInfo = await Domain0Scope.Client.RefreshTokenAsync(request);
                 }
                 catch (Exception e)
                 {
