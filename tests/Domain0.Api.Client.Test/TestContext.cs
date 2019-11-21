@@ -36,7 +36,7 @@ namespace Domain0.Api.Client.Test
                 .ReturnsAsync(MakeTokenResponse(DefaultEmailUser, accessValidTime, refreshValidTime));
 
             clientMock
-                .Setup(callFor => callFor.RefreshAsync(It.IsAny<string>()))
+                .Setup(callFor => callFor.RefreshTokenAsync(It.IsAny<RefreshTokenRequest>()))
                 .ReturnsAsync(MakeTokenResponse(DefaultSmsUser, accessValidTime, refreshValidTime));
 
             var clientScopeMock = new Mock<IDomain0ClientScope>();
