@@ -2,10 +2,12 @@
 {
     public class LdapSettings
     {
-        public string DomainControllerName { get; set; }
-        public int LdapPort { get; set; }
+        public string DomainName { get; set; }
+        public string Host { get; set; }
+        public int Port { get; set; }
         public bool UseSecureSocketLayer { get; set; }
-        public int LdapProtocolVersion { get; set; }
+        public bool TlsReqCertAllow { get; set; }
+        public int ProtocolVersion { get; set; }
         public string EmailAttributeName { get; set; }
     }
 }

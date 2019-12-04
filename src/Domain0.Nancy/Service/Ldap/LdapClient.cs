@@ -18,7 +18,7 @@ namespace Domain0.Nancy.Service.Ldap
             _logger = logger;
             _ldapSettings = ldapSettings;
             _baseDn = string.Join(",",
-                _ldapSettings.DomainControllerName
+                _ldapSettings.Host
                     .Split(new[] {'.'}, StringSplitOptions.RemoveEmptyEntries)
                     .Select(dc => $"dc={dc}"));
         }
@@ -63,9 +63,15 @@ namespace Domain0.Nancy.Service.Ldap
             cons.ReferralFollowing = true;
             ldapConnection.Constraints = cons;
 
-            ldapConnection.Connect(_ldapSettings.DomainControllerName, _ldapSettings.LdapPort);
-            ldapConnection.Bind(_ldapSettings.LdapProtocolVersion,
-                $"{username}@{_ldapSettings.DomainControllerName}", pwd);
+            if (_ldapSettings.TlsReqCertAllow)
+            {
+                ldapConnection.UserDefinedServerCertValidationDelegate +=
+                    (sender, certificate, chain, errors) => true;
+            }
+
+            ldapConnection.Connect(_ldapSettings.Host, _ldapSettings.Port);
+            ldapConnection.Bind(_ldapSettings.ProtocolVersion,
+                $@"{_ldapSettings.DomainName}\{username}", pwd);
 
             return ldapConnection;
         }

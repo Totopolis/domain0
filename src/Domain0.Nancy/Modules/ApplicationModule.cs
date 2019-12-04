@@ -149,11 +149,13 @@ namespace Domain0
         {
             return new LdapSettings
             {
-                DomainControllerName = ConfigurationManager.AppSettings["DomainControllerName"] ?? "domain.local",
-                LdapPort = int.Parse(ConfigurationManager.AppSettings["LdapPort"] ?? "636"),
+                DomainName = ConfigurationManager.AppSettings["LdapDomainName"] ?? "DOMAIN",
+                Host = ConfigurationManager.AppSettings["LdapHost"] ?? "domain.local",
+                Port = int.Parse(ConfigurationManager.AppSettings["LdapPort"] ?? "636"),
                 UseSecureSocketLayer = bool.Parse(ConfigurationManager.AppSettings["UseSecureSocketLayer"] ?? "true"),
-                LdapProtocolVersion = int.Parse(ConfigurationManager.AppSettings["LdapProtocolVersion"] ?? "3"),
-                EmailAttributeName = ConfigurationManager.AppSettings["EmailAttributeName"] ?? "mail"
+                TlsReqCertAllow = bool.Parse(ConfigurationManager.AppSettings["LdapTlsReqCertAllow"] ?? "false"),
+                ProtocolVersion = int.Parse(ConfigurationManager.AppSettings["LdapProtocolVersion"] ?? "3"),
+                EmailAttributeName = ConfigurationManager.AppSettings["EmailAttributeName"] ?? "mail",
             };
         }
     }
