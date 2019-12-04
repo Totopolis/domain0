@@ -23,7 +23,7 @@ namespace Domain0.Nancy.Service.Ldap
                     .Select(dc => $"dc={dc}"));
         }
 
-        public async Task<LdapUser> Authorize(string username, string pwd)
+        public Task<LdapUser> Authorize(string username, string pwd)
         {
             try
             {
@@ -40,15 +40,17 @@ namespace Domain0.Nancy.Service.Ldap
                     var entry = response.First();
                     var attr = entry.GetAttribute(_ldapSettings.EmailAttributeName);
 
-                    return attr != null
+                    var result = attr != null
                         ? new LdapUser {Email = attr.StringValue}
                         : null;
+
+                    return Task.FromResult(result);
                 }
             }
             catch (Exception e)
             {
                 _logger.Error($"Ldap login failed: {e}");
-                return null;
+                return Task.FromResult((LdapUser) null);
             }
         }
 
@@ -71,7 +73,7 @@ namespace Domain0.Nancy.Service.Ldap
 
             ldapConnection.Connect(_ldapSettings.Host, _ldapSettings.Port);
             ldapConnection.Bind(_ldapSettings.ProtocolVersion,
-                $@"{_ldapSettings.DomainName}\{username}", pwd);
+                $"{_ldapSettings.DomainName}\\{username}", pwd);
 
             return ldapConnection;
         }
