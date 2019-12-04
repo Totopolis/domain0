@@ -2,15 +2,13 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <Authors>Totopolis</Authors>
-    <PackageProjectUrl>https://github.com/Totopolis/domain0</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Totopolis/domain0</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Domain0.Tokens\Domain0.Tokens.csproj" />
-  </ItemGroup>
-  <ItemGroup>
+    <PackageReference Include="Domain0.Tokens" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="Nancy" Version="2.0.0" />
     <PackageReference Include="Nancy.Authentication.Stateless" Version="2.0.0" />

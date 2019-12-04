@@ -1,21 +1,21 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Autofac;
+using Domain0.Model;
 using Domain0.Nancy;
+using Domain0.Nancy.Infrastructure;
+using Domain0.Repository;
+using Domain0.Repository.Model;
+using Domain0.Service;
+using Domain0.Service.Tokens;
+using Moq;
 using Nancy;
 using Nancy.Testing;
 using Xunit;
-using Autofac;
-using Domain0.Repository;
-using Moq;
-using Domain0.Repository.Model;
-using Domain0.Service;
-using Domain0.Model;
-using System.Collections.Generic;
-using System.Linq;
-using System;
-using System.Security.Claims;
-using Domain0.Service.Tokens;
-using System.Globalization;
-using Environment = Domain0.Model.Environment;
 
 namespace Domain0.Test
 {
@@ -1087,10 +1087,13 @@ namespace Domain0.Test
                 builder
                     .RegisterInstance(new Mock<ITokenGenerator>().Object)
                     .Keyed<ITokenGenerator>("HS256");
-
+                builder
+                    .RegisterInstance(new Mock<IAccessLogRepository>().Object);
             });
             var bootstrapper = new Domain0Bootstrapper(container);
             var browser = new Browser(bootstrapper);
+
+            var accessLogRepository = Mock.Get(container.Resolve<IAccessLogRepository>());
 
             var userId = 101;
             var tid = 1001;
@@ -1127,6 +1130,12 @@ namespace Domain0.Test
             Assert.Equal(userId, result.Profile.Id);
             Assert.Equal("101_test1_test2_test3", result.AccessToken);
             Assert.Equal(refreshToken, result.RefreshToken);
+
+            accessLogRepository.Verify(l =>
+                l.Insert(It.Is<AccessLogEntry>(x => x.Action.Equals(
+                    SmsModule.RefreshUrl.Replace("{refreshToken}",
+                        NancyExceptionHandling.SensitiveInfoReplacement))
+                )), Times.Once);
         }
 
         [Theory]

@@ -1,12 +1,13 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
-using Nancy;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Domain0.Exceptions;
+using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.ModelBinding;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 using Nancy.Responses.Negotiation;
 
 namespace Domain0.Nancy.Infrastructure
@@ -33,6 +34,8 @@ namespace Domain0.Nancy.Infrastructure
         private const string AllowCredentialsKey = "Access-Control-Allow-Credentials";
 
         private const string OriginKey = "Origin";
+
+        private const string RegexForSensitiveInfoInPathKey = "regex-for-sensitive-info-in-path";
 
         public static void EnableCors(this IPipelines pipelines)
         {
@@ -108,5 +111,13 @@ namespace Domain0.Nancy.Infrastructure
 
             return context.Request.UserHostAddress;
         }
+
+        public static void AddRegexForSensitiveInfoInPath(this NancyContext ctx, Regex regex) =>
+            ctx.Items.Add(RegexForSensitiveInfoInPathKey, regex);
+
+        public static Regex GetRegexForSensitiveInfoInPath(this NancyContext ctx) =>
+            ctx.Items.TryGetValue(RegexForSensitiveInfoInPathKey, out var regex)
+                ? (Regex) regex
+                : null;
     }
 }

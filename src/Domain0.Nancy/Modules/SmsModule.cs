@@ -1,17 +1,18 @@
-﻿using Domain0.Model;
-using Domain0.Service;
-using Nancy;
-using Nancy.ModelBinding;
-using Nancy.Swagger.Annotations.Attributes;
-using Swagger.ObjectModel;
+﻿using System;
 using System.Security;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Domain0.Exceptions;
+using Domain0.Model;
 using Domain0.Nancy.Infrastructure;
+using Domain0.Service;
 using Domain0.Service.Throttling;
-using Nancy.Security;
 using Domain0.Service.Tokens;
-using System;
+using Nancy;
+using Nancy.ModelBinding;
+using Nancy.Security;
+using Nancy.Swagger.Annotations.Attributes;
+using Swagger.ObjectModel;
 
 namespace Domain0.Nancy
 {
@@ -33,6 +34,8 @@ namespace Domain0.Nancy
 
         public const string RequestChangePhoneUrl = "/api/sms/RequestChangePhone";
         public const string CommitChangePhoneUrl = "/api/sms/CommitChangePhone";
+
+        private static readonly Regex RefreshUrlSensitiveRegex = new Regex(@"(?<=\/api\/Refresh\/).*");
 
         private readonly IAccountService accountService;
         private readonly IRequestThrottleManager requestThrottleManager;
@@ -301,6 +304,7 @@ namespace Domain0.Nancy
         public async Task<object> Refresh()
         {
             var refreshToken = Context.Parameters.refreshToken;
+            Context.AddRegexForSensitiveInfoInPath(RefreshUrlSensitiveRegex);
             var response = await accountService.Refresh(refreshToken);
             return response;
         }
