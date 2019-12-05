@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog;
@@ -16,14 +18,12 @@ namespace Domain0.Service
             LogManager.ThrowExceptions = true;
             InternalLogger.LogFile = "error.log";
             InternalLogger.LogLevel = NLog.LogLevel.Error;
+            LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration("configs/NLog.config");
 
             var logger = LogManager.GetCurrentClassLogger();
 
             logger.Info($"Starting version: {Assembly.GetExecutingAssembly().GetName().Version}");
             logger.Info($"Use BasePath: {AppContext.BaseDirectory}");
-
-            logger.Info("Use Uri={0}", Settings.Uri);
-            logger.Info("Use ConnectionString={0}", Settings.ConnectionString);
 
             await CreateHostBuilder(args).Build().RunAsync();
 
@@ -34,12 +34,27 @@ namespace Domain0.Service
             new HostBuilder()
                 .UseSystemd()
                 .UseWindowsService()
+                .UseContentRoot(Directory.GetCurrentDirectory())
                 .ConfigureLogging(logging => { logging.ClearProviders(); })
+                .ConfigureHostConfiguration(config => { config.AddEnvironmentVariables("ASPNETCORE_"); })
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    config
+                        .AddJsonFile("configs/appsettings.json",
+                            optional: true, reloadOnChange: true)
+                        .AddJsonFile($"configs/appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json",
+                            optional: true, reloadOnChange: true);
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
+                        .UseConfiguration(
+                            new ConfigurationBuilder()
+                                .SetBasePath(Directory.GetCurrentDirectory())
+                                .AddJsonFile("configs/hosting.json", optional: true)
+                                .Build()
+                        )
                         .UseKestrel(serverOptions => { serverOptions.AllowSynchronousIO = true; })
-                        .UseUrls(Settings.Uri.ToString().Replace("localhost", "*"))
                         .UseStartup<Startup>();
                 });
     }

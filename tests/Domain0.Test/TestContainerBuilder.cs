@@ -3,6 +3,7 @@ using Autofac;
 using Domain0.Nancy.Service.Ldap;
 using Domain0.Repository;
 using Domain0.Service;
+using Domain0.Service.BuilderModules;
 using Domain0.Test.Infrastructure;
 using Moq;
 using Newtonsoft.Json;

@@ -22,15 +22,6 @@ namespace Domain0.Service
             => principal.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).Distinct().ToArray();
     }
 
-    public class AccountServiceSettings
-    {
-        public TimeSpan MessagesResendCooldown { get; internal set; }
-
-        public TimeSpan PinExpirationTime { get; set; }
-
-        public TimeSpan EmailCodeExpirationTime { get; set; }
-    }
-
     public interface IAccountService
     {
         Task Register(decimal phone, string environmentToken = null);

@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using Autofac;
+﻿using Autofac;
 using Domain0.Repository;
 using Gerakul.FastSql.Common;
 using Gerakul.FastSql.SqlServer;
@@ -10,10 +9,9 @@ namespace Domain0.FastSql
     {
         protected override void Load(ContainerBuilder builder)
         {
-            var connectionString = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
-            builder.RegisterInstance(connectionString).Named<string>(nameof(connectionString));
-
-            builder.Register<DbContext>(c => SqlContextProvider.DefaultInstance.CreateContext(connectionString));
+            builder.Register<DbContext>(c =>
+                SqlContextProvider.DefaultInstance.CreateContext(
+                    c.ResolveNamed<string>("connectionString")));
 
             builder.RegisterType<DbManager>().AsSelf();
             builder.RegisterType<AccountRepository>().As<IAccountRepository>().SingleInstance();
