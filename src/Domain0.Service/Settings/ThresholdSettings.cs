@@ -2,8 +2,8 @@ namespace Domain0.Service
 {
     public class ThresholdSettings
     {
-        public int CacheLimitMB { get; internal set; }
-        public int HourlyRequestsLimitByActionByIP { get; internal set; }
-        public int MinuteRequestsLimitByActionByIP { get; internal set; }
+        public int CacheLimitMB { get; set; }
+        public int HourlyRequestsLimitByActionByIP { get; set; }
+        public int MinuteRequestsLimitByActionByIP { get; set; }
     }
 }

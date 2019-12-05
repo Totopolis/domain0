@@ -4,7 +4,7 @@ namespace Domain0.Service
 {
     public class AccountServiceSettings
     {
-        public TimeSpan MessagesResendCooldown { get; internal set; }
+        public TimeSpan MessagesResendCooldown { get; set; }
 
         public TimeSpan PinExpirationTime { get; set; }
 
