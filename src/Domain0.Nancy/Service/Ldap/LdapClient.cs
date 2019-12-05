@@ -30,15 +30,15 @@ namespace Domain0.Nancy.Service.Ldap
                 using (var ldapConnection = GetLdapConnection(username, pwd))
                 {
                     var response = ldapConnection.Search(_baseDn,
-                        LdapConnection.ScopeSub,
-                        $"(&(objectCategory=person)(objectClass=user)(SAMAccountName={username}))",
-                        null, false)?.ToList();
+                        LdapConnection.SCOPE_SUB,
+                        $"(&(objectCategory=person)(objectClass=user)(sAMAccountName={username}))",
+                        null, false);
 
-                    if (response == null || response.Count == 0)
+                    if (response == null || !response.hasMore())
                         return null;
 
-                    var entry = response.First();
-                    var attr = entry.GetAttribute(_ldapSettings.EmailAttributeName);
+                    var entry = response.next();
+                    var attr = entry.getAttribute(_ldapSettings.EmailAttributeName);
 
                     var result = attr != null
                         ? new LdapUser {Email = attr.StringValue}

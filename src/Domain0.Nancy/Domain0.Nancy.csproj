@@ -17,7 +17,7 @@
     <PackageReference Include="NLog" Version="4.6.7" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.6.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" />
-    <PackageReference Include="Novell.Directory.Ldap.NETStandard" Version="3.0.0-beta6" />
+    <PackageReference Include="Novell.Directory.Ldap.NETStandard" Version="2.3.8" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Domain0.Tokens\Domain0.Tokens.csproj" />
