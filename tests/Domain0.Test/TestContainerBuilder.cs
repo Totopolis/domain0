@@ -30,6 +30,7 @@ namespace Domain0.Test
 
             builder.RegisterSource(new MoqRegistrationSource());
 
+            builder.RegisterInstance(string.Empty).Named<string>("defaultCulture");
             builder.RegisterInstance(new AccountServiceSettings
             {
                 MessagesResendCooldown = TimeSpan.FromMinutes(1),
