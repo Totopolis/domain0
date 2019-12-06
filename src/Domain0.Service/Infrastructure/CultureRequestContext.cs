@@ -1,16 +1,21 @@
-﻿using Domain0.Service;
+﻿using System.Globalization;
+using System.Linq;
+using Domain0.Service;
 using Nancy;
-using System.Globalization;
 
 namespace Domain0.Nancy.Infrastructure
 {
     class CultureRequestContext : ICultureRequestContext
     {
         public CultureRequestContext(
-            NancyContext nancyContextInstance)
+            NancyContext nancyContextInstance,
+            string defaultCulture)
         {
             nancyContext = nancyContextInstance;
-            Culture = nancyContext.Culture; 
+            Culture = !string.IsNullOrEmpty(defaultCulture) &&
+                      !nancyContext.Request.Headers.AcceptLanguage.Any()
+                ? CultureInfo.GetCultureInfo(defaultCulture)
+                : nancyContext.Culture;
         }
 
         public CultureInfo Culture { get; set; }

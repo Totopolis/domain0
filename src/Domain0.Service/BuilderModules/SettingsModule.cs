@@ -21,6 +21,10 @@ namespace Domain0.Service.BuilderModules
                     _config.GetSection("Database").Get<string>())
                 .Named<string>("connectionString")
                 .SingleInstance();
+            builder.Register(c =>
+                    _config.GetSection("DefaultCulture").Get<string>() ?? string.Empty)
+                .Named<string>("defaultCulture")
+                .SingleInstance();
 
             builder.Register(c =>
                     _config.GetSection("AccountService").Get<AccountServiceSettings>())
