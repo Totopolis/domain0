@@ -13,7 +13,6 @@ namespace Domain0.FastSql
                 SqlContextProvider.DefaultInstance.CreateContext(
                     c.ResolveNamed<string>("connectionString")));
 
-            builder.RegisterType<DbManager>().AsSelf();
             builder.RegisterType<AccountRepository>().As<IAccountRepository>().SingleInstance();
             builder.RegisterType<ApplicationRepository>().As<IApplicationRepository>().SingleInstance();
             builder.RegisterType<MessageTemplateRepository>().As<IMessageTemplateRepository>().SingleInstance();
