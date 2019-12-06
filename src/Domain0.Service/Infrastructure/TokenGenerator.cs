@@ -109,7 +109,7 @@ namespace Domain0.Service
                 ValidateAudience = true,
                 ValidAudience = audience,
                 ValidIssuer = Settings.Issuer,
-                ValidateLifetime = !skipLifetimeCheck
+                ValidateLifetime = Settings.ValidateLifetime && !skipLifetimeCheck
             };
             return parameters;
         }

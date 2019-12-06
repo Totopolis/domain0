@@ -14,6 +14,8 @@ namespace Domain0.Tokens
 
         public TimeSpan RefreshLifetime { get; set; }
 
+        public bool ValidateLifetime { get; set; }
+
         public string Secret { get; set; }
 
         public string Private { get; set; }
