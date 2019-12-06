@@ -1,5 +1,7 @@
+using System;
 using Autofac;
 using Domain0.FastSql;
+using Domain0.FastSql.Settings;
 using Domain0.Nancy;
 using Domain0.Service.BuilderModules;
 using Microsoft.AspNetCore.Builder;
@@ -42,11 +44,22 @@ namespace Domain0.Service
         {
             var builder = new ContainerBuilder();
 
-            builder.RegisterModule(new SettingsModule(config));
             builder.Register(c => LogManager.GetCurrentClassLogger()).As<ILogger>().InstancePerDependency();
-            builder.RegisterModule<DatabaseModule>();
+            
+            var settings = config.Get<Domain0Settings>();
+            builder.RegisterModule(new SettingsModule(settings));
+
             builder.RegisterModule<ApplicationModule>();
 
+            switch (settings.Db.Provider)
+            {
+                case DbProvider.SqlServer:
+                    builder.RegisterModule(new DatabaseModule(settings.Db));
+                    break;
+                case DbProvider.PostgreSql:
+                    throw new NotImplementedException();
+            }
+            
             return builder.Build();
         }
     }
