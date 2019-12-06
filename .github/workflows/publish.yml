@@ -14,7 +14,7 @@ jobs:
     - name: Publish to GitHub Packages
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
-        name: totopolis/domain0:${{ env.RELEASE_VERSION }}
+        name: totopolis/domain0/service:${{ env.RELEASE_VERSION }}
         username: Totopolis
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: docker.pkg.github.com
