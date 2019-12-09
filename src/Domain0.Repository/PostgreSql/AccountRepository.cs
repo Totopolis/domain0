@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Domain0.Repository.Model;
 
-namespace Domain0.Repository.SqlServer
+namespace Domain0.Repository.PostgreSql
 {
     public class AccountRepository : IAccountRepository
     {
@@ -18,27 +18,11 @@ namespace Domain0.Repository.SqlServer
         public async Task<int> Insert(Account account)
         {
             const string query = @"
-INSERT INTO [dom].[Account]
-           ([Email]
-           ,[Phone]
-           ,[Login]
-           ,[Password]
-           ,[Name]
-           ,[Description]
-           ,[FirstDate]
-           ,[LastDate]
-           ,[IsLocked])
-     VALUES
-           (@Email
-           ,@Phone
-           ,@Login
-           ,@Password
-           ,@Name
-           ,@Description
-           ,@FirstDate
-           ,@LastDate
-           ,@IsLocked)
-;select SCOPE_IDENTITY() id
+insert into dom.""Account""
+(""Email"", ""Phone"", ""Login"", ""Password"", ""Name"", ""Description"", ""FirstDate"", ""LastDate"", ""IsLocked"")
+values
+(@Email, @Phone, @Login, @Password, @Name, @Description, @FirstDate, @LastDate, @IsLocked)
+returning ""Id""
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -49,18 +33,18 @@ INSERT INTO [dom].[Account]
         public async Task<Account> FindByLogin(string login)
         {
             const string query = @"
-SELECT [Id]
-      ,[Email]
-      ,[Phone]
-      ,[Login]
-      ,[Password]
-      ,[Name]
-      ,[Description]
-      ,[FirstDate]
-      ,[LastDate]
-      ,[IsLocked]
-  FROM [dom].[Account]
-where [Login] = @Login
+SELECT ""Id""
+      ,""Email""
+      ,""Phone""
+      ,""Login""
+      ,""Password""
+      ,""Name""
+      ,""Description""
+      ,""FirstDate""
+      ,""LastDate""
+      ,""IsLocked""
+  FROM dom.""Account""
+where ""Login"" = @Login
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -71,18 +55,18 @@ where [Login] = @Login
         public async Task<Account> FindByPhone(decimal phone)
         {
             const string query = @"
-SELECT [Id]
-      ,[Email]
-      ,[Phone]
-      ,[Login]
-      ,[Password]
-      ,[Name]
-      ,[Description]
-      ,[FirstDate]
-      ,[LastDate]
-      ,[IsLocked]
-  FROM [dom].[Account]
-where [Phone] = @Phone
+SELECT ""Id""
+      ,""Email""
+      ,""Phone""
+      ,""Login""
+      ,""Password""
+      ,""Name""
+      ,""Description""
+      ,""FirstDate""
+      ,""LastDate""
+      ,""IsLocked""
+  FROM dom.""Account""
+where ""Phone"" = @Phone
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -93,18 +77,18 @@ where [Phone] = @Phone
         public async Task<Account> FindByUserId(int userId)
         {
             const string query = @"
-SELECT [Id]
-      ,[Email]
-      ,[Phone]
-      ,[Login]
-      ,[Password]
-      ,[Name]
-      ,[Description]
-      ,[FirstDate]
-      ,[LastDate]
-      ,[IsLocked]
-  FROM [dom].[Account]
-where [Id] = @Id
+SELECT ""Id""
+      ,""Email""
+      ,""Phone""
+      ,""Login""
+      ,""Password""
+      ,""Name""
+      ,""Description""
+      ,""FirstDate""
+      ,""LastDate""
+      ,""IsLocked""
+  FROM dom.""Account""
+where ""Id"" = @Id
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -118,18 +102,18 @@ where [Id] = @Id
             if (listIds.Any())
             {
                 const string query = @"
-SELECT [Id]
-      ,[Email]
-      ,[Phone]
-      ,[Login]
-      ,[Password]
-      ,[Name]
-      ,[Description]
-      ,[FirstDate]
-      ,[LastDate]
-      ,[IsLocked]
-  FROM [dom].[Account]
-where [Id] in @Ids
+SELECT ""Id""
+      ,""Email""
+      ,""Phone""
+      ,""Login""
+      ,""Password""
+      ,""Name""
+      ,""Description""
+      ,""FirstDate""
+      ,""LastDate""
+      ,""IsLocked""
+  FROM dom.""Account""
+where ""Id"" in @Ids
 ";
                 using (var con = _connectionProvider.Connection)
                 {
@@ -140,17 +124,17 @@ where [Id] in @Ids
             else
             {
                 const string query = @"
-SELECT [Id]
-      ,[Email]
-      ,[Phone]
-      ,[Login]
-      ,[Password]
-      ,[Name]
-      ,[Description]
-      ,[FirstDate]
-      ,[LastDate]
-      ,[IsLocked]
-  FROM [dom].[Account]
+SELECT ""Id""
+      ,""Email""
+      ,""Phone""
+      ,""Login""
+      ,""Password""
+      ,""Name""
+      ,""Description""
+      ,""FirstDate""
+      ,""LastDate""
+      ,""IsLocked""
+  FROM dom.""Account""
 ";
                 using (var con = _connectionProvider.Connection)
                 {
@@ -163,17 +147,17 @@ SELECT [Id]
         public async Task Update(Account entity)
         {
             const string query = @"
-UPDATE [dom].[Account]
-   SET [Email] = @Email
-      ,[Phone] = @Phone
-      ,[Login] = @Login
-      ,[Password] = @Password
-      ,[Name] = @Name
-      ,[Description] = @Description
-      ,[FirstDate] = @FirstDate
-      ,[LastDate] = @LastDate
-      ,[IsLocked] = @IsLocked
- WHERE [Id] = @Id
+UPDATE dom.""Account""
+   SET ""Email"" = @Email
+      ,""Phone"" = @Phone
+      ,""Login"" = @Login
+      ,""Password"" = @Password
+      ,""Name"" = @Name
+      ,""Description"" = @Description
+      ,""FirstDate"" = @FirstDate
+      ,""LastDate"" = @LastDate
+      ,""IsLocked"" = @IsLocked
+ WHERE ""Id"" = @Id
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -186,7 +170,7 @@ UPDATE [dom].[Account]
             using (var con = _connectionProvider.Connection)
             {
                 await con.ExecuteAsync(
-                    @"delete from [dom].[Account] where [Id] = @Id ",
+                    @"delete from dom.""Account"" where ""Id"" = @Id ",
                     new {Id = id});
             }
         }
@@ -196,7 +180,7 @@ UPDATE [dom].[Account]
             using (var con = _connectionProvider.Connection)
             {
                 await con.ExecuteAsync(
-                    @"update [dom].[Account] set [IsLocked] = 1 where [Id] = @Id",
+                    @"update dom.""Account"" set ""IsLocked"" = TRUE where ""Id"" = @Id",
                     new {Id = userId});
             }
         }
@@ -206,7 +190,7 @@ UPDATE [dom].[Account]
             using (var con = _connectionProvider.Connection)
             {
                 await con.ExecuteAsync(
-                    @"update [dom].[Account] set [IsLocked] = 0 where [Id] = @Id",
+                    @"update dom.""Account"" set ""IsLocked"" = FALSE where ""Id"" = @Id",
                     new {Id = userId});
             }
         }

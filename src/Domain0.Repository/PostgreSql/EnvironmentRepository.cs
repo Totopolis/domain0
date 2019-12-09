@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Domain0.Repository.Model;
 
-namespace Domain0.Repository.SqlServer
+namespace Domain0.Repository.PostgreSql
 {
     public class EnvironmentRepository : IEnvironmentRepository
     {
@@ -18,17 +18,17 @@ namespace Domain0.Repository.SqlServer
         public async Task<int> Insert(Environment entity)
         {
             const string query = @"
-INSERT INTO [dom].[Environment]
-           ([Name]
-           ,[Description]
-           ,[Token]
-           ,[IsDefault])
+INSERT INTO dom.""Environment""
+           (""Name""
+           ,""Description""
+           ,""Token""
+           ,""IsDefault"")
      VALUES
            (@Name
            ,@Description
            ,@Token
            ,@IsDefault)
-;select SCOPE_IDENTITY() id
+returning ""Id""
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -39,12 +39,12 @@ INSERT INTO [dom].[Environment]
         public async Task Update(Environment entity)
         {
             const string query = @"
-UPDATE [dom].[Environment]
-   SET [Name] = @Name
-      ,[Description] = @Description
-      ,[Token] = @Token
-      ,[IsDefault] = @IsDefault
- WHERE [Id] = @Id
+UPDATE dom.""Environment""
+   SET ""Name"" = @Name
+      ,""Description"" = @Description
+      ,""Token"" = @Token
+      ,""IsDefault"" = @IsDefault
+ WHERE ""Id"" = @Id
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -57,7 +57,7 @@ UPDATE [dom].[Environment]
             using (var con = _connectionProvider.Connection)
             {
                 await con.ExecuteAsync(
-                    @"delete from [dom].[Environment] where [Id] = @Id",
+                    @"delete from dom.""Environment"" where ""Id"" = @Id",
                     new {Id = id});
             }
         }
@@ -65,13 +65,13 @@ UPDATE [dom].[Environment]
         public async Task<Environment> FindById(int id)
         {
             const string query = @"
-SELECT [Id]
-      ,[Name]
-      ,[Description]
-      ,[Token]
-      ,[IsDefault]
-  FROM [dom].[Environment]
-where [Id] = @Id
+SELECT ""Id""
+      ,""Name""
+      ,""Description""
+      ,""Token""
+      ,""IsDefault""
+  FROM dom.""Environment""
+where ""Id"" = @Id
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -85,13 +85,13 @@ where [Id] = @Id
             if (listIds.Any())
             {
                 const string query = @"
-SELECT [Id]
-      ,[Name]
-      ,[Description]
-      ,[Token]
-      ,[IsDefault]
-  FROM [dom].[Environment]
-where [Id] in @Ids
+SELECT ""Id""
+      ,""Name""
+      ,""Description""
+      ,""Token""
+      ,""IsDefault""
+  FROM dom.""Environment""
+where ""Id"" in @Ids
 ";
                 using (var con = _connectionProvider.Connection)
                 {
@@ -102,12 +102,12 @@ where [Id] in @Ids
             else
             {
                 const string query = @"
-SELECT [Id]
-      ,[Name]
-      ,[Description]
-      ,[Token]
-      ,[IsDefault]
-  FROM [dom].[Environment]
+SELECT ""Id""
+      ,""Name""
+      ,""Description""
+      ,""Token""
+      ,""IsDefault""
+  FROM dom.""Environment""
 ";
                 using (var con = _connectionProvider.Connection)
                 {
@@ -120,13 +120,13 @@ SELECT [Id]
         public async Task<Environment> GetByToken(string token)
         {
             const string query = @"
-SELECT [Id]
-      ,[Name]
-      ,[Description]
-      ,[Token]
-      ,[IsDefault]
-  FROM [dom].[Environment]
-where [Token] = @Token
+SELECT ""Id""
+      ,""Name""
+      ,""Description""
+      ,""Token""
+      ,""IsDefault""
+  FROM dom.""Environment""
+where ""Token"" = @Token
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -137,13 +137,13 @@ where [Token] = @Token
         public async Task<Environment> GetDefault()
         {
             const string query = @"
-SELECT [Id]
-      ,[Name]
-      ,[Description]
-      ,[Token]
-      ,[IsDefault]
-  FROM [dom].[Environment]
-where [IsDefault] = 1
+SELECT ""Id""
+      ,""Name""
+      ,""Description""
+      ,""Token""
+      ,""IsDefault""
+  FROM dom.""Environment""
+where ""IsDefault"" = TRUE
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -154,14 +154,14 @@ where [IsDefault] = 1
         public async Task<Environment> GetByUser(int userId)
         {
             const string query = @"
-SELECT e.[Id]
-      ,e.[Name]
-      ,e.[Description]
-      ,e.[Token]
-      ,e.[IsDefault]
-  FROM [dom].[Environment] e
-join [dom].[AccountEnvironment] ae on e.[Id] = ae.[EnvironmentId]
-where ae.[UserId] = @UserId
+SELECT e.""Id""
+      ,e.""Name""
+      ,e.""Description""
+      ,e.""Token""
+      ,e.""IsDefault""
+  FROM dom.""Environment"" e
+join dom.""AccountEnvironment"" ae on e.""Id"" = ae.""EnvironmentId""
+where ae.""UserId"" = @UserId
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -172,9 +172,9 @@ where ae.[UserId] = @UserId
         public async Task SetUserEnvironment(int userId, int environmentId)
         {
             const string query = @"
-INSERT INTO [dom].[AccountEnvironment]
-           ([EnvironmentId]
-           ,[UserId])
+INSERT INTO dom.""AccountEnvironment""
+           (""EnvironmentId""
+           ,""UserId"")
      VALUES
            (@EnvironmentId
            ,@UserId)

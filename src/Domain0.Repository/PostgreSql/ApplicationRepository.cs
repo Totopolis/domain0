@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Domain0.Repository.Model;
 
-namespace Domain0.Repository.SqlServer
+namespace Domain0.Repository.PostgreSql
 {
     public class ApplicationRepository : IApplicationRepository
     {
@@ -18,13 +18,11 @@ namespace Domain0.Repository.SqlServer
         public async Task<int> Insert(Application entity)
         {
             const string query = @"
-INSERT INTO [dom].[Application]
-           ([Name]
-           ,[Description])
-     VALUES
-           (@Name
-           ,@Description)
-;select SCOPE_IDENTITY() id
+insert into dom.""Application""
+(""Name"", ""Description"")
+values
+(@Name, @Description)
+returning ""Id""
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -38,11 +36,11 @@ INSERT INTO [dom].[Application]
             if (listIds.Any())
             {
                 const string query = @"
-SELECT [Id]
-      ,[Name]
-      ,[Description]
-  FROM [dom].[Application]
-where [Id] in @Ids
+SELECT ""Id""
+      ,""Name""
+      ,""Description""
+  FROM dom.""Application""
+where ""Id"" in @Ids
 ";
                 using (var con = _connectionProvider.Connection)
                 {
@@ -53,10 +51,10 @@ where [Id] in @Ids
             else
             {
                 const string query = @"
-SELECT [Id]
-      ,[Name]
-      ,[Description]
-  FROM [dom].[Application]
+SELECT ""Id""
+      ,""Name""
+      ,""Description""
+  FROM dom.""Application""
 ";
                 using (var con = _connectionProvider.Connection)
                 {
@@ -69,10 +67,10 @@ SELECT [Id]
         public async Task Update(Application entity)
         {
             const string query = @"
-UPDATE [dom].[Application]
-   SET [Name] = @Name
-      ,[Description] = @Description
- WHERE [Id] = @Id
+UPDATE dom.""Application""
+   SET ""Name"" = @Name
+      ,""Description"" = @Description
+ WHERE ""Id"" = @Id
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -85,7 +83,7 @@ UPDATE [dom].[Application]
             using (var con = _connectionProvider.Connection)
             {
                 await con.ExecuteAsync(
-                    @"delete from [dom].[Application] where [Id] = @Id ",
+                    @"delete from dom.""Application"" where ""Id"" = @Id ",
                     new {Id = id});
             }
         }
