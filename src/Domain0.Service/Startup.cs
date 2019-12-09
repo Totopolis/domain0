@@ -1,8 +1,6 @@
-using System;
 using Autofac;
-using Domain0.FastSql;
-using Domain0.FastSql.Settings;
 using Domain0.Nancy;
+using Domain0.Repository.Settings;
 using Domain0.Service.BuilderModules;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -54,10 +52,11 @@ namespace Domain0.Service
             switch (settings.Db.Provider)
             {
                 case DbProvider.SqlServer:
-                    builder.RegisterModule(new DatabaseModule(settings.Db));
+                    builder.RegisterModule(new Repository.SqlServer.DatabaseModule(settings.Db));
                     break;
                 case DbProvider.PostgreSql:
-                    throw new NotImplementedException();
+                    builder.RegisterModule(new Repository.PostgreSql.DatabaseModule(settings.Db));
+                    break;
             }
             
             return builder.Build();

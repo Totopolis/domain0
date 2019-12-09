@@ -1,10 +1,9 @@
 ﻿using Autofac;
-using Domain0.FastSql.Settings;
-using Domain0.Repository;
+using Domain0.Repository.Settings;
 using Gerakul.FastSql.Common;
 using Gerakul.FastSql.SqlServer;
 
-namespace Domain0.FastSql
+namespace Domain0.Repository.SqlServer
 {
     public class DatabaseModule : Module
     {

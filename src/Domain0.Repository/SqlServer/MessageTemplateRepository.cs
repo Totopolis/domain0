@@ -1,12 +1,11 @@
-﻿using Domain0.Repository;
+﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain0.Repository.Model;
-using System.Globalization;
 using Gerakul.FastSql.Common;
-using System;
 
-namespace Domain0.FastSql
+namespace Domain0.Repository.SqlServer
 {
     public class MessageTemplateRepository : RepositoryBase<int, MessageTemplate>, IMessageTemplateRepository
     {

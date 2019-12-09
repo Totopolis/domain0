@@ -3,6 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Npgsql" Version="4.1.2" />
     <PackageReference Include="Gerakul.FastSql.SqlServer" Version="1.1.0" />
     <PackageReference Include="Autofac" Version="4.9.4" />
     <PackageReference Include="NLog" Version="4.6.8" />

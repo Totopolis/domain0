@@ -1,11 +1,10 @@
-﻿using Domain0.Repository;
+﻿using System;
+using System.Threading.Tasks;
 using Domain0.Repository.Model;
 using Gerakul.FastSql.Common;
 using NLog;
-using System;
-using System.Threading.Tasks;
 
-namespace Domain0.FastSql
+namespace Domain0.Repository.SqlServer
 {
     public class AccessLogRepository : RepositoryBase<long, AccessLogEntry>, IAccessLogRepository
     {

@@ -1,6 +1,6 @@
-﻿using Domain0.FastSql.Settings;
-using Domain0.Nancy.Service;
+﻿using Domain0.Nancy.Service;
 using Domain0.Nancy.Service.Ldap;
+using Domain0.Repository.Settings;
 using Domain0.Tokens;
 
 namespace Domain0.Service

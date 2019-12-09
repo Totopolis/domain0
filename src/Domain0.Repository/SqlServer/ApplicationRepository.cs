@@ -1,9 +1,8 @@
-﻿using Domain0.Repository;
+﻿using System;
 using Domain0.Repository.Model;
 using Gerakul.FastSql.Common;
-using System;
 
-namespace Domain0.FastSql
+namespace Domain0.Repository.SqlServer
 {
     public class ApplicationRepository : RepositoryBase<int, Application>, IApplicationRepository
     {

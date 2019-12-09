@@ -1,12 +1,11 @@
-﻿using Domain0.Repository.Model;
-using Domain0.Repository;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain0.Repository.Model;
 using Gerakul.FastSql.Common;
-using System;
-using System.Collections.Generic;
 
-namespace Domain0.FastSql
+namespace Domain0.Repository.SqlServer
 {
     public class PermissionRepository : RepositoryBase<int, Permission>, IPermissionRepository
     {

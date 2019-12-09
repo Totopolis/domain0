@@ -1,4 +1,4 @@
-﻿namespace Domain0.FastSql.Settings
+﻿namespace Domain0.Repository.Settings
 {
     public class DbSettings
     {

@@ -1,12 +1,11 @@
-﻿using Domain0.Repository;
-using Domain0.Repository.Model;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain0.Repository.Model;
 using Gerakul.FastSql.Common;
-using System;
 using Gerakul.FastSql.SqlServer;
 
-namespace Domain0.FastSql
+namespace Domain0.Repository.SqlServer
 {
     public class TokenRegistrationRepository : ITokenRegistrationRepository
     {

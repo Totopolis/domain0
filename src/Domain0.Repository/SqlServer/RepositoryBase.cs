@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Gerakul.FastSql.Common;
 using Gerakul.FastSql.SqlServer;
 
-namespace Domain0.Repository
+namespace Domain0.Repository.SqlServer
 {
     public class RepositoryBase<TKey, TEntity> : IRepository<TKey, TEntity>
         where TEntity : new()

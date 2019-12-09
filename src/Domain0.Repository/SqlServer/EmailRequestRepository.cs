@@ -1,11 +1,10 @@
-﻿using Domain0.Repository;
-using Domain0.Repository.Model;
-using Gerakul.FastSql.Common;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain0.Repository.Model;
+using Gerakul.FastSql.Common;
 
-namespace Domain0.FastSql
+namespace Domain0.Repository.SqlServer
 {
     public class EmailRequestRepository : RepositoryBase<int, EmailRequest>, IEmailRequestRepository
     {
