@@ -1,19 +1,24 @@
 ﻿using System.Threading.Tasks;
 using Dapper;
 using Domain0.Repository.Model;
+using NLog;
 
 namespace Domain0.Repository.PostgreSql
 {
     public class AccessLogRepository : IAccessLogRepository
     {
         private readonly IDbConnectionProvider _connectionProvider;
+        private readonly ILogger _logger;
 
-        public AccessLogRepository(IDbConnectionProvider connectionProvider)
+        public AccessLogRepository(
+            IDbConnectionProvider connectionProvider,
+            ILogger logger)
         {
             _connectionProvider = connectionProvider;
+            _logger = logger;
         }
 
-        public Task<long> Insert(AccessLogEntry entity)
+        public async Task<long> Insert(AccessLogEntry entity)
         {
             const string query = @"
 insert into log.""Access""
@@ -25,7 +30,9 @@ returning ""Id""
 
             using (var con = _connectionProvider.Connection)
             {
-                return con.ExecuteScalarAsync<long>(query, entity);
+                var id = await con.ExecuteScalarAsync<long>(query, entity);
+                _logger.Debug($"{entity.Action} | {entity.ClientIp} | {entity.ProcessingTime}");
+                return id;
             }
         }
     }

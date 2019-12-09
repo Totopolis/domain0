@@ -18,6 +18,8 @@ namespace Domain0.Repository.SqlServer
         {
             builder.Register<DbContext>(c =>
                 SqlContextProvider.DefaultInstance.CreateContext(_settings.ConnectionString));
+            builder.Register<IDbConnectionProvider>(c =>
+                new DbConnectionProvider(_settings.ConnectionString));
 
             builder.RegisterType<AccountRepository>().As<IAccountRepository>().SingleInstance();
             builder.RegisterType<ApplicationRepository>().As<IApplicationRepository>().SingleInstance();
