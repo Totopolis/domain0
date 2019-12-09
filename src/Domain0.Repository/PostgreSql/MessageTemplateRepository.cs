@@ -6,7 +6,7 @@ using Dapper;
 using Domain0.Repository.Extensions;
 using Domain0.Repository.Model;
 
-namespace Domain0.Repository.SqlServer
+namespace Domain0.Repository.PostgreSql
 {
     public class MessageTemplateRepository : IMessageTemplateRepository
     {
@@ -20,21 +20,11 @@ namespace Domain0.Repository.SqlServer
         public async Task<int> Insert(MessageTemplate entity)
         {
             const string query = @"
-INSERT INTO [dom].[Message]
-           ([Description]
-           ,[Type]
-           ,[Locale]
-           ,[Name]
-           ,[Template]
-           ,[EnvironmentId])
-     VALUES
-           (@Description
-           ,@Type
-           ,@Locale
-           ,@Name
-           ,@Template
-           ,@EnvironmentId)
-;select SCOPE_IDENTITY() id
+insert into dom.""Message""
+(""Description"", ""Type"", ""Locale"", ""Name"", ""Template"", ""EnvironmentId"")
+values
+(@Description, @Type, @Locale, @Name, @Template, @EnvironmentId)
+returning ""Id""
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -48,14 +38,8 @@ INSERT INTO [dom].[Message]
             if (!listIds.Any())
             {
                 const string query = @"
-SELECT [Id]
-      ,[Description]
-      ,[Type]
-      ,[Locale]
-      ,[Name]
-      ,[Template]
-      ,[EnvironmentId]
-  FROM [dom].[Message]
+select ""Id"", ""Description"", ""Type"", ""Locale"", ""Name"", ""Template"", ""EnvironmentId""
+from dom.""Message""
 ";
                 using (var con = _connectionProvider.Connection)
                 {
@@ -65,15 +49,9 @@ SELECT [Id]
             }
 
             const string queryIn = @"
-SELECT [Id]
-      ,[Description]
-      ,[Type]
-      ,[Locale]
-      ,[Name]
-      ,[Template]
-      ,[EnvironmentId]
-  FROM [dom].[Message]
-where [Id] in @Ids
+select ""Id"", ""Description"", ""Type"", ""Locale"", ""Name"", ""Template"", ""EnvironmentId""
+from dom.""Message""
+where ""Id"" in @Ids
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -85,14 +63,14 @@ where [Id] in @Ids
         public async Task Update(MessageTemplate entity)
         {
             const string query = @"
-UPDATE [dom].[Message]
-   SET [Description] = @Description
-      ,[Type] = @Type
-      ,[Locale] = @Locale
-      ,[Name] = @Name
-      ,[Template] = @Template
-      ,[EnvironmentId] = @EnvironmentId
- WHERE [Id] = @Id
+update dom.""Message""
+set ""Description"" = @Description
+  , ""Type"" = @Type
+  , ""Locale"" = @Locale
+  , ""Name"" = @Name
+  , ""Template"" = @Template
+  , ""EnvironmentId"" = @EnvironmentId
+where ""Id"" = @Id
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -105,7 +83,7 @@ UPDATE [dom].[Message]
             using (var con = _connectionProvider.Connection)
             {
                 await con.ExecuteAsync(
-                    @"delete from [dom].[Message] where [Id] = @Id",
+                    @"delete from dom.""Message"" where ""Id"" = @Id",
                     new {Id = id});
             }
         }
@@ -117,18 +95,13 @@ UPDATE [dom].[Message]
             int environmentId)
         {
             const string query = @"
-SELECT [Id]
-      ,[Description]
-      ,[Type]
-      ,[Locale]
-      ,[Name]
-      ,[Template]
-      ,[EnvironmentId]
-  FROM [dom].[Message]
-where [Name] = @Name
-  and [Type] = @Type
-  and [EnvironmentId] = @EnvironmentId
-order by [Locale]
+select ""Id"", ""Description"", ""Type"", ""Locale"", ""Name"", ""Template"", ""EnvironmentId""
+from dom.""Message""
+where ""Id"" in @Ids
+where ""Name"" = @Name
+  and ""Type"" = @Type
+  and ""EnvironmentId"" = @EnvironmentId
+order by ""Locale""
 ";
             using (var con = _connectionProvider.Connection)
             {

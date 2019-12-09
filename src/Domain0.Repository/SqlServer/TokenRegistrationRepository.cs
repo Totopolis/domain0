@@ -92,7 +92,7 @@ INSERT INTO [dom].[TokenRegistration]
             using (var con = _connectionProvider.Connection)
             {
                 await con.ExecuteAsync(
-                    $"delete from [dom].[TokenRegistration] where [UserId] = @UserId",
+                    @"delete from [dom].[TokenRegistration] where [UserId] = @UserId",
                     new {UserId = userId});
             }
         }
