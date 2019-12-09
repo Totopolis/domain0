@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="1.1.0" />
     <PackageReference Include="Npgsql" Version="4.1.2" />
     <PackageReference Include="Gerakul.FastSql.SqlServer" Version="1.1.0" />
     <PackageReference Include="Autofac" Version="4.9.4" />
