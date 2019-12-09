@@ -2,7 +2,7 @@
 using Dapper;
 using Domain0.Repository.Model;
 
-namespace Domain0.Repository.SqlServer
+namespace Domain0.Repository.PostgreSql
 {
     public class TokenRegistrationRepository : ITokenRegistrationRepository
     {
@@ -16,13 +16,9 @@ namespace Domain0.Repository.SqlServer
         public async Task<TokenRegistration> FindById(int id)
         {
             const string query = @"
-select [Id]
-      ,[UserId]
-      ,[AccessToken]
-      ,[IssuedAt]
-      ,[ExpiredAt]
-from [dom].[TokenRegistration]
-where [Id] = @Id
+select ""Id"", ""UserId"", ""AccessToken"", ""IssuedAt"", ""ExpiredAt""
+from dom.""TokenRegistration""
+where ""Id"" = @Id
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -33,14 +29,10 @@ where [Id] = @Id
         public async Task<TokenRegistration> FindLastTokenByUserId(int userId)
         {
             const string query = @"
-select [Id]
-      ,[UserId]
-      ,[AccessToken]
-      ,[IssuedAt]
-      ,[ExpiredAt]
-from [dom].[TokenRegistration]
-where [UserId] = @UserId
-order by [Id] desc
+select ""Id"", ""UserId"", ""AccessToken"", ""IssuedAt"", ""ExpiredAt""
+from dom.""TokenRegistration""
+where ""UserId"" = @UserId
+order by ""Id"" desc
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -53,12 +45,9 @@ order by [Id] desc
             if (registration.Id > 0)
             {
                 const string query = @"
-UPDATE [dom].[TokenRegistration]
-   SET [UserId] = @UserId
-      ,[AccessToken] = @AccessToken
-      ,[IssuedAt] = @IssuedAt
-      ,[ExpiredAt] = @ExpiredAt
- WHERE [Id] = @Id
+update dom.""TokenRegistration""
+set ""UserId"" = @UserId, ""AccessToken"" = @AccessToken, ""IssuedAt"" = @IssuedAt, ""ExpiredAt"" = @ExpiredAt
+where ""Id"" = @Id
 ";
                 using (var con = _connectionProvider.Connection)
                 {
@@ -68,17 +57,11 @@ UPDATE [dom].[TokenRegistration]
             else
             {
                 const string query = @"
-INSERT INTO [dom].[TokenRegistration]
-           ([UserId]
-           ,[AccessToken]
-           ,[IssuedAt]
-           ,[ExpiredAt])
-     VALUES
-           (@UserId
-           ,@AccessToken
-           ,@IssuedAt
-           ,@ExpiredAt)
-;select SCOPE_IDENTITY() id
+insert into dom.""TokenRegistration""
+(""UserId"", ""AccessToken"", ""IssuedAt"", ""ExpiredAt"")
+values
+(@UserId, @AccessToken, @IssuedAt, @ExpiredAt)
+returning ""Id""
 ";
                 using (var con = _connectionProvider.Connection)
                 {
@@ -92,7 +75,7 @@ INSERT INTO [dom].[TokenRegistration]
             using (var con = _connectionProvider.Connection)
             {
                 await con.ExecuteAsync(
-                    $"delete from [dom].[TokenRegistration] where [UserId] = @UserId",
+                    @"delete from dom.""TokenRegistration"" where ""UserId"" = @UserId",
                     new {UserId = userId});
             }
         }

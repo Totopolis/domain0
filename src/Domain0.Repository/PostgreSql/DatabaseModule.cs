@@ -24,7 +24,7 @@ namespace Domain0.Repository.PostgreSql
             //builder.RegisterType<RoleRepository>().As<IRoleRepository>().SingleInstance();
             builder.RegisterType<SmsRequestRepository>().As<ISmsRequestRepository>().SingleInstance();
             builder.RegisterType<EmailRequestRepository>().As<IEmailRequestRepository>().SingleInstance();
-            //builder.RegisterType<TokenRegistrationRepository>().As<ITokenRegistrationRepository>().SingleInstance();
+            builder.RegisterType<TokenRegistrationRepository>().As<ITokenRegistrationRepository>().SingleInstance();
             builder.RegisterType<AccessLogRepository>().As<IAccessLogRepository>().SingleInstance();
             //builder.RegisterType<EnvironmentRepository>().As<IEnvironmentRepository>().SingleInstance();
         }
