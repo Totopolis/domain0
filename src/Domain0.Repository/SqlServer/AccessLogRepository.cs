@@ -1,31 +1,35 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Domain0.Repository.Model;
 using Gerakul.FastSql.Common;
+using Gerakul.FastSql.SqlServer;
 using NLog;
 
 namespace Domain0.Repository.SqlServer
 {
-    public class AccessLogRepository : RepositoryBase<long, AccessLogEntry>, IAccessLogRepository
+    public class AccessLogRepository : IAccessLogRepository
     {
+        private readonly Func<DbContext> _getContext;
+        private readonly ILogger _logger;
+
         public AccessLogRepository(
             Func<DbContext> getContextFunc,
             ILogger loggerInstance)
-            : base(getContextFunc)
-        { 
-            TableName = "[log].[Access]";
-            KeyName = "Id";
-            Logger = loggerInstance;
+        {
+            _getContext = getContextFunc;
+            _logger = loggerInstance;
         }
 
-
-        public override async Task<decimal> Insert(AccessLogEntry entity)
+        public async Task<long> Insert(AccessLogEntry entity)
         {
-            var id = await base.Insert(entity);
-            Logger.Debug($"{entity.Action} | {entity.ClientIp} | {entity.ProcessingTime }");
+            var id = await (_getContext() as ISqlCommandCreator)
+                .CreateInsertAndGetID("[log].[Access]", entity, ignoreFields: "Id")
+                .ExecuteQueryFirstColumnAsync<long>()
+                .First();
+
+            _logger.Debug($"{entity.Action} | {entity.ClientIp} | {entity.ProcessingTime}");
             return id;
         }
-
-        private readonly ILogger Logger;
     }
 }
