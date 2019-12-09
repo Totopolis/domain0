@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Domain0.Repository.Model;
 
-namespace Domain0.Repository.SqlServer
+namespace Domain0.Repository.PostgreSql
 {
     public class SmsRequestRepository : ISmsRequestRepository
     {
@@ -17,18 +17,10 @@ namespace Domain0.Repository.SqlServer
         public async Task Save(SmsRequest emailRequest)
         {
             const string query = @"
-INSERT INTO [dom].[SmsRequest]
-           ([Phone]
-           ,[Password]
-           ,[ExpiredAt]
-           ,[UserId]
-           ,[EnvironmentId])
-     VALUES
-           (@Phone
-           ,@Password
-           ,@ExpiredAt
-           ,@UserId
-           ,@EnvironmentId)
+insert into dom.""SmsRequest""
+(""Phone"", ""Password"", ""ExpiredAt"", ""UserId"", ""EnvironmentId"")
+values
+(@Phone, @Password, @ExpiredAt, @UserId, @EnvironmentId)
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -39,15 +31,10 @@ INSERT INTO [dom].[SmsRequest]
         public async Task<SmsRequest> Pick(decimal phone)
         {
             const string query = @"
-select [Id]
-    ,[Phone]
-    ,[Password]
-    ,[ExpiredAt]
-    ,[UserId]
-    ,[EnvironmentId]
-from [dom].[SmsRequest]
-where [Phone] = @Phone and [ExpiredAt] >= @Now
-order by id desc
+select ""Id"", ""Phone"", ""Password"", ""ExpiredAt"", ""UserId"", ""EnvironmentId""
+from dom.""SmsRequest""
+where ""Phone"" = @Phone and ""ExpiredAt"" >= @Now
+order by ""Id"" desc
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -69,8 +56,8 @@ order by id desc
             using (var con = _connectionProvider.Connection)
             {
                 await con.ExecuteAsync(
-                    @"delete from [dom].[SmsRequest] where Id = @Id",
-                    new {request.Id});
+                    @"delete from dom.""SmsRequest"" where ""Id"" = @Id",
+                    new { request.Id });
             }
 
             return request;
@@ -79,15 +66,10 @@ order by id desc
         public async Task<SmsRequest> PickByUserId(int userId)
         {
             const string query = @"
-select [Id]
-    ,[Phone]
-    ,[Password]
-    ,[ExpiredAt]
-    ,[UserId]
-    ,[EnvironmentId]
-from [dom].[SmsRequest]
-where [UserId] = @UserId and [ExpiredAt] >= @Now
-order by id desc
+select ""Id"", ""Phone"", ""Password"", ""ExpiredAt"", ""UserId"", ""EnvironmentId""
+from dom.""SmsRequest""
+where ""UserId"" = @UserId and ""ExpiredAt"" >= @Now
+order by ""Id"" desc
 ";
             using (var con = _connectionProvider.Connection)
             {

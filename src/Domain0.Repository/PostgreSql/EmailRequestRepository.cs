@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Domain0.Repository.Model;
 
-namespace Domain0.Repository.SqlServer
+namespace Domain0.Repository.PostgreSql
 {
     public class EmailRequestRepository : IEmailRequestRepository
     {
@@ -17,18 +17,10 @@ namespace Domain0.Repository.SqlServer
         public async Task Save(EmailRequest emailRequest)
         {
             const string query = @"
-INSERT INTO [dom].[EmailRequest]
-           ([Email]
-           ,[Password]
-           ,[ExpiredAt]
-           ,[UserId]
-           ,[EnvironmentId])
-     VALUES
-           (@Email
-           ,@Password
-           ,@ExpiredAt
-           ,@UserId
-           ,@EnvironmentId)
+insert into dom.""EmailRequest""
+(""Email"", ""Password"", ""ExpiredAt"", ""UserId"", ""EnvironmentId"")
+values
+(@Email, @Password, @ExpiredAt, @UserId, @EnvironmentId)
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -39,15 +31,10 @@ INSERT INTO [dom].[EmailRequest]
         public async Task<EmailRequest> Pick(string email)
         {
             const string query = @"
-select top 1 [Id]
-    ,[Email]
-    ,[Password]
-    ,[ExpiredAt]
-    ,[UserId]
-    ,[EnvironmentId]
-from [dom].[EmailRequest]
-where [Email] = @Email and [ExpiredAt] >= @Now
-order by id desc
+select ""Id"", ""Email"", ""Password"", ""ExpiredAt"", ""UserId"", ""EnvironmentId""
+from dom.""EmailRequest""
+where ""Email"" = @Email and ""ExpiredAt"" >= @Now
+order by ""Id"" desc
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -69,25 +56,20 @@ order by id desc
             using (var con = _connectionProvider.Connection)
             {
                 await con.ExecuteAsync(
-                    @"delete from [dom].[EmailRequest] where Id = @Id",
-                    new {request.Id});
+                    @"delete from dom.""EmailRequest"" where ""Id"" = @Id",
+                    new { request.Id });
             }
-
             return request;
+
         }
 
         public async Task<EmailRequest> PickByUserId(int userId)
         {
             const string query = @"
-select top 1 [Id]
-    ,[Email]
-    ,[Password]
-    ,[ExpiredAt]
-    ,[UserId]
-    ,[EnvironmentId]
-from [dom].[EmailRequest]
-where [UserId] = @UserId and [ExpiredAt] >= @Now
-order by id desc
+select ""Id"", ""Email"", ""Password"", ""ExpiredAt"", ""UserId"", ""EnvironmentId""
+from dom.""EmailRequest""
+where ""UserId"" = @UserId and ""ExpiredAt"" >= @Now
+order by ""Id"" desc
 ";
             using (var con = _connectionProvider.Connection)
             {
