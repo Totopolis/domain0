@@ -18,21 +18,19 @@ namespace Domain0.Repository.PostgreSql
             _logger = logger;
         }
 
-        public async Task<long> Insert(AccessLogEntry entity)
+        public async Task Insert(AccessLogEntry entity)
         {
             const string query = @"
 insert into log.""Access""
 (""Action"", ""Method"", ""ClientIp"", ""ProcessedAt"", ""StatusCode"", ""UserAgent"", ""UserId"", ""Referer"", ""ProcessingTime"")
 values
 (@Action, @Method, @ClientIp, @ProcessedAt, @StatusCode, @UserAgent, @UserId, @Referer, @ProcessingTime)
-returning ""Id""
 ";
 
             using (var con = _connectionProvider.Connection)
             {
-                var id = await con.ExecuteScalarAsync<long>(query, entity);
+                await con.ExecuteScalarAsync<long>(query, entity);
                 _logger.Debug($"{entity.Action} | {entity.ClientIp} | {entity.ProcessingTime}");
-                return id;
             }
         }
     }

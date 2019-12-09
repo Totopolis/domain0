@@ -18,7 +18,7 @@ namespace Domain0.Repository.SqlServer
             _logger = loggerInstance;
         }
 
-        public async Task<long> Insert(AccessLogEntry entity)
+        public async Task Insert(AccessLogEntry entity)
         {
             const string query = @"
 INSERT INTO [log].[Access]
@@ -41,13 +41,12 @@ INSERT INTO [log].[Access]
            ,@UserId
            ,@Referer
            ,@ProcessingTime)
-;select SCOPE_IDENTITY() Id";
+";
 
             using (var con = _connectionProvider.Connection)
             {
-                var id = await con.ExecuteScalarAsync<long>(query, entity);
+                await con.ExecuteAsync(query, entity);
                 _logger.Debug($"{entity.Action} | {entity.ClientIp} | {entity.ProcessingTime}");
-                return id;
             }
         }
     }

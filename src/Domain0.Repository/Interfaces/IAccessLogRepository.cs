@@ -5,6 +5,6 @@ namespace Domain0.Repository
 {
     public interface IAccessLogRepository
     {
-        Task<long> Insert(AccessLogEntry entity);
+        Task Insert(AccessLogEntry entity);
     }
 }
