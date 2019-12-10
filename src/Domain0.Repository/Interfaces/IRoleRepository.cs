@@ -4,8 +4,16 @@ using System.Threading.Tasks;
 
 namespace Domain0.Repository
 {
-    public interface IRoleRepository : IRepository<int, Role>
+    public interface IRoleRepository
     {
+        Task<int> Insert(Role entity);
+
+        Task Update(Role entity);
+
+        Task Delete(int id);
+
+        Task<Role[]> FindByIds(IEnumerable<int> ids);
+
         Task AddUserToRoles(int userId, params string[] roles);
 
         Task AddUserToDefaultRoles(int userId);

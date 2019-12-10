@@ -1,7 +1,5 @@
 ﻿using Autofac;
 using Domain0.Repository.Settings;
-using Gerakul.FastSql.Common;
-using Gerakul.FastSql.SqlServer;
 
 namespace Domain0.Repository.SqlServer
 {
@@ -16,8 +14,6 @@ namespace Domain0.Repository.SqlServer
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.Register<DbContext>(c =>
-                SqlContextProvider.DefaultInstance.CreateContext(_settings.ConnectionString));
             builder.Register<IDbConnectionProvider>(c =>
                 new DbConnectionProvider(_settings.ConnectionString));
 

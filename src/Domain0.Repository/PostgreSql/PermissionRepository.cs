@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Domain0.Repository.Model;
 
-namespace Domain0.Repository.SqlServer
+namespace Domain0.Repository.PostgreSql
 {
     public class PermissionRepository : IPermissionRepository
     {
@@ -18,15 +18,11 @@ namespace Domain0.Repository.SqlServer
         public async Task<int> Insert(Permission entity)
         {
             const string query = @"
-INSERT INTO [dom].[Permission]
-           ([ApplicationId]
-           ,[Name]
-           ,[Description])
-     VALUES
-           (@ApplicationId
-           ,@Name
-           ,@Description)
-;select SCOPE_IDENTITY() id
+insert into dom.""Permission""
+(""ApplicationId"", ""Name"", ""Description"")
+values
+(@ApplicationId, @Name, @Description)
+returning ""Id""
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -37,11 +33,11 @@ INSERT INTO [dom].[Permission]
         public async Task Update(Permission entity)
         {
             const string query = @"
-UPDATE [dom].[Permission]
-   SET [ApplicationId] = @ApplicationId
-      ,[Name] = @Name
-      ,[Description] = @Description
- WHERE [Id] = @Id
+UPDATE dom.""Permission""
+   SET ""ApplicationId"" = @ApplicationId
+      ,""Name"" = @Name
+      ,""Description"" = @Description
+ WHERE ""Id"" = @Id
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -54,7 +50,7 @@ UPDATE [dom].[Permission]
             using (var con = _connectionProvider.Connection)
             {
                 await con.ExecuteAsync(
-                    @"delete from [dom].[Permission] where [Id] = @Id",
+                    @"delete from dom.""Permission"" where ""Id"" = @Id",
                     new { Id = id });
             }
         }
@@ -65,11 +61,11 @@ UPDATE [dom].[Permission]
             if (!listIds.Any())
             {
                 const string query = @"
-SELECT [Id]
-      ,[ApplicationId]
-      ,[Name]
-      ,[Description]
-  FROM [dom].[Permission]
+SELECT ""Id""
+      ,""ApplicationId""
+      ,""Name""
+      ,""Description""
+  FROM dom.""Permission""
 ";
                 using (var con = _connectionProvider.Connection)
                 {
@@ -79,12 +75,12 @@ SELECT [Id]
             }
 
             const string queryIn = @"
-SELECT [Id]
-      ,[ApplicationId]
-      ,[Name]
-      ,[Description]
-  FROM [dom].[Permission]
-where [Id] in @Ids
+SELECT ""Id""
+      ,""ApplicationId""
+      ,""Name""
+      ,""Description""
+  FROM dom.""Permission""
+where ""Id"" in @Ids
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -99,14 +95,14 @@ where [Id] in @Ids
                 return;
 
             const string query = @"
-insert into [dom].[PermissionUser] ([PermissionId], [UserId])
-select [Id] as [PermissionId], @UserId as [UserId]
-from [dom].[Permission] p
-where p.[Id] in @Ids
+insert into dom.""PermissionUser"" (""PermissionId"", ""UserId"")
+select ""Id"" as ""PermissionId"", @UserId as ""UserId""
+from dom.""Permission"" p
+where p.""Id"" in @Ids
 ";
             using (var con = _connectionProvider.Connection)
             {
-                await con.ExecuteAsync(query, new {UserId = userId, Ids = ids});
+                await con.ExecuteAsync(query, new { UserId = userId, Ids = ids });
             }
         }
 
@@ -116,18 +112,18 @@ where p.[Id] in @Ids
                 return new RolePermission[0];
 
             const string query = @"
-select p.[Id]
-      ,pr.[RoleId]
-      ,p.[ApplicationId]
-      ,p.[Name]
-      ,p.[Description]
-from [dom].[Permission] p
-join [dom].[PermissionRole] pr on p.[Id] = pr.[PermissionId]
-where pr.[RoleId] in @Ids
+select p.""Id""
+      ,pr.""RoleId""
+      ,p.""ApplicationId""
+      ,p.""Name""
+      ,p.""Description""
+from dom.""Permission"" p
+join dom.""PermissionRole"" pr on p.""Id"" = pr.""PermissionId""
+where pr.""RoleId"" in @Ids
 ";
             using (var con = _connectionProvider.Connection)
             {
-                var result = await con.QueryAsync<RolePermission>(query, new {Ids = ids});
+                var result = await con.QueryAsync<RolePermission>(query, new { Ids = ids });
                 return result.ToArray();
             }
         }
@@ -138,26 +134,26 @@ where pr.[RoleId] in @Ids
                 return new UserPermission[0];
 
             const string query = @"
-select p.[Id]
-      ,ru.[UserId]
-      ,pr.[RoleId]
-      ,p.[ApplicationId]
-      ,p.[Name]
-      ,p.[Description]
-from [dom].[Permission] p
-join [dom].[PermissionRole] pr on p.[Id] = pr.[PermissionId]
-join [dom].[RoleUser] ru on pr.[RoleId] = ru.[RoleId]
-where ru.[UserId] in @Ids
+select p.""Id""
+      ,ru.""UserId""
+      ,pr.""RoleId""
+      ,p.""ApplicationId""
+      ,p.""Name""
+      ,p.""Description""
+from dom.""Permission"" p
+join dom.""PermissionRole"" pr on p.""Id"" = pr.""PermissionId""
+join dom.""RoleUser"" ru on pr.""RoleId"" = ru.""RoleId""
+where ru.""UserId"" in @Ids
 union all
-select p.[Id]
-      ,ru.[UserId]
-      ,null as [RoleId]
-      ,p.[ApplicationId]
-      ,p.[Name]
-      ,p.[Description]
-from [dom].[Permission] p
-join [dom].[PermissionUser] pu on p.[Id] = pu.[PermissionId]
-where pu.[UserId] in @Ids
+select p.""Id""
+      ,ru.""UserId""
+      ,NULL as ""RoleId""
+      ,p.""ApplicationId""
+      ,p.""Name""
+      ,p.""Description""
+from dom.""Permission"" p
+join dom.""PermissionUser"" pu on p.""Id"" = pu.""PermissionId""
+where pu.""UserId"" in @Ids
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -169,13 +165,13 @@ where pu.[UserId] in @Ids
         public async Task<Permission[]> GetByRoleId(int roleId)
         {
             const string query = @"
-select p.[Id]
-      ,p.[ApplicationId]
-      ,p.[Name]
-      ,p.[Description]
-from [dom].[Permission] p
-join [dom].[PermissionRole] pr on p.[Id] = pr.[PermissionId]
-where pr.[RoleId] = @RoleId
+select p.""Id""
+      ,p.""ApplicationId""
+      ,p.""Name""
+      ,p.""Description""
+from dom.""Permission"" p
+join dom.""PermissionRole"" pr on p.""Id"" = pr.""PermissionId""
+where pr.""RoleId"" = @RoleId
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -188,20 +184,20 @@ where pr.[RoleId] = @RoleId
         public async Task<Permission[]> GetByUserId(int userId)
         {
             const string query = @"
-select p.[Id]
-      ,p.[ApplicationId]
-      ,p.[Name]
-      ,p.[Description]
-from [dom].[Permission] p
-where [Id] in (
-    select [PermissionId]
-    from [dom].[PermissionUser] pu
-    where pu.[UserId] = @UserId
+select p.""Id""
+      ,p.""ApplicationId""
+      ,p.""Name""
+      ,p.""Description""
+from dom.""Permission"" p
+where ""Id"" in (
+    select ""PermissionId""
+    from dom.""PermissionUser"" pu
+    where pu.""UserId"" = @UserId
     union
-    select [PermissionId]
-    from [dom].[PermissionRole] pr
-    join [dom].[RoleUser] ru on pr.[RoleId] = ru.[RoleId]
-    where ru.[UserId] = @UserId
+    select ""PermissionId""
+    from dom.""PermissionRole"" pr
+    join dom.""RoleUser"" ru on pr.""RoleId"" = ru.""RoleId""
+    where ru.""UserId"" = @UserId
 )
 ";
             using (var con = _connectionProvider.Connection)
@@ -217,13 +213,13 @@ where [Id] in (
                 return;
 
             const string query = @"
-delete from [dom].[PermissionUser]
-where [UserId] = @UserId
-  and [PermissionId] in @Ids
+delete from dom.""PermissionUser""
+where ""UserId"" = @UserId
+  and ""PermissionId"" in @Ids
 ";
             using (var con = _connectionProvider.Connection)
             {
-                await con.ExecuteAsync(query, new {UserId = userId, Ids = ids});
+                await con.ExecuteAsync(query, new { UserId = userId, Ids = ids });
             }
         }
     }

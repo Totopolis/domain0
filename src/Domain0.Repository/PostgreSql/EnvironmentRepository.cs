@@ -82,24 +82,7 @@ where ""Id"" = @Id
         public async Task<Environment[]> FindByIds(IEnumerable<int> ids)
         {
             var listIds = ids.ToList();
-            if (listIds.Any())
-            {
-                const string query = @"
-SELECT ""Id""
-      ,""Name""
-      ,""Description""
-      ,""Token""
-      ,""IsDefault""
-  FROM dom.""Environment""
-where ""Id"" in @Ids
-";
-                using (var con = _connectionProvider.Connection)
-                {
-                    var result = await con.QueryAsync<Environment>(query, new {Ids = listIds});
-                    return result.ToArray();
-                }
-            }
-            else
+            if (!listIds.Any())
             {
                 const string query = @"
 SELECT ""Id""
@@ -114,6 +97,21 @@ SELECT ""Id""
                     var result = await con.QueryAsync<Environment>(query);
                     return result.ToArray();
                 }
+            }
+
+            const string queryIn = @"
+SELECT ""Id""
+      ,""Name""
+      ,""Description""
+      ,""Token""
+      ,""IsDefault""
+  FROM dom.""Environment""
+where ""Id"" in @Ids
+";
+            using (var con = _connectionProvider.Connection)
+            {
+                var result = await con.QueryAsync<Environment>(queryIn, new {Ids = listIds});
+                return result.ToArray();
             }
         }
 

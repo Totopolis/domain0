@@ -35,22 +35,7 @@ INSERT INTO [dom].[Application]
         public async Task<Application[]> FindByIds(IEnumerable<int> ids)
         {
             var listIds = ids.ToList();
-            if (listIds.Any())
-            {
-                const string query = @"
-SELECT [Id]
-      ,[Name]
-      ,[Description]
-  FROM [dom].[Application]
-where [Id] in @Ids
-";
-                using (var con = _connectionProvider.Connection)
-                {
-                    var result = await con.QueryAsync<Application>(query, new {Ids = listIds});
-                    return result.ToArray();
-                }
-            }
-            else
+            if (!listIds.Any())
             {
                 const string query = @"
 SELECT [Id]
@@ -63,6 +48,19 @@ SELECT [Id]
                     var result = await con.QueryAsync<Application>(query);
                     return result.ToArray();
                 }
+            }
+
+            const string queryIn = @"
+SELECT [Id]
+      ,[Name]
+      ,[Description]
+  FROM [dom].[Application]
+where [Id] in @Ids
+";
+            using (var con = _connectionProvider.Connection)
+            {
+                var result = await con.QueryAsync<Application>(queryIn, new {Ids = listIds});
+                return result.ToArray();
             }
         }
 

@@ -36,7 +36,7 @@ namespace Domain0.Nancy.Service
         {
             var messageTemplateEntity = mapper.Map<Repository.Model.MessageTemplate>(messageTemplate);
 
-            return (int)await messageTemplateRepository.Insert(messageTemplateEntity);
+            return await messageTemplateRepository.Insert(messageTemplateEntity);
         }
 
         public async Task Update(MessageTemplate messageTemplate)
@@ -79,7 +79,7 @@ namespace Domain0.Nancy.Service
         {
             var permissionEntity = mapper.Map<Repository.Model.Permission>(permission);
 
-            return (int)await permissionRepository.Insert(permissionEntity);
+            return await permissionRepository.Insert(permissionEntity);
         }
 
         public async Task Update(Permission permission)
@@ -107,7 +107,7 @@ namespace Domain0.Nancy.Service
         {
             var applicationEntity = mapper.Map<Repository.Model.Application>(application);
 
-            return (int)await applicationRepository.Insert(applicationEntity);
+            return await applicationRepository.Insert(applicationEntity);
         }
 
         public async Task Update(Application application)
@@ -142,7 +142,7 @@ namespace Domain0.Nancy.Service
         {
             var roleEntity = mapper.Map<Repository.Model.Role>(role);
 
-            return (int)await roleRepository.Insert(roleEntity);
+            return await roleRepository.Insert(roleEntity);
         }
 
         public async Task Update(Role role)
@@ -213,7 +213,7 @@ namespace Domain0.Nancy.Service
         {
             var environmentEntity = mapper.Map<Repository.Model.Environment>(environment);
 
-            return (int)await environmentRepository.Insert(environmentEntity);
+            return await environmentRepository.Insert(environmentEntity);
         }
 
         public async Task Update(Environment environment)
