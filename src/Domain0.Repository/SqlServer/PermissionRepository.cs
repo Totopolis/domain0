@@ -150,7 +150,7 @@ join [dom].[RoleUser] ru on pr.[RoleId] = ru.[RoleId]
 where ru.[UserId] in @Ids
 union all
 select p.[Id]
-      ,ru.[UserId]
+      ,pu.[UserId]
       ,null as [RoleId]
       ,p.[ApplicationId]
       ,p.[Name]
