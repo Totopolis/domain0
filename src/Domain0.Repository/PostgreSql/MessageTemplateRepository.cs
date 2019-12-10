@@ -97,7 +97,6 @@ where ""Id"" = @Id
             const string query = @"
 select ""Id"", ""Description"", ""Type"", ""Locale"", ""Name"", ""Template"", ""EnvironmentId""
 from dom.""Message""
-where ""Id"" in @Ids
 where ""Name"" = @Name
   and ""Type"" = @Type
   and ""EnvironmentId"" = @EnvironmentId

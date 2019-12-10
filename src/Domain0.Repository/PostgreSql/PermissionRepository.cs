@@ -133,7 +133,8 @@ where pr.""RoleId"" in @Ids
             if (!ids.Any())
                 return new UserPermission[0];
 
-            const string query = @"
+            var idsStr = string.Join(",", ids);
+            var query = $@"
 select p.""Id""
       ,ru.""UserId""
       ,pr.""RoleId""
@@ -143,7 +144,7 @@ select p.""Id""
 from dom.""Permission"" p
 join dom.""PermissionRole"" pr on p.""Id"" = pr.""PermissionId""
 join dom.""RoleUser"" ru on pr.""RoleId"" = ru.""RoleId""
-where ru.""UserId"" in @Ids
+where ru.""UserId"" in ({idsStr})
 union all
 select p.""Id""
       ,pu.""UserId""
@@ -153,11 +154,11 @@ select p.""Id""
       ,p.""Description""
 from dom.""Permission"" p
 join dom.""PermissionUser"" pu on p.""Id"" = pu.""PermissionId""
-where pu.""UserId"" in @Ids
+where pu.""UserId"" in ({idsStr})
 ";
             using (var con = _connectionProvider.Connection)
             {
-                var result = await con.QueryAsync<UserPermission>(query, new { Ids = ids });
+                var result = await con.QueryAsync<UserPermission>(query);
                 return result.ToArray();
             }
         }
