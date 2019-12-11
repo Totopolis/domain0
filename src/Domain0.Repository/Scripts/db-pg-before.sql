@@ -98,7 +98,7 @@ CREATE TABLE "dom"."TokenRegistration"(
 
 CREATE TABLE "hst_dom"."Account"( 
 	"H_ID" bigint NOT NULL,
-	"H_ConnectionID" uuid NOT NULL,
+	"H_ConnectionID" uuid,
 	"H_TransactionID" bigint NOT NULL,
 	"H_SessionID" int NOT NULL,
 	"H_Login" varchar(128) NOT NULL,
@@ -118,7 +118,7 @@ CREATE TABLE "hst_dom"."Account"(
 
 CREATE TABLE "hst_dom"."Application"( 
 	"H_ID" bigint NOT NULL,
-	"H_ConnectionID" uuid NOT NULL,
+	"H_ConnectionID" uuid,
 	"H_TransactionID" bigint NOT NULL,
 	"H_SessionID" int NOT NULL,
 	"H_Login" varchar(128) NOT NULL,
@@ -131,7 +131,7 @@ CREATE TABLE "hst_dom"."Application"(
 
 CREATE TABLE "hst_dom"."EmailRequest"( 
 	"H_ID" bigint NOT NULL,
-	"H_ConnectionID" uuid NOT NULL,
+	"H_ConnectionID" uuid,
 	"H_TransactionID" bigint NOT NULL,
 	"H_SessionID" int NOT NULL,
 	"H_Login" varchar(128) NOT NULL,
@@ -147,7 +147,7 @@ CREATE TABLE "hst_dom"."EmailRequest"(
 
 CREATE TABLE "hst_dom"."Message"( 
 	"H_ID" bigint NOT NULL,
-	"H_ConnectionID" uuid NOT NULL,
+	"H_ConnectionID" uuid,
 	"H_TransactionID" bigint NOT NULL,
 	"H_SessionID" int NOT NULL,
 	"H_Login" varchar(128) NOT NULL,
@@ -164,7 +164,7 @@ CREATE TABLE "hst_dom"."Message"(
 
 CREATE TABLE "hst_dom"."Permission"( 
 	"H_ID" bigint NOT NULL,
-	"H_ConnectionID" uuid NOT NULL,
+	"H_ConnectionID" uuid,
 	"H_TransactionID" bigint NOT NULL,
 	"H_SessionID" int NOT NULL,
 	"H_Login" varchar(128) NOT NULL,
@@ -178,7 +178,7 @@ CREATE TABLE "hst_dom"."Permission"(
 
 CREATE TABLE "hst_dom"."PermissionRole"( 
 	"H_ID" bigint NOT NULL,
-	"H_ConnectionID" uuid NOT NULL,
+	"H_ConnectionID" uuid,
 	"H_TransactionID" bigint NOT NULL,
 	"H_SessionID" int NOT NULL,
 	"H_Login" varchar(128) NOT NULL,
@@ -190,7 +190,7 @@ CREATE TABLE "hst_dom"."PermissionRole"(
 
 CREATE TABLE "hst_dom"."PermissionUser"( 
 	"H_ID" bigint NOT NULL,
-	"H_ConnectionID" uuid NOT NULL,
+	"H_ConnectionID" uuid,
 	"H_TransactionID" bigint NOT NULL,
 	"H_SessionID" int NOT NULL,
 	"H_Login" varchar(128) NOT NULL,
@@ -204,7 +204,7 @@ CREATE TABLE "hst_dom"."PermissionUser"(
 
 CREATE TABLE "hst_dom"."Role"( 
 	"H_ID" bigint NOT NULL,
-	"H_ConnectionID" uuid NOT NULL,
+	"H_ConnectionID" uuid,
 	"H_TransactionID" bigint NOT NULL,
 	"H_SessionID" int NOT NULL,
 	"H_Login" varchar(128) NOT NULL,
@@ -218,7 +218,7 @@ CREATE TABLE "hst_dom"."Role"(
 
 CREATE TABLE "hst_dom"."RoleUser"( 
 	"H_ID" bigint NOT NULL,
-	"H_ConnectionID" uuid NOT NULL,
+	"H_ConnectionID" uuid,
 	"H_TransactionID" bigint NOT NULL,
 	"H_SessionID" int NOT NULL,
 	"H_Login" varchar(128) NOT NULL,
@@ -230,7 +230,7 @@ CREATE TABLE "hst_dom"."RoleUser"(
 
 CREATE TABLE "hst_dom"."SmsRequest"( 
 	"H_ID" bigint NOT NULL,
-	"H_ConnectionID" uuid NOT NULL,
+	"H_ConnectionID" uuid,
 	"H_TransactionID" bigint NOT NULL,
 	"H_SessionID" int NOT NULL,
 	"H_Login" varchar(128) NOT NULL,
