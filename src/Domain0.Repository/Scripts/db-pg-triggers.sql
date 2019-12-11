@@ -11,16 +11,16 @@ $$
     BEGIN
         IF (TG_OP = 'DELETE') THEN
             INSERT INTO "hst_dom"."Account" VALUES
-            (nextval('"hst_dom"."account_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 3, FALSE, OLD.*);
+            (nextval('"hst_dom"."account_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 3, FALSE, OLD.*);
             RETURN OLD;
         ELSIF (TG_OP = 'UPDATE') THEN
             INSERT INTO "hst_dom"."Account" VALUES
-            (nextval('"hst_dom"."account_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, FALSE, OLD.*),
-            (nextval('"hst_dom"."account_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, TRUE, NEW.*);
+            (nextval('"hst_dom"."account_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, FALSE, OLD.*),
+            (nextval('"hst_dom"."account_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, TRUE, NEW.*);
             RETURN NEW;
         ELSIF (TG_OP = 'INSERT') THEN
             INSERT INTO "hst_dom"."Account" VALUES
-            (nextval('"hst_dom"."account_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 1, TRUE, NEW.*);
+            (nextval('"hst_dom"."account_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 1, TRUE, NEW.*);
             RETURN NEW;
         END IF;
         RETURN NULL;
@@ -42,16 +42,16 @@ $$
     BEGIN
         IF (TG_OP = 'DELETE') THEN
             INSERT INTO "hst_dom"."Application" VALUES
-            (nextval('"hst_dom"."application_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 3, FALSE, OLD.*);
+            (nextval('"hst_dom"."application_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 3, FALSE, OLD.*);
             RETURN OLD;
         ELSIF (TG_OP = 'UPDATE') THEN
             INSERT INTO "hst_dom"."Application" VALUES
-            (nextval('"hst_dom"."application_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, FALSE, OLD.*),
-            (nextval('"hst_dom"."application_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, TRUE, NEW.*);
+            (nextval('"hst_dom"."application_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, FALSE, OLD.*),
+            (nextval('"hst_dom"."application_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, TRUE, NEW.*);
             RETURN NEW;
         ELSIF (TG_OP = 'INSERT') THEN
             INSERT INTO "hst_dom"."Application" VALUES
-            (nextval('"hst_dom"."application_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 1, TRUE, NEW.*);
+            (nextval('"hst_dom"."application_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 1, TRUE, NEW.*);
             RETURN NEW;
         END IF;
         RETURN NULL;
@@ -73,16 +73,16 @@ $$
     BEGIN
         IF (TG_OP = 'DELETE') THEN
             INSERT INTO "hst_dom"."EmailRequest" VALUES
-            (nextval('"hst_dom"."emailrequest_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 3, FALSE, OLD.*);
+            (nextval('"hst_dom"."emailrequest_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 3, FALSE, OLD.*);
             RETURN OLD;
         ELSIF (TG_OP = 'UPDATE') THEN
             INSERT INTO "hst_dom"."EmailRequest" VALUES
-            (nextval('"hst_dom"."emailrequest_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, FALSE, OLD.*),
-            (nextval('"hst_dom"."emailrequest_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, TRUE, NEW.*);
+            (nextval('"hst_dom"."emailrequest_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, FALSE, OLD.*),
+            (nextval('"hst_dom"."emailrequest_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, TRUE, NEW.*);
             RETURN NEW;
         ELSIF (TG_OP = 'INSERT') THEN
             INSERT INTO "hst_dom"."EmailRequest" VALUES
-            (nextval('"hst_dom"."emailrequest_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 1, TRUE, NEW.*);
+            (nextval('"hst_dom"."emailrequest_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 1, TRUE, NEW.*);
             RETURN NEW;
         END IF;
         RETURN NULL;
@@ -104,16 +104,16 @@ $$
     BEGIN
         IF (TG_OP = 'DELETE') THEN
             INSERT INTO "hst_dom"."Message" VALUES
-            (nextval('"hst_dom"."message_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 3, FALSE, OLD.*);
+            (nextval('"hst_dom"."message_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 3, FALSE, OLD.*);
             RETURN OLD;
         ELSIF (TG_OP = 'UPDATE') THEN
             INSERT INTO "hst_dom"."Message" VALUES
-            (nextval('"hst_dom"."message_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, FALSE, OLD.*),
-            (nextval('"hst_dom"."message_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, TRUE, NEW.*);
+            (nextval('"hst_dom"."message_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, FALSE, OLD.*),
+            (nextval('"hst_dom"."message_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, TRUE, NEW.*);
             RETURN NEW;
         ELSIF (TG_OP = 'INSERT') THEN
             INSERT INTO "hst_dom"."Message" VALUES
-            (nextval('"hst_dom"."message_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 1, TRUE, NEW.*);
+            (nextval('"hst_dom"."message_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 1, TRUE, NEW.*);
             RETURN NEW;
         END IF;
         RETURN NULL;
@@ -135,16 +135,16 @@ $$
     BEGIN
         IF (TG_OP = 'DELETE') THEN
             INSERT INTO "hst_dom"."Permission" VALUES
-            (nextval('"hst_dom"."permission_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 3, FALSE, OLD.*);
+            (nextval('"hst_dom"."permission_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 3, FALSE, OLD.*);
             RETURN OLD;
         ELSIF (TG_OP = 'UPDATE') THEN
             INSERT INTO "hst_dom"."Permission" VALUES
-            (nextval('"hst_dom"."permission_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, FALSE, OLD.*),
-            (nextval('"hst_dom"."permission_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, TRUE, NEW.*);
+            (nextval('"hst_dom"."permission_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, FALSE, OLD.*),
+            (nextval('"hst_dom"."permission_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, TRUE, NEW.*);
             RETURN NEW;
         ELSIF (TG_OP = 'INSERT') THEN
             INSERT INTO "hst_dom"."Permission" VALUES
-            (nextval('"hst_dom"."permission_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 1, TRUE, NEW.*);
+            (nextval('"hst_dom"."permission_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 1, TRUE, NEW.*);
             RETURN NEW;
         END IF;
         RETURN NULL;
@@ -166,16 +166,16 @@ $$
     BEGIN
         IF (TG_OP = 'DELETE') THEN
             INSERT INTO "hst_dom"."PermissionRole" VALUES
-            (nextval('"hst_dom"."permissionrole_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 3, FALSE, OLD.*);
+            (nextval('"hst_dom"."permissionrole_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 3, FALSE, OLD.*);
             RETURN OLD;
         ELSIF (TG_OP = 'UPDATE') THEN
             INSERT INTO "hst_dom"."PermissionRole" VALUES
-            (nextval('"hst_dom"."permissionrole_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, FALSE, OLD.*),
-            (nextval('"hst_dom"."permissionrole_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, TRUE, NEW.*);
+            (nextval('"hst_dom"."permissionrole_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, FALSE, OLD.*),
+            (nextval('"hst_dom"."permissionrole_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, TRUE, NEW.*);
             RETURN NEW;
         ELSIF (TG_OP = 'INSERT') THEN
             INSERT INTO "hst_dom"."PermissionRole" VALUES
-            (nextval('"hst_dom"."permissionrole_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 1, TRUE, NEW.*);
+            (nextval('"hst_dom"."permissionrole_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 1, TRUE, NEW.*);
             RETURN NEW;
         END IF;
         RETURN NULL;
@@ -197,16 +197,16 @@ $$
     BEGIN
         IF (TG_OP = 'DELETE') THEN
             INSERT INTO "hst_dom"."PermissionUser" VALUES
-            (nextval('"hst_dom"."permissionuser_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 3, FALSE, OLD.*);
+            (nextval('"hst_dom"."permissionuser_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 3, FALSE, OLD.*);
             RETURN OLD;
         ELSIF (TG_OP = 'UPDATE') THEN
             INSERT INTO "hst_dom"."PermissionUser" VALUES
-            (nextval('"hst_dom"."permissionuser_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, FALSE, OLD.*),
-            (nextval('"hst_dom"."permissionuser_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, TRUE, NEW.*);
+            (nextval('"hst_dom"."permissionuser_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, FALSE, OLD.*),
+            (nextval('"hst_dom"."permissionuser_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, TRUE, NEW.*);
             RETURN NEW;
         ELSIF (TG_OP = 'INSERT') THEN
             INSERT INTO "hst_dom"."PermissionUser" VALUES
-            (nextval('"hst_dom"."permissionuser_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 1, TRUE, NEW.*);
+            (nextval('"hst_dom"."permissionuser_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 1, TRUE, NEW.*);
             RETURN NEW;
         END IF;
         RETURN NULL;
@@ -228,16 +228,16 @@ $$
     BEGIN
         IF (TG_OP = 'DELETE') THEN
             INSERT INTO "hst_dom"."Role" VALUES
-            (nextval('"hst_dom"."role_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 3, FALSE, OLD.*);
+            (nextval('"hst_dom"."role_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 3, FALSE, OLD.*);
             RETURN OLD;
         ELSIF (TG_OP = 'UPDATE') THEN
             INSERT INTO "hst_dom"."Role" VALUES
-            (nextval('"hst_dom"."role_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, FALSE, OLD.*),
-            (nextval('"hst_dom"."role_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, TRUE, NEW.*);
+            (nextval('"hst_dom"."role_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, FALSE, OLD.*),
+            (nextval('"hst_dom"."role_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, TRUE, NEW.*);
             RETURN NEW;
         ELSIF (TG_OP = 'INSERT') THEN
             INSERT INTO "hst_dom"."Role" VALUES
-            (nextval('"hst_dom"."role_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 1, TRUE, NEW.*);
+            (nextval('"hst_dom"."role_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 1, TRUE, NEW.*);
             RETURN NEW;
         END IF;
         RETURN NULL;
@@ -259,16 +259,16 @@ $$
     BEGIN
         IF (TG_OP = 'DELETE') THEN
             INSERT INTO "hst_dom"."RoleUser" VALUES
-            (nextval('"hst_dom"."roleuser_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 3, FALSE, OLD.*);
+            (nextval('"hst_dom"."roleuser_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 3, FALSE, OLD.*);
             RETURN OLD;
         ELSIF (TG_OP = 'UPDATE') THEN
             INSERT INTO "hst_dom"."RoleUser" VALUES
-            (nextval('"hst_dom"."roleuser_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, FALSE, OLD.*),
-            (nextval('"hst_dom"."roleuser_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, TRUE, NEW.*);
+            (nextval('"hst_dom"."roleuser_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, FALSE, OLD.*),
+            (nextval('"hst_dom"."roleuser_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, TRUE, NEW.*);
             RETURN NEW;
         ELSIF (TG_OP = 'INSERT') THEN
             INSERT INTO "hst_dom"."RoleUser" VALUES
-            (nextval('"hst_dom"."roleuser_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 1, TRUE, NEW.*);
+            (nextval('"hst_dom"."roleuser_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 1, TRUE, NEW.*);
             RETURN NEW;
         END IF;
         RETURN NULL;
@@ -290,16 +290,16 @@ $$
     BEGIN
         IF (TG_OP = 'DELETE') THEN
             INSERT INTO "hst_dom"."SmsRequest" VALUES
-            (nextval('"hst_dom"."smsrequest_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 3, FALSE, OLD.*);
+            (nextval('"hst_dom"."smsrequest_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 3, FALSE, OLD.*);
             RETURN OLD;
         ELSIF (TG_OP = 'UPDATE') THEN
             INSERT INTO "hst_dom"."SmsRequest" VALUES
-            (nextval('"hst_dom"."smsrequest_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, FALSE, OLD.*),
-            (nextval('"hst_dom"."smsrequest_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, TRUE, NEW.*);
+            (nextval('"hst_dom"."smsrequest_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, FALSE, OLD.*),
+            (nextval('"hst_dom"."smsrequest_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, TRUE, NEW.*);
             RETURN NEW;
         ELSIF (TG_OP = 'INSERT') THEN
             INSERT INTO "hst_dom"."SmsRequest" VALUES
-            (nextval('"hst_dom"."smsrequest_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 1, TRUE, NEW.*);
+            (nextval('"hst_dom"."smsrequest_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 1, TRUE, NEW.*);
             RETURN NEW;
         END IF;
         RETURN NULL;
@@ -321,16 +321,16 @@ $$
     BEGIN
         IF (TG_OP = 'DELETE') THEN
             INSERT INTO "hst_dom"."TokenRegistration" VALUES
-            (nextval('"hst_dom"."tokenregistration_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 3, FALSE, OLD.*);
+            (nextval('"hst_dom"."tokenregistration_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 3, FALSE, OLD.*);
             RETURN OLD;
         ELSIF (TG_OP = 'UPDATE') THEN
             INSERT INTO "hst_dom"."TokenRegistration" VALUES
-            (nextval('"hst_dom"."tokenregistration_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, FALSE, OLD.*),
-            (nextval('"hst_dom"."tokenregistration_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 2, TRUE, NEW.*);
+            (nextval('"hst_dom"."tokenregistration_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, FALSE, OLD.*),
+            (nextval('"hst_dom"."tokenregistration_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 2, TRUE, NEW.*);
             RETURN NEW;
         ELSIF (TG_OP = 'INSERT') THEN
             INSERT INTO "hst_dom"."TokenRegistration" VALUES
-            (nextval('"hst_dom"."tokenregistration_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, now(), 1, TRUE, NEW.*);
+            (nextval('"hst_dom"."tokenregistration_h_id_seq"'), null, txid_current(), pg_backend_pid(), user, timezone('utc', now()), 1, TRUE, NEW.*);
             RETURN NEW;
         END IF;
         RETURN NULL;
