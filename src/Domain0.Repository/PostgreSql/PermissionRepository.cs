@@ -80,7 +80,7 @@ SELECT ""Id""
       ,""Name""
       ,""Description""
   FROM dom.""Permission""
-where ""Id"" in @Ids
+where ""Id"" = any (@Ids)
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -98,7 +98,7 @@ where ""Id"" in @Ids
 insert into dom.""PermissionUser"" (""PermissionId"", ""UserId"")
 select ""Id"" as ""PermissionId"", @UserId as ""UserId""
 from dom.""Permission"" p
-where p.""Id"" in @Ids
+where p.""Id"" = any (@Ids)
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -119,7 +119,7 @@ select p.""Id""
       ,p.""Description""
 from dom.""Permission"" p
 join dom.""PermissionRole"" pr on p.""Id"" = pr.""PermissionId""
-where pr.""RoleId"" in @Ids
+where pr.""RoleId"" = any (@Ids)
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -216,7 +216,7 @@ where ""Id"" in (
             const string query = @"
 delete from dom.""PermissionUser""
 where ""UserId"" = @UserId
-  and ""PermissionId"" in @Ids
+  and ""PermissionId"" = any (@Ids)
 ";
             using (var con = _connectionProvider.Connection)
             {

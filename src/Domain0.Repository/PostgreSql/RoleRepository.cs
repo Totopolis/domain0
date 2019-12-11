@@ -80,7 +80,7 @@ SELECT ""Id""
       ,""Description""
       ,""IsDefault""
   FROM dom.""Role""
-where ""Id"" in @Ids
+where ""Id"" = any (@Ids)
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -95,7 +95,7 @@ where ""Id"" in @Ids
 insert into dom.""PermissionRole"" (""PermissionId"", ""RoleId"")
 select ""Id"" as ""PermissionId"", @RoleId as ""RoleId""
 from dom.""Permission"" p
-where p.""Id"" in @Ids
+where p.""Id"" = any (@Ids)
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -109,7 +109,7 @@ where p.""Id"" in @Ids
 insert into dom.""RoleUser"" (""RoleId"", ""UserId"")
 select ""Id"" as ""RoleId"", @UserId as ""UserId""
 from dom.""Role"" r
-where r.""Id"" in @Ids
+where r.""Id"" = any (@Ids)
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -143,7 +143,7 @@ where r.""IsDefault"" = 1
 insert into dom.""RoleUser"" (""RoleId"", ""UserId"")
 select ""Id"" as ""RoleId"", @UserId as ""UserId""
 from dom.""Role"" r
-where r.""Name"" in @Roles
+where r.""Name"" = any (@Roles)
   and not exists (
     select 1
     from dom.""RoleUser"" ru
@@ -165,7 +165,7 @@ SELECT ""Id""
       ,""Description""
       ,""IsDefault""
   FROM dom.""Role""
-where ""Name"" in @Roles
+where ""Name"" = any (@Roles)
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -179,7 +179,7 @@ where ""Name"" in @Roles
             const string query = @"
 delete from dom.""PermissionRole""
 where ""RoleId"" = @RoleId
-  and ""PermissionId"" in @Ids
+  and ""PermissionId"" = any (@Ids)
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -192,7 +192,7 @@ where ""RoleId"" = @RoleId
             const string query = @"
 delete from dom.""RoleUser""
 where ""UserId"" = @UserId
-  and ""RoleId"" in @Ids
+  and ""RoleId"" = any (@Ids)
 ";
             using (var con = _connectionProvider.Connection)
             {
@@ -229,7 +229,7 @@ select r.""Id""
       ,ru.""UserId""
 from dom.""Role"" r
 join dom.""RoleUser"" ru on r.""Id"" = ru.""RoleId""
-where ru.""UserId"" in @Ids
+where ru.""UserId"" = any (@Ids)
 ";
             using (var con = _connectionProvider.Connection)
             {

@@ -113,7 +113,7 @@ SELECT ""Id""
       ,""LastDate""
       ,""IsLocked""
   FROM dom.""Account""
-where ""Id"" in @Ids
+where ""Id"" = any (@Ids)
 ";
                 using (var con = _connectionProvider.Connection)
                 {

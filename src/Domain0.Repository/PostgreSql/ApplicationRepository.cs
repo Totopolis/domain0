@@ -53,7 +53,7 @@ SELECT ""Id""
       ,""Name""
       ,""Description""
   FROM dom.""Application""
-where ""Id"" in @Ids
+where ""Id"" = any (@Ids)
 ";
             using (var con = _connectionProvider.Connection)
             {

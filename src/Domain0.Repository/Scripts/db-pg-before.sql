@@ -246,7 +246,7 @@ CREATE TABLE "hst_dom"."SmsRequest"(
 
 CREATE TABLE "hst_dom"."TokenRegistration"( 
 	"H_ID" bigint NOT NULL,
-	"H_ConnectionID" uuid NOT NULL,
+	"H_ConnectionID" uuid,
 	"H_TransactionID" bigint NOT NULL,
 	"H_SessionID" int NOT NULL,
 	"H_Login" varchar(128) NOT NULL,

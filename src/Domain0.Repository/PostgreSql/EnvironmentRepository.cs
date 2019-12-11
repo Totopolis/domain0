@@ -106,7 +106,7 @@ SELECT ""Id""
       ,""Token""
       ,""IsDefault""
   FROM dom.""Environment""
-where ""Id"" in @Ids
+where ""Id"" = any (@Ids)
 ";
             using (var con = _connectionProvider.Connection)
             {

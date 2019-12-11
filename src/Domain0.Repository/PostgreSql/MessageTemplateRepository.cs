@@ -51,7 +51,7 @@ from dom.""Message""
             const string queryIn = @"
 select ""Id"", ""Description"", ""Type"", ""Locale"", ""Name"", ""Template"", ""EnvironmentId""
 from dom.""Message""
-where ""Id"" in @Ids
+where ""Id"" = any (@Ids)
 ";
             using (var con = _connectionProvider.Connection)
             {
