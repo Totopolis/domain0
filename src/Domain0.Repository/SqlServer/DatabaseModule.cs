@@ -1,17 +1,21 @@
 ﻿using Autofac;
-using Domain0.Repository;
-using Gerakul.FastSql.Common;
-using Gerakul.FastSql.SqlServer;
+using Domain0.Repository.Settings;
 
-namespace Domain0.FastSql
+namespace Domain0.Repository.SqlServer
 {
     public class DatabaseModule : Module
     {
+        private readonly DbSettings _settings;
+
+        public DatabaseModule(DbSettings settings)
+        {
+            _settings = settings;
+        }
+
         protected override void Load(ContainerBuilder builder)
         {
-            builder.Register<DbContext>(c =>
-                SqlContextProvider.DefaultInstance.CreateContext(
-                    c.ResolveNamed<string>("connectionString")));
+            builder.Register<IDbConnectionProvider>(c =>
+                new DbConnectionProvider(_settings.ConnectionString));
 
             builder.RegisterType<AccountRepository>().As<IAccountRepository>().SingleInstance();
             builder.RegisterType<ApplicationRepository>().As<IApplicationRepository>().SingleInstance();
@@ -23,7 +27,6 @@ namespace Domain0.FastSql
             builder.RegisterType<TokenRegistrationRepository>().As<ITokenRegistrationRepository>().SingleInstance();
             builder.RegisterType<AccessLogRepository>().As<IAccessLogRepository>().SingleInstance();
             builder.RegisterType<EnvironmentRepository>().As<IEnvironmentRepository>().SingleInstance();
-
         }
     }
 }

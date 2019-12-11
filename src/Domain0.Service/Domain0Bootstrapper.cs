@@ -133,10 +133,6 @@ namespace Domain0.Nancy
                         new ResolvedParameter(
                             (pi, ctx) => pi.ParameterType == typeof(NancyContext),
                             (pi, ctx) => context))
-                    .WithParameter(
-                        new ResolvedParameter(
-                            (pi, ctx) => pi.ParameterType == typeof(string),
-                            (pi, ctx) => ctx.ResolveNamed<string>("defaultCulture")))
                     .InstancePerLifetimeScope();
 
                 builder

@@ -4,8 +4,16 @@ using System.Threading.Tasks;
 
 namespace Domain0.Repository
 {
-    public interface IPermissionRepository : IRepository<int, Permission>
+    public interface IPermissionRepository
     {
+        Task<int> Insert(Permission entity);
+
+        Task Update(Permission entity);
+
+        Task Delete(int id);
+
+        Task<Permission[]> FindByIds(IEnumerable<int> ids);
+
         Task<Permission[]> GetByUserId(int userId);
 
         Task<Permission[]> GetByRoleId(int userId);

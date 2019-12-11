@@ -9,12 +9,12 @@ namespace Domain0.Nancy.Infrastructure
     {
         public CultureRequestContext(
             NancyContext nancyContextInstance,
-            string defaultCulture)
+            CultureContextSettings settings)
         {
             nancyContext = nancyContextInstance;
-            Culture = !string.IsNullOrEmpty(defaultCulture) &&
+            Culture = !string.IsNullOrEmpty(settings?.DefaultCulture) &&
                       !nancyContext.Request.Headers.AcceptLanguage.Any()
-                ? CultureInfo.GetCultureInfo(defaultCulture)
+                ? CultureInfo.GetCultureInfo(settings.DefaultCulture)
                 : nancyContext.Culture;
         }
 
