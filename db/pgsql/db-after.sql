@@ -1,7 +1,4 @@
-\set ON_ERROR_STOP
-\set ECHO all
 BEGIN;
-\set ECHO all
 CREATE SEQUENCE "dom"."account_id_seq" INCREMENT BY 1 MINVALUE 1 START WITH 1 OWNED BY "dom"."Account"."Id";
 CREATE SEQUENCE "dom"."application_id_seq" INCREMENT BY 1 MINVALUE 1 START WITH 1 OWNED BY "dom"."Application"."Id";
 CREATE SEQUENCE "dom"."emailrequest_id_seq" INCREMENT BY 1 MINVALUE 1 START WITH 1 OWNED BY "dom"."EmailRequest"."Id";

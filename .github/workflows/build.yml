@@ -5,7 +5,7 @@ on:
       - "*"
 
 jobs:
-  build:
+  build-n-test:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@master
@@ -19,4 +19,14 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-nuget-
     - run: dotnet build
-    - run: dotnet test
+    - run: dotnet test --filter FullyQualifiedName!~Domain0.Persistence.Tests
+  test-db:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Build the stack
+      run: docker-compose -f ./tests/Domain0.Persistence.Tests/docker-compose.yml up -d
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.1.100' # SDK Version to use.
+    - run: dotnet test ./tests/Domain0.Persistence.Tests/Domain0.Persistence.Tests.csproj
