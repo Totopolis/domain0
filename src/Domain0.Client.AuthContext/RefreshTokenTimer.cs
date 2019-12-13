@@ -14,9 +14,11 @@ namespace Domain0.Api.Client
         public RefreshTokenTimer(AuthenticationContext domain0AuthenticationContext)
         {
             authContext = domain0AuthenticationContext;
-            Task.Run(RefreshLoop, cts.Token);
+            _refreshLoopTask = Task.Run(RefreshLoop, cts.Token);
             currentMinimumAwaitTime = DEFAULT_MIN_AWAIT_TIME;
         }
+
+        private Task _refreshLoopTask;
 
         private DateTime? nextRefreshTime;
         public DateTime? NextRefreshTime
@@ -47,6 +49,7 @@ namespace Domain0.Api.Client
         public void Dispose()
         {
             cts.Cancel();
+            _refreshLoopTask.Wait();
             refreshTimeChangedEvent.Dispose();
         }
 
