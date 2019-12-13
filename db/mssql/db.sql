@@ -682,7 +682,6 @@ order by h.Id, h.H_IsNew
 
 END;
 
-ALTER TABLE [dom].[Account] ENABLE TRIGGER [AccountHistory];
 GO
 ALTER TABLE [dom].[Account] ENABLE TRIGGER [AccountHistory]
 GO
@@ -751,7 +750,6 @@ order by h.Id, h.H_IsNew
 
 END;
 
-ALTER TABLE [dom].[Application] ENABLE TRIGGER [ApplicationHistory];
 GO
 ALTER TABLE [dom].[Application] ENABLE TRIGGER [ApplicationHistory]
 GO
@@ -825,7 +823,6 @@ order by h.Id, h.H_IsNew
 
 END;
 
-ALTER TABLE [dom].[Environment] ENABLE TRIGGER [EnvironmentHistory];
 GO
 ALTER TABLE [dom].[Environment] ENABLE TRIGGER [EnvironmentHistory]
 GO
@@ -902,7 +899,6 @@ order by h.Id, h.H_IsNew
 
 END;
 
-ALTER TABLE [dom].[EmailRequest] ENABLE TRIGGER [EmailRequestHistory];
 GO
 ALTER TABLE [dom].[EmailRequest] ENABLE TRIGGER [EmailRequestHistory]
 GO
@@ -980,7 +976,6 @@ order by h.Id, h.H_IsNew
 
 END;
 
-ALTER TABLE [dom].[Message] ENABLE TRIGGER [MessageHistory];
 GO
 ALTER TABLE [dom].[Message] ENABLE TRIGGER [MessageHistory]
 GO
@@ -1051,7 +1046,6 @@ order by h.Id, h.H_IsNew
 
 END;
 
-ALTER TABLE [dom].[Permission] ENABLE TRIGGER [PermissionHistory];
 GO
 ALTER TABLE [dom].[Permission] ENABLE TRIGGER [PermissionHistory]
 GO
@@ -1118,7 +1112,6 @@ order by h.PermissionId, h.RoleId, h.H_IsNew
 
 END;
 
-ALTER TABLE [dom].[PermissionRole] ENABLE TRIGGER [PermissionRoleHistory];
 GO
 ALTER TABLE [dom].[PermissionRole] ENABLE TRIGGER [PermissionRoleHistory]
 GO
@@ -1189,7 +1182,6 @@ order by h.PermissionId, h.UserId, h.H_IsNew
 
 END;
 
-ALTER TABLE [dom].[PermissionUser] ENABLE TRIGGER [PermissionUserHistory];
 GO
 ALTER TABLE [dom].[PermissionUser] ENABLE TRIGGER [PermissionUserHistory]
 GO
@@ -1260,7 +1252,6 @@ order by h.Id, h.H_IsNew
 
 END;
 
-ALTER TABLE [dom].[Role] ENABLE TRIGGER [RoleHistory];
 GO
 ALTER TABLE [dom].[Role] ENABLE TRIGGER [RoleHistory]
 GO
@@ -1327,7 +1318,6 @@ order by h.RoleId, h.UserId, h.H_IsNew
 
 END;
 
-ALTER TABLE [dom].[RoleUser] ENABLE TRIGGER [RoleUserHistory];
 GO
 ALTER TABLE [dom].[RoleUser] ENABLE TRIGGER [RoleUserHistory]
 GO
@@ -1402,7 +1392,6 @@ order by h.Id, h.H_IsNew
 
 END;
 
-ALTER TABLE [dom].[SmsRequest] ENABLE TRIGGER [SmsRequestHistory];
 GO
 ALTER TABLE [dom].[SmsRequest] ENABLE TRIGGER [SmsRequestHistory]
 GO
@@ -1475,7 +1464,6 @@ order by h.Id, h.H_IsNew
 
 END;
 
-ALTER TABLE [dom].[TokenRegistration] ENABLE TRIGGER [TokenRegistrationHistory];
 GO
 ALTER TABLE [dom].[TokenRegistration] ENABLE TRIGGER [TokenRegistrationHistory]
 GO
