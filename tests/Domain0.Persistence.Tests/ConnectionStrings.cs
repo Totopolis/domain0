@@ -1,4 +1,8 @@
-﻿namespace Domain0.Persistence.Tests
+﻿using Xunit;
+
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
+
+namespace Domain0.Persistence.Tests
 {
     public class ConnectionStrings
     {

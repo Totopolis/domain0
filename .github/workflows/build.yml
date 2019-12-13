@@ -19,7 +19,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-nuget-
     - run: dotnet build
-    - run: dotnet test --filter FullyQualifiedName!~Domain0.Persistence.Tests
+    - run: dotnet test --filter FullyQualifiedName!~Persistence
   test-db:
     runs-on: ubuntu-latest
     steps:
