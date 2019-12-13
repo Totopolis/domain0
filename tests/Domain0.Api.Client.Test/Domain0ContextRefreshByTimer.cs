@@ -23,7 +23,7 @@ namespace Domain0.Api.Client.Test
             var profile = await domain0Context.LoginByPhone(123, "2");
             Assert.NotNull(profile);
 
-            await Task.Delay(500);
+            await Task.Delay(1000);
 
             testContext.ClientScopeMock
                 .VerifySet(callTo => callTo.Token =
