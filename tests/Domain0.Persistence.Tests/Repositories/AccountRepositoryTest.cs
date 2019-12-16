@@ -9,7 +9,7 @@ using FluentAssertions;
 using FluentAssertions.Equivalency;
 using Xunit;
 
-namespace Domain0.Persistence.Tests
+namespace Domain0.Persistence.Tests.Repositories
 {
     [Collection("SqlServer")]
     public class SqlServerAccountRepositoryTest : AccountRepositoryTest

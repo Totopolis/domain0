@@ -6,7 +6,7 @@ using Domain0.Repository;
 using Domain0.Repository.Model;
 using Xunit;
 
-namespace Domain0.Persistence.Tests
+namespace Domain0.Persistence.Tests.Repositories
 {
     [Collection("SqlServer")]
     public class SqlServerAccessLogRepositoryTest : AccessLogRepositoryTest
