@@ -14,16 +14,22 @@ namespace Domain0.Repository
 
         Task<Permission[]> FindByIds(IEnumerable<int> ids);
 
-        Task<Permission[]> GetByUserId(int userId);
-
-        Task<Permission[]> GetByRoleId(int userId);
-
-        Task<UserPermission[]> FindUserPermissionsByUserIds(List<int> ids);
-
-        Task<RolePermission[]> FindRolePermissionsByRoleIds(List<int> ids);
 
         Task AddUserPermission(int userId, int[] ids);
 
         Task RemoveUserPermissions(int userId, int[] ids);
+
+        Task<Permission[]> GetByUserId(int userId);
+        
+        Task<UserPermission[]> FindUserPermissionsByUserIds(List<int> ids);
+
+
+        Task<Permission[]> GetByRoleId(int roleId);
+
+        Task AddRolePermissions(int roleId, int[] ids);
+
+        Task RemoveRolePermissions(int roleId, int[] ids);
+
+        Task<RolePermission[]> FindRolePermissionsByRoleIds(List<int> ids);
     }
 }

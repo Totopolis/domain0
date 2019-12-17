@@ -633,7 +633,7 @@ namespace Domain0.Test
                 var client = new Domain0Client(TEST_URL, http);
 
                 await client.AddRolePermissionsAsync(roleId, ids);
-                roleRepositoryMock.Verify(t => 
+                permissionRepositoryMock.Verify(t => 
                     t.AddRolePermissions(
                         roleId, 
                         It.Is<int[]>(rids => rids.SequenceEqual(ids.Ids))), 
@@ -644,7 +644,7 @@ namespace Domain0.Test
                 permissionRepositoryMock.Verify(t => t.FindRolePermissionsByRoleIds(It.Is<List<int>>(roleIds => roleIds.Contains(roleId))), Times.Once);
 
                 await client.RemoveRolePermissionsAsync(roleId, ids);
-                roleRepositoryMock.Verify(t => t.RemoveRolePermissions(
+                permissionRepositoryMock.Verify(t => t.RemoveRolePermissions(
                     roleId, 
                     It.Is<int[]>(rids => rids.SequenceEqual(ids.Ids))), 
                     Times.Once);

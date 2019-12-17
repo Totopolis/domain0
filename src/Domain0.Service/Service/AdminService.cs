@@ -159,12 +159,12 @@ namespace Domain0.Nancy.Service
 
         public async Task AddRolePermissions(int roleId, int[] ids)
         {
-            await roleRepository.AddRolePermissions(roleId, ids);
+            await permissionRepository.AddRolePermissions(roleId, ids);
         }
 
         public async Task RemoveRolePermissions(int roleId, int[] ids)
         {
-            await roleRepository.RemoveRolePermissions(roleId, ids);
+            await permissionRepository.RemoveRolePermissions(roleId, ids);
         }
 
         #endregion

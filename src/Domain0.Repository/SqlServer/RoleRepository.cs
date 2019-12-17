@@ -93,20 +93,6 @@ where [Id] in @Ids
             }
         }
 
-        public async Task AddRolePermissions(int roleId, int[] ids)
-        {
-            const string query = @"
-insert into [dom].[PermissionRole] ([PermissionId], [RoleId])
-select [Id] as [PermissionId], @RoleId as [RoleId]
-from [dom].[Permission] p
-where p.[Id] in @Ids
-";
-            using (var con = _connectionProvider.Connection)
-            {
-                await con.ExecuteAsync(query, new {RoleId = roleId, Ids = ids});
-            }
-        }
-
         public async Task AddUserRoles(int userId, int[] ids)
         {
             const string query = @"
@@ -175,19 +161,6 @@ where [Name] in @Roles
             {
                 var result = await con.QueryAsync<Role>(query, new {Roles = roleNames});
                 return result.ToArray();
-            }
-        }
-
-        public async Task RemoveRolePermissions(int roleId, int[] ids)
-        {
-            const string query = @"
-delete from [dom].[PermissionRole]
-where [RoleId] = @RoleId
-  and [PermissionId] in @Ids
-";
-            using (var con = _connectionProvider.Connection)
-            {
-                await con.ExecuteAsync(query, new {RoleId = roleId, Ids = ids});
             }
         }
 

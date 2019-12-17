@@ -89,20 +89,6 @@ where ""Id"" = any (@Ids)
             }
         }
 
-        public async Task AddRolePermissions(int roleId, int[] ids)
-        {
-            const string query = @"
-insert into dom.""PermissionRole"" (""PermissionId"", ""RoleId"")
-select ""Id"" as ""PermissionId"", @RoleId as ""RoleId""
-from dom.""Permission"" p
-where p.""Id"" = any (@Ids)
-";
-            using (var con = _connectionProvider.Connection)
-            {
-                await con.ExecuteAsync(query, new { RoleId = roleId, Ids = ids });
-            }
-        }
-
         public async Task AddUserRoles(int userId, int[] ids)
         {
             const string query = @"
@@ -123,7 +109,7 @@ where r.""Id"" = any (@Ids)
 insert into dom.""RoleUser"" (""RoleId"", ""UserId"")
 select ""Id"" as ""RoleId"", @UserId as ""UserId""
 from dom.""Role"" r
-where r.""IsDefault"" = 1
+where r.""IsDefault"" = TRUE
   and not exists (
     select 1
     from dom.""RoleUser"" ru
@@ -171,19 +157,6 @@ where ""Name"" = any (@Roles)
             {
                 var result = await con.QueryAsync<Role>(query, new { Roles = roleNames });
                 return result.ToArray();
-            }
-        }
-
-        public async Task RemoveRolePermissions(int roleId, int[] ids)
-        {
-            const string query = @"
-delete from dom.""PermissionRole""
-where ""RoleId"" = @RoleId
-  and ""PermissionId"" = any (@Ids)
-";
-            using (var con = _connectionProvider.Connection)
-            {
-                await con.ExecuteAsync(query, new { RoleId = roleId, Ids = ids });
             }
         }
 

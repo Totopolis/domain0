@@ -14,15 +14,11 @@ namespace Domain0.Repository
 
         Task<Role[]> FindByIds(IEnumerable<int> ids);
 
+        Task<Role[]> GetByRoleNames(params string[] roleNames);
+
         Task AddUserToRoles(int userId, params string[] roles);
 
         Task AddUserToDefaultRoles(int userId);
-
-        Task AddRolePermissions(int roleId, int[] ids);
-
-        Task RemoveRolePermissions(int roleId, int[] ids);
-
-        Task<Role[]> GetByRoleNames(params string[] roleNames);
 
         Task AddUserRoles(int userId, int[] ids);
 
