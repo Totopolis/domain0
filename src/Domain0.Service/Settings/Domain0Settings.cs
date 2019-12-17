@@ -10,6 +10,7 @@ namespace Domain0.Service
         public DbSettings Db { get; set; }
         public CultureContextSettings CultureContext { get; set; }
         public TokenGeneratorSettings Token { get; set; }
+        public TokenValidatorSettings TokenValidator { get; set; }
         public EmailClientSettings Email { get; set; }
         public SqlQueueSmsClientSettings SmsQueueClient { get; set; }
         public SmsGatewaySettings SmsGateway { get; set; }

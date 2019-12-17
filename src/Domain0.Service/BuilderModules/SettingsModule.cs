@@ -19,6 +19,7 @@ namespace Domain0.Service.BuilderModules
             builder.RegisterInstance(_settings.AccountService);
             builder.RegisterInstance(_settings.Threshold);
             builder.RegisterInstance(_settings.Token);
+            builder.RegisterInstance(_settings.TokenValidator);
             builder.RegisterInstance(_settings.Email);
             builder.RegisterInstance(_settings.SmsQueueClient);
             builder.RegisterInstance(_settings.SmsGateway);

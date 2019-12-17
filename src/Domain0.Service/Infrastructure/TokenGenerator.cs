@@ -14,13 +14,17 @@ namespace Domain0.Service
 {
     public abstract class TokenGenerator : ITokenGenerator, IDisposable
     {
-        protected readonly TokenGeneratorSettings Settings;
+        private readonly TokenGeneratorSettings Settings;
+        private readonly TokenValidatorSettings _validatorSettings;
 
         private readonly JwtSecurityTokenHandler handler;
 
-        protected TokenGenerator(TokenGeneratorSettings settings)
+        protected TokenGenerator(
+            TokenGeneratorSettings settings,
+            TokenValidatorSettings validatorSettings)
         {
             Settings = settings;
+            _validatorSettings = validatorSettings;
             handler = new JwtSecurityTokenHandler {SetDefaultTimesOnTokenCreation = false};
         }
 
@@ -103,7 +107,8 @@ namespace Domain0.Service
                 ValidateAudience = true,
                 ValidAudience = audience,
                 ValidIssuer = Settings.Issuer,
-                ValidateLifetime = Settings.ValidateLifetime && !skipLifetimeCheck
+                ValidateLifetime = _validatorSettings.ValidateLifetime && !skipLifetimeCheck,
+                ClockSkew = _validatorSettings.ClockSkew,
             };
             return parameters;
         }
@@ -143,8 +148,10 @@ namespace Domain0.Service
 
     public class SymmetricKeyTokenGenerator : TokenGenerator
     {
-        public SymmetricKeyTokenGenerator(TokenGeneratorSettings settings)
-            : base(settings)
+        public SymmetricKeyTokenGenerator(
+            TokenGeneratorSettings settings,
+            TokenValidatorSettings validatorSettings)
+            : base(settings, validatorSettings)
         {
             signatureKey = new SymmetricSecurityKey(Convert.FromBase64String(settings.Secret));
         }
@@ -175,8 +182,10 @@ namespace Domain0.Service
     {
         private const int KeySize = 2048;
 
-        public AsymmetricKeyPairTokenGenerator(TokenGeneratorSettings settings)
-            : base(settings)
+        public AsymmetricKeyPairTokenGenerator(
+            TokenGeneratorSettings settings,
+            TokenValidatorSettings validatorSettings)
+            : base(settings, validatorSettings)
         {
             publicKeyRsaProvider = new RSACryptoServiceProvider(KeySize);
             publicKeyRsaProvider.FromXmlString(

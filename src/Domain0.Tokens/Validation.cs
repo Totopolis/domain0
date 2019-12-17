@@ -26,12 +26,13 @@ namespace Domain0.Tokens
             return new TokenValidationParameters
             {
                 SignatureValidator = ValidateSignature,
-                RequireSignedTokens = true,
 
+                RequireSignedTokens = true,
+                ValidateIssuerSigningKey = true,
                 ValidAudience = settings.Audience,
                 ValidIssuer = settings.Issuer,
-                ValidateIssuerSigningKey = true,
                 ValidateLifetime = settings.ValidateLifetime,
+                ClockSkew = settings.ClockSkew,
                 IssuerSigningKeys = GetSecurityKeysFromSettings(settings)
             };
         }
@@ -48,6 +49,7 @@ namespace Domain0.Tokens
                 ValidAudience = validationParameters.ValidAudience,
                 ValidIssuer = validationParameters.ValidIssuer,
                 ValidateLifetime = validationParameters.ValidateLifetime,
+                ClockSkew = validationParameters.ClockSkew,
                 IssuerSigningKeys = validationParameters.IssuerSigningKeys
             };
 

@@ -1,3 +1,6 @@
+using System;
+using Microsoft.IdentityModel.Tokens;
+
 namespace Domain0.Tokens
 {
     public class TokenValidationSettings
@@ -7,6 +10,8 @@ namespace Domain0.Tokens
         public string Issuer { get; set; }
 
         public bool ValidateLifetime { get; set; }
+
+        public TimeSpan ClockSkew { get; set; } = TokenValidationParameters.DefaultClockSkew;
 
         public KeyInfo[] Keys { get; set; }
     }
