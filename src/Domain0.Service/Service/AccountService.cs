@@ -227,7 +227,7 @@ namespace Domain0.Service
 
         public async Task<UserProfile> CreateUser(ForceCreateUserRequest request)
         {
-            logger.Info($"User width id: { requestContext.UserId } execute force create user with phone: {request.Phone}");
+            logger.Info($"User with id: { requestContext.UserId } execute force create user with phone: {request.Phone}");
             if (!request.Phone.HasValue)
                 throw new ArgumentException("can't be null", nameof(ForceCreateUserRequest.Phone));
 
@@ -305,7 +305,7 @@ namespace Domain0.Service
 
         public async Task<UserProfile> CreateUser(ForceCreateEmailUserRequest request)
         {
-            logger.Info($"User width id: { requestContext.UserId } execute force create user with email: {request.Email}");
+            logger.Info($"User with id: { requestContext.UserId } execute force create user with email: {request.Email}");
 
             if (string.IsNullOrWhiteSpace(request.Email))
                 throw new ArgumentException(nameof(ForceCreateEmailUserRequest.Email));
@@ -457,7 +457,7 @@ namespace Domain0.Service
         {
             // assume checking permissions is distinctive
             if (userPermissions.Length != tokenPermissions.Length)
-                // rigths are different!
+                // rights are different!
                 return true;
 
             var matchedRights = userPermissions.Select(p => p.Name)
@@ -468,7 +468,7 @@ namespace Domain0.Service
             .ToArray();
 
             if (userPermissions.Length != matchedRights.Length)
-                // rigths are different!
+                // rights are different!
                 return true;
 
             return false;
@@ -847,7 +847,7 @@ namespace Domain0.Service
             var accountWithNewPhone = await accountRepository.FindByLogin(changePhoneRequest.Phone.ToString());
             if (accountWithNewPhone != null)
             {
-                var warning = $"Attempt to change phone alredy used { changePhoneRequest.Phone }";
+                var warning = $"Attempt to change phone already used { changePhoneRequest.Phone }";
                 logger.Warn(warning);
                 throw new BadModelException(nameof(changePhoneRequest.Phone), warning);
             }
@@ -1035,7 +1035,7 @@ namespace Domain0.Service
             var accountWithNewPhone = await accountRepository.FindByLogin(request.NewPhone.ToString());
             if (accountWithNewPhone != null)
             {
-                var warning = $"Attempt to change phone alredy used { request.NewPhone.ToString() }";
+                var warning = $"Attempt to change phone already used { request.NewPhone.ToString() }";
                 logger.Warn(warning);
                 throw new BadModelException(nameof(request.NewPhone), warning);
             }
@@ -1065,7 +1065,7 @@ namespace Domain0.Service
             var accountWithNewEmail = await accountRepository.FindByLogin(request.NewEmail);
             if (accountWithNewEmail != null)
             {
-                var warning = $"Attempt to change email alredy used { request.NewEmail }";
+                var warning = $"Attempt to change email already used { request.NewEmail }";
                 logger.Warn(warning);
                 throw new BadModelException(nameof(request.NewEmail), warning);
             }
