@@ -66,7 +66,7 @@ namespace Domain0.Service
 
         Task ForceResetPassword(ForceResetPasswordRequest request);
 
-        Task<AccessTokenResponse> Refresh(string refreshToken);
+        Task<AccessTokenResponse> Refresh(string prevRefreshToken);
 
         Task<UserProfile> GetMyProfile();
 
@@ -422,26 +422,27 @@ namespace Domain0.Service
                 }
             }
 
+            var issueDate = DateTime.UtcNow;
             if (string.IsNullOrEmpty(accessToken))
             {
-                var issueDate = DateTime.UtcNow;
                 var expiredAt = issueDate.Add(tokenGeneratorSettings.Lifetime);
                 accessToken = tokenGenerator.GenerateAccessToken(
                     account.Id,
                     issueDate,
                     userPermissions.Select(p => p.Name).ToArray());
-                await tokenRegistrationRepository.Save(registration = new TokenRegistration
+                registration = new TokenRegistration
                 {
                     UserId = account.Id,
                     IssuedAt = issueDate,
                     AccessToken = accessToken,
                     ExpiredAt = expiredAt
-                });
+                };
+                await tokenRegistrationRepository.Save(registration);
             }
             else
                 accessToken = registration.AccessToken;
 
-            var refreshToken = tokenGenerator.GenerateRefreshToken(registration.Id, account.Id);
+            var refreshToken = tokenGenerator.GenerateRefreshToken(registration.Id, issueDate, account.Id);
             return new AccessTokenResponse
             {
                 AccessToken = accessToken,
@@ -1194,9 +1195,9 @@ namespace Domain0.Service
             logger.Info($"New password sent to user { account.Id }");
         }
 
-        public async Task<AccessTokenResponse> Refresh(string refreshToken)
+        public async Task<AccessTokenResponse> Refresh(string prevRefreshToken)
         {
-            var id = tokenGenerator.GetTid(refreshToken);
+            var id = tokenGenerator.GetTid(prevRefreshToken);
             var tokenRegistry = await tokenRegistrationRepository.FindById(id);
             if (tokenRegistry == null)
             {
@@ -1219,7 +1220,22 @@ namespace Domain0.Service
             }
 
             var principal = tokenGenerator.Parse(tokenRegistry.AccessToken, skipLifetimeCheck: true);
-            var accessToken = tokenGenerator.GenerateAccessToken(account.Id, principal.GetPermissions());
+
+            var issueDate = DateTime.UtcNow;
+            var expiredAt = issueDate.Add(tokenGeneratorSettings.Lifetime);
+            var accessToken = tokenGenerator.GenerateAccessToken(
+                account.Id,
+                issueDate,
+                principal.GetPermissions());
+            var registration = new TokenRegistration
+            {
+                UserId = account.Id,
+                IssuedAt = issueDate,
+                AccessToken = accessToken,
+                ExpiredAt = expiredAt
+            };
+            await tokenRegistrationRepository.Save(registration);
+            var refreshToken = tokenGenerator.GenerateRefreshToken(registration.Id, issueDate, account.Id);
 
             logger.Info($"User { tokenRegistry.UserId } get refreshed token");
 

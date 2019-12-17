@@ -24,9 +24,6 @@ namespace Domain0.Service
             handler = new JwtSecurityTokenHandler {SetDefaultTimesOnTokenCreation = false};
         }
 
-        public string GenerateAccessToken(int id, string[] permissions)
-            => GenerateAccessToken(id, DateTime.UtcNow, permissions);
-
         public string GenerateAccessToken(int userId, DateTime issueAt, string[] permissions)
         {
             var claims = BuildClaims(TokenClaims.CLAIM_TOKEN_TYPE_ACCESS, userId, 
@@ -46,9 +43,6 @@ namespace Domain0.Service
             var token = handler.CreateToken(tokenDescriptor);
             return handler.WriteToken(token);
         }
-
-        public string GenerateRefreshToken(int tokenId, int userId)
-            => GenerateRefreshToken(tokenId, DateTime.UtcNow, userId);
 
         public ClaimsPrincipal Parse(string accessToken, bool skipLifetimeCheck = false)
         {

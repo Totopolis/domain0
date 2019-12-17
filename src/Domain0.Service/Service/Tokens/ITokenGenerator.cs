@@ -7,10 +7,6 @@ namespace Domain0.Service
     {
         string GenerateAccessToken(int id, DateTime issueAt, string[] permissions);
 
-        string GenerateAccessToken(int id, string[] permissions);
-
-        string GenerateRefreshToken(int tokenId, int userId);
-
         string GenerateRefreshToken(int tokenId, DateTime issueAt, int userId);
 
         ClaimsPrincipal Parse(string accessToken, bool skipLifetimeCheck = false);

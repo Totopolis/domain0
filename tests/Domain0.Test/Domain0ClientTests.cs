@@ -478,9 +478,10 @@ namespace Domain0.Test
             var accountMock = Mock.Get(container.Resolve<IAccountRepository>());
             accountMock.Setup(a => a.FindByUserId(userId)).ReturnsAsync(new Account { Id = userId });
 
+            var issuedAt = DateTime.UtcNow;
             var tokenGenerator = container.Resolve<ITokenGenerator>();
-            var refreshToken = tokenGenerator.GenerateRefreshToken(tid, userId);
-            var accessToken = tokenGenerator.GenerateAccessToken(userId, new [] {"1","2","3"});
+            var refreshToken = tokenGenerator.GenerateRefreshToken(tid, issuedAt, userId);
+            var accessToken = tokenGenerator.GenerateAccessToken(userId, issuedAt, new[] {"1", "2", "3"});
 
 
             var tokenMock = Mock.Get(container.Resolve<ITokenRegistrationRepository>());

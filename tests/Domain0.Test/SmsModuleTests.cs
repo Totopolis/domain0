@@ -597,9 +597,11 @@ namespace Domain0.Test
             authGenerator.Setup(a => a.CheckPassword(It.IsAny<string>(), It.IsAny<string>())).Returns<string, string>((pasd, hash) => pasd == hash);
             var tokenGenerator = Mock.Get(container.ResolveKeyed<ITokenGenerator>("HS256"));
             tokenGenerator.Setup(a => a.GenerateAccessToken(
-                It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string[]>()))
+                    It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string[]>()))
                 .Returns<int, DateTime, string[]>((userId, dt, perms) => userId + string.Join("", perms));
-            tokenGenerator.Setup(a => a.GenerateRefreshToken(It.IsAny<int>(), It.IsAny<int>())).Returns<int, int>((tid, userId) => $"{tid}_{userId}");
+            tokenGenerator.Setup(a => a.GenerateRefreshToken(
+                    It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<int>()))
+                .Returns<int, DateTime, int>((tid, dt, userId) => $"{tid}_{userId}");
 
             var response = await browser.Post(SmsModule.LoginUrl, with =>
             {
@@ -1109,8 +1111,9 @@ namespace Domain0.Test
                 .Setup(a => a.Parse(It.IsAny<string>(),It.IsAny<bool>()))
                 .Returns<string,bool>((token,x) =>
                     new ClaimsPrincipal(new ClaimsIdentity(token.Split(',').Select(r => new Claim(ClaimTypes.Role, r)))));
-            tokenGeneratorMock.Setup(a => a.GenerateAccessToken(It.IsAny<int>(), It.IsAny<string[]>()))
-                .Returns<int, string[]>((uid, roles) => $"{uid}_{string.Join("_", roles)}");
+            tokenGeneratorMock.Setup(a =>
+                    a.GenerateAccessToken(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string[]>()))
+                .Returns<int, DateTime, string[]>((uid, dt, roles) => $"{uid}_{string.Join("_", roles)}");
 
             var tokenMock = Mock.Get(container.Resolve<ITokenRegistrationRepository>());
             tokenMock.Setup(a => a.FindById(tid)).ReturnsAsync(new TokenRegistration
