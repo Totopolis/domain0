@@ -1099,6 +1099,7 @@ namespace Domain0.Test
 
             var userId = 101;
             var tid = 1001;
+            var newTid = 1002;
             var refreshToken = "refreshToken123123";
             var accessToken = "test1,test2,test3";
 
@@ -1114,6 +1115,9 @@ namespace Domain0.Test
             tokenGeneratorMock.Setup(a =>
                     a.GenerateAccessToken(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string[]>()))
                 .Returns<int, DateTime, string[]>((uid, dt, roles) => $"{uid}_{string.Join("_", roles)}");
+            tokenGeneratorMock.Setup(a => a.GenerateRefreshToken(
+                    It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<int>()))
+                .Returns<int, DateTime, int>((id, dt, uid) => $"{id}_{uid}");
 
             var tokenMock = Mock.Get(container.Resolve<ITokenRegistrationRepository>());
             tokenMock.Setup(a => a.FindById(tid)).ReturnsAsync(new TokenRegistration
@@ -1122,6 +1126,8 @@ namespace Domain0.Test
                 AccessToken = accessToken,
                 UserId = userId
             });
+            tokenMock.Setup(a => a.Save(It.IsAny<TokenRegistration>()))
+                .Callback<TokenRegistration>(tr => tr.Id = newTid);
 
             var response = await browser.Get(SmsModule.RefreshUrl.Replace("{refreshToken}", refreshToken), with =>
             {
@@ -1132,13 +1138,14 @@ namespace Domain0.Test
             var result = response.Body.AsDataFormat<AccessTokenResponse>(format);
             Assert.Equal(userId, result.Profile.Id);
             Assert.Equal("101_test1_test2_test3", result.AccessToken);
-            Assert.Equal(refreshToken, result.RefreshToken);
+            Assert.Equal("1002_101", result.RefreshToken);
 
             accessLogRepository.Verify(l =>
                 l.Insert(It.Is<AccessLogEntry>(x => x.Action.Equals(
                     SmsModule.RefreshUrl.Replace("{refreshToken}",
                         NancyExceptionHandling.SensitiveInfoReplacement))
                 )), Times.Once);
+            tokenMock.Verify(t => t.Save(It.IsAny<TokenRegistration>()), Times.Once);
         }
 
         [Theory]
