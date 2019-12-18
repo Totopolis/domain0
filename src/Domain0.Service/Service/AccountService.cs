@@ -388,45 +388,22 @@ namespace Domain0.Service
             return result;
         }
 
-        public async Task<AccessTokenResponse> GetTokenResponse(Account account)
+        private async Task<AccessTokenResponse> GetTokenResponse(Account account, bool getLastValidToken = true)
         {
             var userPermissions = await permissionRepository.GetByUserId(account.Id);
             if (userPermissions == null
                 || !userPermissions.Any())
                 throw new ForbiddenSecurityException();
 
-            var registration = await tokenRegistrationRepository.FindLastTokenByUserId(account.Id);
-            string accessToken = registration?.AccessToken;
-            if (!string.IsNullOrEmpty(accessToken))
-            {
-                try
-                {
-                    if (registration.ExpiredAt.HasValue
-                        && registration.ExpiredAt < DateTime.UtcNow)
-                    {
-                        accessToken = null;
-                    }
-                    else
-                    {
-                        // if permission changed we should make new token
-                        var principal = tokenGenerator.Parse(accessToken);
-                        if (principal == null
-                            || IsRightsDifferent(userPermissions, principal.GetPermissions()))
-                            accessToken = null;
-                    }
-                }
-                catch (TokenSecurityException)
-                {
-                    // if token expired or some sensitive properties changes we should make new token
-                    accessToken = null;
-                }
-            }
+            var registration = getLastValidToken
+                ? await GetLastValidTokenRegistration(account.Id, userPermissions)
+                : null;
 
             var issueDate = DateTime.UtcNow;
-            if (string.IsNullOrEmpty(accessToken))
+            if (registration == null)
             {
                 var expiredAt = issueDate.Add(tokenGeneratorSettings.Lifetime);
-                accessToken = tokenGenerator.GenerateAccessToken(
+                var accessToken = tokenGenerator.GenerateAccessToken(
                     account.Id,
                     issueDate,
                     userPermissions.Select(p => p.Name).ToArray());
@@ -439,16 +416,43 @@ namespace Domain0.Service
                 };
                 await tokenRegistrationRepository.Save(registration);
             }
-            else
-                accessToken = registration.AccessToken;
 
             var refreshToken = tokenGenerator.GenerateRefreshToken(registration.Id, issueDate, account.Id);
             return new AccessTokenResponse
             {
-                AccessToken = accessToken,
+                AccessToken = registration.AccessToken,
                 RefreshToken = refreshToken,
                 Profile = mapper.Map<UserProfile>(account)
             };
+        }
+
+        private async Task<TokenRegistration> GetLastValidTokenRegistration(
+            int accountId,
+            Repository.Model.Permission[] permissions)
+        {
+            var registration = await tokenRegistrationRepository.FindLastTokenByUserId(accountId);
+
+            if (string.IsNullOrEmpty(registration?.AccessToken) ||
+                registration.ExpiredAt.HasValue && registration.ExpiredAt < DateTime.UtcNow)
+            {
+                return null;
+            }
+
+            try
+            {
+                // if permission changed we should make new token
+                var principal = tokenGenerator.Parse(registration.AccessToken);
+                if (principal == null
+                    || IsRightsDifferent(permissions, principal.GetPermissions()))
+                    return null;
+            }
+            catch (TokenSecurityException)
+            {
+                // if token expired or some sensitive properties changes we should make new token
+                return null;
+            }
+
+            return registration;
         }
 
         private static bool IsRightsDifferent(
@@ -535,6 +539,7 @@ namespace Domain0.Service
                 account.Password = hashPassword;
                 account.LastDate = DateTime.UtcNow;
                 await accountRepository.Update(account);
+                await tokenRegistrationRepository.RevokeByUserId(account.Id);
                 logger.Info($"User { account.Id } | { request.Phone } change password successful!");
             }
             else
@@ -572,7 +577,7 @@ namespace Domain0.Service
                 logger.Info($"User { account.Id } | { request.Phone } account created successful!");
             }
 
-            return await GetTokenResponse(account);
+            return await GetTokenResponse(account, false);
         }
 
         public async Task<AccessTokenResponse> Login(EmailLoginRequest request)
@@ -635,6 +640,7 @@ namespace Domain0.Service
                 account.Password = hashPassword;
                 account.LastDate = DateTime.UtcNow;
                 await accountRepository.Update(account);
+                await tokenRegistrationRepository.RevokeByUserId(account.Id);
                 logger.Info($"User { account.Id } | { request.Email } change password successful!");
             }
             else
@@ -678,7 +684,7 @@ namespace Domain0.Service
                 logger.Info($"User { account.Id } | { request.Email } account created successful!");
             }
 
-            return await GetTokenResponse(account);
+            return await GetTokenResponse(account, false);
         }
 
         public async Task<AccessTokenResponse> Login(ActiveDirectoryUserLoginRequest request, string environmentToken = null)
@@ -747,6 +753,7 @@ namespace Domain0.Service
 
             account.Password = passwordGenerator.HashPassword(request.NewPassword);
             await accountRepository.Update(account);
+            await tokenRegistrationRepository.RevokeByUserId(account.Id);
             logger.Warn($"Change password for user { requestContext.UserId } successful!");
         }
 
@@ -1159,6 +1166,7 @@ namespace Domain0.Service
             // change password
             account.Password = hashNewPassword;
             await accountRepository.Update(account);
+            await tokenRegistrationRepository.RevokeByUserId(account.Id);
             logger.Info($"User { requestContext.UserId } reset password for user { account.Id }");
 
             await environmentRequestContext.LoadEnvironmentByUser(account.Id);

@@ -143,6 +143,7 @@ namespace Domain0.Test
                 .Verify(
                     callTo => callTo.SetUserEnvironment(It.IsAny<int>(), 123),
                     Times.Once);
+            accountMock.Verify(x => x.Insert(It.IsAny<Account>()), Times.Once);
         }
 
         [Theory]
@@ -255,6 +256,7 @@ namespace Domain0.Test
                 .Verify(
                     callTo => callTo.SetUserEnvironment(It.IsAny<int>(), env.Id.Value),
                     Times.Once);
+            accountMock.Verify(x => x.Insert(It.IsAny<Account>()), Times.Once);
         }
 
         [Theory]
@@ -395,6 +397,9 @@ namespace Domain0.Test
             var password = "password";
             var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_FORCE_PASSWORD_RESET);
 
+            var tokenRegistrationRepository = container.Resolve<ITokenRegistrationRepository>();
+            var tokenRegistrationMock = Mock.Get(tokenRegistrationRepository);
+
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountMock = Mock.Get(accountRepository);
             accountMock
@@ -446,6 +451,8 @@ namespace Domain0.Test
             var smsMock = Mock.Get(smsClient);
             smsMock.Verify(s => 
                 s.Send(phone, "hello, your new password is password!", It.IsAny<string>()));
+
+            tokenRegistrationMock.Verify(x => x.RevokeByUserId(userId), Times.Once);
         }
 
         [Theory]

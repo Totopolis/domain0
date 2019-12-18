@@ -158,6 +158,9 @@ namespace Domain0.Test
             var password = "password";
             var accessToken = TestContainerBuilder.BuildToken(container, userId, TokenClaims.CLAIM_PERMISSIONS_FORCE_PASSWORD_RESET);
 
+            var tokenRegistrationRepository = container.Resolve<ITokenRegistrationRepository>();
+            var tokenRegistrationMock = Mock.Get(tokenRegistrationRepository);
+
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountMock = Mock.Get(accountRepository);
             accountMock
@@ -227,6 +230,8 @@ namespace Domain0.Test
             var smsMock = Mock.Get(emaClient);
             smsMock.Verify(s =>
                 s.Send("subject", email, "hello, your new password is password!"));
+
+            tokenRegistrationMock.Verify(x => x.RevokeByUserId(userId), Times.Once);
         }
 
 
@@ -425,6 +430,7 @@ namespace Domain0.Test
                 .Verify(
                     callTo => callTo.SetUserEnvironment(It.IsAny<int>(), env.Id.Value), 
                     Times.Once);
+            accountMock.Verify(x => x.Insert(It.IsAny<Account>()), Times.Once);
         }
     }
 }

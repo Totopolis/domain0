@@ -750,6 +750,9 @@ namespace Domain0.Test
             var accountRepository = container.Resolve<IAccountRepository>();
             var accountRepositoryMock = Mock.Get(accountRepository);
 
+            var tokenRegistryRepository = container.Resolve<ITokenRegistrationRepository>();
+            var tokenRegistryRepositoryMock = Mock.Get(tokenRegistryRepository);
+
             var passwordGenerator = container.Resolve<IPasswordGenerator>();
             var passwordMock = Mock.Get(passwordGenerator);
             passwordMock.Setup(p => p.CheckPassword(
@@ -796,12 +799,14 @@ namespace Domain0.Test
                     .Verify(x => 
                         x.FindByUserId(It.Is<int>(id => id == userId)),
                         Times.Once);
+                tokenRegistryRepositoryMock.Verify(x => x.RevokeByUserId(userId), Times.Exactly(1));
 
                 await client.ChangeMyPasswordAsync(new ChangePasswordRequest("new", "old"));
                 accountRepositoryMock
                     .Verify(x =>
                             x.FindByUserId(It.Is<int>(id => id == userId)),
                         Times.Exactly(2));
+                tokenRegistryRepositoryMock.Verify(x => x.RevokeByUserId(userId), Times.Exactly(2));
 
                 var resetPhone = 123;
                 await client.RequestResetPasswordAsync(resetPhone);
