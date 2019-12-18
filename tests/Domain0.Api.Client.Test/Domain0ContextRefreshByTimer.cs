@@ -65,7 +65,7 @@ namespace Domain0.Api.Client.Test
             await domain0Context.LoginByPhone(123, "2");
             await domain0Context.LoginByPhone(123, "2");
 
-            await Task.Delay(500);
+            await Task.Delay(1000);
 
 
             attachedEnvironmentMock

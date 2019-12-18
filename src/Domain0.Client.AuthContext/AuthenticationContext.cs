@@ -122,7 +122,13 @@ namespace Domain0.Api.Client
 
         public string Token
         {
-            get => tokenChangeManager?.LoginInfo?.AccessToken;
+            get => tokenChangeManager.LoginInfo?.AccessToken;
+        }
+
+        public event Action<string> AccessTokenChanged
+        {
+            add => tokenChangeManager.AccessTokenChanged += value;
+            remove => tokenChangeManager.AccessTokenChanged -= value;
         }
 
         public bool IsLoggedIn

@@ -19,6 +19,8 @@ namespace Domain0.Api.Client
                 refreshTokenTimer = new RefreshTokenTimer(authContext);
         }
 
+        public event Action<string> AccessTokenChanged;
+
         internal TClient AttachClientEnvironment<TClient>(IClientScope<TClient> scope)
             where TClient : class
         {
@@ -152,6 +154,8 @@ namespace Domain0.Api.Client
             }
             set
             {
+                var accessToken = value?.AccessToken;
+
                 using (tokenChangeLock.WriterLock())
                 {
                     loginInfo = value;
@@ -175,17 +179,24 @@ namespace Domain0.Api.Client
                             accessTokenValidTo?.AddSeconds(-domain0AuthenticationContext.ReserveTimeToUpdate);
                     }
                 }
+
+                AccessTokenChanged?.Invoke(accessToken);
             }
         }
 
         internal void RestoreLoginInfo()
         {
+            var value = loginInfoStorage.Load();
+            var accessToken = value?.AccessToken;
+
             using (tokenChangeLock.WriterLock())
             {
-                loginInfo = loginInfoStorage.Load();
+                loginInfo = value;
                 ReadTokenData();
                 SetToken();
             }
+
+            AccessTokenChanged?.Invoke(accessToken);
         }
 
         private void SetToken()
@@ -335,6 +346,7 @@ namespace Domain0.Api.Client
         public void Dispose()
         {
             refreshTokenTimer?.Dispose();
+            AccessTokenChanged = null;
         }
 
         private readonly List<WeakReference<ITokenStore>> attachedClients = new List<WeakReference<ITokenStore>>();

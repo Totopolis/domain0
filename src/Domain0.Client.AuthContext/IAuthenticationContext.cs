@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Domain0.Api.Client
@@ -12,6 +13,8 @@ namespace Domain0.Api.Client
         bool ShouldRemember { get; set; }
 
         string Token { get; }
+
+        event Action<string> AccessTokenChanged;
 
         bool IsLoggedIn { get; }
 
