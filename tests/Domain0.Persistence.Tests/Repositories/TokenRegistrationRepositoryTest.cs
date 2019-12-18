@@ -71,34 +71,5 @@ namespace Domain0.Persistence.Tests.Repositories
             result = await tokens.FindById(registration.Id);
             result.Should().BeNull();
         }
-
-        [Fact]
-        public async Task FindLastTokenRegistration()
-        {
-            var userId = 1;
-            var tokens = _container.Resolve<ITokenRegistrationRepository>();
-            var registrationFirst = new TokenRegistration
-            {
-                UserId = userId,
-                IssuedAt = DateTime.UtcNow.AddDays(0),
-                AccessToken = "token",
-                ExpiredAt = DateTime.UtcNow.AddDays(+1)
-            };
-            await tokens.Save(registrationFirst);
-            var registrationSecond = new TokenRegistration
-            {
-                UserId = userId,
-                IssuedAt = DateTime.UtcNow.AddDays(-1),
-                AccessToken = "token",
-                ExpiredAt = DateTime.UtcNow.AddDays(0)
-            };
-            await tokens.Save(registrationSecond);
-
-            var result = await tokens.FindLastTokenByUserId(userId);
-            result.Should().BeEquivalentTo(registrationSecond, CompareOptions,
-                "tokens are sorted by Id");
-
-            await tokens.RevokeByUserId(userId);
-        }
     }
 }

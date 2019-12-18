@@ -388,94 +388,37 @@ namespace Domain0.Service
             return result;
         }
 
-        private async Task<AccessTokenResponse> GetTokenResponse(Account account, bool getLastValidToken = true)
+        private async Task<AccessTokenResponse> GetTokenResponse(Account account)
         {
             var userPermissions = await permissionRepository.GetByUserId(account.Id);
             if (userPermissions == null
                 || !userPermissions.Any())
                 throw new ForbiddenSecurityException();
 
-            var registration = getLastValidToken
-                ? await GetLastValidTokenRegistration(account.Id, userPermissions)
-                : null;
+            return await CreateTokenResponse(account, userPermissions.Select(p => p.Name).ToArray());
+        }
 
+        private async Task<AccessTokenResponse> CreateTokenResponse(Account account, string[] permissions)
+        {
             var issueDate = DateTime.UtcNow;
-            if (registration == null)
+            var accessToken = tokenGenerator.GenerateAccessToken(account.Id, issueDate, permissions);
+            // save access token registration
+            var registration = new TokenRegistration
             {
-                var expiredAt = issueDate.Add(tokenGeneratorSettings.Lifetime);
-                var accessToken = tokenGenerator.GenerateAccessToken(
-                    account.Id,
-                    issueDate,
-                    userPermissions.Select(p => p.Name).ToArray());
-                registration = new TokenRegistration
-                {
-                    UserId = account.Id,
-                    IssuedAt = issueDate,
-                    AccessToken = accessToken,
-                    ExpiredAt = expiredAt
-                };
-                await tokenRegistrationRepository.Save(registration);
-            }
-
+                UserId = account.Id,
+                IssuedAt = issueDate,
+                AccessToken = accessToken,
+                ExpiredAt = issueDate.Add(tokenGeneratorSettings.Lifetime),
+            };
+            await tokenRegistrationRepository.Save(registration);
+            // generate refresh token with new access token's registration Id
             var refreshToken = tokenGenerator.GenerateRefreshToken(registration.Id, issueDate, account.Id);
             return new AccessTokenResponse
             {
-                AccessToken = registration.AccessToken,
+                AccessToken = accessToken,
                 RefreshToken = refreshToken,
                 Profile = mapper.Map<UserProfile>(account)
             };
-        }
-
-        private async Task<TokenRegistration> GetLastValidTokenRegistration(
-            int accountId,
-            Repository.Model.Permission[] permissions)
-        {
-            var registration = await tokenRegistrationRepository.FindLastTokenByUserId(accountId);
-
-            if (string.IsNullOrEmpty(registration?.AccessToken) ||
-                registration.ExpiredAt.HasValue && registration.ExpiredAt < DateTime.UtcNow)
-            {
-                return null;
-            }
-
-            try
-            {
-                // if permission changed we should make new token
-                var principal = tokenGenerator.Parse(registration.AccessToken);
-                if (principal == null
-                    || IsRightsDifferent(permissions, principal.GetPermissions()))
-                    return null;
-            }
-            catch (TokenSecurityException)
-            {
-                // if token expired or some sensitive properties changes we should make new token
-                return null;
-            }
-
-            return registration;
-        }
-
-        private static bool IsRightsDifferent(
-            Repository.Model.Permission[] userPermissions,
-            string[] tokenPermissions)
-        {
-            // assume checking permissions is distinctive
-            if (userPermissions.Length != tokenPermissions.Length)
-                // rights are different!
-                return true;
-
-            var matchedRights = userPermissions.Select(p => p.Name)
-            .Join(tokenPermissions,
-                up => up,
-                tp => tp,
-                (up, tp) => up)
-            .ToArray();
-
-            if (userPermissions.Length != matchedRights.Length)
-                // rights are different!
-                return true;
-
-            return false;
         }
 
         public async Task<AccessTokenResponse> Login(SmsLoginRequest request)
@@ -577,7 +520,7 @@ namespace Domain0.Service
                 logger.Info($"User { account.Id } | { request.Phone } account created successful!");
             }
 
-            return await GetTokenResponse(account, false);
+            return await GetTokenResponse(account);
         }
 
         public async Task<AccessTokenResponse> Login(EmailLoginRequest request)
@@ -684,7 +627,7 @@ namespace Domain0.Service
                 logger.Info($"User { account.Id } | { request.Email } account created successful!");
             }
 
-            return await GetTokenResponse(account, false);
+            return await GetTokenResponse(account);
         }
 
         public async Task<AccessTokenResponse> Login(ActiveDirectoryUserLoginRequest request, string environmentToken = null)
@@ -1229,30 +1172,9 @@ namespace Domain0.Service
 
             var principal = tokenGenerator.Parse(tokenRegistry.AccessToken, skipLifetimeCheck: true);
 
-            var issueDate = DateTime.UtcNow;
-            var expiredAt = issueDate.Add(tokenGeneratorSettings.Lifetime);
-            var accessToken = tokenGenerator.GenerateAccessToken(
-                account.Id,
-                issueDate,
-                principal.GetPermissions());
-            var registration = new TokenRegistration
-            {
-                UserId = account.Id,
-                IssuedAt = issueDate,
-                AccessToken = accessToken,
-                ExpiredAt = expiredAt
-            };
-            await tokenRegistrationRepository.Save(registration);
-            var refreshToken = tokenGenerator.GenerateRefreshToken(registration.Id, issueDate, account.Id);
-
-            logger.Info($"User { tokenRegistry.UserId } get refreshed token");
-
-            return new AccessTokenResponse
-            {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken,
-                Profile = mapper.Map<UserProfile>(account)
-            };
+            var response = await CreateTokenResponse(account, principal.GetPermissions());
+            logger.Info($"User { tokenRegistry.UserId } refreshed token");
+            return response;
         }
 
         public async Task<UserProfile> GetMyProfile()

@@ -30,24 +30,6 @@ where [Id] = @Id
             }
         }
 
-        public async Task<TokenRegistration> FindLastTokenByUserId(int userId)
-        {
-            const string query = @"
-select [Id]
-      ,[UserId]
-      ,[AccessToken]
-      ,[IssuedAt]
-      ,[ExpiredAt]
-from [dom].[TokenRegistration]
-where [UserId] = @UserId
-order by [Id] desc
-";
-            using (var con = _connectionProvider.Connection)
-            {
-                return await con.QueryFirstOrDefaultAsync<TokenRegistration>(query, new {UserId = userId});
-            }
-        }
-
         public async Task Save(TokenRegistration registration)
         {
             if (registration.Id > 0)

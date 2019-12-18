@@ -598,7 +598,6 @@ namespace Domain0.Test
             });
 
             var tokenMock = Mock.Get(container.Resolve<ITokenRegistrationRepository>());
-            tokenMock.Setup(a => a.FindLastTokenByUserId(It.IsAny<int>())).ReturnsAsync((TokenRegistration) null);
 
             var authGenerator = Mock.Get(container.Resolve<IPasswordGenerator>());
             authGenerator.Setup(a => a.CheckPassword(It.IsAny<string>(), It.IsAny<string>())).Returns<string, string>((pasd, hash) => pasd == hash);
