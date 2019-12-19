@@ -1,8 +1,8 @@
-using Nito.AsyncEx;
 using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Nito.AsyncEx;
 
 namespace Domain0.Api.Client
 {
@@ -14,7 +14,8 @@ namespace Domain0.Api.Client
         public RefreshTokenTimer(AuthenticationContext domain0AuthenticationContext)
         {
             authContext = domain0AuthenticationContext;
-            _refreshLoopTask = Task.Run(RefreshLoop, cts.Token);
+            _refreshLoopTask = Task.Factory.StartNew(RefreshLoop, cts.Token,
+                TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
             currentMinimumAwaitTime = DEFAULT_MIN_AWAIT_TIME;
         }
 

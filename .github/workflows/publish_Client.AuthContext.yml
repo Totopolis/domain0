@@ -2,7 +2,7 @@ name: Publish Client.AuthContext
 on:
   push:
     tags:
-      - 'Client.AuthContext/v[0-9]+.[0-9]+.[0-9]+'
+      - 'Client.AuthContext/v[0-9]+.[0-9]+.[0-9]+*'
 
 jobs:
   publish:

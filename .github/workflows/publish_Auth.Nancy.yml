@@ -2,7 +2,7 @@ name: Publish Auth.Nancy
 on:
   push:
     tags:
-      - 'Auth.Nancy/v[0-9]+.[0-9]+.[0-9]+'
+      - 'Auth.Nancy/v[0-9]+.[0-9]+.[0-9]+*'
 
 jobs:
   publish:

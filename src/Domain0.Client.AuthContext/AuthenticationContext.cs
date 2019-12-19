@@ -1,8 +1,8 @@
-﻿using Castle.DynamicProxy;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Castle.DynamicProxy;
 
 namespace Domain0.Api.Client
 {
@@ -57,7 +57,8 @@ namespace Domain0.Api.Client
         {
             try
             {
-                var li = await Domain0Scope.Client.LoginAsync(new SmsLoginRequest(password, phone));
+                var li = await Domain0Scope.Client.LoginAsync(new SmsLoginRequest(password, phone))
+                    .ConfigureAwait(false);
                 
                 tokenChangeManager.LoginInfo = li;
                 Trace.TraceInformation($"Login: { li?.Profile?.Id } | { phone }");
@@ -75,7 +76,8 @@ namespace Domain0.Api.Client
         {
             try
             { 
-                var li = await Domain0Scope.Client.LoginByEmailAsync(new EmailLoginRequest(email, password));
+                var li = await Domain0Scope.Client.LoginByEmailAsync(new EmailLoginRequest(email, password))
+                    .ConfigureAwait(false);
 
                 tokenChangeManager.LoginInfo = li;
                 Trace.TraceInformation($"Login: { li?.Profile?.Id } | { email }");
@@ -122,7 +124,13 @@ namespace Domain0.Api.Client
 
         public string Token
         {
-            get => tokenChangeManager?.LoginInfo?.AccessToken;
+            get => tokenChangeManager.LoginInfo?.AccessToken;
+        }
+
+        public event Action<AccessTokenResponse> AccessTokenChanged
+        {
+            add => tokenChangeManager.AccessTokenChanged += value;
+            remove => tokenChangeManager.AccessTokenChanged -= value;
         }
 
         public bool IsLoggedIn
@@ -139,7 +147,13 @@ namespace Domain0.Api.Client
                 try
                 {
                     var request = new RefreshTokenRequest(loginInfo.RefreshToken);
-                    tokenChangeManager.LoginInfo = await Domain0Scope.Client.RefreshTokenAsync(request);
+                    tokenChangeManager.LoginInfo = await Domain0Scope.Client.RefreshTokenAsync(request)
+                        .ConfigureAwait(false);
+                }
+                catch (Domain0ClientException e) when (e.StatusCode != 200)
+                {
+                    tokenChangeManager.LoginInfo = null;
+                    throw new AuthenticationContextException("Refresh token failed", e);
                 }
                 catch (Exception e)
                 {
