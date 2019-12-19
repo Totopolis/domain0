@@ -19,7 +19,7 @@ namespace Domain0.Api.Client
                 refreshTokenTimer = new RefreshTokenTimer(authContext);
         }
 
-        public event Action<string> AccessTokenChanged;
+        public event Action<AccessTokenResponse> AccessTokenChanged;
 
         internal TClient AttachClientEnvironment<TClient>(IClientScope<TClient> scope)
             where TClient : class
@@ -154,8 +154,6 @@ namespace Domain0.Api.Client
             }
             set
             {
-                var accessToken = value?.AccessToken;
-
                 using (tokenChangeLock.WriterLock())
                 {
                     loginInfo = value;
@@ -180,14 +178,13 @@ namespace Domain0.Api.Client
                     }
                 }
 
-                AccessTokenChanged?.Invoke(accessToken);
+                AccessTokenChanged?.Invoke(value);
             }
         }
 
         internal void RestoreLoginInfo()
         {
             var value = loginInfoStorage.Load();
-            var accessToken = value?.AccessToken;
 
             using (tokenChangeLock.WriterLock())
             {
@@ -196,7 +193,7 @@ namespace Domain0.Api.Client
                 SetToken();
             }
 
-            AccessTokenChanged?.Invoke(accessToken);
+            AccessTokenChanged?.Invoke(value);
         }
 
         private void SetToken()

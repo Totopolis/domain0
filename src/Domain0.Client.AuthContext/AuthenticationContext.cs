@@ -127,7 +127,7 @@ namespace Domain0.Api.Client
             get => tokenChangeManager.LoginInfo?.AccessToken;
         }
 
-        public event Action<string> AccessTokenChanged
+        public event Action<AccessTokenResponse> AccessTokenChanged
         {
             add => tokenChangeManager.AccessTokenChanged += value;
             remove => tokenChangeManager.AccessTokenChanged -= value;

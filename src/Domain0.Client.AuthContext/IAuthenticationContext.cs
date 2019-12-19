@@ -14,7 +14,7 @@ namespace Domain0.Api.Client
 
         string Token { get; }
 
-        event Action<string> AccessTokenChanged;
+        event Action<AccessTokenResponse> AccessTokenChanged;
 
         bool IsLoggedIn { get; }
 
