@@ -57,7 +57,8 @@ namespace Domain0.Api.Client
         {
             try
             {
-                var li = await Domain0Scope.Client.LoginAsync(new SmsLoginRequest(password, phone));
+                var li = await Domain0Scope.Client.LoginAsync(new SmsLoginRequest(password, phone))
+                    .ConfigureAwait(false);
                 
                 tokenChangeManager.LoginInfo = li;
                 Trace.TraceInformation($"Login: { li?.Profile?.Id } | { phone }");
@@ -75,7 +76,8 @@ namespace Domain0.Api.Client
         {
             try
             { 
-                var li = await Domain0Scope.Client.LoginByEmailAsync(new EmailLoginRequest(email, password));
+                var li = await Domain0Scope.Client.LoginByEmailAsync(new EmailLoginRequest(email, password))
+                    .ConfigureAwait(false);
 
                 tokenChangeManager.LoginInfo = li;
                 Trace.TraceInformation($"Login: { li?.Profile?.Id } | { email }");

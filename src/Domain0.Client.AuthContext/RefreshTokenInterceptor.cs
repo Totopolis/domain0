@@ -19,7 +19,7 @@ namespace Domain0.Api.Client
 
         protected override async Task InterceptAsync(IInvocation invocation, Func<IInvocation, Task> proceed)
         {
-            await authContext.Refresh();
+            await authContext.Refresh().ConfigureAwait(false);
 
             using (await clientScope.RequestSetupLock.ReaderLockAsync())
             {
@@ -29,7 +29,7 @@ namespace Domain0.Api.Client
 
         protected override async Task<TResult> InterceptAsync<TResult>(IInvocation invocation, Func<IInvocation, Task<TResult>> proceed)
         {
-            await authContext.Refresh();
+            await authContext.Refresh().ConfigureAwait(false);
 
             using (await clientScope.RequestSetupLock.ReaderLockAsync())
             {
