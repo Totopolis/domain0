@@ -74,11 +74,17 @@ namespace Domain0.Tokens
                         Encoding.UTF8.GetString(
                             Convert.FromBase64String(settingsKey.Key)));
 
-                    keys.Add(new RsaSecurityKey(publicKeyRsaProvider));
+                    keys.Add(new RsaSecurityKey(publicKeyRsaProvider)
+                    {
+                        KeyId = settingsKey.Key,
+                    });
                 }
                 else if (settingsKey.Alg == SecurityAlgorithms.HmacSha256)
                 {
-                    keys.Add(new SymmetricSecurityKey(Convert.FromBase64String(settingsKey.Key)));
+                    keys.Add(new SymmetricSecurityKey(Convert.FromBase64String(settingsKey.Key))
+                    {
+                        KeyId = settingsKey.Key,
+                    });
                 }
             }
 
