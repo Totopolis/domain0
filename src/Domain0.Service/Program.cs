@@ -18,7 +18,7 @@ namespace Domain0.Service
             LogManager.ThrowExceptions = true;
             InternalLogger.LogFile = "error.log";
             InternalLogger.LogLevel = NLog.LogLevel.Error;
-            LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration("configs/NLog.config");
+            LogManager.LoadConfiguration("configs/NLog.config");
 
             var logger = LogManager.GetCurrentClassLogger();
 
@@ -34,7 +34,6 @@ namespace Domain0.Service
             new HostBuilder()
                 .UseSystemd()
                 .UseWindowsService()
-                .UseContentRoot(Directory.GetCurrentDirectory())
                 .ConfigureLogging(logging => { logging.ClearProviders(); })
                 .ConfigureHostConfiguration(config => { config.AddEnvironmentVariables("ASPNETCORE_"); })
                 .ConfigureAppConfiguration((hostingContext, config) =>
@@ -50,7 +49,6 @@ namespace Domain0.Service
                     webBuilder
                         .UseConfiguration(
                             new ConfigurationBuilder()
-                                .SetBasePath(Directory.GetCurrentDirectory())
                                 .AddJsonFile("configs/hosting.json", optional: true)
                                 .Build()
                         )
