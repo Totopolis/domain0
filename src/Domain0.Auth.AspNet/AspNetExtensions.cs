@@ -17,7 +17,7 @@ namespace Domain0.Auth.AspNet
                 .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
                 .RequireAuthenticatedUser()
                 .Build();
-            services.AddAuthorization(opt => opt.AddPolicy(Domain0Auth.Policy, defaultPolicy));
+            services.AddAuthorizationCore(opt => opt.AddPolicy(Domain0Auth.Policy, defaultPolicy));
 
             services.AddAuthentication().AddJwtBearer(options =>
             {
