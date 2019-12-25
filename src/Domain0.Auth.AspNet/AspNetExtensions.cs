@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Domain0.Tokens;
@@ -40,7 +41,7 @@ namespace Domain0.Auth.AspNet
                             context.Request.Headers["Authorization"][0].Substring(
                                 context.Scheme.Name.Length + 1)));
 
-                        foreach (var role in context.Principal.FindAll("permissions"))
+                        foreach (var role in context.Principal.FindAll("permissions").ToList())
                         {
                             foreach (var permission in JsonConvert.DeserializeObject<string[]>(role.Value))
                             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using Domain0.Service.Tokens;
 using Domain0.Tokens;
@@ -61,7 +62,7 @@ namespace Domain0.Auth.Nancy
         {
             var identity = (ClaimsIdentity) principal.Identity;
             identity.AddClaim(new Claim("id_token", jwtToken));
-            foreach (var role in principal.FindAll(TokenClaims.CLAIM_PERMISSIONS))
+            foreach (var role in principal.FindAll(TokenClaims.CLAIM_PERMISSIONS).ToList())
             {
                 foreach (var permission in JsonConvert.DeserializeObject<string[]>(role.Value))
                 {
