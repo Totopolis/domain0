@@ -20,7 +20,7 @@ namespace Domain0.Auth.AspNet
                 .Build();
             services.AddAuthorizationCore(opt => opt.AddPolicy(Domain0Auth.Policy, defaultPolicy));
 
-            services.AddAuthentication().AddJwtBearer(options =>
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
                 // Automatically disable the HTTPS requirement for development scenarios.
                 options.RequireHttpsMetadata = false; //!env.IsDevelopment();
