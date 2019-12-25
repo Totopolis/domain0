@@ -33,6 +33,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain0.Service", "src\Doma
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain0.Persistence.Tests", "tests\Domain0.Persistence.Tests\Domain0.Persistence.Tests.csproj", "{4FE1B98E-9D2E-4873-BE09-040552ABC159}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{B73E38AB-A566-44BB-992C-5F24057463CB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain0.Auth.AspNet.Example", "examples\Domain0.Auth.AspNet.Example\Domain0.Auth.AspNet.Example.csproj", "{9A2E4289-CA7C-42A0-9B20-6144484174CD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +87,10 @@ Global
 		{4FE1B98E-9D2E-4873-BE09-040552ABC159}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FE1B98E-9D2E-4873-BE09-040552ABC159}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FE1B98E-9D2E-4873-BE09-040552ABC159}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A2E4289-CA7C-42A0-9B20-6144484174CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A2E4289-CA7C-42A0-9B20-6144484174CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A2E4289-CA7C-42A0-9B20-6144484174CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A2E4289-CA7C-42A0-9B20-6144484174CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,6 +107,7 @@ Global
 		{BE08C156-3328-4CC0-A470-658503A09F0D} = {1BF1114E-CAD2-405F-98DE-3B205EA58176}
 		{21A43FEF-8836-4551-A97D-87166BF28C1D} = {1BF1114E-CAD2-405F-98DE-3B205EA58176}
 		{4FE1B98E-9D2E-4873-BE09-040552ABC159} = {7E220B05-27A5-4231-BCC9-D1B54C6B3E53}
+		{9A2E4289-CA7C-42A0-9B20-6144484174CD} = {B73E38AB-A566-44BB-992C-5F24057463CB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5E01D66D-B2FD-4DCF-93C1-E7D66084F5EC}
