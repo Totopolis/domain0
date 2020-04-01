@@ -50,16 +50,13 @@ namespace Domain0.Api.Client
 
         private IsolatedStorageFile GetIsolatedStorage()
         {
-            if (AppDomain.CurrentDomain.ActivationContext != null)
+            try
             {
-                try
-                {
-                    return IsolatedStorageFile.GetUserStoreForApplication();
-                }
-                catch
-                {
-                    // ignored, because GetUserStoreForApplication didn't work out of click-once 
-                }
+                return IsolatedStorageFile.GetUserStoreForApplication();
+            }
+            catch
+            {
+                // ignored, because GetUserStoreForApplication didn't work out of click-once 
             }
 
             // last chance fallback
