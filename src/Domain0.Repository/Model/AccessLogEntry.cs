@@ -23,5 +23,7 @@ namespace Domain0.Repository.Model
         public string Referer { get; set; }
 
         public int? ProcessingTime { get; set; }
+
+        public string AcceptLanguage { get; set; }
     }
 }

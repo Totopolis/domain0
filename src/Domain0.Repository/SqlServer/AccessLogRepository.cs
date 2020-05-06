@@ -30,7 +30,8 @@ INSERT INTO [log].[Access]
            ,[UserAgent]
            ,[UserId]
            ,[Referer]
-           ,[ProcessingTime])
+           ,[ProcessingTime]
+           ,[AcceptLanguage])
      VALUES
            (@Action
            ,@Method
@@ -40,7 +41,8 @@ INSERT INTO [log].[Access]
            ,@UserAgent
            ,@UserId
            ,@Referer
-           ,@ProcessingTime)
+           ,@ProcessingTime
+           ,@AcceptLanguage)
 ";
 
             using (var con = _connectionProvider.Connection)

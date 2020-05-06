@@ -63,7 +63,10 @@ namespace Domain0.Nancy.Infrastructure
                     UserAgent = Truncate(string.Join(", ", ctx.Request.Headers["User-Agent"]), 255),
                     UserId = Truncate(ctx.CurrentUser?.Identity?.Name, 128),
                     ProcessingTime = processingTime,
-                    Referer = Truncate(ctx.Request.Headers.Referrer, 255)
+                    Referer = Truncate(ctx.Request.Headers.Referrer, 255),
+                    AcceptLanguage = ctx.Request.Headers["Accept-Language"].Any()
+                        ? Truncate(string.Join("|", ctx.Request.Headers["Accept-Language"]), 255)
+                        : null,
                 };
 
                 await repository.Insert(logEntry);

@@ -267,6 +267,7 @@ CREATE TABLE "log"."Access"(
 	"UserAgent" varchar NOT NULL,
 	"UserId" varchar,
 	"Referer" varchar,
-	"ProcessingTime" int);
+	"ProcessingTime" int,
+	"AcceptLanguage" varchar);
 
 COMMIT;

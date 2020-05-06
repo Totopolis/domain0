@@ -22,9 +22,9 @@ namespace Domain0.Repository.PostgreSql
         {
             const string query = @"
 insert into log.""Access""
-(""Action"", ""Method"", ""ClientIp"", ""ProcessedAt"", ""StatusCode"", ""UserAgent"", ""UserId"", ""Referer"", ""ProcessingTime"")
+(""Action"", ""Method"", ""ClientIp"", ""ProcessedAt"", ""StatusCode"", ""UserAgent"", ""UserId"", ""Referer"", ""ProcessingTime"", ""AcceptLanguage"")
 values
-(@Action, @Method, @ClientIp, @ProcessedAt, @StatusCode, @UserAgent, @UserId, @Referer, @ProcessingTime)
+(@Action, @Method, @ClientIp, @ProcessedAt, @StatusCode, @UserAgent, @UserId, @Referer, @ProcessingTime, @AcceptLanguage)
 ";
 
             using (var con = _connectionProvider.Connection)

@@ -48,6 +48,7 @@ namespace Domain0.Persistence.Tests.Repositories
                 StatusCode = 200,
                 UserAgent = "me",
                 UserId = "1",
+                AcceptLanguage = "ru",
             };
 
             await logs.Insert(log);

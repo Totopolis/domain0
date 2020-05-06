@@ -218,8 +218,9 @@ create table log.Access(
 	[StatusCode] int null,
 	[UserAgent] nvarchar(max) not null,
 	[UserId] nvarchar(max) null,
-    [Referer] nvarchar(max) null,
-	[ProcessingTime] int null
+	[Referer] nvarchar(max) null,
+	[ProcessingTime] int null,
+	[AcceptLanguage] nvarchar(max) null
 )
 go
 
