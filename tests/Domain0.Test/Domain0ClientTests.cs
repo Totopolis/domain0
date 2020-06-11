@@ -78,7 +78,7 @@ namespace Domain0.Test
             using (var http = new HttpClient())
             {
                 var client = new Domain0Client(TEST_URL, http);
-                await client.RegisterAsync(phone);
+                await client.RegisterAsync(phone, null);
             }
 
             smsRequestRepositoryMock.Verify(t => t.Pick(It.IsAny<decimal>()), Times.Once);
@@ -109,7 +109,7 @@ namespace Domain0.Test
             using (var http = new HttpClient())
             {
                 var client = new Domain0Client(TEST_URL, http);
-                await client.RegisterByEmailAsync(new RegisterRequest(testEmail));
+                await client.RegisterByEmailAsync(new RegisterRequest(testEmail), null);
             }
 
             emailRequestRepositoryMock.Verify(t => t.Pick(It.Is<string>(e => e == testEmail)), Times.Once);

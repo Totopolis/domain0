@@ -74,7 +74,18 @@ namespace Domain0.Nancy
         [Route(Consumes = new[] { "application/json" })]
         [Route(Produces = new string[] { })]
         [Route(Tags = new[] { "Sms" }, Summary = "Method for registration by phone")]
-        [RouteParam(ParamIn = ParameterIn.Body, Name = "phone", ParamType = typeof(long), Required = true, Description = "user's phone with single number, started from 7 for Russia, 71231234567 for example")]
+        [RouteParam(
+            ParamIn = ParameterIn.Body,
+            Name = "phone",
+            ParamType = typeof(long),
+            Required = true, 
+            Description = "user's phone with single number, started from 7 for Russia, 71231234567 for example")]
+        [RouteParam(
+            ParamIn = ParameterIn.Header,
+            Name = "Accept-Language",
+            ParamType = typeof(string),
+            Required = false,
+            Description = "registration language")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone format or user with this phone already existed")]
@@ -101,6 +112,12 @@ namespace Domain0.Nancy
             ParamType = typeof(string),
             Required = false,
             Description = "user's environment token")]
+        [RouteParam(
+            ParamIn = ParameterIn.Header,
+            Name = "Accept-Language",
+            ParamType = typeof(string),
+            Required = false,
+            Description = "registration language")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
         [SwaggerResponse(HttpStatusCode.OK, Message = "Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "wrong phone format or user with this phone already existed")]

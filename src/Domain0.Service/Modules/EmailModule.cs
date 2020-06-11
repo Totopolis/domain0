@@ -66,6 +66,12 @@ namespace Domain0.Nancy
             ParamType = typeof(RegisterRequest), 
             Required = true, 
             Description = "user's email")]
+        [RouteParam(
+            ParamIn = ParameterIn.Header,
+            Name = "Accept-Language",
+            ParamType = typeof(string),
+            Required = false,
+            Description = "registration language")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "wrong email format or user with this email already existed")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
@@ -91,6 +97,12 @@ namespace Domain0.Nancy
             ParamType = typeof(string),
             Required = false,
             Description = "user's environment token")]
+        [RouteParam(
+            ParamIn = ParameterIn.Header,
+            Name = "Accept-Language",
+            ParamType = typeof(string),
+            Required = false,
+            Description = "registration language")]
         [SwaggerResponse(HttpStatusCode.NoContent, Message = "Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "wrong email format or user with this email already existed")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "internal error during request execution")]
