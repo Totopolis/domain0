@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Autofac;
+using Autofac.Core;
 using AutoMapper;
 using Domain0.Nancy.Infrastructure;
 using Domain0.Nancy.Service;
@@ -10,6 +11,15 @@ namespace Domain0.Service.BuilderModules
 {
     public class ApplicationModule : Module
     {
+        private Domain0Settings _settings;
+        public ApplicationModule(Domain0Settings settings)
+        {
+            _settings = settings;
+        }
+        public ApplicationModule()
+        {
+           
+        }
         protected override void Load(ContainerBuilder builder)
         {
             builder
@@ -25,7 +35,22 @@ namespace Domain0.Service.BuilderModules
             builder.RegisterType<AccountService>().As<IAccountService>().InstancePerLifetimeScope();
             builder.RegisterType<AdminService>().As<IAdminService>().InstancePerLifetimeScope();
 
-            builder.RegisterType<SmsGatewayClient>().As<ISmsClient>();
+            if (_settings==null || _settings.SmsProvider == null ||
+                string.IsNullOrEmpty(_settings.SmsProvider.Provider) ||
+                _settings.SmsProvider.Provider.ToLower() == "smsgateway")
+            {
+                builder.RegisterType<SmsGatewayClient>().As<ISmsClient>();
+            }
+            else if (_settings.SmsProvider.Provider.ToLower() == "smsc")
+            {
+                builder.RegisterType<SmscClient>().As<ISmsClient>();
+            }
+            else
+            {
+                builder.RegisterType<SmsGatewayClient>().As<ISmsClient>();
+            }
+
+        
             builder
                 .RegisterType<AuthenticationConfigurationBuilder>()
                 .As<IAuthenticationConfigurationBuilder>()
