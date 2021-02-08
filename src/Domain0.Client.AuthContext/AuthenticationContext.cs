@@ -143,7 +143,6 @@ namespace Domain0.Api.Client
             var loginInfo = tokenChangeManager.GetSuitableToUpdateLoginInfo();
             if (loginInfo != null)
             {
-                Trace.TraceInformation($"Refreshing token for { loginInfo.Profile.Id } ...");
                 try
                 {
                     var request = new RefreshTokenRequest(loginInfo.RefreshToken);

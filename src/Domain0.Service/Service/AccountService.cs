@@ -1173,7 +1173,7 @@ namespace Domain0.Service
             var principal = tokenGenerator.Parse(tokenRegistry.AccessToken, skipLifetimeCheck: true);
 
             var response = await CreateTokenResponse(account, principal.GetPermissions());
-            logger.Info($"User { tokenRegistry.UserId } refreshed token");
+            logger.Debug($"User { tokenRegistry.UserId } refreshed token");
             return response;
         }
 
