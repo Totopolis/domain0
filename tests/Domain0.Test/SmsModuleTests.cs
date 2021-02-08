@@ -1086,9 +1086,11 @@ namespace Domain0.Test
         }
 
         [Theory]
-        [InlineData(DataFormat.Json)]
-        [InlineData(DataFormat.Proto)]
-        public async Task Refresh_Success(DataFormat format)
+        [InlineData(DataFormat.Json, SmsModule.RefreshUrl)]
+        [InlineData(DataFormat.Proto, SmsModule.RefreshUrl)]
+        [InlineData(DataFormat.Json, "/api/refresh/{refreshToken}")]
+        [InlineData(DataFormat.Proto, "/api/refresh/{refreshToken}")]
+        public async Task Refresh_Success(DataFormat format, string url)
         {
             var container = TestContainerBuilder.GetContainer(builder =>
             {
@@ -1135,7 +1137,7 @@ namespace Domain0.Test
             tokenMock.Setup(a => a.Save(It.IsAny<TokenRegistration>()))
                 .Callback<TokenRegistration>(tr => tr.Id = newTid);
 
-            var response = await browser.Get(SmsModule.RefreshUrl.Replace("{refreshToken}", refreshToken), with =>
+            var response = await browser.Get(url.Replace("{refreshToken}", refreshToken), with =>
             {
                 with.Accept(format);
             });
@@ -1148,7 +1150,7 @@ namespace Domain0.Test
 
             accessLogRepository.Verify(l =>
                 l.Insert(It.Is<AccessLogEntry>(x => x.Action.Equals(
-                    SmsModule.RefreshUrl.Replace("{refreshToken}",
+                    url.Replace("{refreshToken}",
                         NancyExceptionHandling.SensitiveInfoReplacement))
                 )), Times.Once);
             tokenMock.Verify(t => t.Save(It.IsAny<TokenRegistration>()), Times.Once);

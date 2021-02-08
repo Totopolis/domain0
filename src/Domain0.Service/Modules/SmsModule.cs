@@ -35,7 +35,7 @@ namespace Domain0.Nancy
         public const string RequestChangePhoneUrl = "/api/sms/RequestChangePhone";
         public const string CommitChangePhoneUrl = "/api/sms/CommitChangePhone";
 
-        private static readonly Regex RefreshUrlSensitiveRegex = new Regex(@"(?<=\/api\/Refresh\/).*");
+        private static readonly Regex RefreshUrlSensitiveRegex = new Regex(@"(?<=\/api\/Refresh\/).*", RegexOptions.IgnoreCase);
 
         private readonly IAccountService accountService;
         private readonly IRequestThrottleManager requestThrottleManager;
