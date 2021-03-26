@@ -24,6 +24,8 @@ namespace Domain0.Service.BuilderModules
             builder.RegisterInstance(_settings.SmsQueueClient);
             builder.RegisterInstance(_settings.SmsGateway);
             builder.RegisterInstance(_settings.Ldap);
+            builder.RegisterInstance(_settings.SmsProvider);
+            builder.RegisterInstance(_settings.Smsc);
         }
     }
 }

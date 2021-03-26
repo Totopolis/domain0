@@ -17,5 +17,7 @@ namespace Domain0.Service
         public AccountServiceSettings AccountService { get; set; }
         public LdapSettings Ldap { get; set; }
         public ThresholdSettings Threshold { get; set; }
+        public SmscSettings Smsc { get; set; }
+        public SmsProvider SmsProvider { get; set; }
     }
 }
